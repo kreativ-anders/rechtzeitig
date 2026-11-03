@@ -1,5 +1,7 @@
 // Everything a check needs. Checks import from this file and nothing else.
 
+export { loadYaml } from "./data.ts";
+
 export type Status = "pass" | "warn" | "fail" | "info" | "skip";
 
 export interface Result {

@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { parse } from "yaml";
+import { readdirSync } from "node:fs";
+import { loadYaml } from "./data.ts";
 import type { Link } from "./sdk.ts";
 
 const DIR = new URL("../lang/", import.meta.url);
@@ -31,7 +31,7 @@ export function loadLanguages(codes: string[]): Language {
   const merged: Language = { codes, locale: "", links: {}, text: {} };
   for (const code of codes) {
     const file = new URL(`${code}.yml`, DIR);
-    const pack = parse(readFileSync(file, "utf8"));
+    const pack = loadYaml<{ locale: string; links?: Record<string, string[]>; text?: Record<string, string[]> }>(file);
     merged.locale ||= pack.locale;
     for (const group of ["links", "text"] as const) {
       for (const [concept, patterns] of Object.entries(pack[group] ?? {})) {

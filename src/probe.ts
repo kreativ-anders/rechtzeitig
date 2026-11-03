@@ -1,18 +1,17 @@
 // Network lookups without a browser: probe paths, plain HTTP, the www variant, TLS, DNS and IP countries.
 
-import { readFileSync } from "node:fs";
 import { connect } from "node:tls";
 import { lookup, resolveMx, resolveTxt } from "node:dns/promises";
-import { parse } from "yaml";
+import { loadYaml } from "./data.ts";
 import { assertPublicHost, BlockedHostError, fetchPublic } from "./net.ts";
 import { siteOf } from "./text.ts";
 import type { Probe, ScanContext } from "./sdk.ts";
 
-const PROBES = parse(readFileSync(new URL("../data/probes.yml", import.meta.url), "utf8")) as Array<{
+const PROBES = loadYaml<Array<{
   path: string;
   kind: "file" | "error";
   expect?: string;
-}>;
+}>>("data/probes.yml");
 const MAX_BODY = 50_000;
 const MAX_REDIRECTS = 10;
 

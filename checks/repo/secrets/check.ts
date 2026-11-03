@@ -1,12 +1,10 @@
-import { readFileSync } from "node:fs";
-import { parse } from "yaml";
-import { defineRepoCheck, fail, pass, warn } from "../../../src/sdk.ts";
+import { defineRepoCheck, fail, loadYaml, pass, warn } from "../../../src/sdk.ts";
 
-const RULES = (parse(readFileSync(new URL("../../../data/secrets.yml", import.meta.url), "utf8")) as Array<{
+const RULES = loadYaml<Array<{
   name: string;
   pattern: string;
   severity: "fail" | "warn";
-}>).map((r) => ({ ...r, re: new RegExp(r.pattern) }));
+}>>("data/secrets.yml").map((r) => ({ ...r, re: new RegExp(r.pattern) }));
 const JWT = /\beyJ[A-Za-z0-9_-]{10,}\.(eyJ[A-Za-z0-9_-]{10,})\.[A-Za-z0-9_-]{10,}/g;
 // Generated or test files that often contain key-like strings.
 const SKIP = /(^|\/)(fixtures?|__snapshots__)\/|\.lock$|-lock\.(json|yaml)$|\.min\.(js|css)$|\.map$/;
