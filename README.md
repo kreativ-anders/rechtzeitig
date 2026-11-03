@@ -20,3 +20,7 @@ npm run typecheck && npm test
 How it works and how to add a check: [dev/](dev/).
 
 The results are automated hints, not legal advice.
+
+## License
+
+[Apache-2.0](LICENSE). The name vibecoda is not covered by the license.
