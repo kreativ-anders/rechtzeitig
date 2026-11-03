@@ -1,10 +1,10 @@
-import { defineRepoCheck, info, pass, skip } from "../../../src/sdk.ts";
+import { WORKFLOWS, defineRepoCheck, info, pass, skip } from "../../../src/sdk.ts";
 
 const USES = /^[ \t]*-?[ \t]*uses:[ \t]*["']?([^"'\s#]+)/gm;
 
 export default defineRepoCheck({
   run(repo) {
-    const workflows = repo.files.filter((f) => /^\.github\/workflows\/.*\.ya?ml$/.test(f));
+    const workflows = repo.find(WORKFLOWS);
     if (!workflows.length) return skip("No GitHub workflows.");
     const unpinned = workflows.flatMap((f) =>
       [...(repo.read(f) ?? "").matchAll(USES)]

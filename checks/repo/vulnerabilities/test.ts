@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runRepoCheck } from "../../../test/helpers.ts";
+import { npmLock, runRepoCheck } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
 const files = {
-  "package-lock.json": JSON.stringify({ packages: { "node_modules/lodash": { version: "4.17.20" }, "node_modules/vite": { version: "5.0.0", dev: true } } }),
+  "package-lock.json": npmLock({ lodash: "4.17.20", vite: { version: "5.0.0", dev: true } }),
 };
 const vuln = (purl: string, severity: string) => ({ id: "GHSA-test", purl, summary: "Prototype pollution", severity, fixed: "4.17.21" });
 

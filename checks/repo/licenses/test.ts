@@ -1,11 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runRepoCheck } from "../../../test/helpers.ts";
+import { npmLock, runRepoCheck } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
-const lock = (license: string, dev = false) =>
-  JSON.stringify({ packages: { "node_modules/lib": { version: "1.0.0", license, dev } } });
+const lock = (license: string, dev = false) => npmLock({ lib: { version: "1.0.0", license, dev } });
 
 test("passes for MIT dependencies in an MIT project", async () => {
   assert.equal((await runRepoCheck(here, { "package.json": '{"license":"MIT"}', "package-lock.json": lock("MIT") })).status, "pass");

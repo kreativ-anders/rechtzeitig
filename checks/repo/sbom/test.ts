@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runRepoCheck } from "../../../test/helpers.ts";
+import { npmLock, runRepoCheck } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
-const lock = JSON.stringify({ lockfileVersion: 3, packages: { "": {}, "node_modules/lodash": { version: "4.17.21", license: "MIT" } } });
+const lock = npmLock({ lodash: { version: "4.17.21", license: "MIT" } });
 
 test("passes and counts components from the lockfile", async () => {
   const result = await runRepoCheck(here, { "package.json": "{}", "package-lock.json": lock });

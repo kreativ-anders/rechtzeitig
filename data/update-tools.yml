@@ -1,0 +1,32 @@
+# Tools that keep dependencies up to date (repo/dependency-updates).
+
+# rechtzeitig ecosystem → package-ecosystem names Dependabot uses for it. The first one is suggested in the fix.
+dependabot:
+  npm: [npm, bun]
+  composer: [composer]
+  pub: [pub]
+  cargo: [cargo]
+  pypi: [pip, uv, pipenv, poetry]
+  go: [gomod]
+
+# Paths of Renovate config files. A "renovate" key in package.json counts too.
+renovate: '^(\.github/|\.gitlab/)?(renovate\.json5?|\.renovaterc(\.json5?)?)$'
+
+# Text in a workflow that shows a tool reporting vulnerabilities without opening update pull requests.
+# Matched case-insensitively. A committed .snyk file counts too.
+scanners:
+  - snyk/actions
+  - osv-scanner
+  - aquasecurity/trivy
+  - anchore/scan-action
+  - grype
+  - socketdev
+  - npm audit
+  - pnpm audit
+  - yarn audit
+  - yarn npm audit
+  - composer audit
+  - pip-audit
+  - cargo audit
+  - govulncheck
+  - dependency-review-action

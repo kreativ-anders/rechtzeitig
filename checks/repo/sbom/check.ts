@@ -1,12 +1,4 @@
-import { defineRepoCheck, pass, skip, warn } from "../../../src/sdk.ts";
-
-const MANIFESTS: Record<string, string[]> = {
-  "package.json": ["package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lock", "bun.lockb"],
-  "composer.json": ["composer.lock"],
-  "pubspec.yaml": ["pubspec.lock"],
-  "Cargo.toml": ["Cargo.lock"],
-  "pyproject.toml": ["uv.lock", "poetry.lock", "pdm.lock", "requirements.txt"],
-};
+import { MANIFESTS, defineRepoCheck, pass, skip, warn } from "../../../src/sdk.ts";
 
 export default defineRepoCheck({
   run(repo) {

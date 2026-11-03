@@ -1,4 +1,4 @@
-import { defineRepoCheck, fail, info, pass, warn } from "../../../src/sdk.ts";
+import { MANIFESTS, defineRepoCheck, fail, info, pass, warn } from "../../../src/sdk.ts";
 
 const ENV = /(^|\/)\.env(\.[\w-]+)?$/;
 const TEMPLATE = /\.(example|sample|template|dist|defaults)$/;
@@ -13,7 +13,7 @@ export default defineRepoCheck({
       const message = '.gitignore does not ignore .env. Add ".env" so local secrets are not committed by accident.';
       // A template means the project expects a local .env; otherwise this is only a precaution.
       if (repo.files.some((f) => ENV.test(f) && !FIXTURES.test(f))) return warn(message);
-      if (["package.json", "composer.json", "pyproject.toml"].some((m) => repo.files.includes(m))) return info(message);
+      if (Object.keys(MANIFESTS).some((m) => repo.files.includes(m))) return info(message);
     }
     return pass("No .env file is committed.");
   },
