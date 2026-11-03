@@ -13,6 +13,36 @@ export const ICONS: Record<Outcome["status"], string> = {
 const ORDER = Object.keys(ICONS);
 const SEVERITY_ORDER = ["critical", "high", "medium", "low", "info"];
 
+/** Shape of rechtzeitig-report.json: rule ids, results and where they were found. No page text, no file contents. */
+export interface Findings {
+  version: string;
+  startedAt: string;
+  target: { url?: string; repository?: string };
+  results: Array<{
+    rule: string;
+    check: string;
+    severity: string;
+    status: Outcome["status"];
+    message: string;
+    /** Pages, files with line numbers, hosts. Secrets are already redacted by the checks. */
+    locations: string[];
+  }>;
+}
+
+export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">): Findings {
+  return {
+    ...meta,
+    results: outcomes.map((o) => ({
+      rule: o.rule.id,
+      check: o.id,
+      severity: o.rule.severity,
+      status: o.status,
+      message: o.message,
+      locations: o.details,
+    })),
+  };
+}
+
 // Report wording. Titles, legal bases and fix hints come from each rule.yml; messages from the checks are English.
 const UI = {
   en: {

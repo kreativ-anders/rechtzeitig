@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rechtzeitig</title>
+<meta name="description" content="Checks a website and its repository for German legal basics, security and an SBOM.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="top-inner">
+  <a class="brand" href="index.html"><span class="brand-mark">§</span>rechtzeitig</a>
+  <nav class="nav"><a href="workflow.html">Workflow</a><a href="checks.html">Checks</a><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></nav>
+</div></header>
+
+<main>
+  <div class="hero">
+    <div>
+      <h1>rechtzeitig</h1>
+      <p class="lead">A GitHub Action you start by hand. It opens your website the way a first-time visitor from Germany would and reads your repository. It reports what German and EU law asks for and what is missing.</p>
+    </div>
+    <div class="stamp" aria-hidden="true"><span>checked<strong>§</strong>in time</span></div>
+  </div>
+
+  <ul class="covers">
+    <li><b>Imprint and privacy policy</b><small>DDG, GDPR</small></li>
+    <li><b>Consent</b><small>Servers, cookies and banners before consent, TDDDG</small></li>
+    <li><b>Contract buttons</b><small>Cancellation and withdrawal, BGB</small></li>
+    <li><b>Security basics</b><small>HTTPS, TLS, headers, exposed files, error pages, email spoofing</small></li>
+    <li><b>Repository</b><small>SBOM, known vulnerabilities, license conflicts, committed secrets</small></li>
+  </ul>
+
+  <p>It is free and runs on GitHub's runners.</p>
+
+  <h2>Start in two minutes</h2>
+  <ol class="steps">
+    <li>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository.</li>
+    <li>Open <b>Actions → rechtzeitig → Run workflow</b>, enter your URL and pick the language.</li>
+    <li>Read the report on the run's summary page.</li>
+  </ol>
+
+  <h2>Read on</h2>
+  <div class="cards">
+    <a class="card-link" href="workflow.html"><b>The workflow</b><span>Inputs, secrets, <code>fail-on</code>, the report files</span></a>
+    <a class="card-link" href="checks.html"><b>All checks</b><span>What each one looks for and which law it is about</span></a>
+  </div>
+</main>
+
+<footer><div class="inner">
+  <span class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</span>
+  <span>Apache-2.0 · <a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></span>
+</div></footer>
+</body>
+</html>

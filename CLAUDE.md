@@ -7,7 +7,7 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | What | File |
 |---|---|
 | One rule | `checks/<module>/<name>/`: `rule.yml` (metadata), `check.ts` (detection), `test.ts`, `fixtures/` |
-| List of all rules with how they are checked | `docs/checks.md`, generated from `rule.yml` by `npm run docs` |
+| List of all rules with how they are checked | `docs/checks.html`, generated from `rule.yml` by `npm run docs` |
 | Words per language | `lang/*.yml` |
 | Known services, countries, cookies | `data/third-parties.yml` |
 | Paths requested without a browser | `data/probes.yml` |
@@ -26,12 +26,12 @@ Every change that affects what a rule does updates its documentation in the same
 - Input added or changed → `action.yml`, `examples/workflows/rechtzeitig.yml`, `docs/workflow.md`.
 - Architecture changed → `dev/architecture.md`.
 
-Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/checks.md` is stale, a rule is invalid or older than a year.
+Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/checks.html` is stale, a rule is invalid or older than a year.
 
 ## Boundaries
 
 - Words belong in `lang/*.yml`, services and patterns in `data/`, never in check code.
 - Paid features never go into the engine; `tier: pro` rules never go into this repository.
 - Findings are technical risk hints with location and legal basis, never legal advice.
-- No business plans, prices or competitor names in this repository.
+- The repository is private for now. Commercialization plans go into the section "Commercialization" of `dev/roadmap.md`, nowhere else. No prices or competitor names. Before the repository goes public, review that section.
 - Docs are English, short and plain. `docs/` is for users (GitHub Pages), `dev/` for contributors.

@@ -23,12 +23,14 @@
 - PR annotations for repository findings with file and line.
 - Check messages in German, not only titles and fix hints.
 
-## Later, in separate repositories
+## Commercialization
 
-These need a server and stay out of this repository. This repository stays a self-contained CI tool.
+Paid features that need a server. They live in separate repositories; this repository stays a self-contained CI tool and the engine gets no paid code paths.
 
-- Dashboard with accounts: history and diff between runs, alerts. It receives findings from the existing upload (`upload-url`, `upload-token`, `src/sink.ts`); the engine needs no change for it.
+- Findings upload: an opt-in input (API key) that sends `rechtzeitig-report.json` to the service. Only rule ids, results and locations, never page text or file contents.
+- Dashboard with accounts: history and diff between runs, alerts. Fed by the upload.
 - Website checks run from a server in Germany, so consent banners look as they do to visitors from the EU. Rules for these would be data for the same engine, delivered as a signed bundle.
+- `tier: pro` rules, delivered the same way at run time.
 
 ## Distribution
 

@@ -24,7 +24,7 @@ export interface Rule {
   tier: (typeof TIERS)[number];
   title: Text;
   legal_basis?: Text;
-  /** One sentence: how check.ts detects it, naming the data files it uses. Shown in docs/checks.md. */
+  /** One sentence: how check.ts detects it, naming the data files it uses. Shown in docs/checks.html. */
   how: string;
   fix_hint: Text;
   meta: { last_reviewed: string; sources: string[] };

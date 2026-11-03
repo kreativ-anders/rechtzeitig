@@ -58,7 +58,7 @@
 
    For data a local fixture cannot produce (TLS, DNS, redirects), use `fakeContext()`. For repository checks, use `runRepoCheck(here, { "path/file": "content" })`.
 
-5. Run `npm run docs` to update `docs/checks.md`. A test fails if you forget. Keep `how` in `rule.yml` true whenever `check.ts` changes.
+5. Run `npm run docs` to update `docs/checks.html`. A test fails if you forget. Keep `how` in `rule.yml` true whenever `check.ts` changes.
 6. Run `npm run typecheck && npm test`.
 
 The runner finds the check by itself. Nothing else needs to change.

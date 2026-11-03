@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All checks · rechtzeitig</title>
+<meta name="description" content="Every rule rechtzeitig checks, how it is detected and which law it is about.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="top-inner">
+  <a class="brand" href="index.html"><span class="brand-mark">§</span>rechtzeitig</a>
+  <nav class="nav"><a href="workflow.html">Workflow</a><a href="checks.html" aria-current="page">Checks</a><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></nav>
+</div></header>
+
+<main>
+  <h1>All checks</h1>
+  <p class="lead">Every rule has a fixed id, so you can refer to it in tickets. Open a card to see how it is checked, how to fix it and where the code lives.</p>
+
+  <h2>Results</h2>
+  <ul class="legend">
+    <li><span class="status s-pass">pass</span><span>Nothing to do.</span></li>
+    <li><span class="status s-fail">fail</span><span>rechtzeitig is sure something is missing or wrong.</span></li>
+    <li><span class="status s-warn">warn</span><span>A pattern matched that a person should look at.</span></li>
+    <li><span class="status s-info">info</span><span>A list of things to judge yourself.</span></li>
+    <li><span class="status s-skip">skip</span><span>The check does not apply, for example no URL was given.</span></li>
+  </ul>
+  <p>The severity says how much a finding matters, from <code>info</code> to <code>critical</code>. Website checks run when you give a URL. Repository checks run when the workflow checks out your repository first. Lockfiles read: <code>package-lock.json</code>, <code>pnpm-lock.yaml</code>, <code>yarn.lock</code>, <code>composer.lock</code>, <code>pubspec.lock</code>, <code>Cargo.lock</code>, <code>uv.lock</code>, <code>poetry.lock</code>, <code>requirements*.txt</code>, <code>go.mod</code>.</p>
+
+  <div class="toolbar" id="toolbar" hidden>
+    <input class="search" id="q" type="search" placeholder="Search by id, title or law, e.g. TDDDG" aria-label="Search checks">
+    <div class="chips" id="modules"><span class="label">Group</span></div>
+    <div class="chips" id="severities"><span class="label">Severity</span></div>
+  </div>
+  <p class="count" id="count" aria-live="polite"></p>
+
+  <div id="list">
+<!-- checks:start -->
+<section class="module" data-module="legal">
+<h3>Legal <small>9 rules</small></h3>
+<div class="rules">
+<details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a link labeled &quot;verträge hier kündigen&quot; (`lang/*.yml` `cancel`) on the start page and &quot;jetzt kündigen&quot; on its target page. only with `subscriptions: true`.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-BTN-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Cancellation button for subscriptions</span>
+<span class="rule-law">§ 312k BGB (German Civil Code)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds a link labeled &quot;Verträge hier kündigen&quot; (<code>lang/*.yml</code> <code>cancel</code>) on the start page and &quot;jetzt kündigen&quot; on its target page. Only with <code>subscriptions: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Offer an always available link &quot;Verträge hier kündigen&quot;, without login, that leads to a page with a &quot;jetzt kündigen&quot; button.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/cancellation-button"><code>checks/legal/cancellation-button</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312k.html">gesetze-im-internet.de</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-DSE-003" data-module="legal" data-severity="medium" data-search="leg-eu-dse-003 legal/form-privacy-notice forms link to the privacy policy formulare verweisen auf die datenschutzerklärung art. 13(1) gdpr for every form with email, name, phone or address fields, looks for a privacy link or wording inside the form or its container. ignores login forms.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-DSE-003</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Forms link to the privacy policy</span>
+<span class="rule-law">Art. 13(1) GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>For every form with email, name, phone or address fields, looks for a privacy link or wording inside the form or its container. Ignores login forms.</dd></div>
+<div><dt>How to fix</dt><dd>Explain next to the form what the data is used for and link the privacy policy.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/form-privacy-notice"><code>checks/legal/form-privacy-notice</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-IMP-002" data-module="legal" data-severity="high" data-search="leg-de-imp-002 legal/imprint-details imprint contains the required details impressum enthält die pflichtangaben § 5(1) ddg searches the imprint text for email, phone or contact form, german postcode, vat id and register number.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-IMP-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Imprint contains the required details</span>
+<span class="rule-law">§ 5(1) DDG</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Searches the imprint text for email, phone or contact form, German postcode, VAT ID and register number.</dd></div>
+<div><dt>How to fix</dt><dd>Give name, postal address, email address and a second fast way of contact, plus register entry and VAT ID if you have them.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/imprint-details"><code>checks/legal/imprint-details</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-IMP-001" data-module="legal" data-severity="high" data-search="leg-de-imp-001 legal/imprint imprint is linked and reachable impressum ist verlinkt und erreichbar § 5 ddg (german digital services act) finds the imprint link on the start page (`imprint`), loads it and checks http status and that it has text.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-IMP-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Imprint is linked and reachable</span>
+<span class="rule-law">§ 5 DDG (German Digital Services Act)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds the imprint link on the start page (<code>imprint</code>), loads it and checks HTTP status and that it has text.</dd></div>
+<div><dt>How to fix</dt><dd>Link the imprint from every page, for example in the footer, labeled &quot;Impressum&quot;.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/imprint"><code>checks/legal/imprint</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-IMP-003" data-module="legal" data-severity="medium" data-search="leg-de-imp-003 legal/links-on-all-pages imprint and privacy policy are linked on every page impressum und datenschutz auf jeder seite verlinkt § 5 ddg, art. 12 gdpr looks for imprint and privacy links on every visited page of the site.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-IMP-003</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Imprint and privacy policy are linked on every page</span>
+<span class="rule-law">§ 5 DDG, Art. 12 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Looks for imprint and privacy links on every visited page of the site.</dd></div>
+<div><dt>How to fix</dt><dd>Put both links in a shared layout (footer) that every page uses, including apps and sub-sections.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/links-on-all-pages"><code>checks/legal/links-on-all-pages</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-ODR-001" data-module="legal" data-severity="medium" data-search="leg-eu-odr-001 legal/odr-link no link to the closed eu dispute platform kein link zur abgeschalteten os-plattform regulation (eu) 2024/3228 looks for links to or mentions of ec.europa.eu/consumers/odr on every visited page.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-ODR-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">No link to the closed EU dispute platform</span>
+<span class="rule-law">Regulation (EU) 2024/3228</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Looks for links to or mentions of ec.europa.eu/consumers/odr on every visited page.</dd></div>
+<div><dt>How to fix</dt><dd>Remove the link and the notice. The platform closed on 20 July 2025.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/odr-link"><code>checks/legal/odr-link</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/3228/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-DSE-002" data-module="legal" data-severity="medium" data-search="leg-eu-dse-002 legal/privacy-policy-details privacy policy covers the required topics datenschutzerklärung enthält die pflichtthemen art. 13 gdpr searches the privacy policy for 11 topics (`controller`, `storage_period`, `right_*` ... in `lang/*.yml`).">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-DSE-002</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Privacy policy covers the required topics</span>
+<span class="rule-law">Art. 13 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Searches the privacy policy for 11 topics (<code>controller</code>, <code>storage_period</code>, <code>right_*</code> ... in <code>lang/*.yml</code>).</dd></div>
+<div><dt>How to fix</dt><dd>Add the missing topics: controller, legal basis, storage period, data subject rights, right to complain.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/privacy-policy-details"><code>checks/legal/privacy-policy-details</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-DSE-001" data-module="legal" data-severity="high" data-search="leg-eu-dse-001 legal/privacy-policy privacy policy is linked and reachable datenschutzerklärung ist verlinkt und erreichbar art. 12, 13 gdpr finds the privacy link on the start page (`privacy`), loads it and checks http status and that it has text.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-DSE-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Privacy policy is linked and reachable</span>
+<span class="rule-law">Art. 12, 13 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds the privacy link on the start page (<code>privacy</code>), loads it and checks HTTP status and that it has text.</dd></div>
+<div><dt>How to fix</dt><dd>Link the privacy policy from every page, for example in the footer, labeled &quot;Datenschutz&quot;.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/privacy-policy"><code>checks/legal/privacy-policy</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-BTN-002" data-module="legal" data-severity="high" data-search="leg-de-btn-002 legal/withdrawal-button withdrawal button for online contracts widerrufsbutton für online-verträge § 356a bgb (german civil code, since 19 june 2026) finds a link labeled &quot;vertrag widerrufen&quot; (`withdraw`) on the start page and &quot;widerruf bestätigen&quot; on its target page. only with `sales: true`.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-BTN-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Withdrawal button for online contracts</span>
+<span class="rule-law">§ 356a BGB (German Civil Code, since 19 June 2026)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds a link labeled &quot;Vertrag widerrufen&quot; (<code>withdraw</code>) on the start page and &quot;Widerruf bestätigen&quot; on its target page. Only with <code>sales: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Offer an always available, prominent &quot;Vertrag widerrufen&quot; function leading to a form with a &quot;Widerruf bestätigen&quot; button; confirm receipt electronically.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/withdrawal-button"><code>checks/legal/withdrawal-button</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__356a.html">gesetze-im-internet.de</a></dd></div>
+</dl></div>
+</details>
+</div>
+</section>
+<section class="module" data-module="privacy">
+<h3>Privacy and consent <small>6 rules</small></h3>
+<div class="rules">
+<details class="rule" id="LEG-EU-CNS-004" data-module="privacy" data-severity="high" data-search="leg-eu-cns-004 privacy/consent-preselected optional cookie categories are not preselected optionale cookie-kategorien nicht vorausgewählt § 25 tdddg, ecj c-673/17 (planet49) finds ticked, enabled checkboxes whose label is an optional category (`consent_optional`), also in shadow roots.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-004</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Optional cookie categories are not preselected</span>
+<span class="rule-law">§ 25 TDDDG, ECJ C-673/17 (Planet49)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds ticked, enabled checkboxes whose label is an optional category (<code>consent_optional</code>), also in shadow roots.</dd></div>
+<div><dt>How to fix</dt><dd>Leave statistics, marketing and similar categories unticked by default.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-preselected"><code>checks/privacy/consent-preselected</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://curia.europa.eu/juris/liste.jsf?num=C-673/17">curia.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-CNS-003" data-module="privacy" data-severity="high" data-search="leg-eu-cns-003 privacy/consent-reject consent banner can be rejected on the first layer consent-banner lässt sich auf der ersten ebene ablehnen § 25 tdddg, art. 7(3) gdpr in dialogs, cookie containers and shadow roots of the start page, looks for an accept button (`consent_accept`) without a reject button (`consent_reject`).">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-003</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Consent banner can be rejected on the first layer</span>
+<span class="rule-law">§ 25 TDDDG, Art. 7(3) GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>In dialogs, cookie containers and shadow roots of the start page, looks for an accept button (<code>consent_accept</code>) without a reject button (<code>consent_reject</code>).</dd></div>
+<div><dt>How to fix</dt><dd>Offer an equal &quot;Reject all&quot; button right next to &quot;Accept all&quot;.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-reject"><code>checks/privacy/consent-reject</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-CNS-002" data-module="privacy" data-severity="high" data-search="leg-eu-cns-002 privacy/cookies-before-consent no cookies before consent keine cookies vor einwilligung § 25 tdddg (german telecommunications digital services data protection act) lists cookies and localstorage set while loading the site without clicks; matches names against `data/third-parties.yml`.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">No cookies before consent</span>
+<span class="rule-law">§ 25 TDDDG (German Telecommunications Digital Services Data Protection Act)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists cookies and localStorage set while loading the site without clicks; matches names against <code>data/third-parties.yml</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Set only strictly necessary cookies right away, all others only after consent.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/cookies-before-consent"><code>checks/privacy/cookies-before-consent</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr gets the country of each third-party host (`data/third-parties.yml`, or ipinfo with a token) and, for countries outside the eu/eea, looks for `third_country` wording in the privacy policy.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-DSE-005</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Privacy policy names transfers outside the EU</span>
+<span class="rule-law">Art. 13(1)(f), Art. 44 ff. GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Gets the country of each third-party host (<code>data/third-parties.yml</code>, or IPinfo with a token) and, for countries outside the EU/EEA, looks for <code>third_country</code> wording in the privacy policy.</dd></div>
+<div><dt>How to fix</dt><dd>Name the country and the safeguard for each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses).</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-country"><code>checks/privacy/third-country</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg records every request to another site while loading pages without clicks; `consent: required` vendors fail, others warn.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">No third-party servers before consent</span>
+<span class="rule-law">Art. 6(1) GDPR, § 25 TDDDG</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Records every request to another site while loading pages without clicks; <code>consent: required</code> vendors fail, others warn.</dd></div>
+<div><dt>How to fix</dt><dd>Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-parties-before-consent"><code>checks/privacy/third-parties-before-consent</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-DSE-004" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-004 privacy/vendors-in-privacy-policy privacy policy names the services the site uses datenschutzerklärung nennt die genutzten dienste art. 13(1)(e) gdpr for every contacted third-party service, looks for its name (`names` in `data/third-parties.yml`) in the privacy policy.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-DSE-004</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Privacy policy names the services the site uses</span>
+<span class="rule-law">Art. 13(1)(e) GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>For every contacted third-party service, looks for its name (<code>names</code> in <code>data/third-parties.yml</code>) in the privacy policy.</dd></div>
+<div><dt>How to fix</dt><dd>List every embedded service with purpose and legal basis in the privacy policy.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/vendors-in-privacy-policy"><code>checks/privacy/vendors-in-privacy-policy</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+</div>
+</section>
+<section class="module" data-module="security">
+<h3>Security <small>9 rules</small></h3>
+<div class="rules">
+<details class="rule" id="SEC-HDR-002" data-module="security" data-severity="medium" data-search="sec-hdr-002 security/cookie-flags cookies use secure flags cookies nutzen sichere flags art. 32 gdpr checks secure on every cookie (https sites) and httponly on session cookies set without login.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-HDR-002</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Cookies use secure flags</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Checks Secure on every cookie (HTTPS sites) and HttpOnly on session cookies set without login.</dd></div>
+<div><dt>How to fix</dt><dd>Set cookies with Secure; session cookies also with HttpOnly and SameSite=Lax.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/cookie-flags"><code>checks/security/cookie-flags</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-DNS-001" data-module="security" data-severity="medium" data-search="sec-dns-001 security/email-dns domain is protected against email spoofing domain ist gegen e-mail-spoofing geschützt art. 32 gdpr reads the spf txt record of the domain and the dmarc record at `_dmarc.`; flags missing ones and `p=none`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-DNS-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Domain is protected against email spoofing</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the SPF TXT record of the domain and the DMARC record at <code>_dmarc.</code>; flags missing ones and <code>p=none</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Publish SPF and DMARC records; a domain without mail needs only &quot;v=spf1 -all&quot; and &quot;v=DMARC1; p=reject&quot;.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/email-dns"><code>checks/security/email-dns</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-EXP-002" data-module="security" data-severity="medium" data-search="sec-exp-002 security/error-disclosure error pages reveal no internals fehlerseiten verraten keine interna art. 32 gdpr requests the error paths from `data/probes.yml` and searches the answers for stack traces, server paths and version headers.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-EXP-002</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Error pages reveal no internals</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Requests the error paths from <code>data/probes.yml</code> and searches the answers for stack traces, server paths and version headers.</dd></div>
+<div><dt>How to fix</dt><dd>Turn off error output in production (for example display_errors=0, DEBUG=false) and remove version headers.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/error-disclosure"><code>checks/security/error-disclosure</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-EXP-001" data-module="security" data-severity="critical" data-search="sec-exp-001 security/exposed-files no private files are public keine privaten dateien öffentlich art. 32 gdpr requests the file paths from `data/probes.yml`; a 200 whose body matches `expect` fails.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-EXP-001</span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><b>critical</b></span></span>
+<span class="rule-title">No private files are public</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Requests the file paths from <code>data/probes.yml</code>; a 200 whose body matches <code>expect</code> fails.</dd></div>
+<div><dt>How to fix</dt><dd>Remove the files from the web server or block access to dot files and backups; change any credentials they contain.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/exposed-files"><code>checks/security/exposed-files</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-HDR-001" data-module="security" data-severity="low" data-search="sec-hdr-001 security/headers security headers are set sicherheits-header sind gesetzt art. 32 gdpr reads the response headers of the start page: hsts, csp, x-content-type-options, referrer-policy, frame protection.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-HDR-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Security headers are set</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the response headers of the start page: HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame protection.</dd></div>
+<div><dt>How to fix</dt><dd>Set the missing headers in the web server or hosting; CSP and Referrer-Policy also work as &lt;meta&gt; tags.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/headers"><code>checks/security/headers</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-DNS-002" data-module="security" data-severity="low" data-search="sec-dns-002 security/host-variants www and non-www addresses both work www- und domain-adresse funktionieren beide art. 32 gdpr requests the domain with `www.` added or removed and follows redirects.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-DNS-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">www and non-www addresses both work</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Requests the domain with <code>www.</code> added or removed and follows redirects.</dd></div>
+<div><dt>How to fix</dt><dd>Get a valid certificate for both addresses and redirect one to the other.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/host-variants"><code>checks/security/host-variants</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-TLS-001" data-module="security" data-severity="high" data-search="sec-tls-001 security/https site uses https website nutzt https art. 32 gdpr checks that the start page is https and that plain `http://` redirects to https.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-TLS-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Site uses HTTPS</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Checks that the start page is HTTPS and that plain <code>http://</code> redirects to HTTPS.</dd></div>
+<div><dt>How to fix</dt><dd>Enforce HTTPS and redirect http:// to https:// with a 301.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/https"><code>checks/security/https</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-TLS-003" data-module="security" data-severity="medium" data-search="sec-tls-003 security/mixed-content no unencrypted resources on https pages keine unverschlüsselten ressourcen auf https-seiten art. 32 gdpr lists `http://` requests made by pages of an https site.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-TLS-003</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">No unencrypted resources on HTTPS pages</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists <code>http://</code> requests made by pages of an HTTPS site.</dd></div>
+<div><dt>How to fix</dt><dd>Load every resource over https://.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/mixed-content"><code>checks/security/mixed-content</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-TLS-002" data-module="security" data-severity="high" data-search="sec-tls-002 security/tls tls certificate is valid and current tls-zertifikat ist gültig und aktuell art. 32 gdpr opens a tls connection to the host and reads protocol, trust and expiry date of the certificate.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-TLS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">TLS certificate is valid and current</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Opens a TLS connection to the host and reads protocol, trust and expiry date of the certificate.</dd></div>
+<div><dt>How to fix</dt><dd>Renew the certificate automatically (for example Let's Encrypt) and allow only TLS 1.2 and 1.3.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/tls"><code>checks/security/tls</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+</div>
+</section>
+<section class="module" data-module="sustainability">
+<h3>Sustainability <small>2 rules</small></h3>
+<div class="rules">
+<details class="rule" id="SUS-JS-002" data-module="sustainability" data-severity="low" data-search="sus-js-002 sustainability/content-without-js start page shows content without javascript startseite zeigt inhalt ohne javascript  compares the visible text of the start page with javascript off and on.">
+<summary>
+<span class="rule-head"><span class="rule-id">SUS-JS-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Start page shows content without JavaScript</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Compares the visible text of the start page with JavaScript off and on.</dd></div>
+<div><dt>How to fix</dt><dd>Deliver content as HTML from the server or at build time.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/content-without-js"><code>checks/sustainability/content-without-js</code></a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SUS-JS-001" data-module="sustainability" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible) checks that imprint and privacy links exist with javascript off and that their pages show text without it.">
+<summary>
+<span class="rule-head"><span class="rule-id">SUS-JS-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Imprint and privacy policy work without JavaScript</span>
+<span class="rule-law">§ 5 DDG (easily recognizable, directly accessible)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Checks that imprint and privacy links exist with JavaScript off and that their pages show text without it.</dd></div>
+<div><dt>How to fix</dt><dd>Deliver the links and texts of the legal pages as static HTML.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/legal-pages-without-js"><code>checks/sustainability/legal-pages-without-js</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a></dd></div>
+</dl></div>
+</details>
+</div>
+</section>
+<section class="module" data-module="accessibility">
+<h3>Accessibility <small>1 rule</small></h3>
+<div class="rules">
+<details class="rule" id="A11Y-LANG-001" data-module="accessibility" data-severity="low" data-search="a11y-lang-001 accessibility/page-language page declares its language seite gibt ihre sprache an wcag 2.2 success criterion 3.1.1 (bfsg) reads `&lt;html lang&gt;` of the start page and compares it with the chosen language.">
+<summary>
+<span class="rule-head"><span class="rule-id">A11Y-LANG-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Page declares its language</span>
+<span class="rule-law">WCAG 2.2 success criterion 3.1.1 (BFSG)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads <code>&lt;html lang&gt;</code> of the start page and compares it with the chosen language.</dd></div>
+<div><dt>How to fix</dt><dd>Set the lang attribute on &lt;html&gt;, for example &lt;html lang=&quot;de&quot;&gt;.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/page-language"><code>checks/accessibility/page-language</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-page.html">w3.org</a>, <a href="https://www.gesetze-im-internet.de/bfsg/">gesetze-im-internet.de</a></dd></div>
+</dl></div>
+</details>
+</div>
+</section>
+<section class="module" data-module="repo">
+<h3>Repository <small>8 rules</small></h3>
+<div class="rules">
+<details class="rule" id="SEC-DEPS-005" data-module="repo" data-severity="low" data-search="sec-deps-005 repo/actions-pinning github actions are pinned to a commit github actions sind auf einen commit gepinnt cra annex i (supply chain) reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit sha.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-DEPS-005</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">GitHub Actions are pinned to a commit</span>
+<span class="rule-law">CRA Annex I (supply chain)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads <code>uses:</code> lines in <code>.github/workflows/*.yml</code> and lists actions not pinned to a 40-character commit SHA.</dd></div>
+<div><dt>How to fix</dt><dd>Use owner/action@&lt;commit-sha&gt; instead of a tag; Dependabot keeps the SHAs current.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/actions-pinning"><code>checks/repo/actions-pinning</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-DBAI-001" data-module="repo" data-severity="critical" data-search="sec-dbai-001 repo/database-rules database rules do not open data to everyone datenbankregeln öffnen keine daten für alle art. 32 gdpr compares `create table` with `enable row level security` in `supabase/**/*.sql`; looks for `if true` in firebase rules.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-DBAI-001</span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><b>critical</b></span></span>
+<span class="rule-title">Database rules do not open data to everyone</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Compares <code>create table</code> with <code>enable row level security</code> in <code>supabase/**/*.sql</code>; looks for <code>if true</code> in Firebase rules.</dd></div>
+<div><dt>How to fix</dt><dd>Enable row level security on every table and replace &quot;if true&quot; rules with checks on the signed-in user.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/database-rules"><code>checks/repo/database-rules</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-DEPS-003" data-module="repo" data-severity="medium" data-search="sec-deps-003 repo/dependency-updates dependency updates are automated abhängigkeits-updates sind automatisiert cra annex i part ii, art. 32 gdpr looks for `.github/dependabot.yml` (and which ecosystems it covers), renovate config, or scanners in workflows.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-DEPS-003</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Dependency updates are automated</span>
+<span class="rule-law">CRA Annex I Part II, Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Looks for <code>.github/dependabot.yml</code> (and which ecosystems it covers), Renovate config, or scanners in workflows.</dd></div>
+<div><dt>How to fix</dt><dd>Set up Dependabot or Renovate for every ecosystem in use.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/dependency-updates"><code>checks/repo/dependency-updates</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-SECRETS-002" data-module="repo" data-severity="high" data-search="sec-secrets-002 repo/env-files .env files stay out of git .env-dateien bleiben außerhalb von git art. 32 gdpr lists committed `.env*` files (except templates and fixtures) and checks that `.gitignore` ignores `.env`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-SECRETS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">.env files stay out of git</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files (except templates and fixtures) and checks that <code>.gitignore</code> ignores <code>.env</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Add .env to .gitignore; revoke committed values and remove them from the history.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/env-files"><code>checks/repo/env-files</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-LIC-001" data-module="repo" data-severity="medium" data-search="leg-de-lic-001 repo/licenses dependency licenses fit the project lizenzen der abhängigkeiten passen zum projekt §§ 31, 69c urhg (german copyright act) compares licenses from npm and composer lockfiles with the project license (package.json, composer.json or license).">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-LIC-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Dependency licenses fit the project</span>
+<span class="rule-law">§§ 31, 69c UrhG (German Copyright Act)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Compares licenses from npm and Composer lockfiles with the project license (package.json, composer.json or LICENSE).</dd></div>
+<div><dt>How to fix</dt><dd>Review the license of each flagged dependency; replace it, buy a license or license the project to match.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/licenses"><code>checks/repo/licenses</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-DEPS-002" data-module="repo" data-severity="low" data-search="sec-deps-002 repo/sbom dependencies are locked and listed in an sbom abhängigkeiten sind gesperrt und in einer sbom erfasst cra annex i part ii reads all lockfiles (`src/repo/lockfiles.ts`), writes `rechtzeitig-sbom.cdx.json` and lists manifests without a lockfile.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-DEPS-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Dependencies are locked and listed in an SBOM</span>
+<span class="rule-law">CRA Annex I Part II</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads all lockfiles (<code>src/repo/lockfiles.ts</code>), writes <code>rechtzeitig-sbom.cdx.json</code> and lists manifests without a lockfile.</dd></div>
+<div><dt>How to fix</dt><dd>Commit a lockfile for every manifest; keep the SBOM with each release.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/sbom"><code>checks/repo/sbom</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-SECRETS-001" data-module="repo" data-severity="critical" data-search="sec-secrets-001 repo/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files line by line against `data/secrets.yml` and decodes jwts to find supabase `service_role` keys.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-SECRETS-001</span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><b>critical</b></span></span>
+<span class="rule-title">No secrets in the repository</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Matches tracked files line by line against <code>data/secrets.yml</code> and decodes JWTs to find Supabase <code>service_role</code> keys.</dd></div>
+<div><dt>How to fix</dt><dd>Revoke found keys right away, then remove them from code and git history and store them as secrets or environment variables.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/secrets"><code>checks/repo/secrets</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-DEPS-001" data-module="repo" data-severity="high" data-search="sec-deps-001 repo/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i sends the package urls of all locked components to the osv api; high and critical issues in production dependencies fail.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-DEPS-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">No dependencies with known vulnerabilities</span>
+<span class="rule-law">Art. 32 GDPR, CRA Annex I</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API; high and critical issues in production dependencies fail.</dd></div>
+<div><dt>How to fix</dt><dd>Update the affected packages to at least the fixed version shown.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/vulnerabilities"><code>checks/repo/vulnerabilities</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://osv.dev">osv.dev</a></dd></div>
+</dl></div>
+</details>
+</div>
+</section>
+<!-- checks:end -->
+  </div>
+  <p class="empty" id="empty" hidden>No check matches. Try fewer filters.</p>
+
+  <h2>Rule ids</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Prefix</th><th>Area</th></tr></thead>
+    <tbody>
+      <tr><td><code>LEG-DE</code></td><td>German law (DDG, BGB, UrhG)</td></tr>
+      <tr><td><code>LEG-EU</code></td><td>EU law (GDPR, ePrivacy as § 25 TDDDG)</td></tr>
+      <tr><td><code>SEC</code></td><td>Security</td></tr>
+      <tr><td><code>A11Y</code></td><td>Accessibility (BFSG)</td></tr>
+      <tr><td><code>SUS</code></td><td>Sustainability</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Words and languages</h2>
+  <p>Checks look for words like "Impressum", "Datenschutz" or "Alle ablehnen". The words live in one file per language, currently German and English. Pick the language of your site when you start the run; the page language check tells you if the choice looks wrong.</p>
+</main>
+
+<footer><div class="inner">
+  <span class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</span>
+  <span>Apache-2.0 · <a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></span>
+</div></footer>
+
+<script src="checks.js"></script>
+</body>
+</html>

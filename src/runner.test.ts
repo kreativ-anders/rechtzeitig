@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, runChecks, selectModules } from "./runner.ts";
 import { validateRule, type Rule } from "./rules.ts";
-import { checksTable } from "./docs.ts";
+import { checksHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, pass } from "./sdk.ts";
 
@@ -33,9 +33,9 @@ test("modules select checks by folder", async () => {
   assert.ok(ids.length > 0 && ids.every((id) => id.startsWith("legal/")));
 });
 
-test("docs/checks.md is up to date (npm run docs)", async () => {
-  const doc = readFileSync(new URL("../docs/checks.md", import.meta.url), "utf8");
-  assert.ok(doc.includes(checksTable(await loadChecks())), "run: npm run docs");
+test("docs/checks.html is up to date (npm run docs)", async () => {
+  const doc = readFileSync(new URL("../docs/checks.html", import.meta.url), "utf8");
+  assert.ok(doc.includes(checksHtml(await loadChecks())), "run: npm run docs");
 });
 
 test("a broken check becomes an error and the others still run", async () => {

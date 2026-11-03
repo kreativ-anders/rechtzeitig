@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The workflow · rechtzeitig</title>
+<meta name="description" content="Inputs, secrets, fail-on and report files of the rechtzeitig GitHub Action.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="top-inner">
+  <a class="brand" href="index.html"><span class="brand-mark">§</span>rechtzeitig</a>
+  <nav class="nav"><a href="workflow.html" aria-current="page">Workflow</a><a href="checks.html">Checks</a><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></nav>
+</div></header>
+
+<main>
+  <h1>The workflow</h1>
+  <p class="lead">Everything you can set when you run rechtzeitig, and what you get back.</p>
+
+  <div class="doc">
+    <nav class="toc" aria-label="On this page">
+      <p>On this page</p>
+      <ol>
+        <li><a href="#inputs">Inputs</a></li>
+        <li><a href="#scope">Website, repository or both</a></li>
+        <li><a href="#fail-on">fail-on</a></li>
+        <li><a href="#secrets">Secrets</a></li>
+        <li><a href="#report">The report</a></li>
+        <li><a href="#visit">How the website is visited</a></li>
+      </ol>
+    </nav>
+
+    <div>
+      <section id="inputs">
+        <h2><span class="par">§ 1</span>Inputs</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Input</th><th>Default</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>url</code></td><td>empty</td><td>Start page to check. Empty scans only the repository.</td></tr>
+            <tr><td><code>language</code></td><td><code>de</code></td><td>Language of the site: <code>de</code>, <code>en</code> or <code>all</code>. Decides which words count as "Impressum", "Datenschutz" and so on.</td></tr>
+            <tr><td><code>subscriptions</code></td><td><code>false</code></td><td><code>true</code> if visitors can sign up for subscriptions. Turns on the cancellation button check (§ 312k BGB).</td></tr>
+            <tr><td><code>sales</code></td><td><code>false</code></td><td><code>true</code> if consumers buy or sign contracts on the site. Turns on the withdrawal button check (§ 356a BGB).</td></tr>
+            <tr><td><code>modules</code></td><td>all</td><td>Comma list of check groups: <code>legal</code>, <code>privacy</code>, <code>security</code>, <code>sustainability</code>, <code>accessibility</code>, <code>repo</code>.</td></tr>
+            <tr><td><code>report-language</code></td><td><code>language</code></td><td><code>de</code> or <code>en</code>. Titles and fix hints follow it; check messages are English.</td></tr>
+            <tr><td><code>fail-on</code></td><td><code>never</code></td><td>When the run turns red, see <a href="#fail-on">fail-on</a>.</td></tr>
+            <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Pages to visit at most.</td></tr>
+            <tr><td><code>repository</code></td><td>workspace</td><td>Folder to read lockfiles, licenses and secrets from. Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
+            <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Optional token from <a href="https://ipinfo.io">ipinfo.io</a> to look up the country of servers rechtzeitig does not know.</td></tr>
+          </tbody>
+        </table></div>
+        <p>The output <code>result</code> is <code>pass</code>, <code>warn</code> or <code>fail</code>.</p>
+      </section>
+
+      <section id="scope">
+        <h2><span class="par">§ 2</span>Website, repository or both</h2>
+        <p>The <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> does both. Without <code>actions/checkout</code> there is nothing to read, so only the website is checked. Without a URL only the repository is checked.</p>
+      </section>
+
+      <section id="fail-on">
+        <h2><span class="par">§ 3</span>fail-on</h2>
+        <p>Every check ends as <span class="status s-pass">pass</span> <span class="status s-warn">warn</span> <span class="status s-fail">fail</span> <span class="status s-info">info</span> or <span class="status s-skip">skip</span>. <code>fail-on</code> decides which of these make the run red. The report is the same either way.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th><code>fail-on</code></th><th>Run is red when</th><th>1 fail, 2 warn</th><th>0 fail, 2 warn</th></tr></thead>
+          <tbody>
+            <tr><td><code>never</code> (default)</td><td>never</td><td class="green">green</td><td class="green">green</td></tr>
+            <tr><td><code>fail</code></td><td>any check fails</td><td class="red">red</td><td class="green">green</td></tr>
+            <tr><td><code>warn</code></td><td>any check fails or warns</td><td class="red">red</td><td class="red">red</td></tr>
+          </tbody>
+        </table></div>
+        <p>The default never turns a run red, so adding rechtzeitig cannot break anything. Choose <code>fail</code> once the findings are fixed and you want to keep it that way, or <code>warn</code> before a launch.</p>
+      </section>
+
+      <section id="secrets">
+        <h2><span class="par">§ 4</span>Secrets</h2>
+        <p><code>IPINFO_TOKEN</code> is the only secret rechtzeitig uses, and it is optional. Without it, rechtzeitig knows the country of about 40 common services from its own list. With it, it also looks up the rest.</p>
+        <p>To add it: repository <b>Settings → Secrets and variables → Actions → New repository secret</b>, name <code>IPINFO_TOKEN</code>. The free plan is enough.</p>
+        <p class="note">rechtzeitig sends only the IP addresses of third-party servers to IPinfo, never data about your visitors.</p>
+      </section>
+
+      <section id="report">
+        <h2><span class="par">§ 5</span>The report</h2>
+        <p>The summary page of the run shows a table of all checks with details. The artifact <code>rechtzeitig-report</code> contains:</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>File</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td><code>rechtzeitig-report.md</code></td><td>The same report as Markdown</td></tr>
+            <tr><td><code>rechtzeitig-report.json</code></td><td>Findings: rule id, severity, status, message and locations. No page text or file contents</td></tr>
+            <tr><td><code>rechtzeitig-sbom.cdx.json</code></td><td>SBOM in CycloneDX 1.6 format, with vulnerabilities</td></tr>
+          </tbody>
+        </table></div>
+        <p>Keep the SBOM with each release. It shows which versions you shipped and that you checked them.</p>
+      </section>
+
+      <section id="visit">
+        <h2><span class="par">§ 6</span>How the website is visited</h2>
+        <p>Each page is loaded twice in a fresh Chromium, once with JavaScript off and once with it on. Nothing is clicked and no consent is given, so every request and cookie in the report happened before consent. rechtzeitig opens the start page, every legal page it finds, a sample of other pages, and a short list of paths that must not be public (<code>/.env</code>, <code>/.git/config</code>, backups).</p>
+        <p class="note">GitHub's runners are in US data centers. A site that shows its consent banner only to EU visitors will look different here, and that is a finding in itself. Pages behind a login are not checked.</p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer><div class="inner">
+  <span class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</span>
+  <span>Apache-2.0 · <a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></span>
+</div></footer>
+</body>
+</html>

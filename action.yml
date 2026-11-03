@@ -36,12 +36,6 @@ inputs:
   ipinfo-token:
     description: Optional IPinfo token. Looks up the country of third-party servers that rechtzeitig does not know.
     default: ""
-  upload-url:
-    description: Optional HTTPS endpoint that receives the findings JSON after the run. Needs upload-token. Empty = nothing is sent.
-    default: ""
-  upload-token:
-    description: Bearer token for upload-url. Store it as a secret.
-    default: ""
 
 outputs:
   result:
@@ -78,13 +72,11 @@ runs:
         MAX_PAGES: ${{ inputs.max-pages }}
         REPOSITORY: ${{ inputs.repository }}
         IPINFO_TOKEN: ${{ inputs.ipinfo-token }}
-        UPLOAD_URL: ${{ inputs.upload-url }}
-        UPLOAD_TOKEN: ${{ inputs.upload-token }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
         --sales "$SALES" --modules "$MODULES" --report-language "$REPORT_LANGUAGE"
-        --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --upload-url "$UPLOAD_URL" --out "$RUNNER_TEMP/rechtzeitig-report"
+        --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --out "$RUNNER_TEMP/rechtzeitig-report"
 
     - name: Upload report
       if: always()
