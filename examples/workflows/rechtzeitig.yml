@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Lets rechtzeitig read lockfiles, licenses and secrets. Remove to scan the website only.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: kreativ-anders/rechtzeitig@v1
         with:
           url: ${{ inputs.url }}
@@ -46,3 +46,6 @@ jobs:
           fail-on: ${{ inputs.fail-on }}
           # Optional: add the secret IPINFO_TOKEN (free at ipinfo.io) to look up server countries.
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
+          # Optional: send the findings JSON to your own endpoint. Both empty = nothing leaves the run.
+          upload-url: ${{ vars.RECHTZEITIG_UPLOAD_URL }}
+          upload-token: ${{ secrets.RECHTZEITIG_UPLOAD_TOKEN }}

@@ -33,7 +33,7 @@ Each check folder has `rule.yml` (metadata: id, severity, tier, titles, legal ba
 
 ## Findings and upload
 
-`src/sink.ts` defines what may leave the runner: rule id, severity, status, message and locations, never page text or file contents. `rechtzeitig-report.json` has exactly this shape. Today the only sink keeps findings in the artifact. A later upload implements the same `FindingsSink` interface and is used only when the user sets an API key.
+`src/sink.ts` defines what may leave the runner: rule id, severity, status, message and locations, never page text or file contents. `rechtzeitig-report.json` has exactly this shape. The artifact always gets the findings. `httpSink` also POSTs them as JSON with a bearer token to `upload-url`, only when the user sets both `upload-url` and `upload-token`; HTTPS only, and a failed upload is a warning, not a failed run. A server that receives them lives in another repository.
 
 `tier: pro` rules never live in this repository. If they come, they arrive as data at run time and use the same open engine, so the engine itself has no paid code paths.
 

@@ -4,7 +4,12 @@ updates:
     directory: /
     schedule:
       interval: weekly
+  # Updates the SHA pins and their version comments in action.yml and .github/workflows/.
+  # examples/workflows/ is not covered: copy the new pins there (src/pinning.test.ts fails until you do).
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]

@@ -10,7 +10,7 @@ import { toCycloneDx } from "./repo/sbom.ts";
 import { loadChecks, runChecks, selectModules, type Outcome } from "./runner.ts";
 import { LANGUAGES, type UiLanguage } from "./rules.ts";
 import { toMarkdown, toText, type Report } from "./report.ts";
-import { artifactSink, toFindings } from "./sink.ts";
+import { chooseSink, toFindings, type FindingsSink } from "./sink.ts";
 
 const FAIL_ON: Record<string, Outcome["status"][]> = {
   never: [],
@@ -31,6 +31,7 @@ const { values, positionals } = parseArgs({
     "fail-on": { type: "string", default: "never" },
     "max-pages": { type: "string", default: "10" },
     out: { type: "string", default: "rechtzeitig-report" },
+    "upload-url": { type: "string", default: "" },
   },
 });
 
@@ -42,6 +43,13 @@ if (!FAIL_ON[failOn]) exit(`fail-on must be one of: ${Object.keys(FAIL_ON).join(
 const wanted = values["report-language"] || values.language!.split(",")[0];
 const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ? (wanted as UiLanguage) : "en";
 const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
+// Checked before the scan, so a wrong upload setting fails fast instead of after minutes of crawling.
+let sink: FindingsSink;
+try {
+  sink = chooseSink(values["upload-url"]?.trim() || undefined, process.env.UPLOAD_TOKEN || undefined);
+} catch (e) {
+  exit((e as Error).message);
+}
 
 const startedAt = new Date().toISOString();
 const checks = selectModules(await loadChecks(), modules);
@@ -68,8 +76,16 @@ const markdown = toMarkdown(report);
 writeFileSync(`${values.out}.md`, markdown);
 writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
 if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));
-await artifactSink.send(findings);
 console.log(toText(report));
+// A failed upload is reported but does not change the result: the scan itself worked and the artifact has everything.
+try {
+  await sink.send(findings);
+  if (sink.name !== "artifact") console.log(`Findings uploaded to ${sink.name}.`);
+} catch (e) {
+  const message = `Upload to ${sink.name} failed: ${(e as Error).message}`;
+  console.error(`rechtzeitig: ${message}`);
+  if (process.env.GITHUB_ACTIONS) console.log(`::warning title=rechtzeitig::${message}`);
+}
 
 const failed = outcomes.some((o) => FAIL_ON[failOn].includes(o.status));
 const result = outcomes.some((o) => o.status === "fail" || o.status === "error") ? "fail"

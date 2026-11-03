@@ -1,3 +1,11 @@
 title: rechtzeitig
 description: Checks a website and its repository for German legal basics, security and an SBOM.
-theme: jekyll-theme-minimal
+theme: minima
+plugins:
+  - jekyll-seo-tag
+  - jekyll-relative-links
+  - jekyll-optional-front-matter
+  - jekyll-default-layout
+  - jekyll-titles-from-headings
+exclude:
+  - README.md

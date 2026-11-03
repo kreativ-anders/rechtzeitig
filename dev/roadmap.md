@@ -27,10 +27,10 @@
 
 These need a server and stay out of this repository. This repository stays a self-contained CI tool.
 
-- Dashboard with accounts: history and diff between runs, alerts. The action would upload findings through the interface in `src/sink.ts`, only when the user sets an API key.
+- Dashboard with accounts: history and diff between runs, alerts. It receives findings from the existing upload (`upload-url`, `upload-token`, `src/sink.ts`); the engine needs no change for it.
 - Website checks run from a server in Germany, so consent banners look as they do to visitors from the EU. Rules for these would be data for the same engine, delivered as a signed bundle.
 
 ## Distribution
 
-- Release tags (`v1`) so repositories only change the version.
+- First release `v1`, once the checks are stable enough. Until then `examples/workflows/rechtzeitig.yml` points to `kreativ-anders/rechtzeitig@v1`, which does not exist yet; copy it with `@main` to try it. With the release: tag `v1` and a moving major tag, pin the example to the release commit SHA like the other actions, and drop the exception in `src/pinning.test.ts`.
 - Prebuilt container image to skip the browser download.
