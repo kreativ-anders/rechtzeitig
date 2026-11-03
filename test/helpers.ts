@@ -7,8 +7,8 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSy
 import { tmpdir } from "node:os";
 import { dirname, extname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { chromium, type Browser } from "playwright";
-import { scan, type ScanOptions } from "../src/scan.ts";
+import type { Browser } from "playwright";
+import { launchBrowser, scan, type ScanOptions } from "../src/scan.ts";
 import { createContext } from "../src/context.ts";
 import type { CrawlData } from "../src/crawl.ts";
 import { loadLanguages } from "../src/lang.ts";
@@ -53,7 +53,7 @@ after(async () => (await browser)?.close());
 
 /** Scans a fixture folder. Requests to other hosts are recorded, then blocked. */
 export async function scanFixture(dir: string, opts: ScanOptions = {}): Promise<ScanContext> {
-  browser ??= chromium.launch();
+  browser ??= launchBrowser();
   const site = await serve(dir);
   try {
     return await scan(site.url, { offline: true, browser: await browser, timeout: 10_000, ...opts });

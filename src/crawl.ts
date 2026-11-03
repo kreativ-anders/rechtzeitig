@@ -41,7 +41,11 @@ const isPage = (href: string | null): href is string => !!href && /^https?:/.tes
  * then a sample of same-site pages, up to maxPages. Each page is loaded twice: JavaScript off and on.
  */
 export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlData> {
-  const settings = { locale: opts.lang.locale, timezoneId: "Europe/Berlin", userAgent: opts.userAgent };
+  const settings = {
+    locale: opts.lang.locale, timezoneId: "Europe/Berlin", userAgent: opts.userAgent,
+    // No downloads; no service workers, so every request passes the route below.
+    acceptDownloads: false, serviceWorkers: "block" as const,
+  };
   const noJs = await opts.browser.newContext({ ...settings, javaScriptEnabled: false });
   const js = await opts.browser.newContext(settings);
   // The host the user asked for is trusted, also when it is local (dev servers, test fixtures).

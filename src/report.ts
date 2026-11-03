@@ -43,6 +43,8 @@ export interface Report {
   startedAt: string;
   onGitHub: boolean;
   language: UiLanguage;
+  /** Problems that did not stop the scan, such as a missing browser sandbox. */
+  warnings?: string[];
 }
 
 export function counts(outcomes: Outcome[]): Record<string, number> {
@@ -103,6 +105,7 @@ export function toMarkdown(r: Report): string {
     );
   }
   if (r.repo) lines.push(`- ${t.repository(r.repo.files.length, r.repo.components.length, r.repo.lockfiles.length, r.repo.osv)}`);
+  for (const w of r.warnings ?? []) lines.push(`- ⚠️ ${md(w)}`);
   lines.push(`- rechtzeitig ${r.version} · ${r.startedAt}`, "", `_${t.disclaimer}_`, "");
   return lines.join("\n");
 }
@@ -113,7 +116,7 @@ export function toText(r: Report): string {
     lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${plain(o.message)}`);
     for (const d of o.details) lines.push(`      - ${plain(d)}`);
   }
-  lines.push("", summaryLine(r, false));
+  lines.push("", ...(r.warnings ?? []).map((w) => `Warning: ${plain(w)}`), summaryLine(r, false));
   return lines.join("\n");
 }
 

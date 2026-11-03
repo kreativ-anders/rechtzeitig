@@ -44,6 +44,7 @@ const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ?
 const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 
 const startedAt = new Date().toISOString();
+const warnings: string[] = [];
 const checks = selectModules(await loadChecks(), modules);
 const wantsRepo = checks.some((c) => c.check.repo);
 const repo = values.repo?.trim() && wantsRepo ? await scanRepo(values.repo) : undefined;
@@ -54,6 +55,7 @@ const web = url && checks.some((c) => !c.check.repo)
       sales: values.sales === "true",
       maxPages: Number(values["max-pages"]) || 10,
       ipinfoToken: process.env.IPINFO_TOKEN || undefined,
+      onWarning: (w) => warnings.push(w),
     })
   : undefined;
 if (!web && !repo) exit("Nothing to scan. Pass a URL, or check out the repository before this step.");
@@ -62,7 +64,7 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
 }
 
 const outcomes = await runChecks(checks, { web, repo });
-const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS, language };
+const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS, language, warnings };
 const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo?.root.split("/").pop() } });
 const markdown = toMarkdown(report);
 writeFileSync(`${values.out}.md`, markdown);

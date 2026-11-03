@@ -34,6 +34,12 @@ test("the step summary escapes Markdown and HTML in messages and details", () =>
   assert.match(md, /- d ::error title=x::y\n/);
 });
 
+test("warnings such as a missing sandbox show in the summary and the log", () => {
+  const r = { ...report("m", []), warnings: ["Chrome sandbox not available on this runner"] };
+  assert.match(toMarkdown(r), /- ⚠️ Chrome sandbox not available on this runner/);
+  assert.match(toText(r), /^Warning: Chrome sandbox not available/m);
+});
+
 test("findings are single, capped lines", () => {
   const { results } = toFindings(report(evilFile, ["x".repeat(1000)]).outcomes, { version: "0", startedAt: "now", target: {} });
   assert.equal(results[0].message, "d ::error title=x::y");
