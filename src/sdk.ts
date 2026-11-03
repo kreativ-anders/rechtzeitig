@@ -250,6 +250,6 @@ export interface RepoContext {
   lockfiles: string[];
   /** Known vulnerabilities from OSV. */
   vulnerabilities: Vulnerability[];
-  /** "ok", "skipped" (no network, tests) or an error message. */
+  /** "ok", "ok (details for N of M)" when OSV sent details for only some issues, "skipped" (no network, tests) or an error message. */
   osv: string;
 }

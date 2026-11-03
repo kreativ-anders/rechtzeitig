@@ -29,3 +29,11 @@ test("skips when the lookup is turned off", async () => {
   assert.equal(result.status, "skip");
   assert.match(result.message, /turned off/);
 });
+
+test("keeps issues without details and says that details are missing", async () => {
+  const bare = { id: "GHSA-bare", purl: "pkg:npm/lodash@4.17.20", summary: "", severity: "" };
+  const result = await runRepoCheck(here, files, { osv: "ok (details for 0 of 1)", vulnerabilities: [bare] });
+  assert.equal(result.status, "warn");
+  assert.match(result.message, /OSV sent details for 0 of 1 issues/);
+  assert.deepEqual(result.details, ["lodash@4.17.20: GHSA-bare."]);
+});

@@ -559,7 +559,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DEPS-001" data-module="repo" data-severity="high" data-search="sec-deps-001 repo/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i sends the package urls of all locked components to the osv api; high and critical issues in production dependencies fail. skipped when the input vulnerabilities is false.">
+<details class="rule" id="SEC-DEPS-001" data-module="repo" data-severity="high" data-search="sec-deps-001 repo/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i sends the package urls of all locked components to the osv api and loads details for up to 100 issues; high and critical issues in production dependencies fail. skipped when the input vulnerabilities is false.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">No dependencies with known vulnerabilities</span>
@@ -567,7 +567,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API; high and critical issues in production dependencies fail. Skipped when the input vulnerabilities is false.</dd></div>
+<div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues; high and critical issues in production dependencies fail. Skipped when the input vulnerabilities is false.</dd></div>
 <div><dt>How to fix</dt><dd>Update the affected packages to at least the fixed version shown.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/vulnerabilities"><code>checks/repo/vulnerabilities</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://osv.dev">osv.dev</a></dd></div>
