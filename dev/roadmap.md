@@ -15,22 +15,20 @@ The first pre-release. Not yet alpha or beta.
    - Put a deadline on every page capture and read probe bodies only up to their limit.
    - Refuse private, loopback and link-local addresses for probes and legal pages. Run probes only against the site that was entered.
    - Run the browser with no downloads, no service workers, a minimal environment and the sandbox where the runner allows it.
-2. CI hardening: `persist-credentials: false`, `npm ci --ignore-scripts`, artifact retention, Dependabot cooldown, job timeouts, `SECURITY.md`, CodeQL.
-3. Detection fixes found in the review: false negatives (`GPL-*-or-later`, edge-hosted third-country vendors, `.env.*.*`, SPF `+all`, buttons without a link) and false positives (`BSL-1.0`, error pages, short vendor names, register numbers as postcodes, schema-qualified tables, DMARC `sp=`, monorepos). OSV results must never be dropped silently.
-4. Lean code: shared helpers in `src/sdk.ts`, checks import only the sdk, patterns and lists move from check code into `data/`.
-5. No paid code paths: remove the `tier` field from `rule.yml`.
-6. Release: tag `v0.1.0` as a GitHub pre-release, pin `examples/workflows/rechtzeitig.yml` to its commit SHA and drop the exception in `src/pinning.test.ts`. No moving major tag before `v1.0.0`.
+2. Detection fixes found in the review: false negatives (`GPL-*-or-later`, edge-hosted third-country vendors, `.env.*.*`, SPF `+all`, buttons without a link) and false positives (`BSL-1.0`, error pages, short vendor names, register numbers as postcodes, schema-qualified tables, DMARC `sp=`, monorepos). OSV results must never be dropped silently.
+3. Lean code: shared helpers in `src/sdk.ts`, checks import only the sdk, patterns and lists move from check code into `data/`.
+4. No paid code paths: remove the `tier` field from `rule.yml`.
+5. Release: tag `v0.1.0` as a GitHub pre-release, pin `examples/workflows/rechtzeitig.yml` to its commit SHA and drop the exception in `src/pinning.test.ts`. No moving major tag before `v1.0.0`.
 
 ## Next: repository
 
 1. PR annotations for repository findings with file and line.
 2. Reports fully in the chosen language: messages and details come from `lang/*.yml`, not only titles and fix hints. Check code returns keys and values, never sentences.
-3. An input to turn off the OSV lookup, so private package names do not leave the runner.
-4. Secrets in the git history, not only in the current files.
-5. Package names that do not exist or look like typos of popular ones.
-6. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
-7. `cors` with `origin: *` and credentials, admin routes without an auth check.
-8. License headers of other projects inside your own files.
+3. Secrets in the git history, not only in the current files.
+4. Package names that do not exist or look like typos of popular ones.
+5. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
+6. `cors` with `origin: *` and credentials, admin routes without an auth check.
+7. License headers of other projects inside your own files.
 
 ## Next: website
 
