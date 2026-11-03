@@ -59,7 +59,7 @@
 <section class="module" data-module="legal">
 <h3>Legal <small>9 rules</small></h3>
 <div class="rules">
-<details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a link labeled &quot;verträge hier kündigen&quot; (`lang/*.yml` `cancel`) on the start page and &quot;jetzt kündigen&quot; on its target page. only with `subscriptions: true`.">
+<details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a button labeled &quot;verträge hier kündigen&quot; on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and &quot;jetzt kündigen&quot; (`cancel_confirm`) on its target page; info when it cannot be followed. only with `subscriptions: true`.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-BTN-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">Cancellation button for subscriptions</span>
@@ -67,13 +67,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds a link labeled &quot;Verträge hier kündigen&quot; (<code>lang/*.yml</code> <code>cancel</code>) on the start page and &quot;jetzt kündigen&quot; on its target page. Only with <code>subscriptions: true</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds a button labeled &quot;Verträge hier kündigen&quot; on the start page (<code>cancel</code> in <code>lang/*.yml</code>, else <code>cancel_similar</code> on the visible text, which warns) and &quot;jetzt kündigen&quot; (<code>cancel_confirm</code>) on its target page; info when it cannot be followed. Only with <code>subscriptions: true</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Offer an always available link &quot;Verträge hier kündigen&quot;, without login, that leads to a page with a &quot;jetzt kündigen&quot; button.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/cancellation-button"><code>checks/legal/cancellation-button</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312k.html">gesetze-im-internet.de</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-003" data-module="legal" data-severity="medium" data-search="leg-eu-dse-003 legal/form-privacy-notice forms link to the privacy policy formulare verweisen auf die datenschutzerklärung art. 13(1) gdpr for every form with email, name, phone or address fields, looks for a privacy link or wording inside the form or its container. ignores login forms.">
+<details class="rule" id="LEG-EU-DSE-003" data-module="legal" data-severity="medium" data-search="leg-eu-dse-003 legal/form-privacy-notice forms link to the privacy policy formulare verweisen auf die datenschutzerklärung art. 13(1) gdpr for every form with email, name, phone, address or birth date fields, looks for a privacy link or wording (`privacy` in `lang/*.yml`) inside the form or its container. ignores login forms.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-003</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Forms link to the privacy policy</span>
@@ -81,13 +81,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>For every form with email, name, phone or address fields, looks for a privacy link or wording inside the form or its container. Ignores login forms.</dd></div>
+<div><dt>How it is checked</dt><dd>For every form with email, name, phone, address or birth date fields, looks for a privacy link or wording (<code>privacy</code> in <code>lang/*.yml</code>) inside the form or its container. Ignores login forms.</dd></div>
 <div><dt>How to fix</dt><dd>Explain next to the form what the data is used for and link the privacy policy.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/form-privacy-notice"><code>checks/legal/form-privacy-notice</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-IMP-002" data-module="legal" data-severity="high" data-search="leg-de-imp-002 legal/imprint-details imprint contains the required details impressum enthält die pflichtangaben § 5(1) ddg searches the imprint text for email, phone or contact form, german postcode, vat id and register number.">
+<details class="rule" id="LEG-DE-IMP-002" data-module="legal" data-severity="high" data-search="leg-de-imp-002 legal/imprint-details imprint contains the required details impressum enthält die pflichtangaben § 5(1) ddg searches the imprint text for email, phone or contact form (ibans ignored), german postcode (register numbers ignored), vat id and register number.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-IMP-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">Imprint contains the required details</span>
@@ -95,7 +95,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Searches the imprint text for email, phone or contact form, German postcode, VAT ID and register number.</dd></div>
+<div><dt>How it is checked</dt><dd>Searches the imprint text for email, phone or contact form (IBANs ignored), German postcode (register numbers ignored), VAT ID and register number.</dd></div>
 <div><dt>How to fix</dt><dd>Give name, postal address, email address and a second fast way of contact, plus register entry and VAT ID if you have them.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/imprint-details"><code>checks/legal/imprint-details</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a></dd></div>
@@ -171,7 +171,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-BTN-002" data-module="legal" data-severity="high" data-search="leg-de-btn-002 legal/withdrawal-button withdrawal button for online contracts widerrufsbutton für online-verträge § 356a bgb (german civil code, since 19 june 2026) finds a link labeled &quot;vertrag widerrufen&quot; (`withdraw`) on the start page and &quot;widerruf bestätigen&quot; on its target page. only with `sales: true`.">
+<details class="rule" id="LEG-DE-BTN-002" data-module="legal" data-severity="high" data-search="leg-de-btn-002 legal/withdrawal-button withdrawal button for online contracts widerrufsbutton für online-verträge § 356a bgb (german civil code, since 19 june 2026) finds a button labeled &quot;vertrag widerrufen&quot; on the start page (`withdraw` in `lang/*.yml`, else `withdraw_similar` on the visible text, which warns) and &quot;widerruf bestätigen&quot; (`withdraw_confirm`) on its target page; info when it cannot be followed. only with `sales: true`.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-BTN-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">Withdrawal button for online contracts</span>
@@ -179,7 +179,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds a link labeled &quot;Vertrag widerrufen&quot; (<code>withdraw</code>) on the start page and &quot;Widerruf bestätigen&quot; on its target page. Only with <code>sales: true</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds a button labeled &quot;Vertrag widerrufen&quot; on the start page (<code>withdraw</code> in <code>lang/*.yml</code>, else <code>withdraw_similar</code> on the visible text, which warns) and &quot;Widerruf bestätigen&quot; (<code>withdraw_confirm</code>) on its target page; info when it cannot be followed. Only with <code>sales: true</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Offer an always available, prominent &quot;Vertrag widerrufen&quot; function leading to a form with a &quot;Widerruf bestätigen&quot; button; confirm receipt electronically.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/withdrawal-button"><code>checks/legal/withdrawal-button</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__356a.html">gesetze-im-internet.de</a></dd></div>
@@ -232,7 +232,7 @@
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr gets the country of each third-party service (ipinfo with a token, else `country` in `data/third-parties.yml`) and, for countries outside the eea (`data/countries.yml`), looks for `third_country` wording in the privacy policy.">
+<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr gets the country of each third-party service (`country` in `data/third-parties.yml`, else ipinfo with a token) and, for countries outside the eea (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-005</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Privacy policy names transfers outside the EU</span>
@@ -240,7 +240,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Gets the country of each third-party service (IPinfo with a token, else <code>country</code> in <code>data/third-parties.yml</code>) and, for countries outside the EEA (<code>data/countries.yml</code>), looks for <code>third_country</code> wording in the privacy policy.</dd></div>
+<div><dt>How it is checked</dt><dd>Gets the country of each third-party service (<code>country</code> in <code>data/third-parties.yml</code>, else IPinfo with a token) and, for countries outside the EEA (<code>data/countries.yml</code>), looks for <code>third_country</code> wording in the privacy policy; info when no country is known.</dd></div>
 <div><dt>How to fix</dt><dd>Name the country and the safeguard for each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses).</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-country"><code>checks/privacy/third-country</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
@@ -260,7 +260,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-004" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-004 privacy/vendors-in-privacy-policy privacy policy names the services the site uses datenschutzerklärung nennt die genutzten dienste art. 13(1)(e) gdpr for every contacted third-party service, looks for its name (`names` in `data/third-parties.yml`) in the privacy policy.">
+<details class="rule" id="LEG-EU-DSE-004" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-004 privacy/vendors-in-privacy-policy privacy policy names the services the site uses datenschutzerklärung nennt die genutzten dienste art. 13(1)(e) gdpr for every contacted third-party service, looks for its name (`names` in `data/third-parties.yml`, else its domain) as a whole word in the privacy policy.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-004</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Privacy policy names the services the site uses</span>
@@ -268,7 +268,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>For every contacted third-party service, looks for its name (<code>names</code> in <code>data/third-parties.yml</code>) in the privacy policy.</dd></div>
+<div><dt>How it is checked</dt><dd>For every contacted third-party service, looks for its name (<code>names</code> in <code>data/third-parties.yml</code>, else its domain) as a whole word in the privacy policy.</dd></div>
 <div><dt>How to fix</dt><dd>List every embedded service with purpose and legal basis in the privacy policy.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/vendors-in-privacy-policy"><code>checks/privacy/vendors-in-privacy-policy</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
@@ -279,7 +279,7 @@
 <section class="module" data-module="security">
 <h3>Security <small>9 rules</small></h3>
 <div class="rules">
-<details class="rule" id="SEC-HDR-002" data-module="security" data-severity="medium" data-search="sec-hdr-002 security/cookie-flags cookies use secure flags cookies nutzen sichere flags art. 32 gdpr checks secure on every cookie (https sites) and httponly on session cookies set without login.">
+<details class="rule" id="SEC-HDR-002" data-module="security" data-severity="medium" data-search="sec-hdr-002 security/cookie-flags cookies use secure flags cookies nutzen sichere flags art. 32 gdpr checks secure on every cookie set without login (https sites, and always with `samesite=none`) and httponly on cookies whose name looks like a session (`data/cookies.yml`); cookies of other sites only give info.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-HDR-002</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Cookies use secure flags</span>
@@ -287,13 +287,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Checks Secure on every cookie (HTTPS sites) and HttpOnly on session cookies set without login.</dd></div>
+<div><dt>How it is checked</dt><dd>Checks Secure on every cookie set without login (HTTPS sites, and always with <code>SameSite=None</code>) and HttpOnly on cookies whose name looks like a session (<code>data/cookies.yml</code>); cookies of other sites only give info.</dd></div>
 <div><dt>How to fix</dt><dd>Set cookies with Secure; session cookies also with HttpOnly and SameSite=Lax.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/cookie-flags"><code>checks/security/cookie-flags</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DNS-001" data-module="security" data-severity="medium" data-search="sec-dns-001 security/email-dns domain is protected against email spoofing domain ist gegen e-mail-spoofing geschützt art. 32 gdpr reads the spf txt record of the domain and the dmarc record at `_dmarc.`; flags missing ones and `p=none`.">
+<details class="rule" id="SEC-DNS-001" data-module="security" data-severity="medium" data-search="sec-dns-001 security/email-dns domain is protected against email spoofing domain ist gegen e-mail-spoofing geschützt art. 32 gdpr reads the spf txt record of the registrable domain and the dmarc record at `_dmarc.`; flags missing ones, spf that allows every server (`+all`, `?all`) and dmarc `p=none`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DNS-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Domain is protected against email spoofing</span>
@@ -301,13 +301,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads the SPF TXT record of the domain and the DMARC record at <code>_dmarc.</code>; flags missing ones and <code>p=none</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads the SPF TXT record of the registrable domain and the DMARC record at <code>_dmarc.</code>; flags missing ones, SPF that allows every server (<code>+all</code>, <code>?all</code>) and DMARC <code>p=none</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Publish SPF and DMARC records; a domain without mail needs only &quot;v=spf1 -all&quot; and &quot;v=DMARC1; p=reject&quot;.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/email-dns"><code>checks/security/email-dns</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-EXP-002" data-module="security" data-severity="medium" data-search="sec-exp-002 security/error-disclosure error pages reveal no internals fehlerseiten verraten keine interna art. 32 gdpr requests the error paths from `data/probes.yml` and searches the answers for stack traces, server paths and version headers.">
+<details class="rule" id="SEC-EXP-002" data-module="security" data-severity="medium" data-search="sec-exp-002 security/error-disclosure error pages reveal no internals fehlerseiten verraten keine interna art. 32 gdpr requests the error paths from `data/probes.yml`, searches their visible text for the traces in `data/leaks.yml` and the headers of the start page and error pages for version headers.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-EXP-002</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Error pages reveal no internals</span>
@@ -315,7 +315,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Requests the error paths from <code>data/probes.yml</code> and searches the answers for stack traces, server paths and version headers.</dd></div>
+<div><dt>How it is checked</dt><dd>Requests the error paths from <code>data/probes.yml</code>, searches their visible text for the traces in <code>data/leaks.yml</code> and the headers of the start page and error pages for version headers.</dd></div>
 <div><dt>How to fix</dt><dd>Turn off error output in production (for example display_errors=0, DEBUG=false) and remove version headers.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/error-disclosure"><code>checks/security/error-disclosure</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
@@ -423,7 +423,7 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/content-without-js"><code>checks/sustainability/content-without-js</code></a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SUS-JS-001" data-module="sustainability" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible) checks that imprint and privacy links exist with javascript off and that their pages show text without it.">
+<details class="rule" id="SUS-JS-001" data-module="sustainability" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible) checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with javascript off and that the linked page that loaded shows text without it.">
 <summary>
 <span class="rule-head"><span class="rule-id">SUS-JS-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Imprint and privacy policy work without JavaScript</span>
@@ -431,7 +431,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Checks that imprint and privacy links exist with JavaScript off and that their pages show text without it.</dd></div>
+<div><dt>How it is checked</dt><dd>Checks that imprint and privacy links (<code>imprint</code>, <code>privacy</code> in <code>lang/*.yml</code>) exist with JavaScript off and that the linked page that loaded shows text without it.</dd></div>
 <div><dt>How to fix</dt><dd>Deliver the links and texts of the legal pages as static HTML.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/legal-pages-without-js"><code>checks/sustainability/legal-pages-without-js</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a></dd></div>

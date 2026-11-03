@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§ 312k BGB"
   en: "§ 312k BGB (German Civil Code)"
-how: "Finds a link labeled \"Verträge hier kündigen\" (`lang/*.yml` `cancel`) on the start page and \"jetzt kündigen\" on its target page. Only with `subscriptions: true`."
+how: "Finds a button labeled \"Verträge hier kündigen\" on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and \"jetzt kündigen\" (`cancel_confirm`) on its target page; info when it cannot be followed. Only with `subscriptions: true`."
 fix_hint:
   de: "Ständig verfügbaren Link \"Verträge hier kündigen\" ohne Login anbieten, der zu einer Seite mit dem Button \"jetzt kündigen\" führt."
   en: "Offer an always available link \"Verträge hier kündigen\", without login, that leads to a page with a \"jetzt kündigen\" button."

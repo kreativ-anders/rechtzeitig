@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§ 356a BGB (seit 19.06.2026)"
   en: "§ 356a BGB (German Civil Code, since 19 June 2026)"
-how: "Finds a link labeled \"Vertrag widerrufen\" (`withdraw`) on the start page and \"Widerruf bestätigen\" on its target page. Only with `sales: true`."
+how: "Finds a button labeled \"Vertrag widerrufen\" on the start page (`withdraw` in `lang/*.yml`, else `withdraw_similar` on the visible text, which warns) and \"Widerruf bestätigen\" (`withdraw_confirm`) on its target page; info when it cannot be followed. Only with `sales: true`."
 fix_hint:
   de: "Ständig verfügbare, hervorgehobene Funktion \"Vertrag widerrufen\" anbieten, die zu einem Formular mit dem Button \"Widerruf bestätigen\" führt; den Eingang elektronisch bestätigen."
   en: "Offer an always available, prominent \"Vertrag widerrufen\" function leading to a form with a \"Widerruf bestätigen\" button; confirm receipt electronically."
