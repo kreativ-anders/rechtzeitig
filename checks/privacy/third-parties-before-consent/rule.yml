@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 6 Abs. 1 DSGVO, § 25 TDDDG"
   en: "Art. 6(1) GDPR, § 25 TDDDG"
+how: "Records every request to another site while loading pages without clicks; `consent: required` vendors fail, others warn."
 fix_hint:
   de: "Schriften, Skripte und Bibliotheken selbst hosten; Einbettungen (Videos, Karten) erst nach Klick oder Einwilligung laden."
   en: "Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent."

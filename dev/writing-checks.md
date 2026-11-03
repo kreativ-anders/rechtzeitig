@@ -15,6 +15,7 @@
    legal_basis:              # optional
      de: "§ 5 DDG"
      en: "§ 5 DDG (German Digital Services Act)"
+   how: "Finds the imprint link on the start page (`imprint`), loads it and checks status and text."
    fix_hint:
      de: "Impressum auf jeder Seite verlinken."
      en: "Link the imprint from every page."
@@ -57,7 +58,7 @@
 
    For data a local fixture cannot produce (TLS, DNS, redirects), use `fakeContext()`. For repository checks, use `runRepoCheck(here, { "path/file": "content" })`.
 
-5. Run `npm run docs` to update `docs/checks.md`. A test fails if you forget.
+5. Run `npm run docs` to update `docs/checks.md`. A test fails if you forget. Keep `how` in `rule.yml` true whenever `check.ts` changes.
 6. Run `npm run typecheck && npm test`.
 
 The runner finds the check by itself. Nothing else needs to change.

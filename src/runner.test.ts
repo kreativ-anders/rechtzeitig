@@ -7,7 +7,7 @@ import { checksTable } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, pass } from "./sdk.ts";
 
-const rule = { id: "SEC-TEST-001", severity: "low", tier: "free", title: { de: "t", en: "t" }, fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: [] } } as Rule;
+const rule = { id: "SEC-TEST-001", severity: "low", tier: "free", title: { de: "t", en: "t" }, how: "Reads something and compares it.", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: [] } } as Rule;
 
 test("every check has a folder id and a valid rule.yml with a unique id", async () => {
   const checks = await loadChecks();

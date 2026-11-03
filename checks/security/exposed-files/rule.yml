@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
+how: "Requests the file paths from `data/probes.yml`; a 200 whose body matches `expect` fails."
 fix_hint:
   de: "Dateien vom Webserver entfernen oder den Zugriff auf Punkt-Dateien und Backups sperren; enthaltene Zugangsdaten wechseln."
   en: "Remove the files from the web server or block access to dot files and backups; change any credentials they contain."

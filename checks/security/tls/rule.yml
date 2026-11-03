@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
+how: "Opens a TLS connection to the host and reads protocol, trust and expiry date of the certificate."
 fix_hint:
   de: "Zertifikat automatisch erneuern (z. B. Let's Encrypt) und nur TLS 1.2 und 1.3 erlauben."
   en: "Renew the certificate automatically (for example Let's Encrypt) and allow only TLS 1.2 and 1.3."

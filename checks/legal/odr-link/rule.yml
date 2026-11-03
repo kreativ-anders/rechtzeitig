@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Verordnung (EU) 2024/3228"
   en: "Regulation (EU) 2024/3228"
+how: "Looks for links to or mentions of ec.europa.eu/consumers/odr on every visited page."
 fix_hint:
   de: "Link und Hinweis auf die OS-Plattform entfernen. Die Plattform ist seit 20.07.2025 abgeschaltet."
   en: "Remove the link and the notice. The platform closed on 20 July 2025."

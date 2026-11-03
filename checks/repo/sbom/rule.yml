@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "CRA Anhang I Teil II"
   en: "CRA Annex I Part II"
+how: "Reads all lockfiles (`src/repo/lockfiles.ts`), writes `vibecoda-sbom.cdx.json` and lists manifests without a lockfile."
 fix_hint:
   de: "Für jedes Manifest ein Lockfile committen; die SBOM mit jedem Release aufbewahren."
   en: "Commit a lockfile for every manifest; keep the SBOM with each release."

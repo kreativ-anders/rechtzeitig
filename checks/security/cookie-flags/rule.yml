@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
+how: "Checks Secure on every cookie (HTTPS sites) and HttpOnly on session cookies set without login."
 fix_hint:
   de: "Cookies mit Secure setzen, Session-Cookies zusätzlich mit HttpOnly und SameSite=Lax."
   en: "Set cookies with Secure; session cookies also with HttpOnly and SameSite=Lax."

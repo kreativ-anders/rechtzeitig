@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "WCAG 2.2 Erfolgskriterium 3.1.1 (BFSG)"
   en: "WCAG 2.2 success criterion 3.1.1 (BFSG)"
+how: "Reads `<html lang>` of the start page and compares it with the chosen language."
 fix_hint:
   de: "lang-Attribut im <html>-Element setzen, z. B. <html lang=\"de\">."
   en: "Set the lang attribute on <html>, for example <html lang=\"de\">."

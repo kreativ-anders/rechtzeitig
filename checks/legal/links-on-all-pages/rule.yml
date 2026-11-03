@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "§ 5 DDG, Art. 12 DSGVO"
   en: "§ 5 DDG, Art. 12 GDPR"
+how: "Looks for imprint and privacy links on every visited page of the site."
 fix_hint:
   de: "Beide Links in ein gemeinsames Layout (Footer) legen, das jede Seite nutzt, auch Apps und Unterbereiche."
   en: "Put both links in a shared layout (footer) that every page uses, including apps and sub-sections."

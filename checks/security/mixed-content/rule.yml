@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
+how: "Lists `http://` requests made by pages of an HTTPS site."
 fix_hint:
   de: "Alle Ressourcen über https:// laden."
   en: "Load every resource over https://."

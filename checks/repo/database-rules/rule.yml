@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
+how: "Compares `create table` with `enable row level security` in `supabase/**/*.sql`; looks for `if true` in Firebase rules."
 fix_hint:
   de: "Row Level Security für jede Tabelle aktivieren und Regeln mit \"if true\" durch Prüfungen auf den angemeldeten Nutzer ersetzen."
   en: "Enable row level security on every table and replace \"if true\" rules with checks on the signed-in user."

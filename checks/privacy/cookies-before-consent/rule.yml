@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "§ 25 TDDDG"
   en: "§ 25 TDDDG (German Telecommunications Digital Services Data Protection Act)"
+how: "Lists cookies and localStorage set while loading the site without clicks; matches names against `data/third-parties.yml`."
 fix_hint:
   de: "Nur unbedingt erforderliche Cookies sofort setzen, alle anderen erst nach Einwilligung."
   en: "Set only strictly necessary cookies right away, all others only after consent."

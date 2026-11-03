@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
+how: "Checks that the start page is HTTPS and that plain `http://` redirects to HTTPS."
 fix_hint:
   de: "HTTPS erzwingen und http:// per 301 auf https:// weiterleiten."
   en: "Enforce HTTPS and redirect http:// to https:// with a 301."

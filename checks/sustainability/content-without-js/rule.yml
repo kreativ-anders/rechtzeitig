@@ -5,6 +5,7 @@ tier: free
 title:
   de: "Startseite zeigt Inhalt ohne JavaScript"
   en: "Start page shows content without JavaScript"
+how: "Compares the visible text of the start page with JavaScript off and on."
 fix_hint:
   de: "Inhalte auf dem Server oder beim Build als HTML ausliefern."
   en: "Deliver content as HTML from the server or at build time."

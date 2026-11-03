@@ -24,6 +24,8 @@ export interface Rule {
   tier: (typeof TIERS)[number];
   title: Text;
   legal_basis?: Text;
+  /** One sentence: how check.ts detects it, naming the data files it uses. Shown in docs/checks.md. */
+  how: string;
   fix_hint: Text;
   meta: { last_reviewed: string; sources: string[] };
 }
@@ -51,6 +53,7 @@ export function validateRule(rule: Rule, today = new Date()): string[] {
   text("title", rule?.title);
   text("legal_basis", rule?.legal_basis, false);
   text("fix_hint", rule?.fix_hint);
+  if (typeof rule?.how !== "string" || rule.how.trim().length < 20) p.push("how must say in one sentence how the check works");
   const reviewed = new Date(rule?.meta?.last_reviewed ?? "");
   if (Number.isNaN(reviewed.getTime())) p.push("meta.last_reviewed must be a date (YYYY-MM-DD)");
   else if ((today.getTime() - reviewed.getTime()) / 86_400_000 > REVIEW_DAYS) p.push(`meta.last_reviewed is older than ${REVIEW_DAYS} days`);

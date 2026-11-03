@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "CRA Anhang I Teil II, Art. 32 DSGVO"
   en: "CRA Annex I Part II, Art. 32 GDPR"
+how: "Looks for `.github/dependabot.yml` (and which ecosystems it covers), Renovate config, or scanners in workflows."
 fix_hint:
   de: "Dependabot oder Renovate für jedes genutzte Ökosystem einrichten."
   en: "Set up Dependabot or Renovate for every ecosystem in use."

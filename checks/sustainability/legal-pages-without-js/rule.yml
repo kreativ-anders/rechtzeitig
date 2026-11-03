@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "§ 5 DDG (leicht erkennbar, unmittelbar erreichbar)"
   en: "§ 5 DDG (easily recognizable, directly accessible)"
+how: "Checks that imprint and privacy links exist with JavaScript off and that their pages show text without it."
 fix_hint:
   de: "Links und Texte der Rechtsseiten als statisches HTML ausliefern."
   en: "Deliver the links and texts of the legal pages as static HTML."

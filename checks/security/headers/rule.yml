@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
+how: "Reads the response headers of the start page: HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame protection."
 fix_hint:
   de: "Fehlende Header im Webserver oder Hosting setzen; CSP und Referrer-Policy gehen notfalls auch als <meta>."
   en: "Set the missing headers in the web server or hosting; CSP and Referrer-Policy also work as <meta> tags."

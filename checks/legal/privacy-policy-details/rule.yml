@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 13 DSGVO"
   en: "Art. 13 GDPR"
+how: "Searches the privacy policy for 11 topics (`controller`, `storage_period`, `right_*` ... in `lang/*.yml`)."
 fix_hint:
   de: "Fehlende Themen ergänzen: Verantwortlicher, Rechtsgrundlage, Speicherdauer, Betroffenenrechte, Beschwerderecht."
   en: "Add the missing topics: controller, legal basis, storage period, data subject rights, right to complain."

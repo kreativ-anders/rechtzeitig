@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
+how: "Requests the domain with `www.` added or removed and follows redirects."
 fix_hint:
   de: "Für beide Adressen ein gültiges Zertifikat ausstellen und eine auf die andere weiterleiten."
   en: "Get a valid certificate for both addresses and redirect one to the other."

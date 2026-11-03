@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "CRA Anhang I (Lieferkette)"
   en: "CRA Annex I (supply chain)"
+how: "Reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit SHA."
 fix_hint:
   de: "uses: owner/action@<commit-sha> statt eines Tags verwenden; Dependabot hält die SHAs aktuell."
   en: "Use owner/action@<commit-sha> instead of a tag; Dependabot keeps the SHAs current."

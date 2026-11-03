@@ -8,6 +8,7 @@ title:
 legal_basis:
   de: "§ 25 TDDDG, EuGH C-673/17 (Planet49)"
   en: "§ 25 TDDDG, ECJ C-673/17 (Planet49)"
+how: "Finds ticked, enabled checkboxes whose label is an optional category (`consent_optional`), also in shadow roots."
 fix_hint:
   de: "Statistik, Marketing und ähnliche Kategorien im Banner standardmäßig abwählen."
   en: "Leave statistics, marketing and similar categories unticked by default."
