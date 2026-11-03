@@ -20,13 +20,21 @@ export const LOCKFILES: Record<string, Parser> = {
   "go.mod": goMod,
 };
 
-/** Manifests that should come with a lockfile. */
+/** Parser for a file path: its name in LOCKFILES, and requirements*.txt as requirements.txt. */
+export function parserFor(path: string): Parser | undefined {
+  const name = path.split("/").pop() ?? "";
+  if (/^requirements.*\.txt$/.test(name)) return requirements;
+  return Object.hasOwn(LOCKFILES, name) ? LOCKFILES[name] : undefined;
+}
+
+/** Manifest name → lockfiles that lock it. go.mod pins exact versions itself. */
 export const MANIFESTS: Record<string, string[]> = {
   "package.json": ["package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lock", "bun.lockb"],
   "composer.json": ["composer.lock"],
   "pubspec.yaml": ["pubspec.lock"],
   "Cargo.toml": ["Cargo.lock"],
   "pyproject.toml": ["uv.lock", "poetry.lock", "requirements.txt", "pdm.lock"],
+  "go.mod": ["go.mod"],
 };
 
 export function purl(c: { ecosystem: Ecosystem; name: string; version: string }): string {
@@ -43,17 +51,22 @@ export function purl(c: { ecosystem: Ecosystem; name: string; version: string })
   }
 }
 
+// Raw lockfile shapes, only the fields read here.
+interface NpmPackage { name?: string; version?: string; license?: string | { type?: string }; dev?: boolean; devOptional?: boolean; link?: boolean }
+interface NpmV1Dependency { version: string; dev?: boolean; dependencies?: Record<string, NpmV1Dependency> }
+interface NpmLock { packages?: Record<string, NpmPackage>; dependencies?: Record<string, NpmV1Dependency> }
+
 function npmLock(text: string): Parsed[] {
-  const lock = JSON.parse(text);
+  const lock = JSON.parse(text) as NpmLock;
   const out: Parsed[] = [];
-  for (const [path, p] of Object.entries<any>(lock.packages ?? {})) {
+  for (const [path, p] of Object.entries(lock.packages ?? {})) {
     if (!path || p.link || !p.version) continue;
     const license = typeof p.license === "string" ? p.license : p.license?.type;
-    out.push({ ecosystem: "npm", name: p.name ?? path.split("node_modules/").pop(), version: p.version, license, dev: !!(p.dev || p.devOptional) });
+    out.push({ ecosystem: "npm", name: p.name ?? path.split("node_modules/").pop()!, version: p.version, license, dev: !!(p.dev || p.devOptional) });
   }
   if (!lock.packages) {
     // lockfileVersion 1
-    const walk = (deps: Record<string, any> = {}) => {
+    const walk = (deps: Record<string, NpmV1Dependency> = {}) => {
       for (const [name, d] of Object.entries(deps)) {
         out.push({ ecosystem: "npm", name, version: d.version, dev: !!d.dev });
         walk(d.dependencies);
@@ -64,14 +77,57 @@ function npmLock(text: string): Parsed[] {
   return out;
 }
 
+type PnpmRefs = Record<string, string | { version: string }>;
+interface PnpmDeps { dependencies?: PnpmRefs; optionalDependencies?: PnpmRefs; devDependencies?: PnpmRefs }
+interface PnpmPackage { name?: string; version?: string; license?: string; dev?: boolean }
+interface PnpmLock { lockfileVersion?: string | number; importers?: Record<string, PnpmDeps>; packages?: Record<string, PnpmPackage>; snapshots?: Record<string, PnpmDeps> }
+
+/**
+ * v5 keys: /name/1.2.3_peer. v6: /name@1.2.3(peer). v9: name@1.2.3, with the dependency graph in
+ * `snapshots` and no dev flag, so dev is what production importers do not reach.
+ */
 function pnpmLock(text: string): Parsed[] {
-  const lock = parseYaml(text) ?? {};
-  return Object.entries<any>(lock.packages ?? {}).flatMap(([key, p]) => {
-    const spec = key.replace(/^\//, "").replace(/\(.*$/, "");
-    const at = spec.lastIndexOf("@");
-    if (at <= 0) return [];
-    return [{ ecosystem: "npm" as const, name: spec.slice(0, at), version: spec.slice(at + 1), license: p?.license, dev: p?.dev === true }];
+  const lock = (parseYaml(text) ?? {}) as PnpmLock;
+  const v5 = String(lock.lockfileVersion ?? "").startsWith("5");
+  const prod = lock.snapshots ? pnpmReachable(lock) : undefined;
+  return Object.entries(lock.packages ?? {}).flatMap(([key, p]) => {
+    const spec = v5 ? pnpmV5Spec(key) : pnpmSpec(key);
+    const name = p?.name ?? spec?.name;
+    const version = p?.version ?? spec?.version;
+    if (!name || !version) return [];
+    const dev = prod ? !prod.has(`${name}@${version}`) : p?.dev === true;
+    return [{ ecosystem: "npm" as const, name, version, license: p?.license, dev }];
   });
+}
+
+function pnpmSpec(key: string): { name: string; version: string } | undefined {
+  const spec = key.replace(/^\//, "").replace(/\(.*$/, "");
+  const at = spec.lastIndexOf("@");
+  return at > 0 ? { name: spec.slice(0, at), version: spec.slice(at + 1) } : undefined;
+}
+
+function pnpmV5Spec(key: string): { name: string; version: string } | undefined {
+  const m = /^\/((?:@[^/]+\/)?[^/@]+)\/([^/_]+)/.exec(key);
+  return m ? { name: m[1], version: m[2] } : undefined;
+}
+
+/** "name@version" of every package that a production dependency of an importer reaches. */
+function pnpmReachable(lock: PnpmLock): Set<string> {
+  const ref = (name: string, r: string | { version: string }) => {
+    const v = typeof r === "string" ? r : r.version;
+    // An alias points at another package: "string-width@4.2.3".
+    return v.replace(/\(.*$/, "").lastIndexOf("@") > 0 ? v : `${name}@${v}`;
+  };
+  const prodRefs = (d: PnpmDeps | undefined) => Object.entries({ ...d?.dependencies, ...d?.optionalDependencies }).map(([n, r]) => ref(n, r));
+  const queue = Object.values(lock.importers ?? {}).flatMap(prodRefs);
+  const seen = new Set<string>();
+  while (queue.length) {
+    const key = queue.pop()!;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    queue.push(...prodRefs(lock.snapshots?.[key]));
+  }
+  return new Set([...seen].map((k) => k.replace(/\(.*$/, "")));
 }
 
 function yarnLock(text: string): Parsed[] {
@@ -91,16 +147,20 @@ function yarnLock(text: string): Parsed[] {
   return out;
 }
 
+interface ComposerPackage { name: string; version: string | number; license?: string[] }
+
 function composerLock(text: string): Parsed[] {
-  const lock = JSON.parse(text);
-  const map = (list: any[] = [], dev: boolean) =>
+  const lock = JSON.parse(text) as { packages?: ComposerPackage[]; "packages-dev"?: ComposerPackage[] };
+  const map = (list: ComposerPackage[] = [], dev: boolean) =>
     list.map((p) => ({ ecosystem: "composer" as const, name: p.name, version: String(p.version).replace(/^v/, ""), license: p.license?.join(" OR "), dev }));
   return [...map(lock.packages, false), ...map(lock["packages-dev"], true)];
 }
 
+interface PubspecPackage { source?: string; version?: string; dependency?: string }
+
 function pubspecLock(text: string): Parsed[] {
-  const lock = parseYaml(text) ?? {};
-  return Object.entries<any>(lock.packages ?? {})
+  const lock = (parseYaml(text) ?? {}) as { packages?: Record<string, PubspecPackage> };
+  return Object.entries(lock.packages ?? {})
     .filter(([, p]) => p.source === "hosted" || p.source === "git")
     .map(([name, p]) => ({ ecosystem: "pub" as const, name, version: String(p.version), dev: p.dependency === "direct dev" }));
 }
