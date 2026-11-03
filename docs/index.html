@@ -3,17 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>rechtzeitig</title>
-<meta name="description" content="Checks a website and its repository for German legal basics, security and an SBOM.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q='; style-src 'self'; img-src 'self' data:; base-uri 'self' https://kreativ-anders.github.io; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>rechtzeitig: German legal and security checks for your website</title>
+<meta name="description" content="A GitHub Action that checks your website and repository for German and EU legal basics, security headers, consent and an SBOM.">
+<link rel="canonical" href="https://kreativ-anders.github.io/rechtzeitig/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rechtzeitig">
+<meta property="og:title" content="rechtzeitig: German legal and security checks for your website">
+<meta property="og:description" content="A GitHub Action that checks your website and repository for German and EU legal basics, security headers, consent and an SBOM.">
+<meta property="og:url" content="https://kreativ-anders.github.io/rechtzeitig/">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
+<script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="site.js" defer></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "rechtzeitig", "description": "A GitHub Action that checks your website and repository for German and EU legal basics, security headers, consent and an SBOM.", "url": "https://kreativ-anders.github.io/rechtzeitig/", "codeRepository": "https://github.com/kreativ-anders/rechtzeitig", "programmingLanguage": "TypeScript", "runtimePlatform": "GitHub Actions", "license": "https://www.apache.org/licenses/LICENSE-2.0", "author": {"@type": "Organization", "name": "kreativ-anders", "url": "https://kreativ-anders.de"}}</script>
 </head>
 <body>
+<a class="skip" href="#content">Skip to content</a>
 <header class="top"><div class="top-inner">
-  <a class="brand" href="index.html"><span class="brand-mark">§</span>rechtzeitig</a>
-  <nav class="nav"><a href="workflow.html">Workflow</a><a href="checks.html">Checks</a><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></nav>
+  <a class="brand" href="./" aria-current="page"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig</a>
+  <nav class="nav" aria-label="Main"><ul><li><a href="workflow.html">Workflow</a></li><li><a href="checks.html">Checks</a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
+  <fieldset class="theme" hidden><legend>Colour theme</legend><input type="radio" name="theme" id="theme-system" value="system"><label for="theme-system" title="System"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.5"/><path d="M5.5 14h5"/></svg><span class="visually-hidden">System</span></label><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Light"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Light</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dark</span></label></fieldset>
 </div></header>
 
-<main>
+<main id="content">
   <div class="hero">
     <div>
       <h1>rechtzeitig</h1>
@@ -23,32 +42,37 @@
   </div>
 
   <ul class="covers">
-    <li><b>Imprint and privacy policy</b><small>DDG, GDPR</small></li>
-    <li><b>Consent</b><small>Servers, cookies and banners before consent, TDDDG</small></li>
-    <li><b>Contract buttons</b><small>Cancellation and withdrawal, BGB</small></li>
-    <li><b>Security basics</b><small>HTTPS, TLS, headers, exposed files, error pages, email spoofing</small></li>
-    <li><b>Repository</b><small>SBOM, known vulnerabilities, license conflicts, committed secrets</small></li>
+    <li><strong>Imprint and privacy policy</strong><p>DDG, GDPR</p></li>
+    <li><strong>Consent</strong><p>Servers, cookies and banners before consent, TDDDG</p></li>
+    <li><strong>Contract buttons</strong><p>Cancellation and withdrawal, BGB</p></li>
+    <li><strong>Security basics</strong><p>HTTPS, TLS, headers, exposed files, error pages, email spoofing</p></li>
+    <li><strong>Repository</strong><p>SBOM, known vulnerabilities, license conflicts, committed secrets</p></li>
   </ul>
 
   <p>It is free and runs on GitHub's runners.</p>
 
   <h2>Start in two minutes</h2>
   <ol class="steps">
-    <li>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository.</li>
-    <li>Open <b>Actions → rechtzeitig → Run workflow</b>, enter your URL and pick the language.</li>
-    <li>Read the report on the run's summary page.</li>
+    <li><span>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository.</span></li>
+    <li><span>Open <b>Actions → rechtzeitig → Run workflow</b>, enter your URL and pick the language.</span></li>
+    <li><span>Read the report on the run's summary page.</span></li>
   </ol>
 
   <h2>Read on</h2>
   <div class="cards">
-    <a class="card-link" href="workflow.html"><b>The workflow</b><span>Inputs, secrets, <code>fail-on</code>, the report files</span></a>
-    <a class="card-link" href="checks.html"><b>All checks</b><span>What each one looks for and which law it is about</span></a>
+    <a class="card-link" href="workflow.html"><strong>The workflow</strong><span>Inputs, secrets, <code>fail-on</code>, the report files</span></a>
+    <a class="card-link" href="checks.html"><strong>All checks</strong><span>What each one looks for and which law it is about</span></a>
   </div>
 </main>
 
 <footer><div class="inner">
-  <span class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</span>
-  <span>Apache-2.0 · <a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></span>
+  <p class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</p>
+  <nav aria-label="Legal and source"><ul>
+    <li><a href="https://kreativ-anders.de/impressum">Imprint <span lang="de">(Impressum)</span></a></li>
+    <li><a href="privacy.html">Privacy policy <span lang="de">(Datenschutz)</span></a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/LICENSE">Apache-2.0</a></li>
+  </ul></nav>
 </div></footer>
 </body>
 </html>

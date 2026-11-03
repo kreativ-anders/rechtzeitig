@@ -114,6 +114,8 @@ export interface Snapshot {
   finalUrl: string;
   /** Response headers of the document, lowercase names. */
   headers: Record<string, string>;
+  /** Header equivalents from <meta http-equiv> and <meta name="referrer">, lowercase names (referrer becomes referrer-policy). */
+  meta: Record<string, string>;
   /** Value of <html lang>. */
   lang: string;
   /** Visible text, as a user would read it. */

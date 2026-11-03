@@ -20,6 +20,7 @@ interface RawForm {
 
 interface Dom {
   lang: string;
+  meta: Record<string, string>;
   text: string;
   links: RawLink[];
   forms: RawForm[];
@@ -77,8 +78,16 @@ function readDom(): Dom {
     return { label: label.trim().slice(0, 200), checked: box.checked, disabled: box.disabled };
   });
 
+  // Header equivalents in <meta>. name="referrer" is stored as referrer-policy, like the header.
+  const meta: Record<string, string> = {};
+  for (const el of all(document, "meta[http-equiv], meta[name=referrer i]")) {
+    const name = el.getAttribute("http-equiv")?.toLowerCase() || "referrer-policy";
+    meta[name] ??= el.getAttribute("content") ?? "";
+  }
+
   return {
     lang: document.documentElement.getAttribute("lang") ?? "",
+    meta,
     text: document.body?.innerText ?? "",
     links: all(document, LINKS).map(toRaw),
     forms,
@@ -106,7 +115,7 @@ function toLink(raw: RawLink): Link {
 
 const toForm = (raw: RawForm): Form => ({ ...raw, links: raw.links.map(toLink) });
 
-const EMPTY = { headers: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], cookies: [], storage: [] };
+const EMPTY = { headers: {}, meta: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], cookies: [], storage: [] };
 
 /** Loads a URL once in the given browser context and records what a visitor gets without clicking anything. */
 export async function capture(context: BrowserContext, url: string, js: boolean, timeout: number): Promise<Snapshot> {
@@ -139,6 +148,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       status: response?.status() ?? 0,
       finalUrl: page.url(),
       headers: response?.headers() ?? {},
+      meta: dom.meta,
       lang: dom.lang,
       text: dom.text,
       links: dom.links.map(toLink),

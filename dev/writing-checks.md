@@ -76,7 +76,7 @@ The runner finds the check by itself. Nothing else needs to change.
 
 | Field or helper | Content |
 |---|---|
-| `ctx.start`, `ctx.pages` | Visited pages. Each has `noJs` and `js` snapshots: status, headers, text, links, forms, checkboxes, requests, cookies |
+| `ctx.start`, `ctx.pages` | Visited pages. Each has `noJs` and `js` snapshots: status, headers, `meta` (header equivalents from `<meta>`), text, links, forms, checkboxes, requests, cookies |
 | `ctx.sitePages`, `siteRequests(ctx)` | Pages and requests of the site itself. Use these for requests and cookies |
 | `ctx.legalPage("imprint")`, `loadedPage(ctx, "privacy")` | Link on the start page and the page behind it |
 | `ctx.links(concept, snapshotOrLinks)` | Links whose label matches a concept from `lang/*.yml` |

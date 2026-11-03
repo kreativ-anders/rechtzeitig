@@ -3,17 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q='; style-src 'self'; img-src 'self' data:; base-uri 'self' https://kreativ-anders.github.io; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>All checks · rechtzeitig</title>
-<meta name="description" content="Every rule rechtzeitig checks, how it is detected and which law it is about.">
+<meta name="description" content="Every rule rechtzeitig checks: how it is detected, how to fix it and which law it is about.">
+<link rel="canonical" href="https://kreativ-anders.github.io/rechtzeitig/checks.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rechtzeitig">
+<meta property="og:title" content="All checks · rechtzeitig">
+<meta property="og:description" content="Every rule rechtzeitig checks: how it is detected, how to fix it and which law it is about.">
+<meta property="og:url" content="https://kreativ-anders.github.io/rechtzeitig/checks.html">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
+<script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="site.js" defer></script>
 </head>
 <body>
+<a class="skip" href="#content">Skip to content</a>
 <header class="top"><div class="top-inner">
-  <a class="brand" href="index.html"><span class="brand-mark">§</span>rechtzeitig</a>
-  <nav class="nav"><a href="workflow.html">Workflow</a><a href="checks.html" aria-current="page">Checks</a><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></nav>
+  <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig</a>
+  <nav class="nav" aria-label="Main"><ul><li><a href="workflow.html">Workflow</a></li><li><a href="checks.html" aria-current="page">Checks</a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
+  <fieldset class="theme" hidden><legend>Colour theme</legend><input type="radio" name="theme" id="theme-system" value="system"><label for="theme-system" title="System"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.5"/><path d="M5.5 14h5"/></svg><span class="visually-hidden">System</span></label><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Light"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Light</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dark</span></label></fieldset>
 </div></header>
 
-<main>
+<main id="content">
   <h1>All checks</h1>
   <p class="lead">Every rule has a fixed id, so you can refer to it in tickets. Open a card to see how it is checked, how to fix it and where the code lives.</p>
 
@@ -27,10 +45,12 @@
   </ul>
   <p>The severity says how much a finding matters, from <code>info</code> to <code>critical</code>. Website checks run when you give a URL. Repository checks run when the workflow checks out your repository first. Lockfiles read: <code>package-lock.json</code>, <code>pnpm-lock.yaml</code>, <code>yarn.lock</code>, <code>composer.lock</code>, <code>pubspec.lock</code>, <code>Cargo.lock</code>, <code>uv.lock</code>, <code>poetry.lock</code>, <code>requirements*.txt</code>, <code>go.mod</code>.</p>
 
+  <h2 id="rules">The rules</h2>
   <div class="toolbar" id="toolbar" hidden>
-    <input class="search" id="q" type="search" placeholder="Search by id, title or law, e.g. TDDDG" aria-label="Search checks">
-    <div class="chips" id="modules"><span class="label">Group</span></div>
-    <div class="chips" id="severities"><span class="label">Severity</span></div>
+    <label class="visually-hidden" for="q">Search checks</label>
+    <input class="search" id="q" type="search" placeholder="Search by id, title or law, e.g. TDDDG">
+    <div class="chips" id="modules" role="group" aria-labelledby="modules-label"><span class="label" id="modules-label">Group</span></div>
+    <div class="chips" id="severities" role="group" aria-labelledby="severities-label"><span class="label" id="severities-label">Severity</span></div>
   </div>
   <p class="count" id="count" aria-live="polite"></p>
 
@@ -226,7 +246,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg records every request to another site while loading pages without clicks; `consent: required` vendors fail, others warn.">
+<details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg records every request to another site while loading pages without clicks and looks the host up in `data/third-parties.yml`; `consent: required` vendors fail, others warn.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">No third-party servers before consent</span>
@@ -234,7 +254,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Records every request to another site while loading pages without clicks; <code>consent: required</code> vendors fail, others warn.</dd></div>
+<div><dt>How it is checked</dt><dd>Records every request to another site while loading pages without clicks and looks the host up in <code>data/third-parties.yml</code>; <code>consent: required</code> vendors fail, others warn.</dd></div>
 <div><dt>How to fix</dt><dd>Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-parties-before-consent"><code>checks/privacy/third-parties-before-consent</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a></dd></div>
@@ -315,7 +335,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-HDR-001" data-module="security" data-severity="low" data-search="sec-hdr-001 security/headers security headers are set sicherheits-header sind gesetzt art. 32 gdpr reads the response headers of the start page: hsts, csp, x-content-type-options, referrer-policy, frame protection.">
+<details class="rule" id="SEC-HDR-001" data-module="security" data-severity="low" data-search="sec-hdr-001 security/headers security headers are set sicherheits-header sind gesetzt art. 32 gdpr reads the response headers of the start page (hsts, csp, x-content-type-options, referrer-policy, frame protection) and accepts csp and referrer-policy from &lt;meta&gt; tags, which browsers apply too.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-HDR-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
 <span class="rule-title">Security headers are set</span>
@@ -323,10 +343,10 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads the response headers of the start page: HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame protection.</dd></div>
-<div><dt>How to fix</dt><dd>Set the missing headers in the web server or hosting; CSP and Referrer-Policy also work as &lt;meta&gt; tags.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads the response headers of the start page (HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame protection) and accepts CSP and Referrer-Policy from &lt;meta&gt; tags, which browsers apply too.</dd></div>
+<div><dt>How to fix</dt><dd>Set the missing headers in the web server or hosting. CSP and Referrer-Policy also work as &lt;meta&gt; tags; frame-ancestors and nosniff only work as headers.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/headers"><code>checks/security/headers</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/CSP3/#meta-element">w3.org</a></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-DNS-002" data-module="security" data-severity="low" data-search="sec-dns-002 security/host-variants www and non-www addresses both work www- und domain-adresse funktionieren beide art. 32 gdpr requests the domain with `www.` added or removed and follows redirects.">
@@ -561,7 +581,7 @@
 
   <h2>Rule ids</h2>
   <div class="table-wrap"><table>
-    <thead><tr><th>Prefix</th><th>Area</th></tr></thead>
+    <thead><tr><th scope="col">Prefix</th><th scope="col">Area</th></tr></thead>
     <tbody>
       <tr><td><code>LEG-DE</code></td><td>German law (DDG, BGB, UrhG)</td></tr>
       <tr><td><code>LEG-EU</code></td><td>EU law (GDPR, ePrivacy as § 25 TDDDG)</td></tr>
@@ -576,10 +596,14 @@
 </main>
 
 <footer><div class="inner">
-  <span class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</span>
-  <span>Apache-2.0 · <a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></span>
+  <p class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</p>
+  <nav aria-label="Legal and source"><ul>
+    <li><a href="https://kreativ-anders.de/impressum">Imprint <span lang="de">(Impressum)</span></a></li>
+    <li><a href="privacy.html">Privacy policy <span lang="de">(Datenschutz)</span></a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/LICENSE">Apache-2.0</a></li>
+  </ul></nav>
 </div></footer>
-
 <script src="checks.js"></script>
 </body>
 </html>

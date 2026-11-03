@@ -72,7 +72,7 @@ export async function runCheck(checkDir: string, fixture: string, opts: ScanOpti
 /** Builds a context by hand, for cases a local fixture cannot show (https, redirects). */
 export function fakeContext(start: Partial<Snapshot>, extra: Partial<CrawlData> = {}): ScanContext {
   const snapshot: Snapshot = {
-    status: 200, finalUrl: "https://example.de/", headers: {}, lang: "de", text: "",
+    status: 200, finalUrl: "https://example.de/", headers: {}, meta: {}, lang: "de", text: "",
     links: [], forms: [], checkboxes: [], requests: [], cookies: [], storage: [], ...start,
   };
   const page: Page = { url: snapshot.finalUrl, noJs: snapshot, js: snapshot };

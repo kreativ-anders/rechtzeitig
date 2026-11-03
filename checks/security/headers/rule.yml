@@ -8,11 +8,12 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Reads the response headers of the start page: HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame protection."
+how: "Reads the response headers of the start page (HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame protection) and accepts CSP and Referrer-Policy from <meta> tags, which browsers apply too."
 fix_hint:
-  de: "Fehlende Header im Webserver oder Hosting setzen; CSP und Referrer-Policy gehen notfalls auch als <meta>."
-  en: "Set the missing headers in the web server or hosting; CSP and Referrer-Policy also work as <meta> tags."
+  de: "Fehlende Header im Webserver oder Hosting setzen. CSP und Referrer-Policy gehen notfalls auch als <meta>, frame-ancestors und nosniff nur als Header."
+  en: "Set the missing headers in the web server or hosting. CSP and Referrer-Policy also work as <meta> tags; frame-ancestors and nosniff only work as headers."
 meta:
   last_reviewed: "2026-11-03"
   sources:
   - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://www.w3.org/TR/CSP3/#meta-element

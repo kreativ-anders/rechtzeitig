@@ -13,3 +13,13 @@ test("warns and lists missing headers", async () => {
   assert.equal(result.status, "warn");
   assert.equal(result.details?.length, 4);
 });
+
+test("counts CSP and Referrer-Policy from <meta>, but not frame-ancestors or nosniff", async () => {
+  const result = await runCheck(here, "meta");
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, [
+    "X-Content-Type-Options: nosniff",
+    "X-Frame-Options or CSP frame-ancestors (browsers ignore frame-ancestors in <meta>)",
+    "Set as <meta>: content-security-policy, referrer-policy",
+  ]);
+});
