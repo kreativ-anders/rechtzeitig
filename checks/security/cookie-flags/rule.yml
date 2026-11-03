@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-HDR-002
+severity: medium
+tier: free
+title:
+  de: "Cookies nutzen sichere Flags"
+  en: "Cookies use secure flags"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+fix_hint:
+  de: "Cookies mit Secure setzen, Session-Cookies zusätzlich mit HttpOnly und SameSite=Lax."
+  en: "Set cookies with Secure; session cookies also with HttpOnly and SameSite=Lax."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

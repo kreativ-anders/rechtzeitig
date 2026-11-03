@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-CNS-004
+severity: high
+tier: free
+title:
+  de: "Optionale Cookie-Kategorien nicht vorausgewählt"
+  en: "Optional cookie categories are not preselected"
+legal_basis:
+  de: "§ 25 TDDDG, EuGH C-673/17 (Planet49)"
+  en: "§ 25 TDDDG, ECJ C-673/17 (Planet49)"
+fix_hint:
+  de: "Statistik, Marketing und ähnliche Kategorien im Banner standardmäßig abwählen."
+  en: "Leave statistics, marketing and similar categories unticked by default."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://www.gesetze-im-internet.de/ttdsg/__25.html
+  - https://curia.europa.eu/juris/liste.jsf?num=C-673/17

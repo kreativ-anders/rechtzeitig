@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-DEPS-003
+severity: medium
+tier: free
+title:
+  de: "Abhängigkeits-Updates sind automatisiert"
+  en: "Dependency updates are automated"
+legal_basis:
+  de: "CRA Anhang I Teil II, Art. 32 DSGVO"
+  en: "CRA Annex I Part II, Art. 32 GDPR"
+fix_hint:
+  de: "Dependabot oder Renovate für jedes genutzte Ökosystem einrichten."
+  en: "Set up Dependabot or Renovate for every ecosystem in use."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj

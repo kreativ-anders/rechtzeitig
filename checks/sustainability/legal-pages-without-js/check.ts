@@ -6,8 +6,6 @@ const PAGES: Array<[string, string]> = [
 ];
 
 export default defineCheck({
-  title: "Imprint and privacy policy work without JavaScript",
-  law: "§ 5 DDG (easily recognizable, directly accessible)",
   run(ctx) {
     const problems: string[] = [];
     let found = 0;

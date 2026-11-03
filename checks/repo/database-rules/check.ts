@@ -7,8 +7,6 @@ const OPEN_RULE = /allow\s+[\w\s,]+:\s*if\s+true\s*;/;
 const OPEN_RTDB = /"\.(read|write)"\s*:\s*true/;
 
 export default defineRepoCheck({
-  title: "Database rules do not open data to everyone",
-  law: "Art. 32 GDPR",
   run(repo) {
     const sql = repo.files.filter((f) => /(^|\/)supabase\/.*\.sql$/.test(f));
     const rules = repo.files.filter((f) => /(^|\/)(firestore|storage)\.rules$|(^|\/)database\.rules\.json$/.test(f));

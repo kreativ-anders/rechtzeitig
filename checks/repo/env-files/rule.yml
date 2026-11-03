@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-SECRETS-002
+severity: high
+tier: free
+title:
+  de: ".env-Dateien bleiben außerhalb von Git"
+  en: ".env files stay out of git"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+fix_hint:
+  de: ".env in .gitignore eintragen; committete Werte widerrufen und aus der Historie entfernen."
+  en: "Add .env to .gitignore; revoke committed values and remove them from the history."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

@@ -4,8 +4,6 @@ import { defineCheck, loadedPage, pass, siteRequests, skip, warn } from "../../.
 const EEA = new Set("AT BE BG CY CZ DE DK EE ES FI FR GR HR HU IE IT LT LU LV MT NL PL PT RO SE SI SK IS LI NO".split(" "));
 
 export default defineCheck({
-  title: "Privacy policy names transfers outside the EU",
-  law: "Art. 13(1)(f), Art. 44 ff. GDPR",
   run(ctx) {
     const policy = loadedPage(ctx, "privacy");
     if (!policy) return skip("No privacy policy to read (see legal/privacy-policy).");

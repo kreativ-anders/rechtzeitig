@@ -16,8 +16,6 @@ const TOPICS: Array<[string, string]> = [
 ];
 
 export default defineCheck({
-  title: "Privacy policy covers the required topics",
-  law: "Art. 13 GDPR",
   run(ctx) {
     const page = loadedPage(ctx, "privacy");
     if (!page) return skip("No privacy policy to read (see legal/privacy-policy).");

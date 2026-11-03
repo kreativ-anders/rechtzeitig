@@ -4,8 +4,6 @@ const OLD = new Set(["SSLv3", "TLSv1", "TLSv1.1"]);
 const WARN_DAYS = 14;
 
 export default defineCheck({
-  title: "TLS certificate is valid and current",
-  law: "Art. 32 GDPR",
   run(ctx) {
     const tls = ctx.tls;
     if (!tls) return skip("No TLS connection to check.");

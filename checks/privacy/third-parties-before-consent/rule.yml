@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-CNS-001
+severity: high
+tier: free
+title:
+  de: "Keine fremden Server vor Einwilligung"
+  en: "No third-party servers before consent"
+legal_basis:
+  de: "Art. 6 Abs. 1 DSGVO, § 25 TDDDG"
+  en: "Art. 6(1) GDPR, § 25 TDDDG"
+fix_hint:
+  de: "Schriften, Skripte und Bibliotheken selbst hosten; Einbettungen (Videos, Karten) erst nach Klick oder Einwilligung laden."
+  en: "Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://www.gesetze-im-internet.de/ttdsg/__25.html

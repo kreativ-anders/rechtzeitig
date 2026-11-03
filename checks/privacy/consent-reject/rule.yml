@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-CNS-003
+severity: high
+tier: free
+title:
+  de: "Consent-Banner lässt sich auf der ersten Ebene ablehnen"
+  en: "Consent banner can be rejected on the first layer"
+legal_basis:
+  de: "§ 25 TDDDG, Art. 7 Abs. 3 DSGVO"
+  en: "§ 25 TDDDG, Art. 7(3) GDPR"
+fix_hint:
+  de: "Einen gleichwertigen Button \"Alle ablehnen\" direkt neben \"Alle akzeptieren\" anbieten."
+  en: "Offer an equal \"Reject all\" button right next to \"Accept all\"."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://www.gesetze-im-internet.de/ttdsg/__25.html
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

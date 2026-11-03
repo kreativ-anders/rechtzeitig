@@ -1,8 +1,6 @@
 import { defineCheck, pass, skip, warn } from "../../../src/sdk.ts";
 
 export default defineCheck({
-  title: "Domain is protected against email spoofing",
-  law: "Art. 32 GDPR",
   run(ctx) {
     const dns = ctx.dns;
     if (!dns) return skip("DNS was not checked.");

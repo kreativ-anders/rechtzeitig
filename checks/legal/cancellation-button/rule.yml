@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-BTN-001
+severity: high
+tier: free
+title:
+  de: "Kündigungsbutton für Abos"
+  en: "Cancellation button for subscriptions"
+legal_basis:
+  de: "§ 312k BGB"
+  en: "§ 312k BGB (German Civil Code)"
+fix_hint:
+  de: "Ständig verfügbaren Link \"Verträge hier kündigen\" ohne Login anbieten, der zu einer Seite mit dem Button \"jetzt kündigen\" führt."
+  en: "Offer an always available link \"Verträge hier kündigen\", without login, that leads to a page with a \"jetzt kündigen\" button."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://www.gesetze-im-internet.de/bgb/__312k.html

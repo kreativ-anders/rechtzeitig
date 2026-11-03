@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-IMP-003
+severity: medium
+tier: free
+title:
+  de: "Impressum und Datenschutz auf jeder Seite verlinkt"
+  en: "Imprint and privacy policy are linked on every page"
+legal_basis:
+  de: "§ 5 DDG, Art. 12 DSGVO"
+  en: "§ 5 DDG, Art. 12 GDPR"
+fix_hint:
+  de: "Beide Links in ein gemeinsames Layout (Footer) legen, das jede Seite nutzt, auch Apps und Unterbereiche."
+  en: "Put both links in a shared layout (footer) that every page uses, including apps and sub-sections."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://www.gesetze-im-internet.de/ddg/__5.html
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

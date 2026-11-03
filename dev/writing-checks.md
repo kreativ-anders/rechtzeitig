@@ -3,14 +3,34 @@
 ## A new check
 
 1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. Repository checks go in `checks/repo/`.
-2. Add `check.ts`:
+2. Add `rule.yml` with the metadata. Titles, legal basis and fix hint in German and English; the report shows them in the chosen language.
+
+   ```yaml
+   id: LEG-DE-IMP-001        # SEC, LEG-DE, LEG-EU, A11Y, PRC or SUS, then a topic and a number
+   severity: high            # info | low | medium | high | critical
+   tier: free
+   title:
+     de: "Impressum ist verlinkt und erreichbar"
+     en: "Imprint is linked and reachable"
+   legal_basis:              # optional
+     de: "§ 5 DDG"
+     en: "§ 5 DDG (German Digital Services Act)"
+   fix_hint:
+     de: "Impressum auf jeder Seite verlinken."
+     en: "Link the imprint from every page."
+   meta:
+     last_reviewed: "2026-11-03"
+     sources: ["https://www.gesetze-im-internet.de/ddg/__5.html"]
+   ```
+
+   A test validates every rule. It fails when `last_reviewed` is older than a year, so legal texts get looked at again.
+
+3. Add `check.ts` with the detection:
 
    ```ts
    import { defineCheck, fail, pass } from "../../../src/sdk.ts";
 
    export default defineCheck({
-     title: "Imprint is linked and reachable",
-     law: "§ 5 DDG",
      run(ctx) {
        const found = ctx.legalPage("imprint");
        if (!found) return fail("No link to the imprint on the start page.");
@@ -21,7 +41,7 @@
 
    A repository check uses `defineRepoCheck` and gets `repo` instead of `ctx`.
 
-3. Add `test.ts` and, for website checks, `fixtures/<case>/index.html` (plus more pages if needed). Each case is a tiny website. Cover one case that passes and one that does not.
+4. Add `test.ts` and, for website checks, `fixtures/<case>/index.html` (plus more pages if needed). Each case is a tiny website. Cover one case that passes and one that does not.
 
    ```ts
    import { test } from "node:test";
@@ -37,8 +57,8 @@
 
    For data a local fixture cannot produce (TLS, DNS, redirects), use `fakeContext()`. For repository checks, use `runRepoCheck(here, { "path/file": "content" })`.
 
-4. Add a row to `docs/checks.md`. A test fails if you forget.
-5. Run `npm run typecheck && npm test`.
+5. Run `npm run docs` to update `docs/checks.md`. A test fails if you forget.
+6. Run `npm run typecheck && npm test`.
 
 The runner finds the check by itself. Nothing else needs to change.
 

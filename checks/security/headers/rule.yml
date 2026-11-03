@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-HDR-001
+severity: low
+tier: free
+title:
+  de: "Sicherheits-Header sind gesetzt"
+  en: "Security headers are set"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+fix_hint:
+  de: "Fehlende Header im Webserver oder Hosting setzen; CSP und Referrer-Policy gehen notfalls auch als <meta>."
+  en: "Set the missing headers in the web server or hosting; CSP and Referrer-Policy also work as <meta> tags."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

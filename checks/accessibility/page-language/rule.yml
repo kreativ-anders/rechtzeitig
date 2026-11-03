@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: A11Y-LANG-001
+severity: low
+tier: free
+title:
+  de: "Seite gibt ihre Sprache an"
+  en: "Page declares its language"
+legal_basis:
+  de: "WCAG 2.2 Erfolgskriterium 3.1.1 (BFSG)"
+  en: "WCAG 2.2 success criterion 3.1.1 (BFSG)"
+fix_hint:
+  de: "lang-Attribut im <html>-Element setzen, z. B. <html lang=\"de\">."
+  en: "Set the lang attribute on <html>, for example <html lang=\"de\">."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://www.w3.org/WAI/WCAG22/Understanding/language-of-page.html
+  - https://www.gesetze-im-internet.de/bfsg/

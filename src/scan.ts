@@ -12,6 +12,7 @@ export interface ScanOptions {
   /** "de", "en", "all" or a comma list. */
   language?: string;
   subscriptions?: boolean;
+  sales?: boolean;
   maxPages?: number;
   timeout?: number;
   offline?: boolean;
@@ -38,7 +39,7 @@ export async function scan(url: string, opts: ScanOptions = {}): Promise<ScanCon
       offline: opts.offline,
       ipinfoToken: opts.ipinfoToken,
     });
-    return createContext(data, lang, loadRegistry(), { languages, subscriptions: opts.subscriptions ?? false });
+    return createContext(data, lang, loadRegistry(), { languages, subscriptions: opts.subscriptions ?? false, sales: opts.sales ?? false });
   } finally {
     if (!opts.browser) await browser.close();
   }

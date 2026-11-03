@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-DEPS-001
+severity: high
+tier: free
+title:
+  de: "Keine Abhängigkeiten mit bekannten Sicherheitslücken"
+  en: "No dependencies with known vulnerabilities"
+legal_basis:
+  de: "Art. 32 DSGVO, CRA Anhang I"
+  en: "Art. 32 GDPR, CRA Annex I"
+fix_hint:
+  de: "Betroffene Pakete mindestens auf die genannte Version mit Fix aktualisieren."
+  en: "Update the affected packages to at least the fixed version shown."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj
+  - https://osv.dev

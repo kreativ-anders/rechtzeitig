@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-DNS-002
+severity: low
+tier: free
+title:
+  de: "www- und Domain-Adresse funktionieren beide"
+  en: "www and non-www addresses both work"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+fix_hint:
+  de: "Für beide Adressen ein gültiges Zertifikat ausstellen und eine auf die andere weiterleiten."
+  en: "Get a valid certificate for both addresses and redirect one to the other."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

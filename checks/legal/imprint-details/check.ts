@@ -8,8 +8,6 @@ const VAT_ID = /\bDE\s?\d{9}\b/;
 const REGISTER = /\b(HRB|HRA|VR|PR|GnR|GsR)\s?\d+/;
 
 export default defineCheck({
-  title: "Imprint contains the required details",
-  law: "§ 5 Abs. 1 DDG",
   run(ctx) {
     const page = loadedPage(ctx, "imprint");
     if (!page) return skip("No imprint to read (see legal/imprint).");

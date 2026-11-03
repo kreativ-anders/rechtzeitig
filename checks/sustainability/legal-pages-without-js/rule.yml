@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SUS-JS-001
+severity: medium
+tier: free
+title:
+  de: "Impressum und Datenschutz funktionieren ohne JavaScript"
+  en: "Imprint and privacy policy work without JavaScript"
+legal_basis:
+  de: "§ 5 DDG (leicht erkennbar, unmittelbar erreichbar)"
+  en: "§ 5 DDG (easily recognizable, directly accessible)"
+fix_hint:
+  de: "Links und Texte der Rechtsseiten als statisches HTML ausliefern."
+  en: "Deliver the links and texts of the legal pages as static HTML."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://www.gesetze-im-internet.de/ddg/__5.html

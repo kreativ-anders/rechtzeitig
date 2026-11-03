@@ -10,7 +10,8 @@
   "scripts": {
     "scan": "node src/main.ts",
     "test": "node --test \"checks/**/test.ts\" \"src/**/*.test.ts\"",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "docs": "node src/docs.ts"
   },
   "dependencies": {
     "playwright": "1.56.0",

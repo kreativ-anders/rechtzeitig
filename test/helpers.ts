@@ -80,6 +80,7 @@ export function fakeContext(start: Partial<Snapshot>, extra: Partial<CrawlData> 
   return createContext(data, loadLanguages(["de"]), loadRegistry(), {
     languages: ["de"],
     subscriptions: false,
+    sales: false,
   });
 }
 

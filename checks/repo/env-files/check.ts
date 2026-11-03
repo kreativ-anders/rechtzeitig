@@ -6,8 +6,6 @@ const FIXTURES = /(^|\/)fixtures?\//;
 const IGNORES_ENV = /^\/?(\*\*\/)?\.env(\*|\.\*|\.local)?$|^\*\.env$/m;
 
 export default defineRepoCheck({
-  title: ".env files stay out of git",
-  law: "Art. 32 GDPR",
   run(repo) {
     const tracked = repo.files.filter((f) => ENV.test(f) && !TEMPLATE.test(f) && !FIXTURES.test(f));
     if (tracked.length) return fail(`${tracked.length} .env file(s) are committed. Their values are in the git history.`, tracked);

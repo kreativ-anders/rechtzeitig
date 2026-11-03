@@ -4,8 +4,6 @@ import { defineCheck, pass, skip, warn } from "../../../src/sdk.ts";
 const isLogin = (fields: string[]) => fields.length <= 2 && fields.some((f) => f.startsWith("password:"));
 
 export default defineCheck({
-  title: "Forms link to the privacy policy",
-  law: "Art. 13(1) GDPR",
   run(ctx) {
     const forms = ctx.sitePages.flatMap((p) =>
       p.js.forms.filter((f) => f.personal && !isLogin(f.fields)).map((f) => ({ ...f, page: ctx.short(p.url) })),

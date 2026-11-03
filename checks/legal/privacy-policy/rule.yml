@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-DSE-001
+severity: high
+tier: free
+title:
+  de: "Datenschutzerklärung ist verlinkt und erreichbar"
+  en: "Privacy policy is linked and reachable"
+legal_basis:
+  de: "Art. 12, 13 DSGVO"
+  en: "Art. 12, 13 GDPR"
+fix_hint:
+  de: "Datenschutzerklärung auf jeder Seite verlinken, z. B. im Footer mit \"Datenschutz\"."
+  en: "Link the privacy policy from every page, for example in the footer, labeled \"Datenschutz\"."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

@@ -1,8 +1,6 @@
 import { defineCheck, pass, warn } from "../../../src/sdk.ts";
 
 export default defineCheck({
-  title: "Page declares its language",
-  law: "WCAG 2.2 SC 3.1.1 (BFSG)",
   run(ctx) {
     const lang = (ctx.start.noJs.lang || ctx.start.js.lang).trim().toLowerCase();
     if (!lang) return warn("The start page has no <html lang> attribute. Screen readers then have to guess the language.");

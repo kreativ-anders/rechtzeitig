@@ -18,11 +18,15 @@ on:
         description: Visitors can sign up for subscriptions
         type: boolean
         default: false
+      sales:
+        description: Consumers buy or sign contracts on the site
+        type: boolean
+        default: false
       fail-on:
         description: Fail the job on
         type: choice
-        default: fail
-        options: [fail, warn, never]
+        default: never
+        options: [never, fail, warn]
 
 permissions:
   contents: read
@@ -38,6 +42,7 @@ jobs:
           url: ${{ inputs.url }}
           language: ${{ inputs.language }}
           subscriptions: ${{ inputs.subscriptions }}
+          sales: ${{ inputs.sales }}
           fail-on: ${{ inputs.fail-on }}
           # Optional: add the secret IPINFO_TOKEN (free at ipinfo.io) to look up server countries.
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}

@@ -1,8 +1,6 @@
 import { defineCheck, pass, warn } from "../../../src/sdk.ts";
 
 export default defineCheck({
-  title: "Security headers are set",
-  law: "Art. 32 GDPR",
   run(ctx) {
     const h = Object.keys(ctx.start.js.headers).length ? ctx.start.js.headers : ctx.start.noJs.headers;
     const csp = h["content-security-policy"] ?? "";

@@ -7,8 +7,6 @@ interface Contact {
 }
 
 export default defineCheck({
-  title: "No third-party servers before consent",
-  law: "Art. 6(1) GDPR, § 25 TDDDG",
   run(ctx) {
     const contacts = new Map<string, Contact>();
     for (const page of ctx.sitePages) {

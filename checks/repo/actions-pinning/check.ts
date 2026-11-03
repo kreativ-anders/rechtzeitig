@@ -3,8 +3,6 @@ import { defineRepoCheck, info, pass, skip } from "../../../src/sdk.ts";
 const USES = /^\s*-?\s*uses:\s*["']?([^"'\s#]+)/gm;
 
 export default defineRepoCheck({
-  title: "GitHub Actions are pinned to a commit",
-  law: "CRA Annex I (supply chain)",
   run(repo) {
     const workflows = repo.files.filter((f) => /^\.github\/workflows\/.*\.ya?ml$/.test(f));
     if (!workflows.length) return skip("No GitHub workflows.");

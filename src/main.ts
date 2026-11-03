@@ -1,5 +1,5 @@
 // Command line entry. Used by action.yml and for local runs:
-//   node src/main.ts --url https://example.de --repo . --language de --fail-on fail
+//   node src/main.ts --url https://example.de --repo . --language de
 
 import { appendFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -7,13 +7,15 @@ import { parseArgs } from "node:util";
 import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
-import { loadChecks, runChecks, type Outcome } from "./runner.ts";
-import { toJson, toMarkdown, toText, type Report } from "./report.ts";
+import { loadChecks, runChecks, selectModules, type Outcome } from "./runner.ts";
+import { LANGUAGES, type UiLanguage } from "./rules.ts";
+import { toMarkdown, toText, type Report } from "./report.ts";
+import { artifactSink, toFindings } from "./sink.ts";
 
 const FAIL_ON: Record<string, Outcome["status"][]> = {
+  never: [],
   fail: ["fail", "error"],
   warn: ["fail", "error", "warn"],
-  never: [],
 };
 
 const { values, positionals } = parseArgs({
@@ -22,24 +24,34 @@ const { values, positionals } = parseArgs({
     url: { type: "string" },
     repo: { type: "string" },
     language: { type: "string", default: "de" },
+    "report-language": { type: "string", default: "" },
+    modules: { type: "string", default: "" },
     subscriptions: { type: "string", default: "false" },
-    "fail-on": { type: "string", default: "fail" },
+    sales: { type: "string", default: "false" },
+    "fail-on": { type: "string", default: "never" },
     "max-pages": { type: "string", default: "10" },
     out: { type: "string", default: "vibecoda-report" },
   },
 });
 
 let url = (values.url || positionals[0] || "").trim();
-const failOn = values["fail-on"] ?? "fail";
 if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;
+const failOn = values["fail-on"] || "never";
 if (!FAIL_ON[failOn]) exit(`fail-on must be one of: ${Object.keys(FAIL_ON).join(", ")}`);
+// The report follows the site language unless set; "all" and unknown languages fall back to English.
+const wanted = values["report-language"] || values.language!.split(",")[0];
+const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ? (wanted as UiLanguage) : "en";
+const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 
 const startedAt = new Date().toISOString();
-const repo = values.repo?.trim() ? await scanRepo(values.repo) : undefined;
-const web = url
+const checks = selectModules(await loadChecks(), modules);
+const wantsRepo = checks.some((c) => c.check.repo);
+const repo = values.repo?.trim() && wantsRepo ? await scanRepo(values.repo) : undefined;
+const web = url && checks.some((c) => !c.check.repo)
   ? await scan(url, {
       language: values.language,
       subscriptions: values.subscriptions === "true",
+      sales: values.sales === "true",
       maxPages: Number(values["max-pages"]) || 10,
       ipinfoToken: process.env.IPINFO_TOKEN || undefined,
     })
@@ -49,12 +61,14 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
   exit(`Could not load ${url}: ${web.start.js.error ?? web.start.noJs.error ?? "unknown error"}`);
 }
 
-const outcomes = await runChecks(await loadChecks(), { web, repo });
-const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS };
+const outcomes = await runChecks(checks, { web, repo });
+const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS, language };
+const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo?.root.split("/").pop() } });
 const markdown = toMarkdown(report);
 writeFileSync(`${values.out}.md`, markdown);
-writeFileSync(`${values.out}.json`, toJson(report));
+writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
 if (repo) writeFileSync(join(dirname(values.out!), "vibecoda-sbom.cdx.json"), toCycloneDx(repo, VERSION));
+await artifactSink.send(findings);
 console.log(toText(report));
 
 const failed = outcomes.some((o) => FAIL_ON[failOn].includes(o.status));

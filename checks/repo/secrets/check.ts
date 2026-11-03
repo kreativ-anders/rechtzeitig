@@ -14,8 +14,6 @@ const SKIP = /(^|\/)(fixtures?|__snapshots__)\/|\.lock$|-lock\.(json|yaml)$|\.mi
 const redact = (s: string) => `${s.slice(0, 8)}…`;
 
 export default defineRepoCheck({
-  title: "No secrets in the repository",
-  law: "Art. 32 GDPR",
   run(repo) {
     const found: Array<{ severity: "fail" | "warn"; line: string }> = [];
     for (const file of repo.files.filter((f) => !SKIP.test(f))) {

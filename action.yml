@@ -13,11 +13,20 @@ inputs:
     description: Language of the site (de, en or all).
     default: de
   subscriptions:
-    description: true if visitors can sign up for subscriptions (checks the cancellation button).
+    description: true if visitors can sign up for subscriptions (checks the cancellation button, § 312k BGB).
     default: "false"
+  sales:
+    description: true if consumers buy or sign contracts on the site (checks the withdrawal button, § 356a BGB).
+    default: "false"
+  modules:
+    description: Comma list of check groups to run (legal, privacy, security, sustainability, accessibility, repo). Empty = all.
+    default: ""
+  report-language:
+    description: Language of the report (de or en). Empty = same as language.
+    default: ""
   fail-on:
-    description: When the job fails. fail = on any fail, warn = on any warn or fail, never = report only.
-    default: fail
+    description: When the job fails. never = report only, fail = on any fail, warn = on any warn or fail.
+    default: never
   max-pages:
     description: How many pages to visit at most.
     default: "10"
@@ -56,6 +65,9 @@ runs:
         URL: ${{ inputs.url }}
         LANGUAGE: ${{ inputs.language }}
         SUBSCRIPTIONS: ${{ inputs.subscriptions }}
+        SALES: ${{ inputs.sales }}
+        MODULES: ${{ inputs.modules }}
+        REPORT_LANGUAGE: ${{ inputs.report-language }}
         FAIL_ON: ${{ inputs.fail-on }}
         MAX_PAGES: ${{ inputs.max-pages }}
         REPOSITORY: ${{ inputs.repository }}
@@ -63,6 +75,7 @@ runs:
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
+        --sales "$SALES" --modules "$MODULES" --report-language "$REPORT_LANGUAGE"
         --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --out "$RUNNER_TEMP/vibecoda-report"
 
     - name: Upload report

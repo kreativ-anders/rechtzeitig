@@ -8,19 +8,14 @@ export interface Result {
   details?: string[];
 }
 
-/** Checks a website. Lives in checks/<category>/<name>/check.ts. */
+/** Checks a website. Lives in checks/<category>/<name>/check.ts, metadata in rule.yml next to it. */
 export interface Check {
-  title: string;
-  /** Legal basis shown in the report, e.g. "§ 5 DDG". */
-  law?: string;
   repo?: false;
   run(ctx: ScanContext): Result | Promise<Result>;
 }
 
 /** Checks the repository the workflow runs in. Lives in checks/repo/<name>/check.ts. */
 export interface RepoCheck {
-  title: string;
-  law?: string;
   repo: true;
   run(repo: RepoContext): Result | Promise<Result>;
 }
@@ -171,6 +166,8 @@ export interface ScanContext {
   languages: string[];
   /** true when the site sells subscriptions or other ongoing contracts. */
   subscriptions: boolean;
+  /** true when consumers buy or sign contracts on the site (shop, paid plans). */
+  sales: boolean;
   start: Page;
   /** All visited pages, start page first. Can include legal pages on other sites. */
   pages: Page[];

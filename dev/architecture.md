@@ -25,9 +25,17 @@ Both loads happen without interaction, so every request and cookie in the contex
 
 `src/repo/scan.ts` lists tracked files, parses lockfiles with `src/repo/lockfiles.ts`, reads the project license, and asks [OSV](https://osv.dev) for known vulnerabilities (`src/repo/osv.ts`). `src/repo/sbom.ts` turns the result into CycloneDX 1.6.
 
-## Checks
+## Rules and checks
 
-`src/runner.ts` loads every `checks/**/check.ts`. Website checks get the `ScanContext`, repository checks (`checks/repo/`) get the `RepoContext`. Each runs on its own with a timeout; a broken check becomes `error` and the rest still run. `src/main.ts` sets the exit code from `fail-on`.
+Each check folder has `rule.yml` (metadata: id, severity, tier, titles, legal basis, fix hint, review date, sources; schema in `src/rules.ts`) and `check.ts` (detection). Legal and wording updates are data changes in `rule.yml` and `lang/*.yml`, not engine changes.
+
+`src/runner.ts` loads every `checks/**/check.ts` with its `rule.yml`. Website checks get the `ScanContext`, repository checks (`checks/repo/`) get the `RepoContext`. Each runs on its own with a timeout; a broken check becomes `error` and the rest still run. `src/main.ts` sets the exit code from `fail-on`.
+
+## Findings and upload
+
+`src/sink.ts` defines what may leave the runner: rule id, severity, status, message and locations, never page text or file contents. `vibecoda-report.json` has exactly this shape. Today the only sink keeps findings in the artifact. A later upload implements the same `FindingsSink` interface and is used only when the user sets an API key.
+
+`tier: pro` rules never live in this repository. If they come, they arrive as data at run time and use the same open engine, so the engine itself has no paid code paths.
 
 ## Layout
 
@@ -35,7 +43,9 @@ Both loads happen without interaction, so every request and cookie in the contex
 |---|---|
 | `src/sdk.ts` | The only API for checks: types, result helpers, both contexts |
 | `src/`, `src/repo/` | Crawler, probes, repository scan, runner, report, CLI |
-| `checks/<category>/<name>/` | One check: `check.ts`, `test.ts`, `fixtures/` |
+| `checks/<module>/<name>/` | One check: `rule.yml`, `check.ts`, `test.ts`, `fixtures/` |
+| `src/rules.ts`, `src/docs.ts` | Rule schema and validator; generator for `docs/checks.md` |
+| `src/sink.ts` | Findings format and where they go |
 | `lang/*.yml` | Words per language, as regular expressions |
 | `data/third-parties.yml` | Known services: hosts, country, consent, cookies |
 | `data/probes.yml` | Paths to request without a browser |

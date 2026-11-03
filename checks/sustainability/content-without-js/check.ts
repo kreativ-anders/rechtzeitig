@@ -3,7 +3,6 @@ import { defineCheck, pass, warn } from "../../../src/sdk.ts";
 const MIN_SHARE = 0.2;
 
 export default defineCheck({
-  title: "Start page shows content without JavaScript",
   run(ctx) {
     const withJs = ctx.start.js.text.trim().length;
     const withoutJs = ctx.start.noJs.text.trim().length;

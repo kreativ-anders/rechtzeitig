@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-DEPS-005
+severity: low
+tier: free
+title:
+  de: "GitHub Actions sind auf einen Commit gepinnt"
+  en: "GitHub Actions are pinned to a commit"
+legal_basis:
+  de: "CRA Anhang I (Lieferkette)"
+  en: "CRA Annex I (supply chain)"
+fix_hint:
+  de: "uses: owner/action@<commit-sha> statt eines Tags verwenden; Dependabot hält die SHAs aktuell."
+  en: "Use owner/action@<commit-sha> instead of a tag; Dependabot keeps the SHAs current."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj

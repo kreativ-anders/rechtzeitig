@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-DSE-004
+severity: medium
+tier: free
+title:
+  de: "Datenschutzerklärung nennt die genutzten Dienste"
+  en: "Privacy policy names the services the site uses"
+legal_basis:
+  de: "Art. 13 Abs. 1 lit. e DSGVO"
+  en: "Art. 13(1)(e) GDPR"
+fix_hint:
+  de: "Jeden eingebundenen Dienst mit Zweck und Rechtsgrundlage in der Datenschutzerklärung aufführen."
+  en: "List every embedded service with purpose and legal basis in the privacy policy."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

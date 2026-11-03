@@ -16,8 +16,6 @@ const LEAKS = [
 const VERSION_HEADERS = ["server", "x-powered-by", "x-aspnet-version", "x-aspnetmvc-version", "x-generator"];
 
 export default defineCheck({
-  title: "Error pages reveal no internals",
-  law: "Art. 32 GDPR",
   run(ctx) {
     const leaks: string[] = [];
     for (const p of ctx.probes.filter((p) => p.kind === "error")) {

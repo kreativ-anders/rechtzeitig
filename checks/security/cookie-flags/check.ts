@@ -4,8 +4,6 @@ const SESSION = /sess|sid|token|auth|login|remember/i;
 const READ_BY_SCRIPT = /csrf|xsrf/i;
 
 export default defineCheck({
-  title: "Cookies use secure flags",
-  law: "Art. 32 GDPR",
   run(ctx) {
     const cookies = new Map(ctx.sitePages.flatMap((p) => [...p.noJs.cookies, ...p.js.cookies]).map((c) => [`${c.name}@${c.domain}`, c]));
     if (!cookies.size) return skip("No cookies set without login.");

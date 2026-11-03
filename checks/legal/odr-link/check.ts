@@ -3,8 +3,6 @@ import { defineCheck, pass, warn } from "../../../src/sdk.ts";
 const ODR = /ec\.europa\.eu\/(consumers\/odr|odr)/i;
 
 export default defineCheck({
-  title: "No link to the closed EU dispute platform",
-  law: "Regulation (EU) 2024/3228",
   run(ctx) {
     const found = ctx.sitePages
       .filter((p) => p.js.links.some((l) => ODR.test(l.href ?? "")) || ODR.test(p.js.text))

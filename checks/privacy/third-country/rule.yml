@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-DSE-005
+severity: medium
+tier: free
+title:
+  de: "Datenschutzerklärung nennt Übermittlungen außerhalb der EU"
+  en: "Privacy policy names transfers outside the EU"
+legal_basis:
+  de: "Art. 13 Abs. 1 lit. f, Art. 44 ff. DSGVO"
+  en: "Art. 13(1)(f), Art. 44 ff. GDPR"
+fix_hint:
+  de: "Für jeden Dienst außerhalb von EU/EWR Land und Garantie nennen (z. B. Data Privacy Framework, Standardvertragsklauseln)."
+  en: "Name the country and the safeguard for each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses)."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

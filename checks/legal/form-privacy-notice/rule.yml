@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-DSE-003
+severity: medium
+tier: free
+title:
+  de: "Formulare verweisen auf die Datenschutzerklärung"
+  en: "Forms link to the privacy policy"
+legal_basis:
+  de: "Art. 13 Abs. 1 DSGVO"
+  en: "Art. 13(1) GDPR"
+fix_hint:
+  de: "Direkt am Formular kurz erklären, wofür die Daten verwendet werden, und die Datenschutzerklärung verlinken."
+  en: "Explain next to the form what the data is used for and link the privacy policy."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-LIC-001
+severity: medium
+tier: free
+title:
+  de: "Lizenzen der Abhängigkeiten passen zum Projekt"
+  en: "Dependency licenses fit the project"
+legal_basis:
+  de: "§§ 31, 69c UrhG"
+  en: "§§ 31, 69c UrhG (German Copyright Act)"
+fix_hint:
+  de: "Lizenz jeder markierten Abhängigkeit prüfen; bei Konflikt ersetzen, Lizenz erwerben oder das Projekt passend lizenzieren."
+  en: "Review the license of each flagged dependency; replace it, buy a license or license the project to match."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://www.gesetze-im-internet.de/urhg/__69c.html

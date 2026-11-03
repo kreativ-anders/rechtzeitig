@@ -1,8 +1,6 @@
 import { defineCheck, fail, loaded, pass, skip, warn } from "../../../src/sdk.ts";
 
 export default defineCheck({
-  title: "Cancellation button for subscriptions",
-  law: "§ 312k BGB",
   run(ctx) {
     if (!ctx.subscriptions) {
       return skip("Only needed when visitors can sign up for subscriptions. Start the scan with subscriptions: true to check it.");

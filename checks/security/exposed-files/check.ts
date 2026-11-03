@@ -1,8 +1,6 @@
 import { defineCheck, fail, pass } from "../../../src/sdk.ts";
 
 export default defineCheck({
-  title: "No private files are public",
-  law: "Art. 32 GDPR",
   run(ctx) {
     const files = ctx.probes.filter((p) => p.kind === "file");
     const exposed = files.filter((p) => p.exposed);

@@ -15,6 +15,10 @@ links:
   cancel_similar:
     - '\b(cancel|end|terminate)\b (\w+ ){0,3}(subscription|contract|membership|plan)s?\b'
     - '\bcancell?ation\b'
+  withdraw:
+    - '\bwithdraw from (the )?contracts?( here)?\b'
+  withdraw_similar:
+    - '\bwithdraw(al)?( form)?\b'
   consent_accept:
     - '\b(accept|allow|agree)( all)?( cookies)?\b'
     - '\bi agree\b'
@@ -28,6 +32,8 @@ text:
   cancel_confirm:
     - '\bcancel now\b'
   # Second way of contact in an imprint besides email, § 5 Abs. 1 Nr. 2 DDG.
+  withdraw_confirm:
+    - '\bconfirm (the )?withdrawal\b'
   contact_form:
     - '\bcontact form\b'
   controller:

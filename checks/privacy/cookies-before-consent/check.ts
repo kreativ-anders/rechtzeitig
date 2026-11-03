@@ -1,8 +1,6 @@
 import { defineCheck, fail, info, pass, warn } from "../../../src/sdk.ts";
 
 export default defineCheck({
-  title: "No cookies before consent",
-  law: "§ 25 TDDDG",
   run(ctx) {
     const cookies = new Map<string, { name: string; domain: string; page: string }>();
     const storage = new Set<string>();

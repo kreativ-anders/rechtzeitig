@@ -9,8 +9,6 @@ const MANIFESTS: Record<string, string[]> = {
 };
 
 export default defineRepoCheck({
-  title: "Dependencies are locked and listed in an SBOM",
-  law: "CRA Annex I Part II",
   run(repo) {
     const files = new Set(repo.files);
     const manifests = repo.files.filter((f) => Object.hasOwn(MANIFESTS, f.split("/").pop() ?? ""));

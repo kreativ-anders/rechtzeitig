@@ -1,7 +1,6 @@
 import { defineCheck, info, pass, skip, warn } from "../../../src/sdk.ts";
 
 export default defineCheck({
-  title: "www and non-www addresses both work",
   run(ctx) {
     const v = ctx.variant;
     if (!v) return skip("The other address variant does not exist.");

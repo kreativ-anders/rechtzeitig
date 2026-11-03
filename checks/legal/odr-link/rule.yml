@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-ODR-001
+severity: medium
+tier: free
+title:
+  de: "Kein Link zur abgeschalteten OS-Plattform"
+  en: "No link to the closed EU dispute platform"
+legal_basis:
+  de: "Verordnung (EU) 2024/3228"
+  en: "Regulation (EU) 2024/3228"
+fix_hint:
+  de: "Link und Hinweis auf die OS-Plattform entfernen. Die Plattform ist seit 20.07.2025 abgeschaltet."
+  en: "Remove the link and the notice. The platform closed on 20 July 2025."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/3228/oj

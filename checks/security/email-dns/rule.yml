@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-DNS-001
+severity: medium
+tier: free
+title:
+  de: "Domain ist gegen E-Mail-Spoofing geschützt"
+  en: "Domain is protected against email spoofing"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+fix_hint:
+  de: "SPF- und DMARC-Eintrag im DNS anlegen; ohne Mailversand reichen \"v=spf1 -all\" und \"v=DMARC1; p=reject\"."
+  en: "Publish SPF and DMARC records; a domain without mail needs only \"v=spf1 -all\" and \"v=DMARC1; p=reject\"."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

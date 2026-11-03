@@ -3,8 +3,6 @@ import { defineCheck, fail, pass } from "../../../src/sdk.ts";
 const REDIRECTS = new Set([301, 302, 303, 307, 308]);
 
 export default defineCheck({
-  title: "Site uses HTTPS",
-  law: "Art. 32 GDPR",
   run(ctx) {
     if (!ctx.url.startsWith("https:")) return fail("The site is not served over HTTPS.");
     const http = ctx.http;

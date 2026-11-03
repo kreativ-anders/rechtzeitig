@@ -6,8 +6,6 @@ const REQUIRED: Array<[string, string]> = [
 ];
 
 export default defineCheck({
-  title: "Imprint and privacy policy are linked on every page",
-  law: "§ 5 DDG, Art. 12 GDPR",
   run(ctx) {
     const pages = ctx.sitePages;
     if (pages.length < 2) return info("Only the start page could be checked.");

@@ -7,6 +7,7 @@ import { loaded, type Page, type ScanContext } from "./sdk.ts";
 export interface ContextOptions {
   languages: string[];
   subscriptions: boolean;
+  sales: boolean;
 }
 
 /** Wraps crawl results with the helpers checks use. Also used by tests to build contexts by hand. */
@@ -27,6 +28,7 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
     url,
     languages: opts.languages,
     subscriptions: opts.subscriptions,
+    sales: opts.sales,
     sitePages: data.pages.filter((p) => loaded(p.js) && siteOf(new URL(p.js.finalUrl).hostname) === site),
     page,
     links: (concept, from) => matchLinks(lang, concept, Array.isArray(from) ? from : from.links),

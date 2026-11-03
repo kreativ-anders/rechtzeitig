@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-BTN-002
+severity: high
+tier: free
+title:
+  de: "Widerrufsbutton für Online-Verträge"
+  en: "Withdrawal button for online contracts"
+legal_basis:
+  de: "§ 356a BGB (seit 19.06.2026)"
+  en: "§ 356a BGB (German Civil Code, since 19 June 2026)"
+fix_hint:
+  de: "Ständig verfügbare, hervorgehobene Funktion \"Vertrag widerrufen\" anbieten, die zu einem Formular mit dem Button \"Widerruf bestätigen\" führt; den Eingang elektronisch bestätigen."
+  en: "Offer an always available, prominent \"Vertrag widerrufen\" function leading to a form with a \"Widerruf bestätigen\" button; confirm receipt electronically."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://www.gesetze-im-internet.de/bgb/__356a.html

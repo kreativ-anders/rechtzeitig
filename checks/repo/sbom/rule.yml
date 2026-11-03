@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-DEPS-002
+severity: low
+tier: free
+title:
+  de: "Abhängigkeiten sind gesperrt und in einer SBOM erfasst"
+  en: "Dependencies are locked and listed in an SBOM"
+legal_basis:
+  de: "CRA Anhang I Teil II"
+  en: "CRA Annex I Part II"
+fix_hint:
+  de: "Für jedes Manifest ein Lockfile committen; die SBOM mit jedem Release aufbewahren."
+  en: "Commit a lockfile for every manifest; keep the SBOM with each release."
+meta:
+  last_reviewed: "2026-11-03"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj

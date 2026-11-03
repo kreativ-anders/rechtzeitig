@@ -6,8 +6,11 @@
 |---|---|---|
 | `url` | empty | Start page to check. Empty scans only the repository. |
 | `language` | `de` | Language of the site: `de`, `en` or `all`. Decides which words count as "Impressum", "Datenschutz" and so on. |
-| `subscriptions` | `false` | `true` if visitors can sign up for subscriptions. Turns on the cancellation button check. |
-| `fail-on` | `fail` | When the run turns red, see below. |
+| `subscriptions` | `false` | `true` if visitors can sign up for subscriptions. Turns on the cancellation button check (§ 312k BGB). |
+| `sales` | `false` | `true` if consumers buy or sign contracts on the site. Turns on the withdrawal button check (§ 356a BGB). |
+| `modules` | all | Comma list of check groups: `legal`, `privacy`, `security`, `sustainability`, `accessibility`, `repo`. |
+| `report-language` | `language` | `de` or `en`. Titles and fix hints follow it; check messages are English. |
+| `fail-on` | `never` | When the run turns red, see below. |
 | `max-pages` | `10` | Pages to visit at most. |
 | `repository` | workspace | Folder to read lockfiles, licenses and secrets from. Needs `actions/checkout` before vibecoda. |
 | `ipinfo-token` | empty | Optional token from [ipinfo.io](https://ipinfo.io) to look up the country of servers vibecoda does not know. |
@@ -24,11 +27,11 @@ Every check ends as `pass`, `warn`, `fail`, `info` or `skip`. `fail-on` decides 
 
 | `fail-on` | Run is red when | 1 fail, 2 warn | 0 fail, 2 warn |
 |---|---|---|---|
+| `never` (default) | never | green | green |
 | `fail` | any check fails | red | green |
 | `warn` | any check fails or warns | red | red |
-| `never` | never | green | green |
 
-Use `fail` for normal runs, `warn` before a launch, `never` if you only want to read the report.
+The default never turns a run red, so adding vibecoda cannot break anything. Choose `fail` once the findings are fixed and you want to keep it that way, or `warn` before a launch.
 
 ## Secrets
 
@@ -45,7 +48,7 @@ The summary page of the run shows a table of all checks with details. The artifa
 | File | Content |
 |---|---|
 | `vibecoda-report.md` | The same report as Markdown |
-| `vibecoda-report.json` | All results, machine readable |
+| `vibecoda-report.json` | Findings: rule id, severity, status, message and locations. No page text or file contents |
 | `vibecoda-sbom.cdx.json` | SBOM in CycloneDX 1.6 format, with vulnerabilities |
 
 Keep the SBOM with each release. It shows which versions you shipped and that you checked them.

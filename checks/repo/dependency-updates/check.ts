@@ -15,8 +15,6 @@ const RENOVATE = /^(\.github\/|\.gitlab\/)?(renovate\.json5?|\.renovaterc(\.json
 const SCANNERS = /snyk\/actions|osv-scanner|aquasecurity\/trivy|anchore\/scan-action|grype|socketdev|npm audit|pnpm audit|yarn (npm )?audit|composer audit|pip-audit|cargo audit|govulncheck|dependency-review-action/i;
 
 export default defineRepoCheck({
-  title: "Dependency updates are automated",
-  law: "CRA Annex I Part II, Art. 32 GDPR",
   run(repo) {
     const used = [...new Set(repo.components.map((c) => c.ecosystem))];
     if (!used.length) return skip("No locked dependencies.");

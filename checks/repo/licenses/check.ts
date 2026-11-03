@@ -6,8 +6,6 @@ const RESTRICTED = /SSPL|BUSL|BSL-1|Commons.?Clause|CC-BY-NC|Elastic-2|proprieta
 const PERMISSIVE = /^(MIT|ISC|BSD|Apache|0BSD|Unlicense|Zlib|MPL)/i;
 
 export default defineRepoCheck({
-  title: "Dependency licenses fit the project",
-  law: "UrhG §§ 31, 69c",
   run(repo) {
     const project = repo.license;
     const issues: string[] = [];

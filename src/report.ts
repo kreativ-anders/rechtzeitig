@@ -1,4 +1,5 @@
 import type { Outcome } from "./runner.ts";
+import type { UiLanguage } from "./rules.ts";
 import type { RepoContext, ScanContext } from "./sdk.ts";
 
 export const ICONS: Record<Outcome["status"], string> = {
@@ -10,6 +11,27 @@ export const ICONS: Record<Outcome["status"], string> = {
   skip: "⏭️",
 };
 const ORDER = Object.keys(ICONS);
+const SEVERITY_ORDER = ["critical", "high", "medium", "low", "info"];
+
+// Report wording. Titles, legal bases and fix hints come from each rule.yml; messages from the checks are English.
+const UI = {
+  en: {
+    check: "Check", severity: "Severity", result: "Result", details: "Details", scan: "Scan", fix: "Fix",
+    pages: "Pages", language: "Language", subscriptions: "Subscriptions", sales: "Sales", yes: "yes", no: "no",
+    visitor: "Visitor: fresh browser, no clicks, no consent given", runner: "GitHub-hosted runner (US data center)",
+    repository: (files: number, components: number, lockfiles: number, osv: string) =>
+      `Repository: ${files} files, ${components} components from ${lockfiles} lockfile(s), OSV: ${osv}`,
+    disclaimer: "Technical risk hints with the place they were found and the legal basis they relate to. Not legal advice.",
+  },
+  de: {
+    check: "Prüfung", severity: "Schwere", result: "Ergebnis", details: "Details", scan: "Scan", fix: "Behebung",
+    pages: "Seiten", language: "Sprache", subscriptions: "Abos", sales: "Verkauf", yes: "ja", no: "nein",
+    visitor: "Besucher: frischer Browser, keine Klicks, keine Einwilligung", runner: "GitHub-Runner (Rechenzentrum in den USA)",
+    repository: (files: number, components: number, lockfiles: number, osv: string) =>
+      `Repository: ${files} Dateien, ${components} Komponenten aus ${lockfiles} Lockfile(s), OSV: ${osv}`,
+    disclaimer: "Technische Risikohinweise mit Fundstelle und Bezug zur Rechtsgrundlage. Keine Rechtsberatung.",
+  },
+} satisfies Record<UiLanguage, unknown>;
 
 export interface Report {
   web?: ScanContext;
@@ -18,6 +40,7 @@ export interface Report {
   version: string;
   startedAt: string;
   onGitHub: boolean;
+  language: UiLanguage;
 }
 
 export function counts(outcomes: Outcome[]): Record<string, number> {
@@ -32,39 +55,49 @@ const summaryLine = (r: Report, icons: boolean) => {
   const c = counts(r.outcomes);
   return ORDER.filter((s) => c[s]).map((s) => `${icons ? `${ICONS[s as Outcome["status"]]} ` : ""}${c[s]} ${s}`).join(icons ? " · " : ", ");
 };
+/** Most urgent first: status, then severity. */
+const sorted = (outcomes: Outcome[]) =>
+  [...outcomes].sort(
+    (a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status) || SEVERITY_ORDER.indexOf(a.rule.severity) - SEVERITY_ORDER.indexOf(b.rule.severity),
+  );
+const open = (o: Outcome) => o.status === "fail" || o.status === "warn" || o.status === "info";
 
 export function toMarkdown(r: Report): string {
-  const sorted = [...r.outcomes].sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status));
+  const t = UI[r.language];
+  const lang = r.language;
+  const list = sorted(r.outcomes);
   const lines = [
     `## vibecoda: ${title(r)}`,
     "",
     summaryLine(r, true),
     "",
-    "| | Check | Result |",
-    "|---|---|---|",
-    ...sorted.map((o) => `| ${ICONS[o.status]} | ${cell(o.title)}<br><sub>${o.id}${o.law ? ` · ${cell(o.law)}` : ""}</sub> | ${cell(o.message)} |`),
+    `| | ${t.check} | ${t.severity} | ${t.result} |`,
+    "|---|---|---|---|",
+    ...list.map((o) => {
+      const law = o.rule.legal_basis?.[lang];
+      return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${o.rule.severity} | ${cell(o.message)} |`;
+    }),
     "",
   ];
-  const withDetails = sorted.filter((o) => o.details.length);
+  const withDetails = list.filter((o) => o.details.length || open(o));
   if (withDetails.length) {
-    lines.push("### Details", "");
+    lines.push(`### ${t.details}`, "");
     for (const o of withDetails) {
-      lines.push(`<details><summary>${ICONS[o.status]} ${o.title}</summary>`, "", ...o.details.map((d) => `- ${d}`), "", "</details>", "");
+      const fix = open(o) ? [`**${t.fix}:** ${o.rule.fix_hint[lang]}`, ""] : [];
+      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...fix, ...o.details.map((d) => `- ${d}`), "", "</details>", "");
     }
   }
-  lines.push("### Scan", "");
+  lines.push(`### ${t.scan}`, "");
   if (r.web) {
     const w = r.web;
     lines.push(
-      `- Pages: ${w.pages.map((p) => `\`${w.short(p.url)}\``).join(", ")}`,
-      `- Language: ${w.languages.join(", ")} · Subscriptions: ${w.subscriptions ? "yes" : "no"}`,
-      `- Visitor: fresh browser, no clicks, no consent given${r.onGitHub ? ", GitHub-hosted runner (US data center)" : ""}`,
+      `- ${t.pages}: ${w.pages.map((p) => `\`${w.short(p.url)}\``).join(", ")}`,
+      `- ${t.language}: ${w.languages.join(", ")} · ${t.subscriptions}: ${w.subscriptions ? t.yes : t.no} · ${t.sales}: ${w.sales ? t.yes : t.no}`,
+      `- ${t.visitor}${r.onGitHub ? `, ${t.runner}` : ""}`,
     );
   }
-  if (r.repo) {
-    lines.push(`- Repository: ${r.repo.files.length} files, ${r.repo.components.length} components from ${r.repo.lockfiles.length} lockfile(s), OSV: ${r.repo.osv}`);
-  }
-  lines.push(`- vibecoda ${r.version} · ${r.startedAt}`, "", "_Automated hints, not legal advice._", "");
+  if (r.repo) lines.push(`- ${t.repository(r.repo.files.length, r.repo.components.length, r.repo.lockfiles.length, r.repo.osv)}`);
+  lines.push(`- vibecoda ${r.version} · ${r.startedAt}`, "", `_${t.disclaimer}_`, "");
   return lines.join("\n");
 }
 
@@ -76,22 +109,4 @@ export function toText(r: Report): string {
   }
   lines.push("", summaryLine(r, false));
   return lines.join("\n");
-}
-
-export function toJson(r: Report): string {
-  return JSON.stringify(
-    {
-      url: r.web?.url,
-      repository: r.repo && { files: r.repo.files.length, components: r.repo.components.length, lockfiles: r.repo.lockfiles, osv: r.repo.osv },
-      version: r.version,
-      startedAt: r.startedAt,
-      languages: r.web?.languages,
-      subscriptions: r.web?.subscriptions,
-      pages: r.web?.pages.map((p) => ({ url: p.url, status: p.js.status, statusWithoutJs: p.noJs.status })),
-      counts: counts(r.outcomes),
-      results: r.outcomes,
-    },
-    null,
-    2,
-  );
 }

@@ -1,8 +1,6 @@
 import { defineCheck, loadedPage, pass, skip, warn } from "../../../src/sdk.ts";
 
 export default defineCheck({
-  title: "Privacy policy names the services the site uses",
-  law: "Art. 13(1)(e), (f) GDPR",
   run(ctx) {
     const policy = loadedPage(ctx, "privacy");
     if (!policy) return skip("No privacy policy to read (see legal/privacy-policy).");
