@@ -20,9 +20,15 @@
 
 ## Findings
 
-- Upload sink behind an optional API key (history, diff between runs). Interface: `src/sink.ts`.
 - PR annotations for repository findings with file and line.
 - Check messages in German, not only titles and fix hints.
+
+## Later, in separate repositories
+
+These need a server and stay out of this repository. This repository stays a self-contained CI tool.
+
+- Dashboard with accounts: history and diff between runs, alerts. The action would upload findings through the interface in `src/sink.ts`, only when the user sets an API key.
+- Website checks run from a server in Germany, so consent banners look as they do to visitors from the EU. Rules for these would be data for the same engine, delivered as a signed bundle.
 
 ## Distribution
 
