@@ -4,3 +4,6 @@ rechtzeitig-sbom.cdx.json
 .env
 # Test sites need their .env files.
 !**/fixtures/**/.env
+# Local tooling: Claude Code worktrees and settings, OS files.
+.claude/
+.DS_Store
