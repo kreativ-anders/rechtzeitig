@@ -23,7 +23,7 @@ Both loads happen without interaction, so every request and cookie in the contex
 
 ## Repository
 
-`src/repo/scan.ts` lists tracked files, parses lockfiles with `src/repo/lockfiles.ts`, reads the project license, and asks [OSV](https://osv.dev) for known vulnerabilities (`src/repo/osv.ts`). `src/repo/sbom.ts` turns the result into CycloneDX 1.6.
+`src/repo/scan.ts` lists tracked files, parses lockfiles with `src/repo/lockfiles.ts`, reads the project license, and asks [OSV](https://osv.dev) for known vulnerabilities (`src/repo/osv.ts`) unless the input `vulnerabilities` is `false`. `src/repo/sbom.ts` turns the result into CycloneDX 1.6.
 
 ## Rules and checks
 

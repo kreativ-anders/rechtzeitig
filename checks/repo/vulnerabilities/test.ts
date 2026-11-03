@@ -23,3 +23,9 @@ test("only warns when the issue is in a dev dependency", async () => {
   const result = await runRepoCheck(here, files, { osv: "ok", vulnerabilities: [vuln("pkg:npm/vite@5.0.0", "HIGH")] });
   assert.equal(result.status, "warn");
 });
+
+test("skips when the lookup is turned off", async () => {
+  const result = await runRepoCheck(here, files, { osv: "skipped" });
+  assert.equal(result.status, "skip");
+  assert.match(result.message, /turned off/);
+});

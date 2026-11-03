@@ -34,9 +34,12 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       # Lets rechtzeitig read lockfiles, licenses and secrets. Remove to scan the website only.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
       - uses: kreativ-anders/rechtzeitig@v1
         with:
           url: ${{ inputs.url }}
@@ -46,3 +49,7 @@ jobs:
           fail-on: ${{ inputs.fail-on }}
           # Optional: add the secret IPINFO_TOKEN (free at ipinfo.io) to look up server countries.
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
+          # Optional: false sends no component list to api.osv.dev and skips the vulnerability rule.
+          # vulnerabilities: "true"
+          # Optional: days to keep the report artifact. On public repositories anyone signed in can download it.
+          # retention-days: "7"

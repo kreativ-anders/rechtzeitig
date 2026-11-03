@@ -29,6 +29,7 @@ const { values, positionals } = parseArgs({
     sales: { type: "string", default: "false" },
     "fail-on": { type: "string", default: "never" },
     "max-pages": { type: "string", default: "10" },
+    vulnerabilities: { type: "string", default: "true" },
     out: { type: "string", default: "rechtzeitig-report" },
   },
 });
@@ -45,7 +46,9 @@ const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 const startedAt = new Date().toISOString();
 const checks = selectModules(await loadChecks(), modules);
 const wantsRepo = checks.some((c) => c.check.repo);
-const repo = values.repo?.trim() && wantsRepo ? await scanRepo(values.repo) : undefined;
+// vulnerabilities=false sends nothing to api.osv.dev; the vulnerabilities rule then skips.
+const osv = values.vulnerabilities !== "false";
+const repo = values.repo?.trim() && wantsRepo ? await scanRepo(values.repo, { osv }) : undefined;
 const web = url && checks.some((c) => !c.check.repo)
   ? await scan(url, {
       language: values.language,
