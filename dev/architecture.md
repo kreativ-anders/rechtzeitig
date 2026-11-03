@@ -33,6 +33,8 @@ Each check folder has `rule.yml` (metadata: id, severity, tier, titles, legal ba
 
 ## Findings and upload
 
+Messages and details carry text from the scanned site and repository. Every output passes them through `oneLine()` in `src/text.ts` (no control characters, at most 300 characters). The step summary escapes Markdown and HTML; the log is wrapped in `::stop-commands::` with a random token, so no line becomes a workflow command.
+
 `src/sink.ts` defines what may leave the runner: rule id, severity, status, message and locations, never page text or file contents. `rechtzeitig-report.json` has exactly this shape. Today the only sink keeps findings in the artifact. A later upload implements the same `FindingsSink` interface and is used only when the user sets an API key.
 
 `tier: pro` rules never live in this repository. If they come, they arrive as data at run time and use the same open engine, so the engine itself has no paid code paths.

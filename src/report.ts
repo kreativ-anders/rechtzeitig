@@ -1,6 +1,8 @@
+import { randomUUID } from "node:crypto";
 import type { Outcome } from "./runner.ts";
 import type { UiLanguage } from "./rules.ts";
 import type { RepoContext, ScanContext } from "./sdk.ts";
+import { oneLine } from "./text.ts";
 
 export const ICONS: Record<Outcome["status"], string> = {
   fail: "❌",
@@ -49,6 +51,10 @@ export function counts(outcomes: Outcome[]): Record<string, number> {
   return c;
 }
 
+/** Untrusted text for Markdown and HTML: one line, every metacharacter as an entity. */
+export const md = (s: string) => oneLine(s).replace(/[<>&[\]()*_`!|\\#~]/g, (c) => `&#${c.charCodeAt(0)};`);
+/** Untrusted text for the log: one line that can never start a workflow command. */
+export const plain = (s: string) => oneLine(s).replace(/^::/, ": :");
 const cell = (s: string) => s.replace(/\|/g, "\\|").replace(/\n/g, " ");
 const title = (r: Report) => [r.web?.url, r.repo && `repository ${r.repo.root.split("/").pop()}`].filter(Boolean).join(" + ");
 const summaryLine = (r: Report, icons: boolean) => {
@@ -67,7 +73,7 @@ export function toMarkdown(r: Report): string {
   const lang = r.language;
   const list = sorted(r.outcomes);
   const lines = [
-    `## rechtzeitig: ${title(r)}`,
+    `## rechtzeitig: ${md(title(r))}`,
     "",
     summaryLine(r, true),
     "",
@@ -75,7 +81,7 @@ export function toMarkdown(r: Report): string {
     "|---|---|---|---|",
     ...list.map((o) => {
       const law = o.rule.legal_basis?.[lang];
-      return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${o.rule.severity} | ${cell(o.message)} |`;
+      return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${o.rule.severity} | ${md(o.message)} |`;
     }),
     "",
   ];
@@ -84,14 +90,14 @@ export function toMarkdown(r: Report): string {
     lines.push(`### ${t.details}`, "");
     for (const o of withDetails) {
       const fix = open(o) ? [`**${t.fix}:** ${o.rule.fix_hint[lang]}`, ""] : [];
-      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...fix, ...o.details.map((d) => `- ${d}`), "", "</details>", "");
+      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...fix, ...o.details.map((d) => `- ${md(d)}`), "", "</details>", "");
     }
   }
   lines.push(`### ${t.scan}`, "");
   if (r.web) {
     const w = r.web;
     lines.push(
-      `- ${t.pages}: ${w.pages.map((p) => `\`${w.short(p.url)}\``).join(", ")}`,
+      `- ${t.pages}: ${w.pages.map((p) => md(w.short(p.url))).join(", ")}`,
       `- ${t.language}: ${w.languages.join(", ")} · ${t.subscriptions}: ${w.subscriptions ? t.yes : t.no} · ${t.sales}: ${w.sales ? t.yes : t.no}`,
       `- ${t.visitor}${r.onGitHub ? `, ${t.runner}` : ""}`,
     );
@@ -102,11 +108,19 @@ export function toMarkdown(r: Report): string {
 }
 
 export function toText(r: Report): string {
-  const lines = [`rechtzeitig: ${title(r)}`, ""];
+  const lines = [`rechtzeitig: ${plain(title(r))}`, ""];
   for (const o of r.outcomes) {
-    lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${o.message}`);
-    for (const d of o.details) lines.push(`      - ${d}`);
+    lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${plain(o.message)}`);
+    for (const d of o.details) lines.push(`      - ${plain(d)}`);
   }
   lines.push("", summaryLine(r, false));
   return lines.join("\n");
+}
+
+/**
+ * Wraps log output so GitHub runs no workflow command from it, even if a line slipped through.
+ * The token is random, so scanned content cannot end the block.
+ */
+export function withoutCommands(text: string, token = randomUUID()): string {
+  return `::stop-commands::${token}\n${text}\n::${token}::`;
 }

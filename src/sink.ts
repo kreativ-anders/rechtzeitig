@@ -2,6 +2,7 @@
 // A later upload (for history across runs) implements the same interface; nothing else changes.
 
 import type { Outcome } from "./runner.ts";
+import { oneLine } from "./text.ts";
 
 /** What may leave the runner: rule ids, results and where they were found. No page text, no file contents. */
 export interface Findings {
@@ -35,8 +36,8 @@ export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">)
       check: o.id,
       severity: o.rule.severity,
       status: o.status,
-      message: o.message,
-      locations: o.details,
+      message: oneLine(o.message),
+      locations: o.details.map((d) => oneLine(d)),
     })),
   };
 }

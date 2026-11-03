@@ -9,7 +9,7 @@ import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
 import { loadChecks, runChecks, selectModules, type Outcome } from "./runner.ts";
 import { LANGUAGES, type UiLanguage } from "./rules.ts";
-import { toMarkdown, toText, type Report } from "./report.ts";
+import { md, plain, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
 import { artifactSink, toFindings } from "./sink.ts";
 
 const FAIL_ON: Record<string, Outcome["status"][]> = {
@@ -69,7 +69,8 @@ writeFileSync(`${values.out}.md`, markdown);
 writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
 if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));
 await artifactSink.send(findings);
-console.log(toText(report));
+const text = toText(report);
+console.log(report.onGitHub ? withoutCommands(text) : text);
 
 const failed = outcomes.some((o) => FAIL_ON[failOn].includes(o.status));
 const result = outcomes.some((o) => o.status === "fail" || o.status === "error") ? "fail"
@@ -80,7 +81,7 @@ if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `result
 process.exit(failed ? 1 : 0);
 
 function exit(message: string): never {
-  console.error(`rechtzeitig: ${message}`);
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## rechtzeitig\n\n💥 ${message}\n`);
+  console.error(`rechtzeitig: ${plain(message)}`);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## rechtzeitig\n\n💥 ${md(message)}\n`);
   process.exit(2);
 }
