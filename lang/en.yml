@@ -1,0 +1,58 @@
+# English wording. See de.yml for how patterns work.
+
+locale: en-GB
+
+links:
+  imprint:
+    - '\bimprint\b'
+    - '\blegal (notice|disclosure|information|info)\b'
+    - '\bsite notice\b'
+  privacy:
+    - '\bprivacy\b'
+    - '\bdata protection\b'
+  cancel:
+    - '\bcancel contracts? here\b'
+  cancel_similar:
+    - '\b(cancel|end|terminate)\b (\w+ ){0,3}(subscription|contract|membership|plan)s?\b'
+    - '\bcancell?ation\b'
+
+text:
+  cancel_confirm:
+    - '\bcancel now\b'
+  # Second way of contact in an imprint besides email, § 5 Abs. 1 Nr. 2 DDG.
+  contact_form:
+    - '\bcontact form\b'
+  controller:
+    - '\bcontroller\b'
+    - '\bresponsible\b'
+  legal_basis:
+    - '\blegal basis\b'
+    - '\bart(icle)?\.? ?6\b'
+  storage_period:
+    - '\bretention\b'
+    - '\bretain'
+    - '\bstorage (period|duration)\b'
+    - '\bstored (until|for|as long)\b'
+    - '\b(be|is|are) (\w+ ){0,4}deleted\b'
+    - '\bafter \d+ (days|weeks|months|years)\b'
+  right_access:
+    - '\baccess\b'
+  right_rectification:
+    - '\brectif'
+    - '\bcorrect(ion)?\b'
+  right_erasure:
+    - '\berasure\b'
+    - '\bdeletion\b'
+  right_restriction:
+    - '\brestrict'
+  right_portability:
+    - '\bportability\b'
+    - '\bcopy of (your|the) data\b'
+  right_objection:
+    - '\bobject(ion)?\b'
+  right_complaint:
+    - '\bsupervisory authority\b'
+    - '\bdata protection authority\b'
+  withdraw_consent:
+    - '\bwithdraw'
+    - '\brevoke\b'

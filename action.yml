@@ -1,0 +1,64 @@
+name: vibecoda
+description: Check a website for German legal basics (GDPR, DDG, TDDDG) the way a first-time visitor sees it.
+author: kreativ-anders
+branding:
+  icon: check-square
+  color: green
+
+inputs:
+  url:
+    description: URL of the start page.
+    required: true
+  language:
+    description: Language of the site (de, en or all).
+    default: de
+  subscriptions:
+    description: true if visitors can sign up for subscriptions (checks the cancellation button).
+    default: "false"
+  fail-on:
+    description: When the job fails. fail = on any fail, warn = on any warn or fail, never = report only.
+    default: fail
+  max-pages:
+    description: How many pages to visit at most.
+    default: "10"
+
+outputs:
+  result:
+    description: pass, warn or fail.
+    value: ${{ steps.scan.outputs.result }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 24
+
+    - name: Install vibecoda
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        npm ci --omit=dev --no-audit --no-fund
+        npx playwright install --with-deps --only-shell chromium
+
+    - name: Scan
+      id: scan
+      shell: bash
+      env:
+        URL: ${{ inputs.url }}
+        LANGUAGE: ${{ inputs.language }}
+        SUBSCRIPTIONS: ${{ inputs.subscriptions }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        MAX_PAGES: ${{ inputs.max-pages }}
+      run: >
+        node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
+        --url "$URL" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
+        --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --out "$RUNNER_TEMP/vibecoda-report"
+
+    - name: Upload report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: vibecoda-report
+        path: ${{ runner.temp }}/vibecoda-report.*
+        if-no-files-found: ignore

@@ -1,0 +1,268 @@
+# Known third-party services.
+#
+# hosts:   a request to this host or any subdomain belongs to the vendor
+# consent: required = must not load before consent (tracking, ads, embeds, fonts)
+#          check    = needs a legal basis, consent is not always necessary (CDN, payment, security)
+# names:   how a privacy policy would mention the vendor (default: name)
+# cookies: regular expressions for the vendor's cookie names
+# advice:  shown in the report
+
+- name: Google Fonts
+  hosts: [fonts.googleapis.com, fonts.gstatic.com]
+  purpose: fonts
+  consent: required
+  names: [google fonts]
+  advice: Host the fonts yourself, for example with @fontsource. LG München I, 20.01.2022, 3 O 17493/20.
+
+- name: Adobe Fonts
+  hosts: [use.typekit.net, p.typekit.net]
+  purpose: fonts
+  consent: required
+  names: [adobe fonts, typekit]
+  advice: Host the fonts yourself if the license allows it.
+
+- name: Font Awesome
+  hosts: [kit.fontawesome.com, use.fontawesome.com, ka-f.fontawesome.com]
+  purpose: fonts
+  consent: required
+  advice: Install Font Awesome as a package and serve it from your own server.
+
+- name: Google Analytics
+  hosts: [google-analytics.com, analytics.google.com]
+  purpose: analytics
+  consent: required
+  cookies: ['^_ga', '^_gid$', '^_gat']
+
+- name: Google Tag Manager
+  hosts: [googletagmanager.com]
+  purpose: tag manager
+  consent: required
+  names: [google tag manager, tag manager]
+
+- name: Google Ads
+  hosts: [doubleclick.net, googleadservices.com, googlesyndication.com, googletagservices.com]
+  purpose: advertising
+  consent: required
+  names: [google ads, adsense, doubleclick]
+  cookies: ['^_gcl_', '^IDE$', '^test_cookie$']
+
+- name: YouTube
+  hosts: [youtube.com, youtube-nocookie.com, ytimg.com, googlevideo.com]
+  purpose: video
+  consent: required
+  advice: Show a preview image and load the video only after a click.
+  cookies: ['^VISITOR_INFO1_LIVE$', '^YSC$']
+
+- name: Vimeo
+  hosts: [vimeo.com, vimeocdn.com]
+  purpose: video
+  consent: required
+  advice: Show a preview image and load the video only after a click.
+
+- name: Google Maps
+  hosts: [maps.googleapis.com, maps.gstatic.com]
+  purpose: maps
+  consent: required
+  names: [google maps]
+  advice: Show a static image or a link and load the map only after a click.
+
+- name: Mapbox
+  hosts: [mapbox.com]
+  purpose: maps
+  consent: required
+
+- name: OpenStreetMap
+  hosts: [tile.openstreetmap.org]
+  purpose: maps
+  consent: required
+  names: [openstreetmap]
+  advice: Load the map after a click, or serve tiles from your own server.
+
+- name: Google (gstatic, reCAPTCHA)
+  hosts: [www.gstatic.com, www.google.com, recaptcha.net]
+  purpose: various Google services
+  consent: required
+  names: [google]
+
+- name: Meta Pixel
+  hosts: [facebook.net, facebook.com, connect.facebook.net]
+  purpose: advertising
+  consent: required
+  names: [facebook, meta]
+  cookies: ['^_fbp$', '^_fbc$', '^fr$']
+
+- name: LinkedIn Insight
+  hosts: [licdn.com, ads.linkedin.com]
+  purpose: advertising
+  consent: required
+  names: [linkedin]
+  cookies: ['^li_', '^bcookie$', '^lidc$', '^UserMatchHistory$']
+
+- name: X (Twitter)
+  hosts: [platform.twitter.com, ads-twitter.com, static.ads-twitter.com]
+  purpose: social / advertising
+  consent: required
+  names: [twitter, x corp]
+
+- name: TikTok Pixel
+  hosts: [analytics.tiktok.com]
+  purpose: advertising
+  consent: required
+  names: [tiktok]
+  cookies: ['^_ttp$']
+
+- name: Microsoft Advertising
+  hosts: [bat.bing.com]
+  purpose: advertising
+  consent: required
+  names: [microsoft advertising, bing]
+  cookies: ['^_uetsid$', '^_uetvid$', '^MUID$']
+
+- name: Microsoft Clarity
+  hosts: [clarity.ms]
+  purpose: analytics
+  consent: required
+  names: [clarity]
+  cookies: ['^_clck$', '^_clsk$', '^CLID$']
+
+- name: Hotjar
+  hosts: [hotjar.com, hotjar.io]
+  purpose: analytics
+  consent: required
+  cookies: ['^_hj']
+
+- name: Matomo
+  hosts: [matomo.cloud]
+  purpose: analytics
+  consent: required
+  names: [matomo, piwik]
+  cookies: ['^_pk_']
+
+- name: Intercom
+  hosts: [intercom.io, intercomcdn.com, intercom-cdn.com]
+  purpose: chat
+  consent: required
+
+- name: Crisp
+  hosts: [crisp.chat]
+  purpose: chat
+  consent: required
+
+- name: Calendly
+  hosts: [calendly.com]
+  purpose: scheduling embed
+  consent: required
+
+- name: Gravatar
+  hosts: [gravatar.com]
+  purpose: avatars
+  consent: required
+
+- name: Pirsch
+  hosts: [pirsch.io]
+  purpose: analytics without cookies
+  consent: check
+
+- name: Plausible
+  hosts: [plausible.io]
+  purpose: analytics without cookies
+  consent: check
+
+- name: Cloudflare Web Analytics
+  hosts: [cloudflareinsights.com]
+  purpose: analytics without cookies
+  consent: check
+  names: [cloudflare]
+
+- name: Vercel Analytics
+  hosts: [va.vercel-scripts.com, vitals.vercel-insights.com]
+  purpose: analytics
+  consent: check
+  names: [vercel]
+
+- name: GitHub
+  hosts: [api.github.com, raw.githubusercontent.com, avatars.githubusercontent.com, objects.githubusercontent.com]
+  purpose: API and file hosting
+  consent: check
+  advice: Fetch the data at build time or on your own server.
+
+- name: jsDelivr
+  hosts: [jsdelivr.net]
+  purpose: CDN
+  consent: check
+  advice: Serve the files from your own server.
+
+- name: unpkg
+  hosts: [unpkg.com]
+  purpose: CDN
+  consent: check
+  advice: Serve the files from your own server.
+
+- name: cdnjs (Cloudflare)
+  hosts: [cdnjs.cloudflare.com]
+  purpose: CDN
+  consent: check
+  names: [cdnjs, cloudflare]
+  advice: Serve the files from your own server.
+
+- name: Google Hosted Libraries
+  hosts: [ajax.googleapis.com]
+  purpose: CDN
+  consent: check
+  names: [google]
+  advice: Serve the files from your own server.
+
+- name: jQuery CDN
+  hosts: [code.jquery.com]
+  purpose: CDN
+  consent: check
+  names: [jquery]
+  advice: Serve the files from your own server.
+
+- name: Bootstrap CDN
+  hosts: [stackpath.bootstrapcdn.com, maxcdn.bootstrapcdn.com, bootstrapcdn.com]
+  purpose: CDN
+  consent: check
+  names: [bootstrapcdn, stackpath]
+  advice: Serve the files from your own server.
+
+- name: Stripe
+  hosts: [stripe.com, stripe.network]
+  purpose: payment
+  consent: check
+
+- name: PayPal
+  hosts: [paypal.com, paypalobjects.com]
+  purpose: payment
+  consent: check
+
+- name: Sentry
+  hosts: [sentry.io, sentry-cdn.com]
+  purpose: error tracking
+  consent: check
+
+- name: hCaptcha
+  hosts: [hcaptcha.com]
+  purpose: bot protection
+  consent: check
+
+- name: Cloudflare Turnstile
+  hosts: [challenges.cloudflare.com]
+  purpose: bot protection
+  consent: check
+  names: [cloudflare, turnstile]
+
+- name: Usercentrics
+  hosts: [usercentrics.eu]
+  purpose: consent management
+  consent: check
+
+- name: Cookiebot
+  hosts: [cookiebot.com, cookiebot.eu]
+  purpose: consent management
+  consent: check
+
+- name: OneTrust
+  hosts: [cookielaw.org, onetrust.com]
+  purpose: consent management
+  consent: check

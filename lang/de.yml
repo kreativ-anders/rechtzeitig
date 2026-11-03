@@ -1,0 +1,65 @@
+# German wording.
+#
+# Patterns are regular expressions, matched case-insensitively against normalized text:
+# lowercase, ä→ae ö→oe ü→ue ß→ss, single spaces. So write "kuendigen", not "kündigen".
+# Every language file must define the same keys (test: src/lang.test.ts).
+
+locale: de-DE
+
+# Labels of links and buttons. Link labels include the URL path, so "/impressum" matches too.
+# The crawler opens every link that matches one of these.
+links:
+  imprint:
+    - '\bimpressum\b'
+    - '\banbieterkennzeichnung\b'
+  privacy:
+    - '\bdatenschutz(erklaerung|hinweise?|information(en)?|richtlinie|bestimmungen)?\b'
+  # Wording required by § 312k Abs. 2 BGB.
+  cancel:
+    - '\bvertraege (hier )?kuendigen\b'
+  # Means the same, but is not as unambiguous as the law asks for.
+  cancel_similar:
+    - '\b(abo|abonnement|vertrag|mitgliedschaft|tarif|paket)\w* (\w+ ){0,3}(kuendigen|beenden|aufloesen|stornieren)\b'
+    - '\b(kuendigen|beenden)\b (\w+ ){0,3}(abo|abonnement|vertrag|mitgliedschaft)'
+    - '\bkuendigung(sbutton|sformular|sseite)?\b'
+
+# Wording inside page text.
+text:
+  # Confirmation button on the cancellation page, § 312k Abs. 2 Satz 2 BGB.
+  cancel_confirm:
+    - '\bjetzt kuendigen\b'
+  # Second way of contact in an imprint besides email, § 5 Abs. 1 Nr. 2 DDG.
+  contact_form:
+    - '\bkontaktformular'
+  # Art. 13 GDPR (DSGVO): what a privacy policy must contain.
+  controller:
+    - '\bverantwortlich'
+    - '\bverantwortliche stelle\b'
+  legal_basis:
+    - '\brechtsgrundlage'
+    - '\bart\.? ?6\b'
+  storage_period:
+    - '\bspeicherdauer\b'
+    - '\bdauer der speicherung\b'
+    - '\bgespeichert,? (bis|solange|fuer)\b'
+    - '\bloeschfrist'
+    - '\b(wird|werden) (\w+ ){0,4}geloescht\b'
+    - '\bnach \d+ (tagen|wochen|monaten|jahren)\b'
+  right_access:
+    - '\bauskunft'
+  right_rectification:
+    - '\bberichtigung'
+  right_erasure:
+    - '\bloeschung'
+  right_restriction:
+    - '\beinschraenkung'
+  right_portability:
+    - '\bdatenuebertragbarkeit\b'
+    - '\bkopie (ihrer|der) daten\b'
+  right_objection:
+    - '\bwiderspruch'
+    - '\bwidersprechen\b'
+  right_complaint:
+    - '\baufsichtsbehoerde\b'
+  withdraw_consent:
+    - '\bwiderruf'

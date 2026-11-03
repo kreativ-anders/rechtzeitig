@@ -1,0 +1,38 @@
+name: vibecoda
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: URL of the start page
+        required: true
+        type: string
+      language:
+        description: Language of the site
+        type: choice
+        default: de
+        options: [de, en, all]
+      subscriptions:
+        description: Visitors can sign up for subscriptions
+        type: boolean
+        default: false
+      fail-on:
+        description: Fail the job on
+        type: choice
+        default: fail
+        options: [fail, warn, never]
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          url: ${{ inputs.url }}
+          language: ${{ inputs.language }}
+          subscriptions: ${{ inputs.subscriptions }}
+          fail-on: ${{ inputs.fail-on }}
