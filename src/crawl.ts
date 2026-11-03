@@ -2,6 +2,7 @@ import type { Browser } from "playwright";
 import { capture } from "./capture.ts";
 import { matchLinks, type Language } from "./lang.ts";
 import { countries, emailDns, hostVariant, plainHttp, probe, tlsInfo } from "./probe.ts";
+import { blockedInBrowser, isPublicHost } from "./net.ts";
 import { siteOf, withoutHash } from "./text.ts";
 import type { Area, Page, Probe, ScanContext, Snapshot } from "./sdk.ts";
 
@@ -43,11 +44,15 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   const settings = { locale: opts.lang.locale, timezoneId: "Europe/Berlin", userAgent: opts.userAgent };
   const noJs = await opts.browser.newContext({ ...settings, javaScriptEnabled: false });
   const js = await opts.browser.newContext(settings);
-  if (opts.offline) {
-    const local = new URL(startUrl).host;
-    for (const c of [noJs, js]) {
-      await c.route("**", (route) => (new URL(route.request().url()).host === local ? route.continue() : route.abort()));
-    }
+  // The host the user asked for is trusted, also when it is local (dev servers, test fixtures).
+  const input = new URL(startUrl);
+  const trusted = input.hostname;
+  for (const c of [noJs, js]) {
+    await c.route("**", (route) => {
+      const u = new URL(route.request().url());
+      const allowed = u.host === input.host || (!opts.offline && !blockedInBrowser(u.hostname, trusted));
+      return allowed ? route.continue() : route.abort();
+    });
   }
 
   try {
@@ -65,11 +70,15 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       const key = withoutHash(url);
       if (seen.has(key)) continue;
       seen.add(key);
+      // Legal pages may live on other domains, but never inside a private network.
+      if (!(await isPublicHost(new URL(key).hostname, trusted))) continue;
       pages.push(await visit(key));
     }
 
-    const finalUrl = start.js.finalUrl || startUrl;
-    const probes = await probe(new URL(finalUrl).origin, opts.userAgent, opts.timeout);
+    // Lookups without a browser follow the start page only within the same site; otherwise they use the input URL.
+    const redirected = start.js.finalUrl || startUrl;
+    const finalUrl = siteOf(new URL(redirected).hostname) === siteOf(trusted) ? redirected : startUrl;
+    const probes = await probe(new URL(finalUrl).origin, opts.userAgent, opts.timeout, trusted);
     if (opts.offline) return { start, pages, probes, countries: {} };
 
     const site = siteOf(new URL(finalUrl).hostname);
@@ -77,9 +86,9 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       .filter((h) => siteOf(h) !== site)
       .slice(0, MAX_COUNTRY_LOOKUPS);
     const [http, variant, tls, dns, found] = await Promise.all([
-      plainHttp(finalUrl, opts.timeout),
+      plainHttp(finalUrl, opts.timeout, trusted),
       hostVariant(finalUrl, opts.timeout),
-      tlsInfo(finalUrl, opts.timeout),
+      tlsInfo(finalUrl, opts.timeout, trusted),
       emailDns(finalUrl),
       countries(thirdParty, opts.ipinfoToken, opts.timeout),
     ]);

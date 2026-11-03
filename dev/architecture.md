@@ -17,7 +17,9 @@ flowchart LR
 1. `src/crawl.ts` visits the start page, every link a language file names as a legal page, then a sample of the site's own pages, up to `max-pages`.
 2. `src/capture.ts` loads each page twice in Chromium, JavaScript off and on. It records status, headers, text, links and buttons (also in shadow roots), forms, checkboxes, requests, cookies with flags, and localStorage. It never clicks. Each load has an overall deadline, so a page that never yields becomes an error. Text (200 KB), links (2000), link labels (300 characters) and requests (5000) are capped.
 3. `src/probe.ts` does the lookups that need no browser: paths from `data/probes.yml`, plain HTTP, the `www.` variant, TLS, SPF/DMARC, and IP countries when an IPinfo token is set.
-4. `src/context.ts` wraps everything in a read-only `ScanContext` with helpers.
+   They run against the start page's final URL only if it is on the same site as the input URL, otherwise against the input URL.
+4. `src/net.ts` keeps the scan off private networks. Before each request without a browser, and before visiting any page, the host must resolve to public addresses only; redirects are followed by hand and checked per hop. In the browser, requests to `localhost` and private IP literals are aborted. The host of the input URL is always allowed, so local dev servers and test fixtures work.
+5. `src/context.ts` wraps everything in a read-only `ScanContext` with helpers.
 
 Both loads happen without interaction, so every request and cookie in the context happened before consent. Comparing the two loads shows what needs JavaScript.
 
@@ -47,6 +49,7 @@ Messages and details carry text from the scanned site and repository. Every outp
 |---|---|
 | `src/sdk.ts` | The only API for checks: types, result helpers, both contexts |
 | `src/`, `src/repo/` | Crawler, probes, repository scan, runner, report, CLI |
+| `src/net.ts`, `src/text.ts` | Public-address checks for every request; `oneLine()` for untrusted text in outputs |
 | `checks/<module>/<name>/` | One check: `rule.yml`, `check.ts`, `test.ts`, `fixtures/` |
 | `src/rules.ts`, `src/docs.ts` | Rule schema and validator; generator for `docs/checks.md` |
 | `src/sink.ts` | Findings format and where they go |
