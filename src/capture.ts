@@ -1,6 +1,6 @@
 import type { BrowserContext } from "playwright";
 import { normalize } from "./text.ts";
-import type { Area, Link, Snapshot } from "./sdk.ts";
+import type { Area, Checkbox, Form, Link, Snapshot } from "./sdk.ts";
 
 interface RawLink {
   href: string | null;
@@ -10,27 +10,79 @@ interface RawLink {
   button: boolean;
 }
 
+interface RawForm {
+  action: string;
+  fields: string[];
+  personal: boolean;
+  links: RawLink[];
+  text: string;
+}
+
+interface Dom {
+  lang: string;
+  text: string;
+  links: RawLink[];
+  forms: RawForm[];
+  checkboxes: Checkbox[];
+}
+
 // Runs inside the page. Works with JavaScript off too, because Playwright evaluates in its own world.
-function readDom(): { lang: string; text: string; links: RawLink[] } {
+// Everything it needs must be defined inside this function.
+function readDom(): Dom {
+  const PERSONAL = /mail|name|phone|tel|address|adresse|street|strasse|zip|plz|birth|geburt/i;
+  // querySelectorAll that also looks into open shadow roots, where many consent banners live.
+  const all = (root: Document | ShadowRoot, selector: string): Element[] => {
+    const found = Array.from(root.querySelectorAll(selector));
+    for (const el of Array.from(root.querySelectorAll("*"))) {
+      if (el.shadowRoot) found.push(...all(el.shadowRoot, selector));
+    }
+    return found;
+  };
+  const BANNER = "dialog,[role=dialog],[role=alertdialog],[aria-modal=true],[id*=cookie i],[class*=cookie i],[id*=consent i],[class*=consent i],[id*=gdpr i],[class*=gdpr i],[id*=cmp i]";
   const areaOf = (el: Element): Area =>
-    el.closest("footer,[role=contentinfo]") ? "footer"
+    el.closest(BANNER) || el.getRootNode() instanceof ShadowRoot ? "banner"
+    : el.closest("footer,[role=contentinfo]") ? "footer"
     : el.closest("nav,[role=navigation]") ? "nav"
     : el.closest("header,[role=banner]") ? "header"
     : el.closest("main,[role=main]") ? "main"
     : "other";
-  const elements = document.querySelectorAll("a[href], button, [role=button], input[type=submit], input[type=button]");
-  const links: RawLink[] = [];
-  for (const el of Array.from(elements)) {
+  const toRaw = (el: Element): RawLink => {
     const isLink = el instanceof HTMLAnchorElement;
-    const text = ((el as HTMLElement).innerText || (el as HTMLInputElement).value || "").trim();
+    const text = ((el as HTMLElement).innerText || (el as HTMLInputElement).value || el.textContent || "").trim();
     const alts = Array.from(el.querySelectorAll("img[alt]")).map((img) => img.getAttribute("alt"));
     const extra = [el.getAttribute("aria-label"), el.getAttribute("title"), ...alts].filter(Boolean).join(" ");
-    links.push({ href: isLink ? (el as HTMLAnchorElement).href : null, text, extra, area: areaOf(el), button: !isLink });
-  }
+    return { href: isLink ? (el as HTMLAnchorElement).href : null, text, extra, area: areaOf(el), button: !isLink };
+  };
+  const LINKS = "a[href], button, [role=button], input[type=submit], input[type=button]";
+
+  const forms = Array.from(document.forms).map((form): RawForm => {
+    const fields = Array.from(form.elements)
+      .filter((el): el is HTMLInputElement => el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)
+      .filter((el) => !["hidden", "submit", "button", "checkbox", "radio"].includes(el.type))
+      .map((el) => `${el.type}:${el.name || el.id || el.getAttribute("autocomplete") || ""}`);
+    // The form and its direct container; never the whole page.
+    const around = form.parentElement && form.parentElement !== document.body ? form.parentElement : form;
+    return {
+      action: form.action,
+      fields,
+      personal: fields.some((f) => f.startsWith("email:") || f.startsWith("tel:") || PERSONAL.test(f.split(":")[1])),
+      links: Array.from(around.querySelectorAll(LINKS)).map(toRaw),
+      text: ((around as HTMLElement).innerText ?? "").slice(0, 3000),
+    };
+  });
+
+  const checkboxes = all(document, "input[type=checkbox]").map((el) => {
+    const box = el as HTMLInputElement;
+    const label = box.labels?.[0]?.innerText || box.closest("label")?.innerText || box.getAttribute("aria-label") || box.parentElement?.textContent || "";
+    return { label: label.trim().slice(0, 200), checked: box.checked, disabled: box.disabled };
+  });
+
   return {
     lang: document.documentElement.getAttribute("lang") ?? "",
     text: document.body?.innerText ?? "",
-    links,
+    links: all(document, LINKS).map(toRaw),
+    forms,
+    checkboxes,
   };
 }
 
@@ -44,13 +96,17 @@ function toLink(raw: RawLink): Link {
     }
   }
   return {
-    href: raw.href && /^https?:/.test(raw.href) ? raw.href : null,
+    href: raw.href && /^(https?|mailto):/.test(raw.href) ? raw.href : null,
     text: raw.text,
     label: normalize(`${raw.text} ${raw.extra} ${path}`),
     area: raw.area,
     button: raw.button,
   };
 }
+
+const toForm = (raw: RawForm): Form => ({ ...raw, links: raw.links.map(toLink) });
+
+const EMPTY = { headers: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], cookies: [], storage: [] };
 
 /** Loads a URL once in the given browser context and records what a visitor gets without clicking anything. */
 export async function capture(context: BrowserContext, url: string, js: boolean, timeout: number): Promise<Snapshot> {
@@ -78,7 +134,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     // Only cookies this load added; the context keeps cookies from earlier pages.
     const cookies = (await context.cookies())
       .filter((c) => !before.has(cookieKey(c)))
-      .map((c) => ({ name: c.name, domain: c.domain.replace(/^\./, "") }));
+      .map((c) => ({ name: c.name, domain: c.domain.replace(/^\./, ""), secure: c.secure, httpOnly: c.httpOnly, sameSite: c.sameSite }));
     return {
       status: response?.status() ?? 0,
       finalUrl: page.url(),
@@ -86,23 +142,14 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       lang: dom.lang,
       text: dom.text,
       links: dom.links.map(toLink),
+      forms: dom.forms.map(toForm),
+      checkboxes: dom.checkboxes,
       requests,
       cookies,
       storage,
     };
   } catch (e) {
-    return {
-      status: 0,
-      error: (e as Error).message.split("\n")[0],
-      finalUrl: url,
-      headers: {},
-      lang: "",
-      text: "",
-      links: [],
-      requests,
-      cookies: [],
-      storage: [],
-    };
+    return { ...EMPTY, status: 0, error: (e as Error).message.split("\n")[0], finalUrl: url, requests };
   } finally {
     await page.close();
   }

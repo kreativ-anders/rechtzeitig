@@ -22,6 +22,16 @@ links:
     - '\b(abo|abonnement|vertrag|mitgliedschaft|tarif|paket)\w* (\w+ ){0,3}(kuendigen|beenden|aufloesen|stornieren)\b'
     - '\b(kuendigen|beenden)\b (\w+ ){0,3}(abo|abonnement|vertrag|mitgliedschaft)'
     - '\bkuendigung(sbutton|sformular|sseite)?\b'
+  # Buttons of a consent banner.
+  consent_accept:
+    - '\b(alle )?(akzeptieren|annehmen|zustimmen|erlauben)\b'
+    - '\beinverstanden\b'
+    - '\balle (cookies )?(akzeptieren|erlauben|zulassen)\b'
+  consent_reject:
+    - '\b(alle )?ablehnen\b'
+    - '\bnur (technisch )?(notwendige|erforderliche|essenzielle|essentielle)\b'
+    - '\bweiter ohne (einwilligung|zustimmung)\b'
+    - '\bverweigern\b'
 
 # Wording inside page text.
 text:
@@ -48,13 +58,15 @@ text:
   right_access:
     - '\bauskunft'
   right_rectification:
-    - '\bberichtigung'
+    - '\bberichtig'
   right_erasure:
-    - '\bloeschung'
+    - '\bloesch'
   right_restriction:
-    - '\beinschraenkung'
+    - '\beinschraenk'
   right_portability:
-    - '\bdatenuebertragbarkeit\b'
+    - '\bdatenuebertrag'
+    - '\bdaten\w* (\w+ ){0,4}uebertrag'
+    - '\buebertrag\w* (\w+ ){0,4}daten'
     - '\bkopie (ihrer|der) daten\b'
   right_objection:
     - '\bwiderspruch'
@@ -63,3 +75,21 @@ text:
     - '\baufsichtsbehoerde\b'
   withdraw_consent:
     - '\bwiderruf'
+  # Art. 13(1)(f) GDPR: transfers outside the EU/EEA.
+  third_country:
+    - '\bdrittland'
+    - '\bdrittstaat'
+    - '\busa\b'
+    - '\bvereinigten? staaten\b'
+    - '\bdata privacy framework\b'
+    - '\bangemessenheitsbeschluss'
+    - '\bstandardvertragsklauseln\b'
+  # Optional cookie categories in a consent banner.
+  consent_optional:
+    - '\bstatistik'
+    - '\banalyse'
+    - '\bmarketing\b'
+    - '\bwerbung\b'
+    - '\bpersonalisierung\b'
+    - '\bexterne medien\b'
+    - '\bkomfort\b'

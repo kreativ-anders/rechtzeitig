@@ -19,25 +19,25 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
   }
   const url = data.start.js.finalUrl || data.start.url;
   const site = siteOf(new URL(url).hostname);
-  const page = (u: string | null) => (u ? byUrl.get(withoutHash(u)) : undefined);
+  const isWeb = (u: string | null): u is string => !!u && /^https?:/.test(u);
+  const page = (u: string | null) => (isWeb(u) ? byUrl.get(withoutHash(u)) : undefined);
 
   const ctx: ScanContext = {
+    ...data,
     url,
     languages: opts.languages,
     subscriptions: opts.subscriptions,
-    start: data.start,
-    pages: data.pages,
     sitePages: data.pages.filter((p) => loaded(p.js) && siteOf(new URL(p.js.finalUrl).hostname) === site),
-    http: data.http,
     page,
-    links: (concept, snapshot) => matchLinks(lang, concept, snapshot),
+    links: (concept, from) => matchLinks(lang, concept, Array.isArray(from) ? from : from.links),
     says: (concept, text) => {
+      const group = lang.text[concept] ? "text" : "links";
       const t = normalize(text);
-      return patternsFor(lang, "text", concept).some((re) => re.test(t));
+      return patternsFor(lang, group, concept).some((re) => re.test(t));
     },
     mentions: (text, phrase) => normalize(text).includes(normalize(phrase)),
     legalPage: (concept) => {
-      const found = [...ctx.links(concept, data.start.js), ...ctx.links(concept, data.start.noJs)].filter((l) => l.href);
+      const found = [...ctx.links(concept, data.start.js), ...ctx.links(concept, data.start.noJs)].filter((l) => isWeb(l.href));
       if (!found.length) return undefined;
       const link = found.find((l) => loaded(page(l.href)?.js)) ?? found[0];
       return { link, page: page(link.href) };

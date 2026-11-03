@@ -4,10 +4,13 @@ export default defineCheck({
   title: "No cookies before consent",
   law: "§ 25 TDDDG",
   run(ctx) {
-    const cookies = new Map<string, { name: string; domain: string }>();
+    const cookies = new Map<string, { name: string; domain: string; page: string }>();
     const storage = new Set<string>();
     for (const page of ctx.sitePages) {
-      for (const c of [...page.noJs.cookies, ...page.js.cookies]) cookies.set(`${c.name}@${c.domain}`, c);
+      for (const c of [...page.noJs.cookies, ...page.js.cookies]) {
+        const key = `${c.name}@${c.domain}`;
+        if (!cookies.has(key)) cookies.set(key, { ...c, page: ctx.short(page.url) });
+      }
       for (const key of page.js.storage) storage.add(key);
     }
 
@@ -15,9 +18,9 @@ export default defineCheck({
     const foreign = [...cookies.values()].filter((c) => !ctx.trackingCookie(c.name) && ctx.isThirdParty(c.domain));
     const own = [...cookies.values()].filter((c) => !ctx.trackingCookie(c.name) && !ctx.isThirdParty(c.domain));
     const details = [
-      ...tracking.map((c) => `${c.name} (${c.domain}): tracking cookie of ${ctx.trackingCookie(c.name)?.name}`),
-      ...foreign.map((c) => `${c.name} (${c.domain}): third-party cookie`),
-      ...own.map((c) => `${c.name} (${c.domain})`),
+      ...tracking.map((c) => `${c.name} (${c.domain}, set on ${c.page}): tracking cookie of ${ctx.trackingCookie(c.name)?.name}`),
+      ...foreign.map((c) => `${c.name} (${c.domain}, set on ${c.page}): third-party cookie`),
+      ...own.map((c) => `${c.name} (${c.domain}, set on ${c.page})`),
       ...[...storage].map((key) => `localStorage: ${key}`),
     ];
 

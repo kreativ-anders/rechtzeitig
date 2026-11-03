@@ -15,6 +15,7 @@ export interface ScanOptions {
   maxPages?: number;
   timeout?: number;
   offline?: boolean;
+  ipinfoToken?: string;
   /** Reuse a running browser (tests). */
   browser?: Browser;
 }
@@ -35,6 +36,7 @@ export async function scan(url: string, opts: ScanOptions = {}): Promise<ScanCon
       maxPages: opts.maxPages ?? 10,
       timeout: opts.timeout ?? 20_000,
       offline: opts.offline,
+      ipinfoToken: opts.ipinfoToken,
     });
     return createContext(data, lang, loadRegistry(), { languages, subscriptions: opts.subscriptions ?? false });
   } finally {

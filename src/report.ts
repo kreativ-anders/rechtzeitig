@@ -1,5 +1,5 @@
 import type { Outcome } from "./runner.ts";
-import type { ScanContext } from "./sdk.ts";
+import type { RepoContext, ScanContext } from "./sdk.ts";
 
 export const ICONS: Record<Outcome["status"], string> = {
   fail: "❌",
@@ -11,7 +11,10 @@ export const ICONS: Record<Outcome["status"], string> = {
 };
 const ORDER = Object.keys(ICONS);
 
-export interface ReportMeta {
+export interface Report {
+  web?: ScanContext;
+  repo?: RepoContext;
+  outcomes: Outcome[];
   version: string;
   startedAt: string;
   onGitHub: boolean;
@@ -24,14 +27,18 @@ export function counts(outcomes: Outcome[]): Record<string, number> {
 }
 
 const cell = (s: string) => s.replace(/\|/g, "\\|").replace(/\n/g, " ");
+const title = (r: Report) => [r.web?.url, r.repo && `repository ${r.repo.root.split("/").pop()}`].filter(Boolean).join(" + ");
+const summaryLine = (r: Report, icons: boolean) => {
+  const c = counts(r.outcomes);
+  return ORDER.filter((s) => c[s]).map((s) => `${icons ? `${ICONS[s as Outcome["status"]]} ` : ""}${c[s]} ${s}`).join(icons ? " · " : ", ");
+};
 
-export function toMarkdown(ctx: ScanContext, outcomes: Outcome[], meta: ReportMeta): string {
-  const c = counts(outcomes);
-  const sorted = [...outcomes].sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status));
+export function toMarkdown(r: Report): string {
+  const sorted = [...r.outcomes].sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status));
   const lines = [
-    `## vibecoda: ${ctx.url}`,
+    `## vibecoda: ${title(r)}`,
     "",
-    ORDER.filter((s) => c[s]).map((s) => `${ICONS[s as Outcome["status"]]} ${c[s]} ${s}`).join(" · "),
+    summaryLine(r, true),
     "",
     "| | Check | Result |",
     "|---|---|---|",
@@ -45,41 +52,44 @@ export function toMarkdown(ctx: ScanContext, outcomes: Outcome[], meta: ReportMe
       lines.push(`<details><summary>${ICONS[o.status]} ${o.title}</summary>`, "", ...o.details.map((d) => `- ${d}`), "", "</details>", "");
     }
   }
-  lines.push(
-    "### Scan",
-    "",
-    `- Pages: ${ctx.pages.map((p) => `\`${ctx.short(p.url)}\``).join(", ")}`,
-    `- Language: ${ctx.languages.join(", ")} · Subscriptions: ${ctx.subscriptions ? "yes" : "no"}`,
-    `- Visitor: fresh browser, no clicks, no consent given${meta.onGitHub ? ", GitHub-hosted runner (US data center)" : ""}`,
-    `- vibecoda ${meta.version} · ${meta.startedAt}`,
-    "",
-    "_Automated hints, not legal advice._",
-    "",
-  );
+  lines.push("### Scan", "");
+  if (r.web) {
+    const w = r.web;
+    lines.push(
+      `- Pages: ${w.pages.map((p) => `\`${w.short(p.url)}\``).join(", ")}`,
+      `- Language: ${w.languages.join(", ")} · Subscriptions: ${w.subscriptions ? "yes" : "no"}`,
+      `- Visitor: fresh browser, no clicks, no consent given${r.onGitHub ? ", GitHub-hosted runner (US data center)" : ""}`,
+    );
+  }
+  if (r.repo) {
+    lines.push(`- Repository: ${r.repo.files.length} files, ${r.repo.components.length} components from ${r.repo.lockfiles.length} lockfile(s), OSV: ${r.repo.osv}`);
+  }
+  lines.push(`- vibecoda ${r.version} · ${r.startedAt}`, "", "_Automated hints, not legal advice._", "");
   return lines.join("\n");
 }
 
-export function toText(ctx: ScanContext, outcomes: Outcome[]): string {
-  const lines = [`vibecoda: ${ctx.url}`, ""];
-  for (const o of outcomes) {
+export function toText(r: Report): string {
+  const lines = [`vibecoda: ${title(r)}`, ""];
+  for (const o of r.outcomes) {
     lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${o.message}`);
     for (const d of o.details) lines.push(`      - ${d}`);
   }
-  const c = counts(outcomes);
-  lines.push("", ORDER.filter((s) => c[s]).map((s) => `${c[s]} ${s}`).join(", "));
+  lines.push("", summaryLine(r, false));
   return lines.join("\n");
 }
 
-export function toJson(ctx: ScanContext, outcomes: Outcome[], meta: ReportMeta): string {
+export function toJson(r: Report): string {
   return JSON.stringify(
     {
-      url: ctx.url,
-      ...meta,
-      languages: ctx.languages,
-      subscriptions: ctx.subscriptions,
-      pages: ctx.pages.map((p) => ({ url: p.url, status: p.js.status, statusWithoutJs: p.noJs.status })),
-      counts: counts(outcomes),
-      results: outcomes,
+      url: r.web?.url,
+      repository: r.repo && { files: r.repo.files.length, components: r.repo.components.length, lockfiles: r.repo.lockfiles, osv: r.repo.osv },
+      version: r.version,
+      startedAt: r.startedAt,
+      languages: r.web?.languages,
+      subscriptions: r.web?.subscriptions,
+      pages: r.web?.pages.map((p) => ({ url: p.url, status: p.js.status, statusWithoutJs: p.noJs.status })),
+      counts: counts(r.outcomes),
+      results: r.outcomes,
     },
     null,
     2,

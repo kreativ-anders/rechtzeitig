@@ -15,6 +15,14 @@ links:
   cancel_similar:
     - '\b(cancel|end|terminate)\b (\w+ ){0,3}(subscription|contract|membership|plan)s?\b'
     - '\bcancell?ation\b'
+  consent_accept:
+    - '\b(accept|allow|agree)( all)?( cookies)?\b'
+    - '\bi agree\b'
+  consent_reject:
+    - '\b(reject|decline|deny|refuse)( all)?( cookies)?\b'
+    - '\b(only )?(necessary|essential|required)( cookies)? only\b'
+    - '\bonly (necessary|essential|required)\b'
+    - '\bcontinue without (accepting|consent)\b'
 
 text:
   cancel_confirm:
@@ -39,14 +47,14 @@ text:
     - '\baccess\b'
   right_rectification:
     - '\brectif'
-    - '\bcorrect(ion)?\b'
+    - '\bcorrect'
   right_erasure:
     - '\berasure\b'
-    - '\bdeletion\b'
+    - '\bdelet'
   right_restriction:
     - '\brestrict'
   right_portability:
-    - '\bportability\b'
+    - '\bportab'
     - '\bcopy of (your|the) data\b'
   right_objection:
     - '\bobject(ion)?\b'
@@ -56,3 +64,17 @@ text:
   withdraw_consent:
     - '\bwithdraw'
     - '\brevoke\b'
+  third_country:
+    - '\bthird countr'
+    - '\b(usa|united states)\b'
+    - '\bu\.s\.'
+    - '\bdata privacy framework\b'
+    - '\badequacy decision\b'
+    - '\bstandard contractual clauses\b'
+  consent_optional:
+    - '\bstatistic'
+    - '\banalytic'
+    - '\bmarketing\b'
+    - '\badvertis'
+    - '\bpersonali[sz]ation\b'
+    - '\bexternal media\b'

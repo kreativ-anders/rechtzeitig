@@ -3,6 +3,8 @@
 # hosts:   a request to this host or any subdomain belongs to the vendor
 # consent: required = must not load before consent (tracking, ads, embeds, fonts)
 #          check    = needs a legal basis, consent is not always necessary (CDN, payment, security)
+# country: ISO code of the group that processes the data. A US group counts as US even when
+#          an EU subsidiary is the contract partner, because data can reach the parent company.
 # names:   how a privacy policy would mention the vendor (default: name)
 # cookies: regular expressions for the vendor's cookie names
 # advice:  shown in the report
@@ -11,6 +13,7 @@
   hosts: [fonts.googleapis.com, fonts.gstatic.com]
   purpose: fonts
   consent: required
+  country: US
   names: [google fonts]
   advice: Host the fonts yourself, for example with @fontsource. LG München I, 20.01.2022, 3 O 17493/20.
 
@@ -18,6 +21,7 @@
   hosts: [use.typekit.net, p.typekit.net]
   purpose: fonts
   consent: required
+  country: US
   names: [adobe fonts, typekit]
   advice: Host the fonts yourself if the license allows it.
 
@@ -25,24 +29,28 @@
   hosts: [kit.fontawesome.com, use.fontawesome.com, ka-f.fontawesome.com]
   purpose: fonts
   consent: required
+  country: US
   advice: Install Font Awesome as a package and serve it from your own server.
 
 - name: Google Analytics
   hosts: [google-analytics.com, analytics.google.com]
   purpose: analytics
   consent: required
+  country: US
   cookies: ['^_ga', '^_gid$', '^_gat']
 
 - name: Google Tag Manager
   hosts: [googletagmanager.com]
   purpose: tag manager
   consent: required
+  country: US
   names: [google tag manager, tag manager]
 
 - name: Google Ads
   hosts: [doubleclick.net, googleadservices.com, googlesyndication.com, googletagservices.com]
   purpose: advertising
   consent: required
+  country: US
   names: [google ads, adsense, doubleclick]
   cookies: ['^_gcl_', '^IDE$', '^test_cookie$']
 
@@ -50,6 +58,7 @@
   hosts: [youtube.com, youtube-nocookie.com, ytimg.com, googlevideo.com]
   purpose: video
   consent: required
+  country: US
   advice: Show a preview image and load the video only after a click.
   cookies: ['^VISITOR_INFO1_LIVE$', '^YSC$']
 
@@ -57,12 +66,14 @@
   hosts: [vimeo.com, vimeocdn.com]
   purpose: video
   consent: required
+  country: US
   advice: Show a preview image and load the video only after a click.
 
 - name: Google Maps
   hosts: [maps.googleapis.com, maps.gstatic.com]
   purpose: maps
   consent: required
+  country: US
   names: [google maps]
   advice: Show a static image or a link and load the map only after a click.
 
@@ -70,11 +81,13 @@
   hosts: [mapbox.com]
   purpose: maps
   consent: required
+  country: US
 
 - name: OpenStreetMap
   hosts: [tile.openstreetmap.org]
   purpose: maps
   consent: required
+  country: GB
   names: [openstreetmap]
   advice: Load the map after a click, or serve tiles from your own server.
 
@@ -82,12 +95,14 @@
   hosts: [www.gstatic.com, www.google.com, recaptcha.net]
   purpose: various Google services
   consent: required
+  country: US
   names: [google]
 
 - name: Meta Pixel
   hosts: [facebook.net, facebook.com, connect.facebook.net]
   purpose: advertising
   consent: required
+  country: US
   names: [facebook, meta]
   cookies: ['^_fbp$', '^_fbc$', '^fr$']
 
@@ -95,6 +110,7 @@
   hosts: [licdn.com, ads.linkedin.com]
   purpose: advertising
   consent: required
+  country: US
   names: [linkedin]
   cookies: ['^li_', '^bcookie$', '^lidc$', '^UserMatchHistory$']
 
@@ -102,12 +118,14 @@
   hosts: [platform.twitter.com, ads-twitter.com, static.ads-twitter.com]
   purpose: social / advertising
   consent: required
+  country: US
   names: [twitter, x corp]
 
 - name: TikTok Pixel
   hosts: [analytics.tiktok.com]
   purpose: advertising
   consent: required
+  country: CN
   names: [tiktok]
   cookies: ['^_ttp$']
 
@@ -115,6 +133,7 @@
   hosts: [bat.bing.com]
   purpose: advertising
   consent: required
+  country: US
   names: [microsoft advertising, bing]
   cookies: ['^_uetsid$', '^_uetvid$', '^MUID$']
 
@@ -122,6 +141,7 @@
   hosts: [clarity.ms]
   purpose: analytics
   consent: required
+  country: US
   names: [clarity]
   cookies: ['^_clck$', '^_clsk$', '^CLID$']
 
@@ -129,12 +149,14 @@
   hosts: [hotjar.com, hotjar.io]
   purpose: analytics
   consent: required
+  country: MT
   cookies: ['^_hj']
 
 - name: Matomo
   hosts: [matomo.cloud]
   purpose: analytics
   consent: required
+  country: NZ
   names: [matomo, piwik]
   cookies: ['^_pk_']
 
@@ -142,66 +164,78 @@
   hosts: [intercom.io, intercomcdn.com, intercom-cdn.com]
   purpose: chat
   consent: required
+  country: US
 
 - name: Crisp
   hosts: [crisp.chat]
   purpose: chat
   consent: required
+  country: FR
 
 - name: Calendly
   hosts: [calendly.com]
   purpose: scheduling embed
   consent: required
+  country: US
 
 - name: Gravatar
   hosts: [gravatar.com]
   purpose: avatars
   consent: required
+  country: US
 
 - name: Pirsch
   hosts: [pirsch.io]
   purpose: analytics without cookies
   consent: check
+  country: DE
 
 - name: Plausible
   hosts: [plausible.io]
   purpose: analytics without cookies
   consent: check
+  country: EE
 
 - name: Cloudflare Web Analytics
   hosts: [cloudflareinsights.com]
   purpose: analytics without cookies
   consent: check
+  country: US
   names: [cloudflare]
 
 - name: Vercel Analytics
   hosts: [va.vercel-scripts.com, vitals.vercel-insights.com]
   purpose: analytics
   consent: check
+  country: US
   names: [vercel]
 
 - name: GitHub
   hosts: [api.github.com, raw.githubusercontent.com, avatars.githubusercontent.com, objects.githubusercontent.com]
   purpose: API and file hosting
   consent: check
+  country: US
   advice: Fetch the data at build time or on your own server.
 
 - name: jsDelivr
   hosts: [jsdelivr.net]
   purpose: CDN
   consent: check
+  country: PL
   advice: Serve the files from your own server.
 
 - name: unpkg
   hosts: [unpkg.com]
   purpose: CDN
   consent: check
+  country: US
   advice: Serve the files from your own server.
 
 - name: cdnjs (Cloudflare)
   hosts: [cdnjs.cloudflare.com]
   purpose: CDN
   consent: check
+  country: US
   names: [cdnjs, cloudflare]
   advice: Serve the files from your own server.
 
@@ -209,6 +243,7 @@
   hosts: [ajax.googleapis.com]
   purpose: CDN
   consent: check
+  country: US
   names: [google]
   advice: Serve the files from your own server.
 
@@ -216,6 +251,7 @@
   hosts: [code.jquery.com]
   purpose: CDN
   consent: check
+  country: US
   names: [jquery]
   advice: Serve the files from your own server.
 
@@ -223,6 +259,7 @@
   hosts: [stackpath.bootstrapcdn.com, maxcdn.bootstrapcdn.com, bootstrapcdn.com]
   purpose: CDN
   consent: check
+  country: US
   names: [bootstrapcdn, stackpath]
   advice: Serve the files from your own server.
 
@@ -230,39 +267,47 @@
   hosts: [stripe.com, stripe.network]
   purpose: payment
   consent: check
+  country: US
 
 - name: PayPal
   hosts: [paypal.com, paypalobjects.com]
   purpose: payment
   consent: check
+  country: US
 
 - name: Sentry
   hosts: [sentry.io, sentry-cdn.com]
   purpose: error tracking
   consent: check
+  country: US
 
 - name: hCaptcha
   hosts: [hcaptcha.com]
   purpose: bot protection
   consent: check
+  country: US
 
 - name: Cloudflare Turnstile
   hosts: [challenges.cloudflare.com]
   purpose: bot protection
   consent: check
+  country: US
   names: [cloudflare, turnstile]
 
 - name: Usercentrics
   hosts: [usercentrics.eu]
   purpose: consent management
   consent: check
+  country: DE
 
 - name: Cookiebot
   hosts: [cookiebot.com, cookiebot.eu]
   purpose: consent management
   consent: check
+  country: DK
 
 - name: OneTrust
   hosts: [cookielaw.org, onetrust.com]
   purpose: consent management
   consent: check
+  country: US

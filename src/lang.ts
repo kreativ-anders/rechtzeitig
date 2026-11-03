@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { parse } from "yaml";
-import type { Link, Snapshot } from "./sdk.ts";
+import type { Link } from "./sdk.ts";
 
 const DIR = new URL("../lang/", import.meta.url);
 
@@ -55,7 +55,7 @@ export function patternsFor(lang: Language, group: "links" | "text", concept: st
   return patterns;
 }
 
-export function matchLinks(lang: Language, concept: string, snapshot: Snapshot): Link[] {
+export function matchLinks(lang: Language, concept: string, links: Link[]): Link[] {
   const patterns = patternsFor(lang, "links", concept);
-  return snapshot.links.filter((link) => patterns.some((re) => re.test(link.label)));
+  return links.filter((link) => patterns.some((re) => re.test(link.label)));
 }

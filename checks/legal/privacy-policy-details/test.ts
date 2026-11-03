@@ -8,6 +8,16 @@ test("passes when every topic is covered", async () => {
   assert.equal((await runCheck(here, "complete")).status, "pass");
 });
 
+test("understands plain English wording", async () => {
+  const result = await runCheck(here, "plain-english", { language: "en" });
+  assert.deepEqual(result.details ?? [], []);
+});
+
+test("understands plain German wording", async () => {
+  const result = await runCheck(here, "plain-german");
+  assert.deepEqual(result.details ?? [], []);
+});
+
 test("warns and lists missing topics", async () => {
   const result = await runCheck(here, "incomplete");
   assert.equal(result.status, "warn");

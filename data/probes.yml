@@ -1,0 +1,57 @@
+# Paths fetched once per scan from the site's origin, without a browser.
+#
+# kind: file  = must not be public. It counts as exposed when the answer is 200 and the body matches `expect`
+#               (this filters out servers that answer every path with their start page).
+# kind: error = provokes an error page. security/error-disclosure looks for stack traces and versions in it.
+
+- path: /.env
+  kind: file
+  expect: '^\s*[A-Z][A-Z0-9_]*\s*='
+- path: /.env.local
+  kind: file
+  expect: '^\s*[A-Z][A-Z0-9_]*\s*='
+- path: /.env.production
+  kind: file
+  expect: '^\s*[A-Z][A-Z0-9_]*\s*='
+- path: /.git/config
+  kind: file
+  expect: '^\[core\]'
+- path: /.git/HEAD
+  kind: file
+  expect: '^ref: refs/'
+- path: /.svn/entries
+  kind: file
+  expect: '^\d+\s*$'
+- path: /.DS_Store
+  kind: file
+  expect: 'Bud1'
+- path: /phpinfo.php
+  kind: file
+  expect: 'PHP Version'
+- path: /info.php
+  kind: file
+  expect: 'PHP Version'
+- path: /backup.sql
+  kind: file
+  expect: 'CREATE TABLE|INSERT INTO'
+- path: /dump.sql
+  kind: file
+  expect: 'CREATE TABLE|INSERT INTO'
+- path: /database.sql
+  kind: file
+  expect: 'CREATE TABLE|INSERT INTO'
+- path: /wp-config.php.bak
+  kind: file
+  expect: 'DB_PASSWORD'
+- path: /config.php.bak
+  kind: file
+  expect: '<\?php'
+- path: /.htpasswd
+  kind: file
+  expect: '^[^:\s]+:\$?[\w./$]+'
+- path: /vibecoda-not-found-a7f3
+  kind: error
+- path: /?vibecoda[]=%00'
+  kind: error
+- path: /index.php?vibecoda[]=%00'
+  kind: error

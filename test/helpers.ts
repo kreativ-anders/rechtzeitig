@@ -3,15 +3,18 @@
 
 import { after } from "node:test";
 import { createServer } from "node:http";
-import { existsSync, readFileSync, statSync } from "node:fs";
-import { extname, join, resolve } from "node:path";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, extname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { chromium, type Browser } from "playwright";
 import { scan, type ScanOptions } from "../src/scan.ts";
 import { createContext } from "../src/context.ts";
+import type { CrawlData } from "../src/crawl.ts";
 import { loadLanguages } from "../src/lang.ts";
 import { loadRegistry } from "../src/registry.ts";
-import type { Check, Page, Result, ScanContext, Snapshot } from "../src/sdk.ts";
+import { scanRepo } from "../src/repo/scan.ts";
+import type { Check, Page, RepoCheck, RepoContext, Result, ScanContext, Snapshot } from "../src/sdk.ts";
 
 const TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -67,14 +70,33 @@ export async function runCheck(checkDir: string, fixture: string, opts: ScanOpti
 }
 
 /** Builds a context by hand, for cases a local fixture cannot show (https, redirects). */
-export function fakeContext(start: Partial<Snapshot>, extra: { http?: ScanContext["http"] } = {}): ScanContext {
+export function fakeContext(start: Partial<Snapshot>, extra: Partial<CrawlData> = {}): ScanContext {
   const snapshot: Snapshot = {
     status: 200, finalUrl: "https://example.de/", headers: {}, lang: "de", text: "",
-    links: [], requests: [], cookies: [], storage: [], ...start,
+    links: [], forms: [], checkboxes: [], requests: [], cookies: [], storage: [], ...start,
   };
   const page: Page = { url: snapshot.finalUrl, noJs: snapshot, js: snapshot };
-  return createContext({ start: page, pages: [page], http: extra.http }, loadLanguages(["de"]), loadRegistry(), {
+  const data = { start: page, pages: [page], probes: [], countries: {}, ...extra };
+  return createContext(data, loadLanguages(["de"]), loadRegistry(), {
     languages: ["de"],
     subscriptions: false,
   });
+}
+
+/** Writes the files to a temporary folder and scans it as a repository (without OSV). */
+export async function repoFromFiles(files: Record<string, string>): Promise<RepoContext> {
+  const root = mkdtempSync(join(tmpdir(), "vibecoda-repo-"));
+  for (const [path, content] of Object.entries(files)) {
+    mkdirSync(dirname(join(root, path)), { recursive: true });
+    writeFileSync(join(root, path), content);
+  }
+  const repo = await scanRepo(root, { osv: false });
+  if (!repo) throw new Error("repoFromFiles needs at least one file");
+  return repo;
+}
+
+/** Runs checks/repo/<name>/check.ts in `checkDir` against a repository made of `files`. */
+export async function runRepoCheck(checkDir: string, files: Record<string, string>, extra: Partial<RepoContext> = {}): Promise<Result> {
+  const check = (await import(pathToFileURL(join(checkDir, "check.ts")).href)).default as RepoCheck;
+  return check.run({ ...(await repoFromFiles(files)), ...extra });
 }

@@ -1,8 +1,9 @@
-import type { Browser, BrowserContext } from "playwright";
+import type { Browser } from "playwright";
 import { capture } from "./capture.ts";
 import { matchLinks, type Language } from "./lang.ts";
+import { countries, emailDns, hostVariant, plainHttp, probe, tlsInfo } from "./probe.ts";
 import { siteOf, withoutHash } from "./text.ts";
-import type { Area, Page, Snapshot } from "./sdk.ts";
+import type { Area, Page, Probe, ScanContext, Snapshot } from "./sdk.ts";
 
 export interface CrawlOptions {
   browser: Browser;
@@ -10,19 +11,29 @@ export interface CrawlOptions {
   maxPages: number;
   timeout: number;
   userAgent: string;
-  /** Tests only: requests to other hosts are recorded, then aborted. */
+  /** Looks up the country of third-party hosts. */
+  ipinfoToken?: string;
+  /** Tests only: requests to other hosts are recorded, then aborted; no DNS, TLS or HTTP lookups. */
   offline?: boolean;
 }
 
 export interface CrawlData {
   start: Page;
   pages: Page[];
-  http?: { status: number; location: string } | { error: string };
+  probes: Probe[];
+  countries: Record<string, string>;
+  http?: ScanContext["http"];
+  variant?: ScanContext["variant"];
+  tls?: ScanContext["tls"];
+  dns?: ScanContext["dns"];
 }
 
 const SKIP_FILES = /\.(pdf|zip|gz|dmg|pkg|exe|msi|apk|jpe?g|png|gif|svg|webp|avif|ico|mp3|mp4|webm|xml|json|txt|ics|rss|atom)$/i;
-const SAMPLE_ORDER: Area[] = ["nav", "header", "footer", "main", "other"];
+const SAMPLE_ORDER: Area[] = ["nav", "header", "footer", "main", "other", "banner"];
 const LEGAL_LINKS_PER_CONCEPT = 2;
+const MAX_COUNTRY_LOOKUPS = 30;
+
+const isPage = (href: string | null): href is string => !!href && /^https?:/.test(href) && !SKIP_FILES.test(new URL(href).pathname);
 
 /**
  * Visits the start page, every page a language pack calls a legal page (imprint, privacy, ...),
@@ -57,8 +68,22 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       pages.push(await visit(key));
     }
 
-    const http = opts.offline ? undefined : await plainHttp(start.js.finalUrl || startUrl, opts.timeout);
-    return { start, pages, http };
+    const finalUrl = start.js.finalUrl || startUrl;
+    const probes = await probe(new URL(finalUrl).origin, opts.userAgent, opts.timeout);
+    if (opts.offline) return { start, pages, probes, countries: {} };
+
+    const site = siteOf(new URL(finalUrl).hostname);
+    const thirdParty = [...new Set(pages.flatMap((p) => [...p.noJs.requests, ...p.js.requests].map((r) => r.host)))]
+      .filter((h) => siteOf(h) !== site)
+      .slice(0, MAX_COUNTRY_LOOKUPS);
+    const [http, variant, tls, dns, found] = await Promise.all([
+      plainHttp(finalUrl, opts.timeout),
+      hostVariant(finalUrl, opts.timeout),
+      tlsInfo(finalUrl, opts.timeout),
+      emailDns(finalUrl),
+      countries(thirdParty, opts.ipinfoToken, opts.timeout),
+    ]);
+    return { start, pages, probes, countries: found, http, variant, tls, dns };
   } finally {
     await noJs.close();
     await js.close();
@@ -68,9 +93,9 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
 function legalTargets(start: Page, lang: Language): string[] {
   const urls: string[] = [];
   for (const concept of Object.keys(lang.links)) {
-    const hrefs = [...matchLinks(lang, concept, start.js), ...matchLinks(lang, concept, start.noJs)]
+    const hrefs = [...matchLinks(lang, concept, start.js.links), ...matchLinks(lang, concept, start.noJs.links)]
       .map((l) => l.href)
-      .filter((h): h is string => !!h && !SKIP_FILES.test(new URL(h).pathname));
+      .filter(isPage);
     urls.push(...[...new Set(hrefs)].slice(0, LEGAL_LINKS_PER_CONCEPT));
   }
   return urls;
@@ -79,19 +104,7 @@ function legalTargets(start: Page, lang: Language): string[] {
 function sampleTargets(snapshot: Snapshot): string[] {
   const site = siteOf(new URL(snapshot.finalUrl).hostname);
   return snapshot.links
-    .filter((l) => l.href && siteOf(new URL(l.href).hostname) === site && !SKIP_FILES.test(new URL(l.href).pathname))
+    .filter((l) => isPage(l.href) && siteOf(new URL(l.href).hostname) === site)
     .sort((a, b) => SAMPLE_ORDER.indexOf(a.area) - SAMPLE_ORDER.indexOf(b.area))
     .map((l) => l.href as string);
-}
-
-async function plainHttp(url: string, timeout: number): Promise<CrawlData["http"]> {
-  const u = new URL(url);
-  if (u.protocol !== "https:") return undefined;
-  u.protocol = "http:";
-  try {
-    const res = await fetch(u, { redirect: "manual", signal: AbortSignal.timeout(timeout) });
-    return { status: res.status, location: res.headers.get("location") ?? "" };
-  } catch (e) {
-    return { error: (e as Error).message };
-  }
 }

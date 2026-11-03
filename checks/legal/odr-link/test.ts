@@ -1,0 +1,15 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { runCheck } from "../../../test/helpers.ts";
+
+const here = import.meta.dirname;
+
+test("passes without the old link", async () => {
+  assert.equal((await runCheck(here, "clean")).status, "pass");
+});
+
+test("warns for the old link in the imprint", async () => {
+  const result = await runCheck(here, "outdated");
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["/impressum"]);
+});
