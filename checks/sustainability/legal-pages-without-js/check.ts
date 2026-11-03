@@ -1,26 +1,20 @@
-import { defineCheck, fail, loaded, MIN_TEXT, pass, skip } from "../../../src/sdk.ts";
-
-const PAGES: Array<[string, string]> = [
-  ["imprint", "Imprint"],
-  ["privacy", "Privacy policy"],
-];
+import { defineCheck, fail, LEGAL_PAGES, loaded, MIN_TEXT, pass, skip, startLinks } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
     const problems: string[] = [];
     let found = 0;
-    for (const [concept, name] of PAGES) {
-      const withJs = ctx.links(concept, ctx.start.js).filter((l) => l.href);
-      const withoutJs = ctx.links(concept, ctx.start.noJs).filter((l) => l.href);
-      if (!withJs.length && !withoutJs.length) continue;
+    for (const { concept, name } of LEGAL_PAGES) {
+      const label = `${name[0].toUpperCase()}${name.slice(1)}`;
+      if (!startLinks(ctx, concept).some((l) => l.href)) continue;
       found++;
-      if (!withoutJs.length) {
-        problems.push(`${name}: the link only appears with JavaScript.`);
+      if (!ctx.links(concept, ctx.start.noJs).some((l) => l.href)) {
+        problems.push(`${label}: the link only appears with JavaScript.`);
         continue;
       }
-      const page = ctx.page(withoutJs[0].href);
+      const page = ctx.legalPage(concept)?.page;
       if (page && loaded(page.noJs) && page.noJs.text.trim().length < MIN_TEXT) {
-        problems.push(`${name}: ${ctx.short(page.url)} shows no text without JavaScript.`);
+        problems.push(`${label}: ${ctx.short(page.url)} shows no text without JavaScript.`);
       }
     }
     if (!found) return skip("No imprint or privacy policy link found (see legal/*).");

@@ -1,5 +1,6 @@
 import { readdirSync } from "node:fs";
 import { loadYaml } from "./data.ts";
+import { errorMessage } from "./text.ts";
 import type { Link } from "./sdk.ts";
 
 const DIR = new URL("../lang/", import.meta.url);
@@ -39,7 +40,7 @@ export function loadLanguages(codes: string[]): Language {
           try {
             return new RegExp(p, "i");
           } catch (e) {
-            throw new Error(`lang/${code}.yml ${group}.${concept}: invalid pattern ${p} (${(e as Error).message})`);
+            throw new Error(`lang/${code}.yml ${group}.${concept}: invalid pattern ${p} (${errorMessage(e)})`);
           }
         });
         (merged[group][concept] ??= []).push(...compiled);

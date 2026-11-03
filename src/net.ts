@@ -29,6 +29,12 @@ export function isPublicAddress(ip: string): boolean {
   return !PRIVATE.check(a, family === 4 ? "ipv4" : "ipv6");
 }
 
+/** true for IP literals (also [::1]) and `localhost`: hosts without a domain to check. */
+export const isIpOrLocal = (host: string): boolean => {
+  const h = bare(host);
+  return isLocalName(h) || isIP(h) > 0;
+};
+
 /** For the browser, where DNS per request is too slow: true for `localhost` and private IP literals. */
 export function blockedInBrowser(host: string, trusted?: string): boolean {
   const h = bare(host);

@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-DEPS-002
 severity: low
-tier: free
 title:
   de: "Abhängigkeiten sind gesperrt und in einer SBOM erfasst"
   en: "Dependencies are locked and listed in an SBOM"

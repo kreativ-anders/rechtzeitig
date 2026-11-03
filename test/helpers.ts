@@ -6,14 +6,15 @@ import { createServer } from "node:http";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, extname, join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
 import type { Browser } from "playwright";
 import { launchBrowser, scan, type ScanOptions } from "../src/scan.ts";
+import { emptySnapshot } from "../src/capture.ts";
 import { createContext } from "../src/context.ts";
 import type { CrawlData } from "../src/crawl.ts";
 import { loadLanguages } from "../src/lang.ts";
 import { loadRegistry } from "../src/registry.ts";
 import { scanRepo } from "../src/repo/scan.ts";
+import { importCheck } from "../src/runner.ts";
 import type { Check, Page, RepoCheck, RepoContext, Result, ScanContext, Snapshot } from "../src/sdk.ts";
 
 const TYPES: Record<string, string> = {
@@ -64,19 +65,22 @@ export async function scanFixture(dir: string, opts: ScanOptions = {}): Promise<
 
 /** Runs checks/<…>/check.ts in `checkDir` against checkDir/fixtures/<fixture>. */
 export async function runCheck(checkDir: string, fixture: string, opts: ScanOptions = {}): Promise<Result> {
-  const check = (await import(pathToFileURL(join(checkDir, "check.ts")).href)).default as Check;
+  const check = await importCheck<Check>(join(checkDir, "check.ts"));
   const ctx = await scanFixture(join(checkDir, "fixtures", fixture), opts);
   return check.run(ctx);
 }
 
+/** Runs checks/<…>/check.ts in `checkDir` against fakeContext(start, extra). */
+export async function runFake(checkDir: string, start: Partial<Snapshot> = {}, extra: Partial<CrawlData> = {}): Promise<Result> {
+  const check = await importCheck<Check>(join(checkDir, "check.ts"));
+  return check.run(fakeContext(start, extra));
+}
+
 /** Builds a context by hand, for cases a local fixture cannot show (https, redirects). */
 export function fakeContext(start: Partial<Snapshot>, extra: Partial<CrawlData> = {}): ScanContext {
-  const snapshot: Snapshot = {
-    status: 200, finalUrl: "https://example.de/", headers: {}, meta: {}, lang: "de", text: "",
-    links: [], forms: [], checkboxes: [], requests: [], cookies: [], storage: [], ...start,
-  };
+  const snapshot: Snapshot = { ...emptySnapshot("https://example.de/"), status: 200, lang: "de", ...start };
   const page: Page = { url: snapshot.finalUrl, noJs: snapshot, js: snapshot };
-  const data = { start: page, pages: [page], probes: [], countries: {}, ...extra };
+  const data = { url: snapshot.finalUrl, start: page, pages: [page], probes: [], countries: {}, ...extra };
   return createContext(data, loadLanguages(["de"]), loadRegistry(), {
     languages: ["de"],
     subscriptions: false,
@@ -98,7 +102,7 @@ export async function repoFromFiles(files: Record<string, string>): Promise<Repo
 
 /** Runs checks/repo/<name>/check.ts in `checkDir` against a repository made of `files`. */
 export async function runRepoCheck(checkDir: string, files: Record<string, string>, extra: Partial<RepoContext> = {}): Promise<Result> {
-  const check = (await import(pathToFileURL(join(checkDir, "check.ts")).href)).default as RepoCheck;
+  const check = await importCheck<RepoCheck>(join(checkDir, "check.ts"));
   return check.run({ ...(await repoFromFiles(files)), ...extra });
 }
 

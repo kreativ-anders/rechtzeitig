@@ -1,6 +1,7 @@
 // Loads the YAML files that ship with rechtzeitig (data/, lang/, rule.yml).
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
+import { errorMessage } from "./text.ts";
 
 const ROOT = new URL("../", import.meta.url);
 
@@ -10,6 +11,6 @@ export function loadYaml<T>(path: string | URL): T {
   try {
     return parse(readFileSync(url, "utf8")) as T;
   } catch (e) {
-    throw new Error(`${url.pathname}: ${(e as Error).message}`);
+    throw new Error(`${url.pathname}: ${errorMessage(e)}`);
   }
 }

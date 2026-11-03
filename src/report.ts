@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
-import type { Outcome } from "./runner.ts";
-import type { UiLanguage } from "./rules.ts";
+import { basename } from "node:path";
+import { OUTCOMES, type Outcome, type OutcomeStatus } from "./runner.ts";
+import { SEVERITIES, type UiLanguage } from "./rules.ts";
 import type { RepoContext, ScanContext } from "./sdk.ts";
 import { oneLine } from "./text.ts";
 
-export const ICONS: Record<Outcome["status"], string> = {
+const ICONS: Record<OutcomeStatus, string> = {
   fail: "❌",
   warn: "⚠️",
   error: "💥",
@@ -12,8 +13,10 @@ export const ICONS: Record<Outcome["status"], string> = {
   info: "ℹ️",
   skip: "⏭️",
 };
-const ORDER = Object.keys(ICONS);
-const SEVERITY_ORDER = ["critical", "high", "medium", "low", "info"];
+const SEVERITY_ORDER = [...SEVERITIES].reverse();
+
+/** Folder name of the scanned repository. */
+export const repoName = (root: string) => basename(root);
 
 /** Shape of rechtzeitig-report.json: rule ids, results and where they were found. No page text, no file contents. */
 export interface Findings {
@@ -24,7 +27,7 @@ export interface Findings {
     rule: string;
     check: string;
     severity: string;
-    status: Outcome["status"];
+    status: OutcomeStatus;
     message: string;
     /** Pages, files with line numbers, hosts. Secrets are already redacted by the checks. */
     locations: string[];
@@ -77,9 +80,9 @@ export interface Report {
   warnings?: string[];
 }
 
-export function counts(outcomes: Outcome[]): Record<string, number> {
-  const c: Record<string, number> = {};
-  for (const s of ORDER) c[s] = outcomes.filter((o) => o.status === s).length;
+function counts(outcomes: Outcome[]): Record<OutcomeStatus, number> {
+  const c = Object.fromEntries(OUTCOMES.map((s) => [s, 0])) as Record<OutcomeStatus, number>;
+  for (const o of outcomes) c[o.status]++;
   return c;
 }
 
@@ -88,15 +91,15 @@ export const md = (s: string) => oneLine(s).replace(/[<>&[\]()*_`!|\\#~]/g, (c) 
 /** Untrusted text for the log: one line that can never start a workflow command. */
 export const plain = (s: string) => oneLine(s).replace(/^::/, ": :");
 const cell = (s: string) => s.replace(/\|/g, "\\|").replace(/\n/g, " ");
-const title = (r: Report) => [r.web?.url, r.repo && `repository ${r.repo.root.split("/").pop()}`].filter(Boolean).join(" + ");
+const title = (r: Report) => [r.web?.url, r.repo && `repository ${repoName(r.repo.root)}`].filter(Boolean).join(" + ");
 const summaryLine = (r: Report, icons: boolean) => {
   const c = counts(r.outcomes);
-  return ORDER.filter((s) => c[s]).map((s) => `${icons ? `${ICONS[s as Outcome["status"]]} ` : ""}${c[s]} ${s}`).join(icons ? " · " : ", ");
+  return OUTCOMES.filter((s) => c[s]).map((s) => `${icons ? `${ICONS[s]} ` : ""}${c[s]} ${s}`).join(icons ? " · " : ", ");
 };
 /** Most urgent first: status, then severity. */
 const sorted = (outcomes: Outcome[]) =>
   [...outcomes].sort(
-    (a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status) || SEVERITY_ORDER.indexOf(a.rule.severity) - SEVERITY_ORDER.indexOf(b.rule.severity),
+    (a, b) => OUTCOMES.indexOf(a.status) - OUTCOMES.indexOf(b.status) || SEVERITY_ORDER.indexOf(a.rule.severity) - SEVERITY_ORDER.indexOf(b.rule.severity),
   );
 const open = (o: Outcome) => o.status === "fail" || o.status === "warn" || o.status === "info";
 

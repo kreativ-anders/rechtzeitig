@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-SECRETS-002
 severity: high
-tier: free
 title:
   de: ".env-Dateien bleiben außerhalb von Git"
   en: ".env files stay out of git"

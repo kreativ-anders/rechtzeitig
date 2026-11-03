@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-DSE-002
 severity: medium
-tier: free
 title:
   de: "Datenschutzerklärung enthält die Pflichtthemen"
   en: "Privacy policy covers the required topics"

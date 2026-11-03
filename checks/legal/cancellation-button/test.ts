@@ -20,6 +20,12 @@ test("warns when the confirmation button is missing", async () => {
   assert.match(result.details?.[0] ?? "", /jetzt kündigen/);
 });
 
+test("gives info when the button cannot be followed to the confirmation page", async () => {
+  const result = await runCheck(here, "button-only", { subscriptions });
+  assert.equal(result.status, "info");
+  assert.match(result.details?.[0] ?? "", /a button without a link/);
+});
+
 test("fails without a button", async () => {
   assert.equal((await runCheck(here, "missing", { subscriptions })).status, "fail");
 });

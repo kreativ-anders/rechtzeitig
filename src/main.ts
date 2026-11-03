@@ -7,11 +7,11 @@ import { parseArgs } from "node:util";
 import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
-import { loadChecks, runChecks, selectModules, type Outcome } from "./runner.ts";
+import { loadChecks, OUTCOMES, runChecks, selectModules, type OutcomeStatus } from "./runner.ts";
 import { LANGUAGES, type UiLanguage } from "./rules.ts";
-import { md, plain, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
+import { md, plain, repoName, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
 
-const FAIL_ON: Record<string, Outcome["status"][]> = {
+const FAIL_ON: Record<string, OutcomeStatus[]> = {
   never: [],
   fail: ["fail", "error"],
   warn: ["fail", "error", "warn"],
@@ -67,7 +67,7 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
 
 const outcomes = await runChecks(checks, { web, repo });
 const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS, language, warnings };
-const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo?.root.split("/").pop() } });
+const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) } });
 const markdown = toMarkdown(report);
 writeFileSync(`${values.out}.md`, markdown);
 writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
@@ -76,9 +76,9 @@ const text = toText(report);
 console.log(report.onGitHub ? withoutCommands(text) : text);
 
 const failed = outcomes.some((o) => FAIL_ON[failOn].includes(o.status));
-const result = outcomes.some((o) => o.status === "fail" || o.status === "error") ? "fail"
-  : outcomes.some((o) => o.status === "warn") ? "warn"
-  : "pass";
+// The most urgent outcome decides: fail (also for errors), warn, otherwise pass.
+const worst = OUTCOMES.find((s) => outcomes.some((o) => o.status === s));
+const result = worst === "fail" || worst === "error" ? "fail" : worst === "warn" ? "warn" : "pass";
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
 if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `result=${result}\n`);
 process.exit(failed ? 1 : 0);

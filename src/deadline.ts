@@ -6,3 +6,6 @@ export function timeoutAfter(ms: number, message: string): [Promise<never>, () =
   });
   return [promise, () => clearTimeout(timer)];
 }
+
+/** One day in milliseconds. */
+export const DAY = 86_400_000;

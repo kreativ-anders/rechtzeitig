@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-DE-IMP-001
 severity: high
-tier: free
 title:
   de: "Impressum ist verlinkt und erreichbar"
   en: "Imprint is linked and reachable"

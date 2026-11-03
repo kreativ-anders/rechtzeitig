@@ -8,7 +8,6 @@
    ```yaml
    id: LEG-DE-IMP-001        # SEC, LEG-DE, LEG-EU, A11Y, PRC or SUS, then a topic and a number
    severity: high            # info | low | medium | high | critical
-   tier: free
    title:
      de: "Impressum ist verlinkt und erreichbar"
      en: "Imprint is linked and reachable"
@@ -77,8 +76,13 @@ The runner finds the check by itself. Nothing else needs to change.
 | Field or helper | Content |
 |---|---|
 | `ctx.start`, `ctx.pages` | Visited pages. Each has `noJs` and `js` snapshots: status, headers, `meta` (header equivalents from `<meta>`), text, links, forms, checkboxes, requests, cookies |
-| `ctx.sitePages`, `siteRequests(ctx)` | Pages and requests of the site itself. Use these for requests and cookies |
-| `ctx.legalPage("imprint")`, `loadedPage(ctx, "privacy")` | Link on the start page and the page behind it |
+| `ctx.url`, `ctx.https`, `ctx.domain` | Final URL of the start page, whether it is HTTPS, its registrable domain |
+| `startLinks(ctx, concept?)`, `startCheckboxes(ctx)` | Links and checkboxes of the start page, both loads, without duplicates |
+| `startSnapshot(ctx)` | The start page as the server sent it. Use it for status, headers, `meta` and `lang` |
+| `ctx.sitePages`, `siteRequests(ctx)`, `siteCookies(ctx)` | Pages, requests and cookies (once per name and domain) of the site itself |
+| `thirdPartyServices(ctx)` | Other sites contacted, grouped by vendor (else by domain), with hosts and pages |
+| `ctx.legalPage("imprint")`, `needLegalPage(ctx, "privacy")` | Link on the start page and the page behind it; `needLegalPage` returns the skip result when it did not load |
+| `LEGAL_PAGES`, `linkedPageResult`, `requiredButton` | Shared logic of the imprint/privacy and cancellation/withdrawal rules |
 | `ctx.links(concept, snapshotOrLinks)` | Links whose label matches a concept from `lang/*.yml` |
 | `ctx.says(concept, text)` | Text contains a concept from `lang/*.yml` |
 | `ctx.probes`, `ctx.tls`, `ctx.dns`, `ctx.http`, `ctx.variant`, `ctx.countries` | Lookups without a browser |
@@ -94,4 +98,5 @@ The runner finds the check by itself. Nothing else needs to change.
 | `data/secrets.yml` | A secret pattern with `fail` or `warn`. With `payload`, match group 1 is decoded as a JWT payload and must have the listed claims. |
 | `data/licenses.yml` | A license pattern in one of the groups `agpl`, `gpl`, `restricted`, `permissive`. |
 | `data/update-tools.yml` | A Dependabot ecosystem name, a Renovate config path or a vulnerability scanner. |
+| `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml` | Country groups, cookie name patterns, error page traces and version headers, links to closed services. |
 | `src/repo/lockfiles.ts` | A lockfile parser: one function plus one entry in `LOCKFILES`; its manifest in `MANIFESTS`. |

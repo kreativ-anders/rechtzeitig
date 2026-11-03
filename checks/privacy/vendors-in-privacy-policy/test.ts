@@ -14,6 +14,13 @@ test("warns when the policy does not name it", async () => {
   assert.deepEqual(result.details, ["Google Fonts"]);
 });
 
+test("matches whole words, and names unknown services by their domain", async () => {
+  // "Metadaten" is not "Meta"; "Cookies" is not "co" from shop.co.uk.
+  const result = await runCheck(here, "partial-words");
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["Meta Pixel", "shop.co.uk"]);
+});
+
 test("skips without a privacy policy", async () => {
   assert.equal((await runCheck(here, "none")).status, "skip");
 });

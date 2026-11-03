@@ -1,14 +1,13 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-DSE-005
 severity: medium
-tier: free
 title:
   de: "Datenschutzerklärung nennt Übermittlungen außerhalb der EU"
   en: "Privacy policy names transfers outside the EU"
 legal_basis:
   de: "Art. 13 Abs. 1 lit. f, Art. 44 ff. DSGVO"
   en: "Art. 13(1)(f), Art. 44 ff. GDPR"
-how: "Gets the country of each third-party host (`data/third-parties.yml`, or IPinfo with a token) and, for countries outside the EU/EEA, looks for `third_country` wording in the privacy policy."
+how: "Gets the country of each third-party service (`country` in `data/third-parties.yml`, else IPinfo with a token) and, for countries outside the EEA (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known."
 fix_hint:
   de: "Für jeden Dienst außerhalb von EU/EWR Land und Garantie nennen (z. B. Data Privacy Framework, Standardvertragsklauseln)."
   en: "Name the country and the safeguard for each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses)."

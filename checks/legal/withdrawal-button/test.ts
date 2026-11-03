@@ -17,6 +17,11 @@ test("does not count the withdrawal instructions as a function", async () => {
   assert.equal((await runCheck(here, "instructions-only", { sales })).status, "fail");
 });
 
+test("matches similar wording on the link text, not the URL", async () => {
+  // "/widerruf" in the URL, but the link says "Widerrufsbelehrung".
+  assert.equal((await runCheck(here, "path-only", { sales })).status, "fail");
+});
+
 test("skips when nothing is sold", async () => {
   assert.equal((await runCheck(here, "exact")).status, "skip");
 });

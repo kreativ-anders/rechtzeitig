@@ -1,9 +1,12 @@
 // Everything a check needs. Checks import from this file and nothing else.
 
+import { siteOf } from "./text.ts";
+
 export { loadYaml } from "./data.ts";
 export { MANIFESTS } from "./repo/lockfiles.ts";
 
-export type Status = "pass" | "warn" | "fail" | "info" | "skip";
+export const STATUSES = ["pass", "warn", "fail", "info", "skip"] as const;
+export type Status = (typeof STATUSES)[number];
 
 export interface Result {
   status: Status;
@@ -41,14 +44,65 @@ export const MIN_TEXT = 100;
 /** true when the snapshot loaded with HTTP 2xx/3xx. */
 export const loaded = (s?: Snapshot): s is Snapshot => !!s && s.status > 0 && s.status < 400;
 
+// ---------- Start page
+
+/** Links and buttons of both loads of a page, JavaScript on first, without duplicates. */
+export function pageLinks(page: Page): Link[] {
+  const seen = new Set<string>();
+  return [...page.js.links, ...page.noJs.links].filter((l) => {
+    const key = `${l.href}\n${l.label}\n${l.area}\n${l.button}`;
+    return !seen.has(key) && !!seen.add(key);
+  });
+}
+
+/** Links and buttons on the start page, both loads; with `concept`, only those matching it (lang/*.yml `links`). */
+export const startLinks = (ctx: ScanContext, concept?: string): Link[] =>
+  concept ? ctx.links(concept, pageLinks(ctx.start)) : pageLinks(ctx.start);
+
+/** Checkboxes on the start page, both loads, without duplicates. */
+export function startCheckboxes(ctx: ScanContext): Checkbox[] {
+  const seen = new Set<string>();
+  return [...ctx.start.js.checkboxes, ...ctx.start.noJs.checkboxes].filter((b) => {
+    const key = `${b.label}\n${b.checked}\n${b.disabled}`;
+    return !seen.has(key) && !!seen.add(key);
+  });
+}
+
+/**
+ * The start page as the server sent it, for status, headers, `meta` and `lang`:
+ * the load without JavaScript, or the one with JavaScript when that one failed.
+ */
+export const startSnapshot = (ctx: ScanContext): Snapshot => (ctx.start.noJs.status > 0 ? ctx.start.noJs : ctx.start.js);
+
+// ---------- Legal pages
+
+/** Pages every site must link. `concept` is the lang/*.yml `links` key, `check` the rule that looks for the link. */
+export const LEGAL_PAGES = [
+  { concept: "imprint", name: "imprint", law: "Impressum", check: "legal/imprint" },
+  { concept: "privacy", name: "privacy policy", law: "Datenschutzerklärung", check: "legal/privacy-policy" },
+] as const;
+export type LegalConcept = (typeof LEGAL_PAGES)[number]["concept"];
+const legal = (concept: LegalConcept) => LEGAL_PAGES.find((p) => p.concept === concept)!;
+
 /** The page a legal link leads to, if it was visited and loaded. */
 export function loadedPage(ctx: ScanContext, concept: string): Page | undefined {
   const page = ctx.legalPage(concept)?.page;
   return page && loaded(page.js) ? page : undefined;
 }
 
+/**
+ * The loaded legal page, or the skip result to return when there is none:
+ * `const page = needLegalPage(ctx, "privacy"); if ("status" in page) return page;`
+ */
+export function needLegalPage(ctx: ScanContext, concept: LegalConcept): Page | Result {
+  const { name, check } = legal(concept);
+  return loadedPage(ctx, concept) ?? skip(`No ${name} to read (see ${check}).`);
+}
+
 /** fail unless the start page links to a page for `concept` that loads and has text. */
-export function linkedPageResult(ctx: ScanContext, concept: string, name: string): Result {
+export function linkedPageResult(ctx: ScanContext, concept: LegalConcept): Result {
+  const { name: short, law } = legal(concept);
+  const name = `${short} (${law})`;
   const found = ctx.legalPage(concept);
   if (!found) return fail(`No link to the ${name} on the start page.`);
   const where = ctx.short(found.link.href ?? "");
@@ -59,9 +113,86 @@ export function linkedPageResult(ctx: ScanContext, concept: string, name: string
   return pass(`${name[0].toUpperCase()}${name.slice(1)} found at ${where}.`);
 }
 
+/** A button the law asks for on the start page (cancellation, withdrawal) and its confirmation page. */
+export interface ButtonRule {
+  /** lang/*.yml `links` concept with the wording from the law. */
+  exact: string;
+  /** `links` concept for wording that means the same. Matched on the visible text only, not the URL. */
+  similar: string;
+  /** lang/*.yml `text` concept for the confirmation button on the page behind it. */
+  confirm: string;
+  /** For messages: what the page is called ("cancellation"), the wording of both buttons, the law of the confirmation. */
+  name: string;
+  wording: string;
+  confirmWording: string;
+  confirmLaw: string;
+  /** fail message when there is no such button. */
+  missing: string;
+}
+
+/**
+ * Finds the button with the wording from the law (or similar wording, which warns) and checks the
+ * confirmation button on the page behind it. A control that could not be followed gives info.
+ */
+export function requiredButton(ctx: ScanContext, rule: ButtonRule): Result {
+  const exact = startLinks(ctx, rule.exact);
+  const link = exact[0] ?? startLinks(ctx).find((l) => ctx.says(rule.similar, l.text));
+  if (!link) return fail(rule.missing);
+  const target = ctx.page(link.href)?.js;
+  const problems = !loaded(target)
+    ? [`Could not follow "${link.text}" to the ${rule.name} page${link.href ? ` ${ctx.short(link.href)}` : " (a button without a link)"}; the confirmation button "${rule.confirmWording}" was not checked.`]
+    : ctx.says(rule.confirm, target.text) ? []
+    : [`${ctx.short(target.finalUrl)} has no confirmation button "${rule.confirmWording}" (${rule.confirmLaw}).`];
+  if (!exact.length) return warn(`Found "${link.text}", but the law asks for "${rule.wording}" or equally clear wording.`, problems);
+  if (!loaded(target)) return info(`Found "${link.text}", but could not follow it to the confirmation page.`, problems);
+  if (problems.length) return warn(`Found "${link.text}", but the ${rule.name} page looks incomplete.`, problems);
+  return pass(`Found "${link.text}".`);
+}
+
+// ---------- Requests and cookies
+
 /** Every request made by the site's own pages, both loads. */
 export const siteRequests = (ctx: ScanContext): Array<Request & { page: string }> =>
   ctx.sitePages.flatMap((p) => [...p.noJs.requests, ...p.js.requests].map((r) => ({ ...r, page: ctx.short(p.url) })));
+
+/** A third-party service the site's pages contacted. */
+export interface Service {
+  /** Vendor name from data/third-parties.yml, else the host's registrable domain. */
+  name: string;
+  vendor?: Vendor;
+  hosts: Set<string>;
+  /** Pages that contacted it, short form. */
+  pages: Set<string>;
+}
+
+/** Third-party services contacted by the site's own pages, keyed by vendor name, else by the host's site. */
+export function thirdPartyServices(ctx: ScanContext): Map<string, Service> {
+  const services = new Map<string, Service>();
+  for (const { host, page } of siteRequests(ctx)) {
+    if (!ctx.isThirdParty(host)) continue;
+    const vendor = ctx.vendor(host);
+    const name = vendor?.name ?? siteOf(host);
+    const service = services.get(name) ?? { name, vendor, hosts: new Set(), pages: new Set() };
+    service.hosts.add(host);
+    service.pages.add(page);
+    services.set(name, service);
+  }
+  return services;
+}
+
+/** Identity of a cookie: name and domain. */
+export const cookieKey = (c: { name: string; domain: string }) => `${c.name}@${c.domain}`;
+
+/** Cookies set on the site's own pages, both loads, once per name and domain, with the first page that set it. */
+export function siteCookies(ctx: ScanContext): Array<Cookie & { page: string }> {
+  const cookies = new Map<string, Cookie & { page: string }>();
+  for (const p of ctx.sitePages) {
+    for (const c of [...p.noJs.cookies, ...p.js.cookies]) {
+      if (!cookies.has(cookieKey(c))) cookies.set(cookieKey(c), { ...c, page: ctx.short(p.url) });
+    }
+  }
+  return [...cookies.values()];
+}
 
 // ---------- Website data
 
@@ -171,6 +302,10 @@ export interface Vendor {
 export interface ScanContext {
   /** Final URL of the start page. */
   url: string;
+  /** true when the start page is served over HTTPS. */
+  https: boolean;
+  /** Registrable domain of the start page ("www.example.de" → "example.de"). */
+  domain: string;
   languages: string[];
   /** true when the site sells subscriptions or other ongoing contracts. */
   subscriptions: boolean;
@@ -187,8 +322,8 @@ export interface ScanContext {
   variant?: { url: string; status: number; finalUrl: string } | { url: string; error: string };
   /** TLS certificate of the start page's host. Missing for http:// and in tests. */
   tls?: { protocol: string; validTo: string; daysLeft: number; authorized: boolean; error?: string };
-  /** DNS TXT records of the site's domain. Missing in tests. */
-  dns?: { spf?: string; dmarc?: string; mx: boolean };
+  /** DNS records of the registrable domain `domain` (SPF, DMARC at _dmarc.domain, MX). Missing in tests. */
+  dns?: { domain: string; spf?: string; dmarc?: string; mx: boolean };
   probes: Probe[];
   /** Host → ISO country, looked up by IP when an IPinfo token is set. */
   countries: Record<string, string>;
@@ -199,7 +334,7 @@ export interface ScanContext {
   links(concept: string, from: Snapshot | Link[]): Link[];
   /** true when the text contains a concept from lang/*.yml (`text`, or `links` if not found there). */
   says(concept: string, text: string): boolean;
-  /** true when the text contains the phrase, both normalized. */
+  /** true when the text contains the phrase as whole words, both normalized. */
   mentions(text: string, phrase: string): boolean;
   /** Link on the start page for a concept, and the page it leads to (if it was visited). */
   legalPage(concept: string): { link: Link; page?: Page } | undefined;

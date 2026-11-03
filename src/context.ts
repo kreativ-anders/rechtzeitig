@@ -1,8 +1,8 @@
 import { matchLinks, patternsFor, type Language } from "./lang.ts";
 import type { Registry } from "./registry.ts";
-import { normalize, siteOf, withoutHash } from "./text.ts";
+import { isWebUrl, normalize, siteOf, withoutHash } from "./text.ts";
 import type { CrawlData } from "./crawl.ts";
-import { loaded, type Page, type ScanContext } from "./sdk.ts";
+import { loaded, pageLinks, type Page, type ScanContext } from "./sdk.ts";
 
 export interface ContextOptions {
   languages: string[];
@@ -18,14 +18,13 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
       if (u && !byUrl.has(withoutHash(u))) byUrl.set(withoutHash(u), p);
     }
   }
-  const url = data.start.js.finalUrl || data.start.url;
-  const site = siteOf(new URL(url).hostname);
-  const isWeb = (u: string | null): u is string => !!u && /^https?:/.test(u);
-  const page = (u: string | null) => (isWeb(u) ? byUrl.get(withoutHash(u)) : undefined);
+  const site = siteOf(new URL(data.url).hostname);
+  const page = (u: string | null) => (isWebUrl(u) ? byUrl.get(withoutHash(u)) : undefined);
 
   const ctx: ScanContext = {
     ...data,
-    url,
+    https: data.url.startsWith("https:"),
+    domain: site,
     languages: opts.languages,
     subscriptions: opts.subscriptions,
     sales: opts.sales,
@@ -37,9 +36,13 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
       const t = normalize(text);
       return patternsFor(lang, group, concept).some((re) => re.test(t));
     },
-    mentions: (text, phrase) => normalize(text).includes(normalize(phrase)),
+    // Whole words only: "meta" is not in "metadaten".
+    mentions: (text, phrase) => {
+      const p = normalize(phrase).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return !!p && new RegExp(`(^|[^a-z0-9])${p}($|[^a-z0-9])`).test(normalize(text));
+    },
     legalPage: (concept) => {
-      const found = [...ctx.links(concept, data.start.js), ...ctx.links(concept, data.start.noJs)].filter((l) => isWeb(l.href));
+      const found = ctx.links(concept, pageLinks(data.start)).filter((l) => isWebUrl(l.href));
       if (!found.length) return undefined;
       const link = found.find((l) => loaded(page(l.href)?.js)) ?? found[0];
       return { link, page: page(link.href) };

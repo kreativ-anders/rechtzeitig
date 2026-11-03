@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-CNS-004
 severity: high
-tier: free
 title:
   de: "Optionale Cookie-Kategorien nicht vorausgewählt"
   en: "Optional cookie categories are not preselected"

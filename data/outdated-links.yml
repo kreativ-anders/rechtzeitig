@@ -1,0 +1,5 @@
+# Links to services that no longer exist (regular expressions on the URL, case-insensitive).
+
+# EU online dispute resolution platform, closed on 20 July 2025. Used by legal/odr-link.
+odr:
+  - 'ec\.europa\.eu/(consumers/)?odr'

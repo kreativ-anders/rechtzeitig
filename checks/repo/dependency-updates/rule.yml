@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-DEPS-003
 severity: medium
-tier: free
 title:
   de: "Abhängigkeits-Updates sind automatisiert"
   en: "Dependency updates are automated"

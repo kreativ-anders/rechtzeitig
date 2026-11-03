@@ -7,7 +7,7 @@ import { checksHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, pass } from "./sdk.ts";
 
-const rule = { id: "SEC-TEST-001", severity: "low", tier: "free", title: { de: "t", en: "t" }, how: "Reads something and compares it.", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: [] } } as Rule;
+const rule = { id: "SEC-TEST-001", severity: "low", title: { de: "t", en: "t" }, how: "Reads something and compares it.", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: [] } } as Rule;
 
 test("every check has a folder id and a valid rule.yml with a unique id", async () => {
   const checks = await loadChecks();
@@ -47,6 +47,12 @@ test("a broken check becomes an error and the others still run", async () => {
   const outcomes = await runChecks(checks, { web: fakeContext({}) });
   assert.deepEqual(outcomes.map((o) => o.status), ["error", "error", "pass"]);
   assert.equal(outcomes[0].message, "boom");
+});
+
+test("a check that throws a non-Error still gets a message", async () => {
+  const checks = [{ id: "x/string", rule, check: defineCheck({ run: () => { throw "plain text\nsecond line"; } }) }];
+  const [outcome] = await runChecks(checks, { web: fakeContext({}) });
+  assert.equal(outcome.message, "plain text");
 });
 
 test("asking for an unknown concept is an error, not a silent pass", async () => {

@@ -12,6 +12,8 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | Known services, countries, cookies | `data/third-parties.yml` |
 | Paths requested without a browser | `data/probes.yml` |
 | Secret patterns | `data/secrets.yml` |
+| License groups, update tools | `data/licenses.yml`, `data/update-tools.yml` |
+| Lists for single checks (countries, cookie names, error traces, closed services) | `data/*.yml` |
 | Lockfile parsers | `src/repo/lockfiles.ts` |
 | Inputs of the action | `action.yml`, documented in `docs/workflow.md` |
 
@@ -31,7 +33,7 @@ Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/
 ## Boundaries
 
 - Words belong in `lang/*.yml`, services and patterns in `data/`, never in check code.
-- Paid features never go into the engine; `tier: pro` rules never go into this repository.
+- No paid features or paid code paths in this repository.
 - Findings are technical risk hints with location and legal basis, never legal advice.
 - The repository is private for now. Commercialization plans go into the section "Commercialization" of `dev/roadmap.md`, nowhere else. No prices or competitor names. Before the repository goes public, review that section.
 - Docs are English, short and plain. `docs/` is for users (GitHub Pages), `dev/` for contributors.

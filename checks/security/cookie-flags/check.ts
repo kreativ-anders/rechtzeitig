@@ -1,23 +1,24 @@
-import { defineCheck, pass, skip, warn } from "../../../src/sdk.ts";
+import { defineCheck, info, loadYaml, pass, siteCookies, skip, warn, type Cookie } from "../../../src/sdk.ts";
 
-const SESSION = /sess|sid|token|auth|login|remember/i;
-const READ_BY_SCRIPT = /csrf|xsrf/i;
+const NAMES = loadYaml<{ session: string[]; read_by_script: string[] }>("data/cookies.yml");
+const SESSION = new RegExp(NAMES.session.join("|"), "i");
+const READ_BY_SCRIPT = new RegExp(NAMES.read_by_script.join("|"), "i");
 
 export default defineCheck({
   run(ctx) {
-    const cookies = new Map(ctx.sitePages.flatMap((p) => [...p.noJs.cookies, ...p.js.cookies]).map((c) => [`${c.name}@${c.domain}`, c]));
-    if (!cookies.size) return skip("No cookies set without login.");
-    const https = ctx.url.startsWith("https:");
-    const issues: string[] = [];
-    for (const c of cookies.values()) {
-      const missing = [
-        https && !c.secure ? "Secure" : "",
-        SESSION.test(c.name) && !READ_BY_SCRIPT.test(c.name) && !c.httpOnly ? "HttpOnly" : "",
-        c.sameSite === "None" && !c.secure ? "Secure (required with SameSite=None)" : "",
-      ].filter(Boolean);
-      if (missing.length) issues.push(`${c.name}: missing ${[...new Set(missing)].join(", ")}`);
-    }
-    if (issues.length) return warn(`${issues.length} of ${cookies.size} cookie(s) lack security flags.`, issues);
-    return pass(`All ${cookies.size} cookie(s) have the expected flags.`);
+    const cookies = siteCookies(ctx);
+    if (!cookies.length) return skip("No cookies set without login.");
+    const missing = (c: Cookie) => [
+      !c.secure && c.sameSite === "None" ? "Secure (required with SameSite=None)" : !c.secure && ctx.https ? "Secure" : "",
+      SESSION.test(c.name) && !READ_BY_SCRIPT.test(c.name) && !c.httpOnly ? "HttpOnly" : "",
+    ].filter(Boolean);
+    const issues = (list: typeof cookies) =>
+      list.map((c) => ({ c, flags: missing(c) })).filter((x) => x.flags.length).map(({ c, flags }) => `${c.name}: missing ${flags.join(", ")}`);
+    // Cookies of other sites (embeds, ads) can only be fixed by their vendor.
+    const own = issues(cookies.filter((c) => !ctx.isThirdParty(c.domain)));
+    const foreign = issues(cookies.filter((c) => ctx.isThirdParty(c.domain))).map((i) => `${i} (set by another site, the site cannot change it)`);
+    if (own.length) return warn(`${own.length} of ${cookies.length} cookie(s) lack security flags.`, [...own, ...foreign]);
+    if (foreign.length) return info(`Only cookies of other sites lack security flags.`, foreign);
+    return pass(`All ${cookies.length} cookie(s) have the expected flags.`);
   },
 });

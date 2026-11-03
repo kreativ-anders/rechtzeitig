@@ -1,14 +1,13 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-DSE-003
 severity: medium
-tier: free
 title:
   de: "Formulare verweisen auf die Datenschutzerklärung"
   en: "Forms link to the privacy policy"
 legal_basis:
   de: "Art. 13 Abs. 1 DSGVO"
   en: "Art. 13(1) GDPR"
-how: "For every form with email, name, phone or address fields, looks for a privacy link or wording inside the form or its container. Ignores login forms."
+how: "For every form with email, name, phone, address or birth date fields, looks for a privacy link or wording (`privacy` in `lang/*.yml`) inside the form or its container. Ignores login forms."
 fix_hint:
   de: "Direkt am Formular kurz erklären, wofür die Daten verwendet werden, und die Datenschutzerklärung verlinken."
   en: "Explain next to the form what the data is used for and link the privacy policy."

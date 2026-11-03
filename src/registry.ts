@@ -3,7 +3,6 @@ import { normalize } from "./text.ts";
 import type { Vendor } from "./sdk.ts";
 
 export interface Registry {
-  vendors: Vendor[];
   vendor(host: string): Vendor | undefined;
   trackingCookie(name: string): Vendor | undefined;
 }
@@ -16,7 +15,6 @@ export function loadRegistry(): Registry {
     cookieRules: (e.cookies ?? []).map((c) => new RegExp(c)),
   }));
   return {
-    vendors,
     vendor: (host) => {
       const h = host.toLowerCase();
       return vendors.find((v) => v.hosts.some((vh) => h === vh || h.endsWith(`.${vh}`)));

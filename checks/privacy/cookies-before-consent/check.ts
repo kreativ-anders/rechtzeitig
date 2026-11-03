@@ -1,20 +1,13 @@
-import { defineCheck, fail, info, pass, warn } from "../../../src/sdk.ts";
+import { defineCheck, fail, info, pass, siteCookies, warn } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
-    const cookies = new Map<string, { name: string; domain: string; page: string }>();
-    const storage = new Set<string>();
-    for (const page of ctx.sitePages) {
-      for (const c of [...page.noJs.cookies, ...page.js.cookies]) {
-        const key = `${c.name}@${c.domain}`;
-        if (!cookies.has(key)) cookies.set(key, { ...c, page: ctx.short(page.url) });
-      }
-      for (const key of page.js.storage) storage.add(key);
-    }
+    const cookies = siteCookies(ctx);
+    const storage = new Set(ctx.sitePages.flatMap((p) => p.js.storage));
 
-    const tracking = [...cookies.values()].filter((c) => ctx.trackingCookie(c.name));
-    const foreign = [...cookies.values()].filter((c) => !ctx.trackingCookie(c.name) && ctx.isThirdParty(c.domain));
-    const own = [...cookies.values()].filter((c) => !ctx.trackingCookie(c.name) && !ctx.isThirdParty(c.domain));
+    const tracking = cookies.filter((c) => ctx.trackingCookie(c.name));
+    const foreign = cookies.filter((c) => !ctx.trackingCookie(c.name) && ctx.isThirdParty(c.domain));
+    const own = cookies.filter((c) => !ctx.trackingCookie(c.name) && !ctx.isThirdParty(c.domain));
     const details = [
       ...tracking.map((c) => `${c.name} (${c.domain}, set on ${c.page}): tracking cookie of ${ctx.trackingCookie(c.name)?.name}`),
       ...foreign.map((c) => `${c.name} (${c.domain}, set on ${c.page}): third-party cookie`),

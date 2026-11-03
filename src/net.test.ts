@@ -4,7 +4,7 @@ import { createServer } from "node:http";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { assertPublicHost, BlockedHostError, blockedInBrowser, fetchPublic, isPublicAddress } from "./net.ts";
+import { assertPublicHost, BlockedHostError, blockedInBrowser, fetchPublic, isIpOrLocal, isPublicAddress } from "./net.ts";
 import { scanFixture } from "../test/helpers.ts";
 
 test("private, loopback, link-local and mapped addresses are not public", () => {
@@ -22,6 +22,11 @@ test("the browser blocks localhost and private IP literals, except the trusted h
   assert.equal(blockedInBrowser("[::1]"), true);
   assert.equal(blockedInBrowser("127.0.0.1", "127.0.0.1"), false);
   assert.equal(blockedInBrowser("example.de"), false);
+});
+
+test("IP literals and localhost have no domain", () => {
+  for (const host of ["127.0.0.1", "[::1]", "::1", "localhost", "app.localhost"]) assert.ok(isIpOrLocal(host), host);
+  assert.ok(!isIpOrLocal("example.de"));
 });
 
 test("hosts are checked after DNS, the trusted host is allowed", async () => {

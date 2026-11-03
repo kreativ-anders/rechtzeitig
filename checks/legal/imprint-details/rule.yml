@@ -1,14 +1,13 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-DE-IMP-002
 severity: high
-tier: free
 title:
   de: "Impressum enthält die Pflichtangaben"
   en: "Imprint contains the required details"
 legal_basis:
   de: "§ 5 Abs. 1 DDG"
   en: "§ 5(1) DDG"
-how: "Searches the imprint text for email, phone or contact form, German postcode, VAT ID and register number."
+how: "Searches the imprint text for email, phone or contact form (IBANs ignored), German postcode (register numbers ignored), VAT ID and register number."
 fix_hint:
   de: "Name, ladungsfähige Anschrift, E-Mail-Adresse und einen zweiten schnellen Kontaktweg angeben, dazu Register und USt-IdNr., falls vorhanden."
   en: "Give name, postal address, email address and a second fast way of contact, plus register entry and VAT ID if you have them."

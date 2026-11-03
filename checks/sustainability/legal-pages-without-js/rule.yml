@@ -1,14 +1,13 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SUS-JS-001
 severity: medium
-tier: free
 title:
   de: "Impressum und Datenschutz funktionieren ohne JavaScript"
   en: "Imprint and privacy policy work without JavaScript"
 legal_basis:
   de: "§ 5 DDG (leicht erkennbar, unmittelbar erreichbar)"
   en: "§ 5 DDG (easily recognizable, directly accessible)"
-how: "Checks that imprint and privacy links exist with JavaScript off and that their pages show text without it."
+how: "Checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with JavaScript off and that the linked page that loaded shows text without it."
 fix_hint:
   de: "Links und Texte der Rechtsseiten als statisches HTML ausliefern."
   en: "Deliver the links and texts of the legal pages as static HTML."

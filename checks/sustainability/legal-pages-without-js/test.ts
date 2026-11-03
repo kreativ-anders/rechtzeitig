@@ -19,3 +19,9 @@ test("fails when the imprint text is rendered by JavaScript", async () => {
   assert.equal(result.status, "fail");
   assert.match(result.details?.[0] ?? "", /^Imprint: .* shows no text/);
 });
+
+test("reads the imprint page that loaded, not a broken first link", async () => {
+  const result = await runCheck(here, "broken-first");
+  assert.equal(result.status, "fail");
+  assert.match(result.details?.[0] ?? "", /^Imprint: \/impressum shows no text/);
+});

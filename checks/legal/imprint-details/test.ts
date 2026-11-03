@@ -24,6 +24,13 @@ test("warns when address and phone are missing", async () => {
   assert.match(result.message, /2 item/);
 });
 
+test("does not take a register number for a postcode or an IBAN for a phone number", async () => {
+  const result = await runCheck(here, "register-iban");
+  assert.equal(result.status, "warn");
+  assert.match(result.message, /2 item/);
+  assert.ok(result.details?.includes("Register entry found."));
+});
+
 test("skips when there is no imprint", async () => {
   assert.equal((await runCheck(here, "none")).status, "skip");
 });

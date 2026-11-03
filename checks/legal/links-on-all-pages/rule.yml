@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-DE-IMP-003
 severity: medium
-tier: free
 title:
   de: "Impressum und Datenschutz auf jeder Seite verlinkt"
   en: "Imprint and privacy policy are linked on every page"

@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-CNS-003
 severity: high
-tier: free
 title:
   de: "Consent-Banner lässt sich auf der ersten Ebene ablehnen"
   en: "Consent banner can be rejected on the first layer"

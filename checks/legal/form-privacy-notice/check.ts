@@ -1,6 +1,14 @@
 import { defineCheck, pass, skip, warn } from "../../../src/sdk.ts";
 
 // Login forms reuse data the person gave before; they need no new notice.
+// Host a form sends to; none for an empty or javascript: action.
+const hostOf = (action: string) => {
+  try {
+    return /^https?:/i.test(action) ? new URL(action).hostname : undefined;
+  } catch {
+    return undefined;
+  }
+};
 const isLogin = (fields: string[]) => fields.length <= 2 && fields.some((f) => f.startsWith("password:"));
 
 export default defineCheck({
@@ -11,7 +19,10 @@ export default defineCheck({
     if (!forms.length) return skip("No form that asks for personal data.");
     const missing = forms
       .filter((f) => !ctx.links("privacy", f.links).length && !ctx.says("privacy", f.text))
-      .map((f) => `${f.page}: form with ${f.fields.join(", ")}${ctx.isThirdParty(new URL(f.action).hostname) ? `, sends to ${new URL(f.action).hostname}` : ""}`);
+      .map((f) => {
+        const host = hostOf(f.action);
+        return `${f.page}: form with ${f.fields.join(", ")}${host && ctx.isThirdParty(host) ? `, sends to ${host}` : ""}`;
+      });
     if (missing.length) {
       return warn(`${missing.length} of ${forms.length} form(s) ask for personal data without a privacy notice next to them.`, missing);
     }
