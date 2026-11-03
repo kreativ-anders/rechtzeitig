@@ -1,4 +1,5 @@
 import type { BrowserContext } from "playwright";
+import { timeoutAfter } from "./deadline.ts";
 import { normalize } from "./text.ts";
 import type { Area, Checkbox, Form, Link, Snapshot } from "./sdk.ts";
 
@@ -106,6 +107,7 @@ function toLink(raw: RawLink): Link {
 
 const toForm = (raw: RawForm): Form => ({ ...raw, links: raw.links.map(toLink) });
 
+const IDLE = 5000;
 const EMPTY = { headers: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], cookies: [], storage: [] };
 
 /** Loads a URL once in the given browser context and records what a visitor gets without clicking anything. */
@@ -118,9 +120,9 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
   });
   const cookieKey = (c: { name: string; domain: string }) => `${c.name}@${c.domain}`;
   const before = new Set((await context.cookies()).map(cookieKey));
-  try {
+  const load = async (): Promise<Snapshot> => {
     const response = await page.goto(url, { waitUntil: "load", timeout });
-    if (js) await page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {});
+    if (js) await page.waitForLoadState("networkidle", { timeout: IDLE }).catch(() => {});
     const dom = await page.evaluate(readDom);
     const storage = js
       ? await page.evaluate(() => {
@@ -148,9 +150,15 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       cookies,
       storage,
     };
+  };
+  // page.evaluate has no timeout: a page that never yields (while (true) {}) would block the scan forever.
+  const [deadline, stop] = timeoutAfter(2 * timeout + IDLE, "page did not finish loading in time");
+  try {
+    return await Promise.race([load(), deadline]);
   } catch (e) {
-    return { ...EMPTY, status: 0, error: (e as Error).message.split("\n")[0], finalUrl: url, requests };
+    return { ...EMPTY, status: 0, error: (e as Error).message.split("\n")[0], finalUrl: url, requests: [...requests] };
   } finally {
-    await page.close();
+    stop();
+    await page.close().catch(() => {});
   }
 }
