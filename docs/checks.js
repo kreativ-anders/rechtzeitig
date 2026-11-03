@@ -14,7 +14,10 @@
     b.type = "button";
     b.className = "chip";
     b.setAttribute("aria-pressed", "false");
-    b.innerHTML = `${label}<span class="n">${n}</span>`;
+    const count = document.createElement("span");
+    count.className = "n";
+    count.textContent = String(n);
+    b.append(label, count);
     b.addEventListener("click", () => { onClick(b); update(); });
     parent.append(b);
     return b;
