@@ -49,9 +49,9 @@
 - path: /.htpasswd
   kind: file
   expect: '^[^:\s]+:\$?[\w./$]+'
-- path: /vibecoda-not-found-a7f3
+- path: /rechtzeitig-not-found-a7f3
   kind: error
-- path: /?vibecoda[]=%00'
+- path: /?rechtzeitig[]=%00'
   kind: error
-- path: /index.php?vibecoda[]=%00'
+- path: /index.php?rechtzeitig[]=%00'
   kind: error

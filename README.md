@@ -1,12 +1,12 @@
-# vibecoda
+# rechtzeitig
 
 A GitHub Action that checks a website and its repository for German legal basics (DDG, GDPR, TDDDG), security, and writes an SBOM. You start it by hand; it runs on GitHub's free runners.
 
 ## Use it
 
-Copy [examples/workflows/vibecoda.yml](examples/workflows/vibecoda.yml) to `.github/workflows/vibecoda.yml`, then open **Actions → vibecoda → Run workflow**.
+Copy [examples/workflows/rechtzeitig.yml](examples/workflows/rechtzeitig.yml) to `.github/workflows/rechtzeitig.yml`, then open **Actions → rechtzeitig → Run workflow**.
 
-Documentation: [kreativ-anders.github.io/vibecoda](https://kreativ-anders.github.io/vibecoda/) ([source](docs/)).
+Documentation: [kreativ-anders.github.io/rechtzeitig](https://kreativ-anders.github.io/rechtzeitig/) ([source](docs/)).
 
 ## Develop
 
@@ -23,4 +23,4 @@ The results are automated hints, not legal advice.
 
 ## License
 
-[Apache-2.0](LICENSE). The name vibecoda is not covered by the license.
+[Apache-2.0](LICENSE). The name rechtzeitig is not covered by the license.

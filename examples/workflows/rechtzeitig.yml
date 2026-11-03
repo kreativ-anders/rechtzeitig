@@ -1,7 +1,7 @@
-# Copy to .github/workflows/vibecoda.yml in your repository.
-# Then: Actions → vibecoda → Run workflow.
-# Docs: https://kreativ-anders.github.io/vibecoda/
-name: vibecoda
+# Copy to .github/workflows/rechtzeitig.yml in your repository.
+# Then: Actions → rechtzeitig → Run workflow.
+# Docs: https://kreativ-anders.github.io/rechtzeitig/
+name: rechtzeitig
 
 on:
   workflow_dispatch:
@@ -35,9 +35,9 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      # Lets vibecoda read lockfiles, licenses and secrets. Remove to scan the website only.
+      # Lets rechtzeitig read lockfiles, licenses and secrets. Remove to scan the website only.
       - uses: actions/checkout@v4
-      - uses: kreativ-anders/vibecoda@v1
+      - uses: kreativ-anders/rechtzeitig@v1
         with:
           url: ${{ inputs.url }}
           language: ${{ inputs.language }}

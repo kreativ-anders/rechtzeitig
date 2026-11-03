@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { loadChecks, type LoadedCheck } from "./runner.ts";
 
 const FILE = new URL("../docs/checks.md", import.meta.url);
-const SOURCE = "https://github.com/kreativ-anders/vibecoda/tree/main/checks";
+const SOURCE = "https://github.com/kreativ-anders/rechtzeitig/tree/main/checks";
 const START = "<!-- checks:start -->";
 const END = "<!-- checks:end -->";
 const MODULES: Record<string, string> = {

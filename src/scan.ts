@@ -6,7 +6,7 @@ import { loadRegistry } from "./registry.ts";
 import type { ScanContext } from "./sdk.ts";
 
 export const VERSION = "0.1.0";
-export const HOMEPAGE = "https://github.com/kreativ-anders/vibecoda";
+export const HOMEPAGE = "https://github.com/kreativ-anders/rechtzeitig";
 
 export interface ScanOptions {
   /** "de", "en", "all" or a comma list. */
@@ -29,7 +29,7 @@ export async function scan(url: string, opts: ScanOptions = {}): Promise<ScanCon
     const chrome = browser.version().split(".")[0];
     const userAgent =
       `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chrome}.0.0.0 Safari/537.36 ` +
-      `vibecoda/${VERSION} (+${HOMEPAGE})`;
+      `rechtzeitig/${VERSION} (+${HOMEPAGE})`;
     const data = await crawl(url, {
       browser,
       lang,

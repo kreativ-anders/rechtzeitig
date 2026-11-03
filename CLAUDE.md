@@ -1,4 +1,4 @@
-# vibecoda
+# rechtzeitig
 
 GitHub Action that scans a website and its repository for German legal basics, security and an SBOM. Read README.md, then dev/architecture.md.
 
@@ -23,7 +23,7 @@ Every change that affects what a rule does updates its documentation in the same
 - Legal basis, wording or threshold changed → update `legal_basis`, `fix_hint`, `meta.sources`, and set `meta.last_reviewed` to today.
 - Rule added, removed or renamed → `rule.yml` with a new unique id, then `npm run docs`.
 - Data file changed in a way that changes results (new vendor, pattern, probe) → mention it in the commit message.
-- Input added or changed → `action.yml`, `examples/workflows/vibecoda.yml`, `docs/workflow.md`.
+- Input added or changed → `action.yml`, `examples/workflows/rechtzeitig.yml`, `docs/workflow.md`.
 - Architecture changed → `dev/architecture.md`.
 
 Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/checks.md` is stale, a rule is invalid or older than a year.

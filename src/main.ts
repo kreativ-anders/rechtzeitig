@@ -30,7 +30,7 @@ const { values, positionals } = parseArgs({
     sales: { type: "string", default: "false" },
     "fail-on": { type: "string", default: "never" },
     "max-pages": { type: "string", default: "10" },
-    out: { type: "string", default: "vibecoda-report" },
+    out: { type: "string", default: "rechtzeitig-report" },
   },
 });
 
@@ -67,7 +67,7 @@ const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { u
 const markdown = toMarkdown(report);
 writeFileSync(`${values.out}.md`, markdown);
 writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
-if (repo) writeFileSync(join(dirname(values.out!), "vibecoda-sbom.cdx.json"), toCycloneDx(repo, VERSION));
+if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));
 await artifactSink.send(findings);
 console.log(toText(report));
 
@@ -80,7 +80,7 @@ if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `result
 process.exit(failed ? 1 : 0);
 
 function exit(message: string): never {
-  console.error(`vibecoda: ${message}`);
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## vibecoda\n\n💥 ${message}\n`);
+  console.error(`rechtzeitig: ${message}`);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## rechtzeitig\n\n💥 ${message}\n`);
   process.exit(2);
 }

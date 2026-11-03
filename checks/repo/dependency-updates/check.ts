@@ -1,7 +1,7 @@
 import { parse } from "yaml";
 import { defineRepoCheck, info, pass, skip, warn, type Ecosystem } from "../../../src/sdk.ts";
 
-// vibecoda ecosystem → names Dependabot uses for it.
+// rechtzeitig ecosystem → names Dependabot uses for it.
 const DEPENDABOT: Record<Ecosystem, string[]> = {
   npm: ["npm", "bun"],
   composer: ["composer"],

@@ -1,6 +1,6 @@
-# vibecoda
+# rechtzeitig
 
-vibecoda is a GitHub Action you start by hand. It opens your website the way a first-time visitor from Germany would and reads your repository. It reports what German and EU law asks for and what is missing:
+rechtzeitig is a GitHub Action you start by hand. It opens your website the way a first-time visitor from Germany would and reads your repository. It reports what German and EU law asks for and what is missing:
 
 - imprint and privacy policy (DDG, GDPR)
 - servers, cookies and banners before consent (TDDDG)
@@ -12,8 +12,8 @@ It is free and runs on GitHub's runners.
 
 ## Start in two minutes
 
-1. Copy [vibecoda.yml](https://github.com/kreativ-anders/vibecoda/blob/main/examples/workflows/vibecoda.yml) to `.github/workflows/vibecoda.yml` in your repository.
-2. Open **Actions → vibecoda → Run workflow**, enter your URL and pick the language.
+1. Copy [rechtzeitig.yml](https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml) to `.github/workflows/rechtzeitig.yml` in your repository.
+2. Open **Actions → rechtzeitig → Run workflow**, enter your URL and pick the language.
 3. Read the report on the run's summary page.
 
 ## Read on

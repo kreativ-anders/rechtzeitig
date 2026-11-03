@@ -67,7 +67,7 @@ export function toMarkdown(r: Report): string {
   const lang = r.language;
   const list = sorted(r.outcomes);
   const lines = [
-    `## vibecoda: ${title(r)}`,
+    `## rechtzeitig: ${title(r)}`,
     "",
     summaryLine(r, true),
     "",
@@ -97,12 +97,12 @@ export function toMarkdown(r: Report): string {
     );
   }
   if (r.repo) lines.push(`- ${t.repository(r.repo.files.length, r.repo.components.length, r.repo.lockfiles.length, r.repo.osv)}`);
-  lines.push(`- vibecoda ${r.version} · ${r.startedAt}`, "", `_${t.disclaimer}_`, "");
+  lines.push(`- rechtzeitig ${r.version} · ${r.startedAt}`, "", `_${t.disclaimer}_`, "");
   return lines.join("\n");
 }
 
 export function toText(r: Report): string {
-  const lines = [`vibecoda: ${title(r)}`, ""];
+  const lines = [`rechtzeitig: ${title(r)}`, ""];
   for (const o of r.outcomes) {
     lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${o.message}`);
     for (const d of o.details) lines.push(`      - ${d}`);

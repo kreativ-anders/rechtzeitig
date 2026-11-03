@@ -13,7 +13,7 @@ export function toCycloneDx(repo: RepoContext, version: string): string {
     purl: c.purl,
     scope: c.dev ? "optional" : "required",
     ...(c.license ? { licenses: [license(c.license)] } : {}),
-    properties: [{ name: "vibecoda:source", value: c.source }],
+    properties: [{ name: "rechtzeitig:source", value: c.source }],
   }));
   const vulnerabilities = repo.vulnerabilities.map((v) => ({
     id: v.id,
@@ -30,7 +30,7 @@ export function toCycloneDx(repo: RepoContext, version: string): string {
       version: 1,
       metadata: {
         timestamp: new Date().toISOString(),
-        tools: { components: [{ type: "application", name: "vibecoda", version }] },
+        tools: { components: [{ type: "application", name: "rechtzeitig", version }] },
         component: { type: "application", name: basename(repo.root), ...(repo.license ? { licenses: [license(repo.license)] } : {}) },
       },
       components,

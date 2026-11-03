@@ -86,7 +86,7 @@ export function fakeContext(start: Partial<Snapshot>, extra: Partial<CrawlData> 
 
 /** Writes the files to a temporary folder and scans it as a repository (without OSV). */
 export async function repoFromFiles(files: Record<string, string>): Promise<RepoContext> {
-  const root = mkdtempSync(join(tmpdir(), "vibecoda-repo-"));
+  const root = mkdtempSync(join(tmpdir(), "rechtzeitig-repo-"));
   for (const [path, content] of Object.entries(files)) {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), content);

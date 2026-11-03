@@ -18,7 +18,7 @@ export default defineRepoCheck({
       return !MANIFESTS[m.split("/").pop()!].some((lock) => files.has(dir + lock));
     });
     const byEcosystem = Object.entries(Object.groupBy(repo.components, (c) => c.ecosystem)).map(([e, list]) => `${e}: ${list?.length}`);
-    const summary = `${repo.components.length} components from ${repo.lockfiles.length} lockfile(s), written to vibecoda-sbom.cdx.json.`;
+    const summary = `${repo.components.length} components from ${repo.lockfiles.length} lockfile(s), written to rechtzeitig-sbom.cdx.json.`;
     if (unlocked.length) {
       return warn(`${unlocked.length} manifest(s) without a lockfile. Installed versions can change between builds.`, [...unlocked, summary]);
     }
