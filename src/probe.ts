@@ -24,7 +24,7 @@ export async function probe(origin: string, userAgent: string, timeout: number):
           headers: { "user-agent": userAgent },
           signal: AbortSignal.timeout(timeout),
         });
-        const body = (await res.text()).slice(0, MAX_BODY);
+        const body = await readCapped(res, MAX_BODY);
         const headers = Object.fromEntries(res.headers);
         const exposed = kind === "file" && res.status === 200 && !!expect && new RegExp(expect, "m").test(body);
         return { path, kind, status: res.status, headers, body, exposed };
@@ -33,6 +33,25 @@ export async function probe(origin: string, userAgent: string, timeout: number):
       }
     }),
   );
+}
+
+/** Reads at most `max` bytes of a response body, then stops the download. */
+export async function readCapped(res: Response, max: number): Promise<string> {
+  if (!res.body) return "";
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    while (size < max) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      size += value.length;
+    }
+  } finally {
+    await reader.cancel().catch(() => {});
+  }
+  return new TextDecoder().decode(Buffer.concat(chunks).subarray(0, max));
 }
 
 export async function plainHttp(url: string, timeout: number): Promise<ScanContext["http"]> {
