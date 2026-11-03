@@ -6,13 +6,13 @@
 
 - path: /.env
   kind: file
-  expect: '^\s*[A-Z][A-Z0-9_]*\s*='
+  expect: '^[ \t]*[A-Z][A-Z0-9_]*[ \t]*='
 - path: /.env.local
   kind: file
-  expect: '^\s*[A-Z][A-Z0-9_]*\s*='
+  expect: '^[ \t]*[A-Z][A-Z0-9_]*[ \t]*='
 - path: /.env.production
   kind: file
-  expect: '^\s*[A-Z][A-Z0-9_]*\s*='
+  expect: '^[ \t]*[A-Z][A-Z0-9_]*[ \t]*='
 - path: /.git/config
   kind: file
   expect: '^\[core\]'
@@ -21,7 +21,7 @@
   expect: '^ref: refs/'
 - path: /.svn/entries
   kind: file
-  expect: '^\d+\s*$'
+  expect: '^\d+[ \t\r]*$'
 - path: /.DS_Store
   kind: file
   expect: 'Bud1'

@@ -9,7 +9,7 @@ import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
 import { loadChecks, runChecks, selectModules, type Outcome } from "./runner.ts";
 import { LANGUAGES, type UiLanguage } from "./rules.ts";
-import { toFindings, toMarkdown, toText, type Report } from "./report.ts";
+import { md, plain, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
 
 const FAIL_ON: Record<string, Outcome["status"][]> = {
   never: [],
@@ -44,6 +44,7 @@ const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ?
 const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 
 const startedAt = new Date().toISOString();
+const warnings: string[] = [];
 const checks = selectModules(await loadChecks(), modules);
 const wantsRepo = checks.some((c) => c.check.repo);
 // vulnerabilities=false sends nothing to api.osv.dev; the vulnerabilities rule then skips.
@@ -56,6 +57,7 @@ const web = url && checks.some((c) => !c.check.repo)
       sales: values.sales === "true",
       maxPages: Number(values["max-pages"]) || 10,
       ipinfoToken: process.env.IPINFO_TOKEN || undefined,
+      onWarning: (w) => warnings.push(w),
     })
   : undefined;
 if (!web && !repo) exit("Nothing to scan. Pass a URL, or check out the repository before this step.");
@@ -64,13 +66,14 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
 }
 
 const outcomes = await runChecks(checks, { web, repo });
-const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS, language };
+const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS, language, warnings };
 const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo?.root.split("/").pop() } });
 const markdown = toMarkdown(report);
 writeFileSync(`${values.out}.md`, markdown);
 writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
 if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));
-console.log(toText(report));
+const text = toText(report);
+console.log(report.onGitHub ? withoutCommands(text) : text);
 
 const failed = outcomes.some((o) => FAIL_ON[failOn].includes(o.status));
 const result = outcomes.some((o) => o.status === "fail" || o.status === "error") ? "fail"
@@ -81,7 +84,7 @@ if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `result
 process.exit(failed ? 1 : 0);
 
 function exit(message: string): never {
-  console.error(`rechtzeitig: ${message}`);
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## rechtzeitig\n\n💥 ${message}\n`);
+  console.error(`rechtzeitig: ${plain(message)}`);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## rechtzeitig\n\n💥 ${md(message)}\n`);
   process.exit(2);
 }

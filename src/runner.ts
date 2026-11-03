@@ -2,6 +2,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join, sep } from "node:path";
 import { loadRule, type Rule } from "./rules.ts";
+import { timeoutAfter } from "./deadline.ts";
 import type { Check, RepoCheck, RepoContext, ScanContext, Status } from "./sdk.ts";
 
 const CHECKS_DIR = fileURLToPath(new URL("../checks/", import.meta.url));
@@ -54,15 +55,15 @@ export async function runChecks(checks: LoadedCheck[], targets: { web?: ScanCont
   for (const { id, rule, check } of checks) {
     const target = check.repo ? targets.repo : targets.web;
     if (!target) continue;
+    const [deadline, stop] = timeoutAfter(TIMEOUT, `timed out after ${TIMEOUT / 1000}s`);
     try {
-      const result = await Promise.race([
-        (check.run as (t: typeof target) => ReturnType<Check["run"]>)(target),
-        new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`timed out after ${TIMEOUT / 1000}s`)), TIMEOUT).unref()),
-      ]);
+      const result = await Promise.race([(check.run as (t: typeof target) => ReturnType<Check["run"]>)(target), deadline]);
       if (!result || !STATUSES.has(result.status)) throw new Error("check returned no result");
       outcomes.push({ id, rule, status: result.status, message: result.message, details: result.details ?? [] });
     } catch (e) {
       outcomes.push({ id, rule, status: "error", message: (e as Error).message, details: [] });
+    } finally {
+      stop();
     }
   }
   return outcomes;

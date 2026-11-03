@@ -21,3 +21,9 @@ test("fails for open Firestore rules", async () => {
   const rules = "service cloud.firestore { match /{document=**} { allow read, write: if true; } }";
   assert.equal((await runRepoCheck(here, { "firestore.rules": rules })).status, "fail");
 });
+
+test("stays fast on a long rules file without a match", async () => {
+  const started = Date.now();
+  await runRepoCheck(here, { "firestore.rules": "allow read ".repeat(90_000) });
+  assert.ok(Date.now() - started < 500);
+});

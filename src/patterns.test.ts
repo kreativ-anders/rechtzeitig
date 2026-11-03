@@ -1,0 +1,28 @@
+// Every pattern from data/ and lang/ runs on text from the scanned site or repository.
+// None may take long on hostile input (catastrophic backtracking).
+
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { parse } from "yaml";
+import { availableLanguages, loadLanguages } from "./lang.ts";
+
+const data = (file: string) => parse(readFileSync(new URL(`../data/${file}`, import.meta.url), "utf8")) as Array<Record<string, string>>;
+const patterns: Array<[string, RegExp]> = [
+  ...data("secrets.yml").map((r): [string, RegExp] => [`secrets.yml ${r.name}`, new RegExp(r.pattern)]),
+  ...data("probes.yml").filter((p) => p.expect).map((p): [string, RegExp] => [`probes.yml ${p.path}`, new RegExp(p.expect, "m")]),
+  ...Object.entries({ ...loadLanguages(availableLanguages()).links, ...loadLanguages(availableLanguages()).text })
+    .flatMap(([concept, res]) => res.map((re): [string, RegExp] => [`lang ${concept}`, re])),
+];
+const N = 50_000;
+const inputs = ["\n", " ", "\t\n", "a ", "A", "0", "aaa ", "_", "-"].map((s) => s.repeat(N / s.length) + "!");
+
+test("data and language patterns stay fast on hostile input", () => {
+  for (const [name, re] of patterns) {
+    for (const input of inputs) {
+      const started = Date.now();
+      re.test(input);
+      assert.ok(Date.now() - started < 200, `${name} is slow on ${JSON.stringify(input.slice(0, 4))}…`);
+    }
+  }
+});

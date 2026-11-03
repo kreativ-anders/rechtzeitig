@@ -1,6 +1,6 @@
 import { defineRepoCheck, info, pass, skip } from "../../../src/sdk.ts";
 
-const USES = /^\s*-?\s*uses:\s*["']?([^"'\s#]+)/gm;
+const USES = /^[ \t]*-?[ \t]*uses:[ \t]*["']?([^"'\s#]+)/gm;
 
 export default defineRepoCheck({
   run(repo) {

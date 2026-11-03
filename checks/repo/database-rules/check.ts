@@ -3,7 +3,7 @@ import { defineRepoCheck, fail, pass, skip, warn } from "../../../src/sdk.ts";
 const CREATE = /create\s+table\s+(if\s+not\s+exists\s+)?(public\.)?"?(\w+)"?/gi;
 const ENABLE = /alter\s+table\s+(only\s+)?(public\.)?"?(\w+)"?\s+enable\s+row\s+level\s+security/gi;
 const OPEN_POLICY = /create\s+policy[\s\S]{0,300}?using\s*\(\s*true\s*\)/gi;
-const OPEN_RULE = /allow\s+[\w\s,]+:\s*if\s+true\s*;/;
+const OPEN_RULE = /\ballow\b[\w, \t]{1,200}:\s*if\s+true\s*;/;
 const OPEN_RTDB = /"\.(read|write)"\s*:\s*true/;
 
 export default defineRepoCheck({

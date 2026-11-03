@@ -545,7 +545,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-SECRETS-001" data-module="repo" data-severity="critical" data-search="sec-secrets-001 repo/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files line by line against `data/secrets.yml` and decodes jwts to find supabase `service_role` keys.">
+<details class="rule" id="SEC-SECRETS-001" data-module="repo" data-severity="critical" data-search="sec-secrets-001 repo/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files line by line against `data/secrets.yml` and decodes jwts to find supabase `service_role` keys; shows only the first 4 characters and the length of each find.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SECRETS-001</span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><b>critical</b></span></span>
 <span class="rule-title">No secrets in the repository</span>
@@ -553,7 +553,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Matches tracked files line by line against <code>data/secrets.yml</code> and decodes JWTs to find Supabase <code>service_role</code> keys.</dd></div>
+<div><dt>How it is checked</dt><dd>Matches tracked files line by line against <code>data/secrets.yml</code> and decodes JWTs to find Supabase <code>service_role</code> keys; shows only the first 4 characters and the length of each find.</dd></div>
 <div><dt>How to fix</dt><dd>Revoke found keys right away, then remove them from code and git history and store them as secrets or environment variables.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/secrets"><code>checks/repo/secrets</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>

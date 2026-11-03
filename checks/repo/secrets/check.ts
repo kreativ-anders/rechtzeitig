@@ -11,7 +11,8 @@ const JWT = /\beyJ[A-Za-z0-9_-]{10,}\.(eyJ[A-Za-z0-9_-]{10,})\.[A-Za-z0-9_-]{10,
 // Generated or test files that often contain key-like strings.
 const SKIP = /(^|\/)(fixtures?|__snapshots__)\/|\.lock$|-lock\.(json|yaml)$|\.min\.(js|css)$|\.map$/;
 
-const redact = (s: string) => `${s.slice(0, 8)}…`;
+// Enough to find the key again, too little to use it.
+const redact = (s: string) => `${s.slice(0, 4)}… (${s.length} chars)`;
 
 export default defineRepoCheck({
   run(repo) {

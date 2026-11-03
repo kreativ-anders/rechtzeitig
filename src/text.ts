@@ -17,6 +17,17 @@ export function normalize(text: string): string {
     .trim();
 }
 
+const CONTROL = /[\u0000-\u001f\u007f-\u009f\u2028-\u202e\u2066-\u2069]+/g;
+
+/**
+ * Untrusted text (file names, link texts, header values) as one short line, for every output:
+ * control characters, line breaks and bidi overrides become a space, the length is capped.
+ */
+export function oneLine(text: string, max = 300): string {
+  const s = String(text).replace(CONTROL, " ").trim();
+  return s.length > max ? `${s.slice(0, max - 1)}…` : s;
+}
+
 /** URL without the #hash, used as the key for visited pages. */
 export function withoutHash(url: string): string {
   const u = new URL(url);
