@@ -30,3 +30,10 @@ test("fails for a secret under a public prefix", async () => {
   const result = await runRepoCheck(here, { ".env.example": `${["VITE", "STRIPE", "SECRET", "KEY"].join("_")}=` });
   assert.equal(result.status, "fail");
 });
+
+test("finds a service_role key after an anon key on the same line", async () => {
+  const line = `const a = "${jwt({ role: "anon" })}", b = "${jwt({ role: "service_role" })}";`;
+  const result = await runRepoCheck(here, { "src/db.ts": line });
+  assert.equal(result.status, "fail");
+  assert.match(result.details?.[0] ?? "", /Supabase service_role key/);
+});

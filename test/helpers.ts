@@ -101,3 +101,9 @@ export async function runRepoCheck(checkDir: string, files: Record<string, strin
   const check = (await import(pathToFileURL(join(checkDir, "check.ts")).href)).default as RepoCheck;
   return check.run({ ...(await repoFromFiles(files)), ...extra });
 }
+
+/** package-lock.json text: package name → version, or → { version, license, dev }. */
+export function npmLock(pkgs: Record<string, string | { version: string; license?: string; dev?: boolean }>): string {
+  const packages = Object.fromEntries(Object.entries(pkgs).map(([name, p]) => [`node_modules/${name}`, typeof p === "string" ? { version: p } : p]));
+  return JSON.stringify({ lockfileVersion: 3, packages: { "": {}, ...packages } });
+}

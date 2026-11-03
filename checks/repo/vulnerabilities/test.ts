@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runRepoCheck } from "../../../test/helpers.ts";
+import { npmLock, runRepoCheck } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
 const files = {
-  "package-lock.json": JSON.stringify({ packages: { "node_modules/lodash": { version: "4.17.20" }, "node_modules/vite": { version: "5.0.0", dev: true } } }),
+  "package-lock.json": npmLock({ lodash: "4.17.20", vite: { version: "5.0.0", dev: true } }),
 };
 const vuln = (purl: string, severity: string) => ({ id: "GHSA-test", purl, summary: "Prototype pollution", severity, fixed: "4.17.21" });
 
@@ -28,4 +28,12 @@ test("skips when the lookup is turned off", async () => {
   const result = await runRepoCheck(here, files, { osv: "skipped" });
   assert.equal(result.status, "skip");
   assert.match(result.message, /turned off/);
+});
+
+test("keeps issues without details and says that details are missing", async () => {
+  const bare = { id: "GHSA-bare", purl: "pkg:npm/lodash@4.17.20", summary: "", severity: "" };
+  const result = await runRepoCheck(here, files, { osv: "ok (details for 0 of 1)", vulnerabilities: [bare] });
+  assert.equal(result.status, "warn");
+  assert.match(result.message, /OSV sent details for 0 of 1 issues/);
+  assert.deepEqual(result.details, ["lodash@4.17.20: GHSA-bare."]);
 });

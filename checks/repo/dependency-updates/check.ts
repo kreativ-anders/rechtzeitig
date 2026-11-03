@@ -1,32 +1,26 @@
-import { parse } from "yaml";
-import { defineRepoCheck, info, pass, skip, warn, type Ecosystem } from "../../../src/sdk.ts";
+import { WORKFLOWS, defineRepoCheck, info, loadYaml, pass, skip, warn, type Ecosystem } from "../../../src/sdk.ts";
 
-// rechtzeitig ecosystem → names Dependabot uses for it.
-const DEPENDABOT: Record<Ecosystem, string[]> = {
-  npm: ["npm", "bun"],
-  composer: ["composer"],
-  pub: ["pub"],
-  cargo: ["cargo"],
-  pypi: ["pip", "uv", "pipenv", "poetry"],
-  go: ["gomod"],
-};
-const RENOVATE = /^(\.github\/|\.gitlab\/)?(renovate\.json5?|\.renovaterc(\.json5?)?)$/;
-// Tools that report vulnerabilities without opening update pull requests.
-const SCANNERS = /snyk\/actions|osv-scanner|aquasecurity\/trivy|anchore\/scan-action|grype|socketdev|npm audit|pnpm audit|yarn (npm )?audit|composer audit|pip-audit|cargo audit|govulncheck|dependency-review-action/i;
+const TOOLS = loadYaml<{ dependabot: Record<Ecosystem, string[]>; renovate: string; scanners: string[] }>("data/update-tools.yml");
+const DEPENDABOT = TOOLS.dependabot;
+const RENOVATE = new RegExp(TOOLS.renovate);
+const SCANNERS = TOOLS.scanners.map((s) => s.toLowerCase());
 
 export default defineRepoCheck({
   run(repo) {
     const used = [...new Set(repo.components.map((c) => c.ecosystem))];
     if (!used.length) return skip("No locked dependencies.");
 
-    const dependabotFile = repo.files.find((f) => /^\.github\/dependabot\.ya?ml$/.test(f));
-    const covered = new Set<string>(
-      (parse(dependabotFile ? (repo.read(dependabotFile) ?? "") : "")?.updates ?? []).map((u: { "package-ecosystem"?: string }) => u["package-ecosystem"]),
-    );
-    const renovate = repo.files.some((f) => RENOVATE.test(f)) || /"renovate"\s*:/.test(repo.read("package.json") ?? "");
-    const scanners = repo.files
-      .filter((f) => /^\.github\/workflows\/.*\.ya?ml$/.test(f) || f === ".snyk")
-      .filter((f) => f === ".snyk" || SCANNERS.test(repo.read(f) ?? ""));
+    const dependabotFile = repo.find(/^\.github\/dependabot\.ya?ml$/)[0];
+    const updates = (dependabotFile && repo.yaml<{ updates?: Array<{ "package-ecosystem"?: string }> }>(dependabotFile)?.updates) || [];
+    const covered = new Set(Array.isArray(updates) ? updates.map((u) => u?.["package-ecosystem"]) : []);
+    const renovate = repo.find(RENOVATE).length > 0 || repo.yaml<{ renovate?: unknown }>("package.json")?.renovate !== undefined;
+    const scanners = [
+      ...repo.find(/^\.snyk$/),
+      ...repo.find(WORKFLOWS).filter((f) => {
+        const text = (repo.read(f) ?? "").toLowerCase();
+        return SCANNERS.some((s) => text.includes(s));
+      }),
+    ];
 
     if (renovate) return pass("Renovate keeps dependencies up to date.");
     const missing = used.filter((e) => !DEPENDABOT[e].some((name) => covered.has(name)));
