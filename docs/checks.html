@@ -475,7 +475,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DBAI-001" data-module="repo" data-severity="critical" data-search="sec-dbai-001 repo/database-rules database rules do not open data to everyone datenbankregeln öffnen keine daten für alle art. 32 gdpr compares `create table` with `enable row level security` in `supabase/**/*.sql`; looks for `if true` in firebase rules.">
+<details class="rule" id="SEC-DBAI-001" data-module="repo" data-severity="critical" data-search="sec-dbai-001 repo/database-rules database rules do not open data to everyone datenbankregeln öffnen keine daten für alle art. 32 gdpr splits `supabase/**/*.sql` into statements and compares `create table` in the public schema with `enable row level security`; looks for `if true` and test mode (`request.time &lt; timestamp.date(...)`) in firebase rules.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DBAI-001</span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><b>critical</b></span></span>
 <span class="rule-title">Database rules do not open data to everyone</span>
@@ -483,10 +483,10 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Compares <code>create table</code> with <code>enable row level security</code> in <code>supabase/**/*.sql</code>; looks for <code>if true</code> in Firebase rules.</dd></div>
-<div><dt>How to fix</dt><dd>Enable row level security on every table and replace &quot;if true&quot; rules with checks on the signed-in user.</dd></div>
+<div><dt>How it is checked</dt><dd>Splits <code>supabase/**/*.sql</code> into statements and compares <code>create table</code> in the public schema with <code>enable row level security</code>; looks for <code>if true</code> and test mode (<code>request.time &lt; timestamp.date(...)</code>) in Firebase rules.</dd></div>
+<div><dt>How to fix</dt><dd>Enable row level security on every table and replace &quot;if true&quot; and test-mode rules with checks on the signed-in user.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/database-rules"><code>checks/repo/database-rules</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://supabase.com/docs/guides/database/postgres/row-level-security">supabase.com</a>, <a href="https://firebase.google.com/docs/rules/insecure-rules">firebase.google.com</a></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-DEPS-003" data-module="repo" data-severity="medium" data-search="sec-deps-003 repo/dependency-updates dependency updates are automated abhängigkeits-updates sind automatisiert cra annex i part ii, art. 32 gdpr looks for `.github/dependabot.yml` (and which ecosystems it covers), renovate config, or vulnerability scanners in workflows, as listed in `data/update-tools.yml`.">
