@@ -517,7 +517,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-LIC-001" data-module="repo" data-severity="medium" data-search="leg-de-lic-001 repo/licenses dependency licenses fit the project lizenzen der abhängigkeiten passen zum projekt §§ 31, 69c urhg (german copyright act) compares licenses from npm and composer lockfiles with the project license (package.json, composer.json or license).">
+<details class="rule" id="LEG-DE-LIC-001" data-module="repo" data-severity="medium" data-search="leg-de-lic-001 repo/licenses dependency licenses fit the project lizenzen der abhängigkeiten passen zum projekt §§ 31, 69c urhg (german copyright act) compares licenses from npm and composer lockfiles with the project license (package.json, composer.json or license) using the groups in `data/licenses.yml`; an spdx `or` with a non-copyleft choice is not flagged.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-LIC-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Dependency licenses fit the project</span>
@@ -525,7 +525,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Compares licenses from npm and Composer lockfiles with the project license (package.json, composer.json or LICENSE).</dd></div>
+<div><dt>How it is checked</dt><dd>Compares licenses from npm and Composer lockfiles with the project license (package.json, composer.json or LICENSE) using the groups in <code>data/licenses.yml</code>; an SPDX <code>OR</code> with a non-copyleft choice is not flagged.</dd></div>
 <div><dt>How to fix</dt><dd>Review the license of each flagged dependency; replace it, buy a license or license the project to match.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/licenses"><code>checks/repo/licenses</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a></dd></div>
