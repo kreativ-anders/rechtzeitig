@@ -1,0 +1,18 @@
+# What error pages and headers should not reveal. Used by security/error-disclosure.
+
+# Traces of PHP, Node, Python, Java, .NET, Laravel and SQL errors, and server paths.
+# Regular expressions, case-sensitive, matched against the visible text of error pages (tags removed).
+patterns:
+  - '[Ff]atal [Ee]rror:?.{0,200}'
+  - 'Stack trace:.{0,120}'
+  - 'Traceback \(most recent call last\).{0,120}'
+  - 'Uncaught \w*(Error|Exception).{0,120}'
+  - '(Warning|Notice|Deprecated): .{0,160} on line \d+'
+  - 'SQLSTATE\[\w+\].{0,120}'
+  - 'Whoops! There was an error'
+  - 'Werkzeug Debugger|DisallowedHost at|Exception in thread "'
+  - 'at [\w.$<>]+ \((/|[A-Z]:\\)[^)]{0,120}:\d+:\d+\)'
+  - '(/var/www|/home/[\w-]+|/srv/|[A-Z]:\\inetpub)[\w./\\-]*'
+
+# Response headers that name software. "server" counts only with a version number.
+version_headers: [server, x-powered-by, x-aspnet-version, x-aspnetmvc-version, x-generator]

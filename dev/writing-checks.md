@@ -96,4 +96,5 @@ The runner finds the check by itself. Nothing else needs to change.
 | `data/third-parties.yml` | A service: hosts, country, whether it needs consent, how a privacy policy names it, its cookies, advice. |
 | `data/probes.yml` | A path to request. `kind: file` with an `expect` pattern for files that must not be public, `kind: error` for error pages. |
 | `data/secrets.yml` | A secret pattern with `fail` or `warn`. |
+| `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml` | Country groups, cookie name patterns, error page traces and version headers, links to closed services. |
 | `src/repo/lockfiles.ts` | A lockfile parser: one function plus one entry in `LOCKFILES`. |

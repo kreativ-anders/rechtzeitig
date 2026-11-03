@@ -56,6 +56,7 @@ The engine has no paid features and no paid code paths.
 | `data/third-parties.yml` | Known services: hosts, country, consent, cookies |
 | `data/probes.yml` | Paths to request without a browser |
 | `data/secrets.yml` | Secret patterns |
+| `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml` | Lists for single checks: EEA countries, session cookie names, error traces, closed services |
 | `test/helpers.ts` | Serves a fixture on localhost, builds repositories and contexts for tests |
 | `docs/` | User documentation: plain HTML and one `style.css`, published with GitHub Pages, no build. `npm run docs` writes the rule cards in `checks.html`. Header and footer are copied into every page, so change them in all of them. `privacy.html` must stay true when the site starts loading anything new |
 | `action.yml` | Composite action: Node 24, Playwright, scan, upload report |

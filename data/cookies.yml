@@ -1,0 +1,16 @@
+# Cookie name patterns (regular expressions, case-insensitive). Used by security/cookie-flags.
+# Tracking cookies of known vendors live in data/third-parties.yml.
+
+# Names that look like a session or login cookie. These need HttpOnly.
+session:
+  - 'sess'
+  - 'sid'
+  - 'token'
+  - 'auth'
+  - 'login'
+  - 'remember'
+
+# Names of cookies that scripts must read (CSRF tokens), so HttpOnly is not expected.
+read_by_script:
+  - 'csrf'
+  - 'xsrf'

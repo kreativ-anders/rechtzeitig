@@ -1,19 +1,8 @@
-import { defineCheck, fail, pass, startSnapshot, warn } from "../../../src/sdk.ts";
+import { defineCheck, fail, loadYaml, pass, startSnapshot, warn } from "../../../src/sdk.ts";
 
-// Traces of PHP, Node, Python, Java, .NET, Laravel and SQL errors, and server paths.
-const LEAKS = [
-  /Fatal error:?.{0,200}/i,
-  /Stack trace:.{0,120}/,
-  /Traceback \(most recent call last\).{0,120}/,
-  /Uncaught \w*(Error|Exception).{0,120}/,
-  /(Warning|Notice|Deprecated): .{0,160} on line \d+/,
-  /SQLSTATE\[\w+\].{0,120}/,
-  /Whoops! There was an error/,
-  /Werkzeug Debugger|DisallowedHost at|Exception in thread "/,
-  /at [\w.$<>]+ \((\/|[A-Z]:\\)[^)]{0,120}:\d+:\d+\)/,
-  /(\/var\/www|\/home\/[\w-]+|\/srv\/|[A-Z]:\\inetpub)[\w./\\-]*/,
-];
-const VERSION_HEADERS = ["server", "x-powered-by", "x-aspnet-version", "x-aspnetmvc-version", "x-generator"];
+const DATA = loadYaml<{ patterns: string[]; version_headers: string[] }>("data/leaks.yml");
+const LEAKS = DATA.patterns.map((p) => new RegExp(p));
+const VERSION_HEADERS = DATA.version_headers;
 
 export default defineCheck({
   run(ctx) {

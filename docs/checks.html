@@ -129,7 +129,7 @@
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-ODR-001" data-module="legal" data-severity="medium" data-search="leg-eu-odr-001 legal/odr-link no link to the closed eu dispute platform kein link zur abgeschalteten os-plattform regulation (eu) 2024/3228 looks for links to or mentions of ec.europa.eu/consumers/odr on every visited page.">
+<details class="rule" id="LEG-EU-ODR-001" data-module="legal" data-severity="medium" data-search="leg-eu-odr-001 legal/odr-link no link to the closed eu dispute platform kein link zur abgeschalteten os-plattform regulation (eu) 2024/3228 looks for links to or mentions of the closed eu dispute platform (`odr` in `data/outdated-links.yml`) on every visited page.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-ODR-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">No link to the closed EU dispute platform</span>
@@ -137,7 +137,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Looks for links to or mentions of ec.europa.eu/consumers/odr on every visited page.</dd></div>
+<div><dt>How it is checked</dt><dd>Looks for links to or mentions of the closed EU dispute platform (<code>odr</code> in <code>data/outdated-links.yml</code>) on every visited page.</dd></div>
 <div><dt>How to fix</dt><dd>Remove the link and the notice. The platform closed on 20 July 2025.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/odr-link"><code>checks/legal/odr-link</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/3228/oj">eur-lex.europa.eu</a></dd></div>
@@ -232,7 +232,7 @@
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr gets the country of each third-party host (`data/third-parties.yml`, or ipinfo with a token) and, for countries outside the eu/eea, looks for `third_country` wording in the privacy policy.">
+<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr gets the country of each third-party service (ipinfo with a token, else `country` in `data/third-parties.yml`) and, for countries outside the eea (`data/countries.yml`), looks for `third_country` wording in the privacy policy.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-005</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Privacy policy names transfers outside the EU</span>
@@ -240,7 +240,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Gets the country of each third-party host (<code>data/third-parties.yml</code>, or IPinfo with a token) and, for countries outside the EU/EEA, looks for <code>third_country</code> wording in the privacy policy.</dd></div>
+<div><dt>How it is checked</dt><dd>Gets the country of each third-party service (IPinfo with a token, else <code>country</code> in <code>data/third-parties.yml</code>) and, for countries outside the EEA (<code>data/countries.yml</code>), looks for <code>third_country</code> wording in the privacy policy.</dd></div>
 <div><dt>How to fix</dt><dd>Name the country and the safeguard for each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses).</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-country"><code>checks/privacy/third-country</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>

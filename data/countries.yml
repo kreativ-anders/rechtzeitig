@@ -1,0 +1,4 @@
+# Country groups, as ISO 3166-1 alpha-2 codes. Used by privacy/third-country.
+
+# EU member states plus Iceland, Liechtenstein and Norway. Transfers outside need a basis (Art. 44 ff. GDPR).
+eea: [AT, BE, BG, CY, CZ, DE, DK, EE, ES, FI, FR, GR, HR, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, RO, SE, SI, SK, IS, LI, "NO"]

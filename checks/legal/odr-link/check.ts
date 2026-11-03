@@ -1,6 +1,6 @@
-import { defineCheck, pass, warn } from "../../../src/sdk.ts";
+import { defineCheck, loadYaml, pass, warn } from "../../../src/sdk.ts";
 
-const ODR = /ec\.europa\.eu\/(consumers\/odr|odr)/i;
+const ODR = new RegExp(loadYaml<{ odr: string[] }>("data/outdated-links.yml").odr.join("|"), "i");
 
 export default defineCheck({
   run(ctx) {

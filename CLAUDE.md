@@ -12,6 +12,7 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | Known services, countries, cookies | `data/third-parties.yml` |
 | Paths requested without a browser | `data/probes.yml` |
 | Secret patterns | `data/secrets.yml` |
+| Lists for single checks (countries, cookie names, error traces, closed services) | `data/*.yml` |
 | Lockfile parsers | `src/repo/lockfiles.ts` |
 | Inputs of the action | `action.yml`, documented in `docs/workflow.md` |
 

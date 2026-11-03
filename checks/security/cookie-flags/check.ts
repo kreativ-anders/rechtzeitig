@@ -1,7 +1,8 @@
-import { defineCheck, pass, siteCookies, skip, warn } from "../../../src/sdk.ts";
+import { defineCheck, loadYaml, pass, siteCookies, skip, warn } from "../../../src/sdk.ts";
 
-const SESSION = /sess|sid|token|auth|login|remember/i;
-const READ_BY_SCRIPT = /csrf|xsrf/i;
+const NAMES = loadYaml<{ session: string[]; read_by_script: string[] }>("data/cookies.yml");
+const SESSION = new RegExp(NAMES.session.join("|"), "i");
+const READ_BY_SCRIPT = new RegExp(NAMES.read_by_script.join("|"), "i");
 
 export default defineCheck({
   run(ctx) {

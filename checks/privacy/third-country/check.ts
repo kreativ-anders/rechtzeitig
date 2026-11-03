@@ -1,7 +1,6 @@
-import { defineCheck, needLegalPage, pass, thirdPartyServices, warn } from "../../../src/sdk.ts";
+import { defineCheck, loadYaml, needLegalPage, pass, thirdPartyServices, warn } from "../../../src/sdk.ts";
 
-// EU member states plus Iceland, Liechtenstein and Norway.
-const EEA = new Set("AT BE BG CY CZ DE DK EE ES FI FR GR HR HU IE IT LT LU LV MT NL PL PT RO SE SI SK IS LI NO".split(" "));
+const EEA = new Set(loadYaml<{ eea: string[] }>("data/countries.yml").eea);
 
 export default defineCheck({
   run(ctx) {
