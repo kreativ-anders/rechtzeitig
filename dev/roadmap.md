@@ -8,18 +8,20 @@ Items are listed in order of priority.
 
 The first pre-release. Not yet alpha or beta.
 
-1. Security fixes from the audit of 2026-11-03:
-   - Remove line breaks from untrusted text and escape it before any output (stdout, step summary, SARIF).
-   - Skip symlinks and non-regular files in the repository, and read files with a byte limit.
-   - Rewrite regular expressions that backtrack badly (`actions-pinning`, `database-rules`, go.mod parser).
-   - Put a deadline on every page capture and read probe bodies only up to their limit.
-   - Refuse private, loopback and link-local addresses for probes and legal pages. Run probes only against the site that was entered.
-   - Run the browser with no downloads, no service workers, a minimal environment and the sandbox where the runner allows it.
-2. Detection fixes found in the review: false negatives (`GPL-*-or-later`, edge-hosted third-country vendors, `.env.*.*`, SPF `+all`, buttons without a link) and false positives (`BSL-1.0`, error pages, short vendor names, register numbers as postcodes, schema-qualified tables, DMARC `sp=`, monorepos). OSV results must never be dropped silently.
-3. Lean code: shared helpers in `src/sdk.ts`, checks import only the sdk, patterns and lists move from check code into `data/`.
-4. Legal references in `rule.yml`: CRA scope and dates (Art. 13(5), Art. 71 CRA), BFSG via EN 301 549, keep the § 36 VSBG statement in the ODR fix hint, recent rulings as sources.
-5. No paid code paths: remove the `tier` field from `rule.yml`.
-6. Release: tag `v0.1.0` as a GitHub pre-release, pin `examples/workflows/rechtzeitig.yml` to its commit SHA and drop the exception in `src/pinning.test.ts`. No moving major tag before `v1.0.0`.
+Done: security fixes, CI hardening, detection fixes and lean-code refactors from the audit of 2026-11-03; `tier` removed.
+
+1. Legal references in `rule.yml`: CRA scope and dates (Art. 13(5), Art. 71 CRA), BFSG via EN 301 549, keep the § 36 VSBG statement in the ODR fix hint, recent rulings as sources.
+2. GitHub settings of this repository (only the owner can change them):
+   - Settings → Actions → General → Workflow permissions: "Read repository contents", and untick "Allow GitHub Actions to create and approve pull requests".
+   - Settings → Security: turn on private vulnerability reporting, which `SECURITY.md` points to. Confirm the answer time stated there.
+3. Release: tag `v0.1.0` as a GitHub pre-release, pin `examples/workflows/rechtzeitig.yml` to its commit SHA and drop the exception in `src/pinning.test.ts`. No moving major tag before `v1.0.0`. Turn on immutable releases.
+
+Before the repository goes public:
+
+- A ruleset for `main`: pull requests only, status check `test` required, no force push, signed commits.
+- A ruleset for `v*` tags: no update, no delete.
+- Code scanning: CodeQL runs once the repository is public (`.github/workflows/codeql.yml` skips while it is private); add the OpenSSF Scorecard action.
+- `CODEOWNERS`.
 
 ## Next: repository
 
