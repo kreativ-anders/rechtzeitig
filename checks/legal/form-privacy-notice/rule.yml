@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-DSE-003
 severity: medium
-tier: free
 title:
   de: "Formulare verweisen auf die Datenschutzerklärung"
   en: "Forms link to the privacy policy"

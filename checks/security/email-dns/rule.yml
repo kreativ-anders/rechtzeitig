@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-DNS-001
 severity: medium
-tier: free
 title:
   de: "Domain ist gegen E-Mail-Spoofing geschützt"
   en: "Domain is protected against email spoofing"

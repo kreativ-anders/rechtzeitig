@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-EXP-002
 severity: medium
-tier: free
 title:
   de: "Fehlerseiten verraten keine Interna"
   en: "Error pages reveal no internals"

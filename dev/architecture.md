@@ -31,7 +31,7 @@ The repository is untrusted. Only regular files count: symlinks and devices are 
 
 ## Rules and checks
 
-Each check folder has `rule.yml` (metadata: id, severity, tier, titles, legal basis, fix hint, review date, sources; schema in `src/rules.ts`) and `check.ts` (detection). Legal and wording updates are data changes in `rule.yml` and `lang/*.yml`, not engine changes.
+Each check folder has `rule.yml` (metadata: id, severity, titles, legal basis, fix hint, review date, sources; schema in `src/rules.ts`) and `check.ts` (detection). Legal and wording updates are data changes in `rule.yml` and `lang/*.yml`, not engine changes.
 
 `src/runner.ts` loads every `checks/**/check.ts` with its `rule.yml`. Website checks get the `ScanContext`, repository checks (`checks/repo/`) get the `RepoContext`. Each runs on its own with a timeout; a broken check becomes `error` and the rest still run. `src/main.ts` sets the exit code from `fail-on`.
 
@@ -41,7 +41,7 @@ Messages and details carry text from the scanned site and repository. Every outp
 
 `toFindings` in `src/report.ts` builds `rechtzeitig-report.json`: rule id, severity, status, message and locations, never page text or file contents. Findings stay in the workflow artifact; nothing is sent anywhere.
 
-`tier: pro` rules never live in this repository. If they come, they arrive as data at run time and use the same open engine, so the engine itself has no paid code paths.
+The engine has no paid features and no paid code paths.
 
 ## Layout
 

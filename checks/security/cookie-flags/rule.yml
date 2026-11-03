@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-HDR-002
 severity: medium
-tier: free
 title:
   de: "Cookies nutzen sichere Flags"
   en: "Cookies use secure flags"

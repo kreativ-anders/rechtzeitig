@@ -8,7 +8,6 @@
    ```yaml
    id: LEG-DE-IMP-001        # SEC, LEG-DE, LEG-EU, A11Y, PRC or SUS, then a topic and a number
    severity: high            # info | low | medium | high | critical
-   tier: free
    title:
      de: "Impressum ist verlinkt und erreichbar"
      en: "Imprint is linked and reachable"

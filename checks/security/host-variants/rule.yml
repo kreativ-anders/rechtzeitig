@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-DNS-002
 severity: low
-tier: free
 title:
   de: "www- und Domain-Adresse funktionieren beide"
   en: "www and non-www addresses both work"

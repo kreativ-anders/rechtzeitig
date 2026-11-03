@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-CNS-001
 severity: high
-tier: free
 title:
   de: "Keine fremden Server vor Einwilligung"
   en: "No third-party servers before consent"

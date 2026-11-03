@@ -31,7 +31,7 @@ Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/
 ## Boundaries
 
 - Words belong in `lang/*.yml`, services and patterns in `data/`, never in check code.
-- Paid features never go into the engine; `tier: pro` rules never go into this repository.
+- No paid features or paid code paths in this repository.
 - Findings are technical risk hints with location and legal basis, never legal advice.
 - The repository is private for now. Commercialization plans go into the section "Commercialization" of `dev/roadmap.md`, nowhere else. No prices or competitor names. Before the repository goes public, review that section.
 - Docs are English, short and plain. `docs/` is for users (GitHub Pages), `dev/` for contributors.

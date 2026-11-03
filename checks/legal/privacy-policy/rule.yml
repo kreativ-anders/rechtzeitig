@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-DSE-001
 severity: high
-tier: free
 title:
   de: "Datenschutzerklärung ist verlinkt und erreichbar"
   en: "Privacy policy is linked and reachable"

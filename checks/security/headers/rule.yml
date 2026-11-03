@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-HDR-001
 severity: low
-tier: free
 title:
   de: "Sicherheits-Header sind gesetzt"
   en: "Security headers are set"

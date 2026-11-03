@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-ODR-001
 severity: medium
-tier: free
 title:
   de: "Kein Link zur abgeschalteten OS-Plattform"
   en: "No link to the closed EU dispute platform"

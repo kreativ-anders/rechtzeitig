@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-DEPS-005
 severity: low
-tier: free
 title:
   de: "GitHub Actions sind auf einen Commit gepinnt"
   en: "GitHub Actions are pinned to a commit"

@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-EXP-001
 severity: critical
-tier: free
 title:
   de: "Keine privaten Dateien öffentlich"
   en: "No private files are public"

@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-DE-BTN-002
 severity: high
-tier: free
 title:
   de: "Widerrufsbutton für Online-Verträge"
   en: "Withdrawal button for online contracts"

@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-TLS-001
 severity: high
-tier: free
 title:
   de: "Website nutzt HTTPS"
   en: "Site uses HTTPS"

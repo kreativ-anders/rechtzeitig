@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-DBAI-001
 severity: critical
-tier: free
 title:
   de: "Datenbankregeln öffnen keine Daten für alle"
   en: "Database rules do not open data to everyone"

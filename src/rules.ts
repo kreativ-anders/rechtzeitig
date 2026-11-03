@@ -7,8 +7,6 @@ export const LANGUAGES = ["de", "en"] as const;
 export type UiLanguage = (typeof LANGUAGES)[number];
 export const SEVERITIES = ["info", "low", "medium", "high", "critical"] as const;
 export type Severity = (typeof SEVERITIES)[number];
-/** free = ships with the open action. pro = only ever delivered as data, never stored in this repository. */
-export const TIERS = ["free", "pro"] as const;
 
 /** SEC security, LEG-DE German law, LEG-EU EU law, A11Y accessibility, PRC prices, SUS sustainability. */
 export const ID = /^(SEC|LEG-DE|LEG-EU|A11Y|PRC|SUS)-[A-Z0-9]+-\d{3}$/;
@@ -20,7 +18,6 @@ type Text = Record<UiLanguage, string>;
 export interface Rule {
   id: string;
   severity: Severity;
-  tier: (typeof TIERS)[number];
   title: Text;
   legal_basis?: Text;
   /** One sentence: how check.ts detects it, naming the data files it uses. Shown in docs/checks.html. */
@@ -48,7 +45,6 @@ export function validateRule(rule: Rule, today = new Date()): string[] {
   };
   if (!ID.test(rule?.id ?? "")) p.push(`id "${rule?.id}" does not match ${ID}`);
   if (!SEVERITIES.includes(rule?.severity)) p.push(`severity must be one of ${SEVERITIES.join(", ")}`);
-  if (!TIERS.includes(rule?.tier)) p.push(`tier must be one of ${TIERS.join(", ")}`);
   text("title", rule?.title);
   text("legal_basis", rule?.legal_basis, false);
   text("fix_hint", rule?.fix_hint);

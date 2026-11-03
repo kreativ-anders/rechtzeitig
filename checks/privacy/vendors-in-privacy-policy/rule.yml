@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-DSE-004
 severity: medium
-tier: free
 title:
   de: "Datenschutzerklärung nennt die genutzten Dienste"
   en: "Privacy policy names the services the site uses"

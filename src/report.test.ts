@@ -4,7 +4,7 @@ import { toFindings, toMarkdown, toText, withoutCommands, type Report } from "./
 import { oneLine } from "./text.ts";
 import type { Rule } from "./rules.ts";
 
-const rule = { id: "SEC-TEST-001", severity: "high", tier: "free", title: { de: "t", en: "t" }, how: "h", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: [] } } as Rule;
+const rule = { id: "SEC-TEST-001", severity: "high", title: { de: "t", en: "t" }, how: "h", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: [] } } as Rule;
 const report = (message: string, details: string[]): Report => ({
   outcomes: [{ id: "security/test", rule, status: "fail", message, details }],
   version: "0", startedAt: "now", onGitHub: true, language: "en",

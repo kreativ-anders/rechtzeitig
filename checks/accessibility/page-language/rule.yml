@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: A11Y-LANG-001
 severity: low
-tier: free
 title:
   de: "Seite gibt ihre Sprache an"
   en: "Page declares its language"

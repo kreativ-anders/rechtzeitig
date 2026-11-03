@@ -1,7 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-DSE-005
 severity: medium
-tier: free
 title:
   de: "Datenschutzerklärung nennt Übermittlungen außerhalb der EU"
   en: "Privacy policy names transfers outside the EU"
