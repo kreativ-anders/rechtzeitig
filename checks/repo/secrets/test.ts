@@ -13,10 +13,10 @@ test("passes for clean code", async () => {
   assert.equal((await runRepoCheck(here, { "src/app.ts": "const key = process.env.STRIPE_KEY;" })).status, "pass");
 });
 
-test("fails for a live Stripe key and redacts it", async () => {
+test("fails for a live Stripe key and shows only its start and length", async () => {
   const result = await runRepoCheck(here, { "src/pay.ts": `const key = "${stripe}";` });
   assert.equal(result.status, "fail");
-  assert.equal(result.details?.[0], "src/pay.ts:1: Stripe secret key (sk_live_…)");
+  assert.equal(result.details?.[0], "src/pay.ts:1: Stripe secret key (sk_l… (32 chars))");
 });
 
 test("fails for a Supabase service_role key but not for the anon key", async () => {
