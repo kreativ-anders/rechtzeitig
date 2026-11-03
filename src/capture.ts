@@ -1,6 +1,6 @@
 import type { BrowserContext } from "playwright";
 import { timeoutAfter } from "./deadline.ts";
-import { normalize } from "./text.ts";
+import { errorMessage, isWebUrl, normalize } from "./text.ts";
 import type { Area, Checkbox, Form, Link, Snapshot } from "./sdk.ts";
 
 interface RawLink {
@@ -120,7 +120,11 @@ const toForm = (raw: RawForm): Form => ({ ...raw, links: raw.links.map(toLink) }
 
 const IDLE = 5000;
 const MAX_REQUESTS = 5000;
-const EMPTY = { headers: {}, meta: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], cookies: [], storage: [] };
+
+/** A load that got nothing: status 0, no content. */
+export const emptySnapshot = (finalUrl: string): Snapshot => ({
+  status: 0, finalUrl, headers: {}, meta: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], requests: [], cookies: [], storage: [],
+});
 
 /** Loads a URL once in the given browser context and records what a visitor gets without clicking anything. */
 export async function capture(context: BrowserContext, url: string, js: boolean, timeout: number): Promise<Snapshot> {
@@ -128,7 +132,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
   const requests: Snapshot["requests"] = [];
   page.on("request", (r) => {
     const u = r.url();
-    if (/^https?:/.test(u) && requests.length < MAX_REQUESTS) requests.push({ url: u, host: new URL(u).hostname, type: r.resourceType() });
+    if (isWebUrl(u) && requests.length < MAX_REQUESTS) requests.push({ url: u, host: new URL(u).hostname, type: r.resourceType() });
   });
   const cookieKey = (c: { name: string; domain: string }) => `${c.name}@${c.domain}`;
   const before = new Set((await context.cookies()).map(cookieKey));
@@ -169,7 +173,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
   try {
     return await Promise.race([load(), deadline]);
   } catch (e) {
-    return { ...EMPTY, status: 0, error: (e as Error).message.split("\n")[0], finalUrl: url, requests: [...requests] };
+    return { ...emptySnapshot(url), error: errorMessage(e), requests: [...requests] };
   } finally {
     stop();
     await page.close().catch(() => {});

@@ -2,7 +2,8 @@
 
 export { loadYaml } from "./data.ts";
 
-export type Status = "pass" | "warn" | "fail" | "info" | "skip";
+export const STATUSES = ["pass", "warn", "fail", "info", "skip"] as const;
+export type Status = (typeof STATUSES)[number];
 
 export interface Result {
   status: Status;
@@ -183,8 +184,8 @@ export interface ScanContext {
   variant?: { url: string; status: number; finalUrl: string } | { url: string; error: string };
   /** TLS certificate of the start page's host. Missing for http:// and in tests. */
   tls?: { protocol: string; validTo: string; daysLeft: number; authorized: boolean; error?: string };
-  /** DNS TXT records of the site's domain. Missing in tests. */
-  dns?: { spf?: string; dmarc?: string; mx: boolean };
+  /** DNS records of the registrable domain `domain` (SPF, DMARC at _dmarc.domain, MX). Missing in tests. */
+  dns?: { domain: string; spf?: string; dmarc?: string; mx: boolean };
   probes: Probe[];
   /** Host → ISO country, looked up by IP when an IPinfo token is set. */
   countries: Record<string, string>;

@@ -3,7 +3,7 @@ import { capture } from "./capture.ts";
 import { matchLinks, type Language } from "./lang.ts";
 import { countries, emailDns, hostVariant, plainHttp, probe, tlsInfo } from "./probe.ts";
 import { blockedInBrowser, isPublicHost } from "./net.ts";
-import { siteOf, withoutHash } from "./text.ts";
+import { isWebUrl, siteOf, withoutHash } from "./text.ts";
 import type { Area, Page, Probe, ScanContext, Snapshot } from "./sdk.ts";
 
 export interface CrawlOptions {
@@ -19,6 +19,8 @@ export interface CrawlOptions {
 }
 
 export interface CrawlData {
+  /** Final URL of the start page. */
+  url: string;
   start: Page;
   pages: Page[];
   probes: Probe[];
@@ -34,7 +36,7 @@ const SAMPLE_ORDER: Area[] = ["nav", "header", "footer", "main", "other", "banne
 const LEGAL_LINKS_PER_CONCEPT = 2;
 const MAX_COUNTRY_LOOKUPS = 30;
 
-const isPage = (href: string | null): href is string => !!href && /^https?:/.test(href) && !SKIP_FILES.test(new URL(href).pathname);
+const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_FILES.test(new URL(href).pathname);
 
 /**
  * Visits the start page, every page a language pack calls a legal page (imprint, privacy, ...),
@@ -66,8 +68,9 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     };
 
     const start = await visit(startUrl);
+    const url = start.js.finalUrl || startUrl;
     const pages = [start];
-    const seen = new Set([withoutHash(startUrl), withoutHash(start.js.finalUrl)]);
+    const seen = new Set([withoutHash(startUrl), withoutHash(url)]);
     const queue = [...legalTargets(start, opts.lang), ...sampleTargets(start.js)];
     for (const url of queue) {
       if (pages.length >= opts.maxPages) break;
@@ -80,10 +83,9 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     }
 
     // Lookups without a browser follow the start page only within the same site; otherwise they use the input URL.
-    const redirected = start.js.finalUrl || startUrl;
-    const finalUrl = siteOf(new URL(redirected).hostname) === siteOf(trusted) ? redirected : startUrl;
+    const finalUrl = siteOf(new URL(url).hostname) === siteOf(trusted) ? url : startUrl;
     const probes = await probe(new URL(finalUrl).origin, opts.userAgent, opts.timeout, trusted);
-    if (opts.offline) return { start, pages, probes, countries: {} };
+    if (opts.offline) return { url, start, pages, probes, countries: {} };
 
     const site = siteOf(new URL(finalUrl).hostname);
     const thirdParty = [...new Set(pages.flatMap((p) => [...p.noJs.requests, ...p.js.requests].map((r) => r.host)))]
@@ -96,7 +98,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       emailDns(finalUrl),
       countries(thirdParty, opts.ipinfoToken, opts.timeout),
     ]);
-    return { start, pages, probes, countries: found, http, variant, tls, dns };
+    return { url, start, pages, probes, countries: found, http, variant, tls, dns };
   } finally {
     await noJs.close();
     await js.close();

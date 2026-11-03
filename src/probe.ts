@@ -3,8 +3,9 @@
 import { connect } from "node:tls";
 import { lookup, resolveMx, resolveTxt } from "node:dns/promises";
 import { loadYaml } from "./data.ts";
-import { assertPublicHost, BlockedHostError, fetchPublic } from "./net.ts";
-import { siteOf } from "./text.ts";
+import { DAY } from "./deadline.ts";
+import { assertPublicHost, BlockedHostError, fetchPublic, isIpOrLocal } from "./net.ts";
+import { errorMessage, siteOf } from "./text.ts";
 import type { Probe, ScanContext } from "./sdk.ts";
 
 const PROBES = loadYaml<Array<{
@@ -62,14 +63,14 @@ export async function plainHttp(url: string, timeout: number, trusted?: string):
     await res.body?.cancel();
     return { status: res.status, location: res.headers.get("location") ?? "" };
   } catch (e) {
-    return { error: (e as Error).message };
+    return { error: errorMessage(e) };
   }
 }
 
 /** Requests the host with "www." added or removed and follows redirects, checking every hop. */
 export async function hostVariant(url: string, timeout: number): Promise<ScanContext["variant"]> {
   const u = new URL(url);
-  if (/^[\d.]+$/.test(u.hostname) || u.hostname === "localhost") return undefined;
+  if (isIpOrLocal(u.hostname)) return undefined;
   u.hostname = u.hostname.startsWith("www.") ? u.hostname.slice(4) : `www.${u.hostname}`;
   u.pathname = "/";
   try {
@@ -83,8 +84,7 @@ export async function hostVariant(url: string, timeout: number): Promise<ScanCon
     return { url: u.href, status: res.status, finalUrl };
   } catch (e) {
     if (e instanceof BlockedHostError) return undefined; // points into a private network, nothing to check
-    const cause = (e as { cause?: { code?: string; message?: string } }).cause;
-    return { url: u.href, error: cause?.code ?? cause?.message ?? (e as Error).message };
+    return { url: u.href, error: errorMessage(e) };
   }
 }
 
@@ -94,7 +94,7 @@ export async function tlsInfo(url: string, timeout: number, trusted?: string): P
   try {
     await assertPublicHost(u.hostname, trusted);
   } catch (e) {
-    return { protocol: "", validTo: "", daysLeft: 0, authorized: false, error: (e as Error).message };
+    return { protocol: "", validTo: "", daysLeft: 0, authorized: false, error: errorMessage(e) };
   }
   return new Promise((resolve) => {
     const socket = connect({ host: u.hostname, port: Number(u.port) || 443, servername: u.hostname, rejectUnauthorized: false });
@@ -110,7 +110,7 @@ export async function tlsInfo(url: string, timeout: number, trusted?: string): P
       done({
         protocol: socket.getProtocol() ?? "",
         validTo: validTo.toISOString().slice(0, 10),
-        daysLeft: Math.floor((validTo.getTime() - Date.now()) / 86_400_000),
+        daysLeft: Math.floor((validTo.getTime() - Date.now()) / DAY),
         authorized: socket.authorized,
         error: socket.authorized ? undefined : String(socket.authorizationError),
       });
@@ -118,9 +118,11 @@ export async function tlsInfo(url: string, timeout: number, trusted?: string): P
   });
 }
 
+/** SPF, DMARC and MX of the registrable domain; `domain` says which one was queried. */
 export async function emailDns(url: string): Promise<ScanContext["dns"]> {
-  const domain = siteOf(new URL(url).hostname);
-  if (!domain.includes(".") || /^[\d.]+$/.test(domain)) return undefined;
+  const host = new URL(url).hostname;
+  if (isIpOrLocal(host) || !host.includes(".")) return undefined;
+  const domain = siteOf(host);
   const txt = async (name: string) => (await resolveTxt(name).catch(() => [])).map((parts) => parts.join(""));
   const [root, dmarc, mx] = await Promise.all([
     txt(domain),
@@ -128,6 +130,7 @@ export async function emailDns(url: string): Promise<ScanContext["dns"]> {
     resolveMx(domain).catch(() => []),
   ]);
   return {
+    domain,
     spf: root.find((r) => r.toLowerCase().startsWith("v=spf1")),
     dmarc: dmarc.find((r) => r.toLowerCase().startsWith("v=dmarc1")),
     mx: mx.length > 0,

@@ -49,3 +49,13 @@ export function siteOf(host: string): string {
   const lastTwo = parts.slice(-2).join(".");
   return SHARED_SUFFIXES.has(lastTwo) ? parts.slice(-3).join(".") : lastTwo;
 }
+
+/** true for http:// and https:// URLs. */
+export const isWebUrl = (url: string | null | undefined): url is string => !!url && /^https?:/i.test(url);
+
+/** First line of an error, preferring the network cause (ECONNREFUSED, CERT_HAS_EXPIRED) over fetch's "fetch failed". */
+export function errorMessage(e: unknown): string {
+  const err = e as { message?: unknown; cause?: { code?: unknown; message?: unknown } } | undefined;
+  const text = err?.cause?.code ?? err?.cause?.message ?? err?.message ?? e;
+  return String(text).split("\n")[0];
+}

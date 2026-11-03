@@ -3,10 +3,12 @@ import { createContext } from "./context.ts";
 import { crawl } from "./crawl.ts";
 import { loadLanguages, resolveLanguages } from "./lang.ts";
 import { loadRegistry } from "./registry.ts";
-import type { ScanContext } from "./sdk.ts";
+import { loadYaml, type ScanContext } from "./sdk.ts";
+import { errorMessage } from "./text.ts";
 
-export const VERSION = "0.1.0";
-export const HOMEPAGE = "https://github.com/kreativ-anders/rechtzeitig";
+/** From package.json (YAML reads JSON too). */
+export const VERSION = loadYaml<{ version: string }>("package.json").version;
+const HOMEPAGE = "https://github.com/kreativ-anders/rechtzeitig";
 
 export interface ScanOptions {
   /** "de", "en", "all" or a comma list. */
@@ -32,7 +34,7 @@ export async function launchBrowser(onWarning: (message: string) => void = () =>
   try {
     return await chromium.launch({ env, chromiumSandbox: true });
   } catch (e) {
-    onWarning(`Chrome sandbox not available on this runner, scanning without it (${(e as Error).message.split("\n")[0]})`);
+    onWarning(`Chrome sandbox not available on this runner, scanning without it (${errorMessage(e)})`);
     return chromium.launch({ env, chromiumSandbox: false });
   }
 }

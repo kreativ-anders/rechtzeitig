@@ -49,6 +49,12 @@ test("a broken check becomes an error and the others still run", async () => {
   assert.equal(outcomes[0].message, "boom");
 });
 
+test("a check that throws a non-Error still gets a message", async () => {
+  const checks = [{ id: "x/string", rule, check: defineCheck({ run: () => { throw "plain text\nsecond line"; } }) }];
+  const [outcome] = await runChecks(checks, { web: fakeContext({}) });
+  assert.equal(outcome.message, "plain text");
+});
+
 test("asking for an unknown concept is an error, not a silent pass", async () => {
   const checks = [{ id: "x/typo", rule, check: defineCheck({ run: (ctx) => pass(String(ctx.says("imprnt", "x"))) }) }];
   const [outcome] = await runChecks(checks, { web: fakeContext({}) });

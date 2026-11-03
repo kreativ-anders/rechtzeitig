@@ -2,6 +2,7 @@
 // Legal and wording updates are data updates here, never engine changes.
 
 import { loadYaml } from "./data.ts";
+import { DAY } from "./deadline.ts";
 
 export const LANGUAGES = ["de", "en"] as const;
 export type UiLanguage = (typeof LANGUAGES)[number];
@@ -9,9 +10,9 @@ export const SEVERITIES = ["info", "low", "medium", "high", "critical"] as const
 export type Severity = (typeof SEVERITIES)[number];
 
 /** SEC security, LEG-DE German law, LEG-EU EU law, A11Y accessibility, PRC prices, SUS sustainability. */
-export const ID = /^(SEC|LEG-DE|LEG-EU|A11Y|PRC|SUS)-[A-Z0-9]+-\d{3}$/;
+const ID = /^(SEC|LEG-DE|LEG-EU|A11Y|PRC|SUS)-[A-Z0-9]+-\d{3}$/;
 /** A rule whose review is older than this fails the tests, so legal texts get looked at again. */
-export const REVIEW_DAYS = 365;
+const REVIEW_DAYS = 365;
 
 type Text = Record<UiLanguage, string>;
 
@@ -51,7 +52,7 @@ export function validateRule(rule: Rule, today = new Date()): string[] {
   if (typeof rule?.how !== "string" || rule.how.trim().length < 20) p.push("how must say in one sentence how the check works");
   const reviewed = new Date(rule?.meta?.last_reviewed ?? "");
   if (Number.isNaN(reviewed.getTime())) p.push("meta.last_reviewed must be a date (YYYY-MM-DD)");
-  else if ((today.getTime() - reviewed.getTime()) / 86_400_000 > REVIEW_DAYS) p.push(`meta.last_reviewed is older than ${REVIEW_DAYS} days`);
+  else if ((today.getTime() - reviewed.getTime()) / DAY > REVIEW_DAYS) p.push(`meta.last_reviewed is older than ${REVIEW_DAYS} days`);
   if (!Array.isArray(rule?.meta?.sources)) p.push("meta.sources must be a list");
   if (rule?.legal_basis && !rule.meta?.sources?.length) p.push("a rule with a legal basis needs at least one source");
   return p;

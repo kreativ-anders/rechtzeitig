@@ -3,13 +3,13 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { SEVERITIES } from "./rules.ts";
-import { loadChecks, type LoadedCheck } from "./runner.ts";
+import { loadChecks, moduleOf, type LoadedCheck } from "./runner.ts";
 
 const FILE = new URL("../docs/checks.html", import.meta.url);
 const SOURCE = "https://github.com/kreativ-anders/rechtzeitig/tree/main/checks";
 const START = "<!-- checks:start -->";
 const END = "<!-- checks:end -->";
-export const MODULES: Record<string, string> = {
+const MODULES: Record<string, string> = {
   legal: "Legal",
   privacy: "Privacy and consent",
   security: "Security",
@@ -50,7 +50,7 @@ function card(c: LoadedCheck, module: string): string {
 export function checksHtml(checks: LoadedCheck[]): string {
   const out: string[] = [];
   for (const [module, heading] of Object.entries(MODULES)) {
-    const list = checks.filter((c) => c.id.split("/")[0] === module);
+    const list = checks.filter((c) => moduleOf(c.id) === module);
     if (!list.length) continue;
     out.push(
       `<section class="module" data-module="${module}">`,
