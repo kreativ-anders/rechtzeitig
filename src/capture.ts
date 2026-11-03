@@ -1,7 +1,7 @@
 import type { BrowserContext } from "playwright";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage, isWebUrl, normalize } from "./text.ts";
-import type { Area, Checkbox, Form, Link, Snapshot } from "./sdk.ts";
+import { cookieKey, type Area, type Checkbox, type Form, type Link, type Snapshot } from "./sdk.ts";
 
 interface RawLink {
   href: string | null;
@@ -134,7 +134,6 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     const u = r.url();
     if (isWebUrl(u) && requests.length < MAX_REQUESTS) requests.push({ url: u, host: new URL(u).hostname, type: r.resourceType() });
   });
-  const cookieKey = (c: { name: string; domain: string }) => `${c.name}@${c.domain}`;
   const before = new Set((await context.cookies()).map(cookieKey));
   const load = async (): Promise<Snapshot> => {
     const response = await page.goto(url, { waitUntil: "load", timeout });

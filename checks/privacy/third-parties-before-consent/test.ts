@@ -20,8 +20,9 @@ test("warns for a public CDN", async () => {
   assert.match(result.message, /jsDelivr/);
 });
 
-test("warns for unknown hosts", async () => {
+test("warns for unknown hosts, grouped by site", async () => {
   const result = await runCheck(here, "unknown");
   assert.equal(result.status, "warn");
-  assert.match(result.message, /images\.example-unknown\.com/);
+  assert.match(result.message, /example-unknown\.com/);
+  assert.match(result.details?.[0] ?? "", /^example-unknown\.com \(images\.example-unknown\.com\)/);
 });

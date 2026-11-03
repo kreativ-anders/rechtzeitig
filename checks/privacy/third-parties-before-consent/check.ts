@@ -1,32 +1,13 @@
-import { defineCheck, fail, pass, warn, type Vendor } from "../../../src/sdk.ts";
-
-interface Contact {
-  vendor?: Vendor;
-  hosts: Set<string>;
-  pages: Set<string>;
-}
+import { defineCheck, fail, pass, thirdPartyServices, warn, type Service } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
-    const contacts = new Map<string, Contact>();
-    for (const page of ctx.sitePages) {
-      for (const request of [...page.noJs.requests, ...page.js.requests]) {
-        if (!ctx.isThirdParty(request.host)) continue;
-        const vendor = ctx.vendor(request.host);
-        const key = vendor?.name ?? request.host;
-        const contact = contacts.get(key) ?? { vendor, hosts: new Set(), pages: new Set() };
-        contact.hosts.add(request.host);
-        contact.pages.add(ctx.short(page.url));
-        contacts.set(key, contact);
-      }
-    }
-
-    const line = (name: string, c: Contact) =>
-      `${name} (${[...c.hosts].join(", ")}) on ${[...c.pages].join(", ")}.${c.vendor?.advice ? ` ${c.vendor.advice}` : ""}`;
-    const needConsent = [...contacts].filter(([, c]) => c.vendor?.consent === "required");
-    const others = [...contacts].filter(([, c]) => c.vendor?.consent !== "required");
-    const details = [...needConsent, ...others].map(([name, c]) => line(name, c));
-    const names = (list: typeof needConsent) => list.map(([name]) => name).join(", ");
+    const services = [...thirdPartyServices(ctx).values()];
+    const line = (s: Service) => `${s.name} (${[...s.hosts].join(", ")}) on ${[...s.pages].join(", ")}.${s.vendor?.advice ? ` ${s.vendor.advice}` : ""}`;
+    const needConsent = services.filter((s) => s.vendor?.consent === "required");
+    const others = services.filter((s) => s.vendor?.consent !== "required");
+    const details = [...needConsent, ...others].map(line);
+    const names = (list: Service[]) => list.map((s) => s.name).join(", ");
 
     if (needConsent.length) {
       return fail(`Loaded before consent: ${names(needConsent)}. Each visit sends the visitor's IP address to them.`, details);

@@ -1,4 +1,4 @@
-import { defineCheck, fail, pass, warn } from "../../../src/sdk.ts";
+import { defineCheck, fail, pass, startSnapshot, warn } from "../../../src/sdk.ts";
 
 // Traces of PHP, Node, Python, Java, .NET, Laravel and SQL errors, and server paths.
 const LEAKS = [
@@ -24,7 +24,7 @@ export default defineCheck({
         if (m) leaks.push(`${p.path} (HTTP ${p.status}): ${m[0].replace(/<[^>]+>/g, "").slice(0, 160)}`);
       }
     }
-    const headers = { ...ctx.start.js.headers, ...Object.assign({}, ...ctx.probes.map((p) => p.headers)) };
+    const headers = { ...startSnapshot(ctx).headers, ...Object.assign({}, ...ctx.probes.map((p) => p.headers)) };
     const versions = VERSION_HEADERS.filter((h) => headers[h] && (h !== "server" || /\d/.test(headers[h]))).map((h) => `${h}: ${headers[h]}`);
 
     if (leaks.length) return fail("Error pages show technical details that help attackers.", [...leaks, ...versions]);

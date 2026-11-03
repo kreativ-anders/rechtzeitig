@@ -1,4 +1,4 @@
-import { defineCheck, fail, loadedPage, pass, skip, warn } from "../../../src/sdk.ts";
+import { defineCheck, fail, needLegalPage, pass, warn } from "../../../src/sdk.ts";
 
 // Formats from German law, so they do not depend on the page language.
 const EMAIL = /[\w.+-]+\s*(@|[[(]\s*at\s*[\])])\s*[\w-]+(\.[\w-]+)*\.[a-z]{2,}/i;
@@ -9,8 +9,8 @@ const REGISTER = /\b(HRB|HRA|VR|PR|GnR|GsR)\s?\d+/;
 
 export default defineCheck({
   run(ctx) {
-    const page = loadedPage(ctx, "imprint");
-    if (!page) return skip("No imprint to read (see legal/imprint).");
+    const page = needLegalPage(ctx, "imprint");
+    if ("status" in page) return page;
     const text = page.js.text;
     const hasEmail = EMAIL.test(text) || page.js.links.some((l) => l.href?.startsWith("mailto:"));
     const missing: string[] = [];

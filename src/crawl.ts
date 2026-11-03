@@ -4,7 +4,7 @@ import { matchLinks, type Language } from "./lang.ts";
 import { countries, emailDns, hostVariant, plainHttp, probe, tlsInfo } from "./probe.ts";
 import { blockedInBrowser, isPublicHost } from "./net.ts";
 import { isWebUrl, siteOf, withoutHash } from "./text.ts";
-import type { Area, Page, Probe, ScanContext, Snapshot } from "./sdk.ts";
+import { pageLinks, type Area, type Page, type Probe, type ScanContext, type Snapshot } from "./sdk.ts";
 
 export interface CrawlOptions {
   browser: Browser;
@@ -108,7 +108,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
 function legalTargets(start: Page, lang: Language): string[] {
   const urls: string[] = [];
   for (const concept of Object.keys(lang.links)) {
-    const hrefs = [...matchLinks(lang, concept, start.js.links), ...matchLinks(lang, concept, start.noJs.links)]
+    const hrefs = matchLinks(lang, concept, pageLinks(start))
       .map((l) => l.href)
       .filter(isPage);
     urls.push(...[...new Set(hrefs)].slice(0, LEGAL_LINKS_PER_CONCEPT));

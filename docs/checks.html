@@ -246,7 +246,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg records every request to another site while loading pages without clicks and looks the host up in `data/third-parties.yml`; `consent: required` vendors fail, others warn.">
+<details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg records every request to another site while loading pages without clicks, groups hosts by vendor from `data/third-parties.yml` (else by domain); `consent: required` vendors fail, others warn.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">No third-party servers before consent</span>
@@ -254,7 +254,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Records every request to another site while loading pages without clicks and looks the host up in <code>data/third-parties.yml</code>; <code>consent: required</code> vendors fail, others warn.</dd></div>
+<div><dt>How it is checked</dt><dd>Records every request to another site while loading pages without clicks, groups hosts by vendor from <code>data/third-parties.yml</code> (else by domain); <code>consent: required</code> vendors fail, others warn.</dd></div>
 <div><dt>How to fix</dt><dd>Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-parties-before-consent"><code>checks/privacy/third-parties-before-consent</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a></dd></div>
@@ -442,7 +442,7 @@
 <section class="module" data-module="accessibility">
 <h3>Accessibility <small>1 rule</small></h3>
 <div class="rules">
-<details class="rule" id="A11Y-LANG-001" data-module="accessibility" data-severity="low" data-search="a11y-lang-001 accessibility/page-language page declares its language seite gibt ihre sprache an wcag 2.2 success criterion 3.1.1 (bfsg) reads `&lt;html lang&gt;` of the start page and compares it with the chosen language.">
+<details class="rule" id="A11Y-LANG-001" data-module="accessibility" data-severity="low" data-search="a11y-lang-001 accessibility/page-language page declares its language seite gibt ihre sprache an wcag 2.2 success criterion 3.1.1 (bfsg) reads `&lt;html lang&gt;` of the start page as the server sent it (javascript off) and compares it with the chosen language.">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-LANG-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
 <span class="rule-title">Page declares its language</span>
@@ -450,7 +450,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads <code>&lt;html lang&gt;</code> of the start page and compares it with the chosen language.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads <code>&lt;html lang&gt;</code> of the start page as the server sent it (JavaScript off) and compares it with the chosen language.</dd></div>
 <div><dt>How to fix</dt><dd>Set the lang attribute on &lt;html&gt;, for example &lt;html lang=&quot;de&quot;&gt;.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/page-language"><code>checks/accessibility/page-language</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-page.html">w3.org</a>, <a href="https://www.gesetze-im-internet.de/bfsg/">gesetze-im-internet.de</a></dd></div>

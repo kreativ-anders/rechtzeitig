@@ -1,4 +1,4 @@
-import { defineCheck, loadedPage, pass, skip, warn } from "../../../src/sdk.ts";
+import { defineCheck, needLegalPage, pass, warn } from "../../../src/sdk.ts";
 
 // Concept in lang/*.yml `text` → what Art. 13 GDPR asks for.
 const TOPICS: Array<[string, string]> = [
@@ -17,8 +17,8 @@ const TOPICS: Array<[string, string]> = [
 
 export default defineCheck({
   run(ctx) {
-    const page = loadedPage(ctx, "privacy");
-    if (!page) return skip("No privacy policy to read (see legal/privacy-policy).");
+    const page = needLegalPage(ctx, "privacy");
+    if ("status" in page) return page;
     const missing = TOPICS.filter(([concept]) => !ctx.says(concept, page.js.text)).map(([, label]) => label);
     if (missing.length) return warn(`${missing.length} of ${TOPICS.length} required topics not found.`, missing);
     return pass(`All ${TOPICS.length} required topics found.`);

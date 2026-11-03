@@ -1,21 +1,19 @@
-import { defineCheck, loadedPage, pass, siteRequests, skip, warn } from "../../../src/sdk.ts";
+import { defineCheck, needLegalPage, pass, thirdPartyServices, warn } from "../../../src/sdk.ts";
 
 // EU member states plus Iceland, Liechtenstein and Norway.
 const EEA = new Set("AT BE BG CY CZ DE DK EE ES FI FR GR HR HU IE IT LT LU LV MT NL PL PT RO SE SI SK IS LI NO".split(" "));
 
 export default defineCheck({
   run(ctx) {
-    const policy = loadedPage(ctx, "privacy");
-    if (!policy) return skip("No privacy policy to read (see legal/privacy-policy).");
+    const policy = needLegalPage(ctx, "privacy");
+    if ("status" in policy) return policy;
 
     const outside = new Map<string, string>();
     const unknown = new Set<string>();
-    for (const { host } of siteRequests(ctx)) {
-      if (!ctx.isThirdParty(host)) continue;
-      const vendor = ctx.vendor(host);
-      const country = ctx.countries[host] ?? vendor?.country;
-      if (!country) unknown.add(host);
-      else if (!EEA.has(country)) outside.set(vendor?.name ?? host, country);
+    for (const service of thirdPartyServices(ctx).values()) {
+      const country = [...service.hosts].map((h) => ctx.countries[h]).find(Boolean) ?? service.vendor?.country;
+      if (!country) unknown.add(service.name);
+      else if (!EEA.has(country)) outside.set(service.name, country);
     }
     const notes = unknown.size
       ? [`Country unknown for ${[...unknown].join(", ")}. Set the ipinfo-token input to look it up.`]

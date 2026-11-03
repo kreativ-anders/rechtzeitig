@@ -76,8 +76,13 @@ The runner finds the check by itself. Nothing else needs to change.
 | Field or helper | Content |
 |---|---|
 | `ctx.start`, `ctx.pages` | Visited pages. Each has `noJs` and `js` snapshots: status, headers, `meta` (header equivalents from `<meta>`), text, links, forms, checkboxes, requests, cookies |
-| `ctx.sitePages`, `siteRequests(ctx)` | Pages and requests of the site itself. Use these for requests and cookies |
-| `ctx.legalPage("imprint")`, `loadedPage(ctx, "privacy")` | Link on the start page and the page behind it |
+| `ctx.url`, `ctx.https`, `ctx.domain` | Final URL of the start page, whether it is HTTPS, its registrable domain |
+| `startLinks(ctx, concept?)`, `startCheckboxes(ctx)` | Links and checkboxes of the start page, both loads, without duplicates |
+| `startSnapshot(ctx)` | The start page as the server sent it. Use it for status, headers, `meta` and `lang` |
+| `ctx.sitePages`, `siteRequests(ctx)`, `siteCookies(ctx)` | Pages, requests and cookies (once per name and domain) of the site itself |
+| `thirdPartyServices(ctx)` | Other sites contacted, grouped by vendor (else by domain), with hosts and pages |
+| `ctx.legalPage("imprint")`, `needLegalPage(ctx, "privacy")` | Link on the start page and the page behind it; `needLegalPage` returns the skip result when it did not load |
+| `LEGAL_PAGES`, `linkedPageResult`, `requiredButton` | Shared logic of the imprint/privacy and cancellation/withdrawal rules |
 | `ctx.links(concept, snapshotOrLinks)` | Links whose label matches a concept from `lang/*.yml` |
 | `ctx.says(concept, text)` | Text contains a concept from `lang/*.yml` |
 | `ctx.probes`, `ctx.tls`, `ctx.dns`, `ctx.http`, `ctx.variant`, `ctx.countries` | Lookups without a browser |
