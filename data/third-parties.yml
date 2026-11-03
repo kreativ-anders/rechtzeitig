@@ -311,3 +311,39 @@
   purpose: consent management
   consent: check
   country: US
+
+- name: consentmanager
+  hosts: [consentmanager.net]
+  purpose: consent management
+  consent: check
+  country: BE # consentmanager AB (SE), owned by iubenda (IT), part of team.blue (BE)
+
+- name: CookieYes
+  hosts: [cookieyes.com, cdn-cookieyes.com]
+  purpose: consent management
+  consent: check
+  country: GB
+
+- name: iubenda
+  hosts: [iubenda.com]
+  purpose: consent management
+  consent: check
+  country: BE # iubenda Srl (IT), part of team.blue (BE) since 2022
+
+- name: Cookie-Script
+  hosts: [cookie-script.com]
+  purpose: consent management
+  consent: check
+  country: LT
+
+- name: CookieFirst
+  hosts: [cookiefirst.com]
+  purpose: consent management
+  consent: check
+  country: BE # Digital Data Solutions BV (NL), owned by iubenda, part of team.blue (BE) since 2025
+
+- name: Osano
+  hosts: [osano.com]
+  purpose: consent management
+  consent: check
+  country: US
