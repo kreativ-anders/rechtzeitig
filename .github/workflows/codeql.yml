@@ -16,6 +16,8 @@ concurrency:
 
 jobs:
   analyze:
+    # Code scanning needs GitHub Code Security on private repositories.
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
