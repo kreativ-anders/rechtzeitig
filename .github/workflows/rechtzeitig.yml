@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Lets rechtzeitig read lockfiles, licenses and secrets. Remove to scan the website only.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./
         with:
           url: ${{ inputs.url }}
