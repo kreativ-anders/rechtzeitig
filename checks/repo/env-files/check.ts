@@ -1,6 +1,6 @@
 import { MANIFESTS, defineRepoCheck, fail, info, pass, warn } from "../../../src/sdk.ts";
 
-const ENV = /(^|\/)\.env(\.[\w-]+)?$/;
+const ENV = /(^|\/)\.env(\.[\w-]+)*$/;
 const TEMPLATE = /\.(example|sample|template|dist|defaults)$/;
 const FIXTURES = /(^|\/)fixtures?\//;
 const IGNORES_ENV = /^\/?(\*\*\/)?\.env(\*|\.\*|\.local)?$|^\*\.env$/m;
