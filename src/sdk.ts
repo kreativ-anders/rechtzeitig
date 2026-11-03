@@ -330,7 +330,7 @@ export interface ScanContext {
   links(concept: string, from: Snapshot | Link[]): Link[];
   /** true when the text contains a concept from lang/*.yml (`text`, or `links` if not found there). */
   says(concept: string, text: string): boolean;
-  /** true when the text contains the phrase, both normalized. */
+  /** true when the text contains the phrase as whole words, both normalized. */
   mentions(text: string, phrase: string): boolean;
   /** Link on the start page for a concept, and the page it leads to (if it was visited). */
   legalPage(concept: string): { link: Link; page?: Page } | undefined;

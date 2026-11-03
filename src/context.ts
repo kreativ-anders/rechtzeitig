@@ -36,7 +36,11 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
       const t = normalize(text);
       return patternsFor(lang, group, concept).some((re) => re.test(t));
     },
-    mentions: (text, phrase) => normalize(text).includes(normalize(phrase)),
+    // Whole words only: "meta" is not in "metadaten".
+    mentions: (text, phrase) => {
+      const p = normalize(phrase).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return !!p && new RegExp(`(^|[^a-z0-9])${p}($|[^a-z0-9])`).test(normalize(text));
+    },
     legalPage: (concept) => {
       const found = ctx.links(concept, pageLinks(data.start)).filter((l) => isWebUrl(l.href));
       if (!found.length) return undefined;

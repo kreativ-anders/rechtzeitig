@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 13 Abs. 1 lit. f, Art. 44 ff. DSGVO"
   en: "Art. 13(1)(f), Art. 44 ff. GDPR"
-how: "Gets the country of each third-party service (IPinfo with a token, else `country` in `data/third-parties.yml`) and, for countries outside the EEA (`data/countries.yml`), looks for `third_country` wording in the privacy policy."
+how: "Gets the country of each third-party service (`country` in `data/third-parties.yml`, else IPinfo with a token) and, for countries outside the EEA (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known."
 fix_hint:
   de: "Für jeden Dienst außerhalb von EU/EWR Land und Garantie nennen (z. B. Data Privacy Framework, Standardvertragsklauseln)."
   en: "Name the country and the safeguard for each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses)."
