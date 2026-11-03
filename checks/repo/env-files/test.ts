@@ -12,6 +12,10 @@ test("fails for a committed .env", async () => {
   assert.equal((await runRepoCheck(here, { ".env.production": "KEY=value" })).status, "fail");
 });
 
-test("warns when .gitignore misses .env", async () => {
-  assert.equal((await runRepoCheck(here, { ".gitignore": "node_modules\n", "package.json": "{}" })).status, "warn");
+test("warns when .gitignore misses .env and the project has an .env template", async () => {
+  assert.equal((await runRepoCheck(here, { ".gitignore": "node_modules\n", ".env.example": "KEY=" })).status, "warn");
+});
+
+test("only notes a missing .env rule when no .env is expected", async () => {
+  assert.equal((await runRepoCheck(here, { ".gitignore": "node_modules\n", "package.json": "{}" })).status, "info");
 });

@@ -1,18 +1,21 @@
-import { defineRepoCheck, fail, pass, warn } from "../../../src/sdk.ts";
+import { defineRepoCheck, fail, info, pass, warn } from "../../../src/sdk.ts";
 
 const ENV = /(^|\/)\.env(\.[\w-]+)?$/;
 const TEMPLATE = /\.(example|sample|template|dist|defaults)$/;
+const FIXTURES = /(^|\/)fixtures?\//;
 const IGNORES_ENV = /^\/?(\*\*\/)?\.env(\*|\.\*|\.local)?$|^\*\.env$/m;
 
 export default defineRepoCheck({
   title: ".env files stay out of git",
   law: "Art. 32 GDPR",
   run(repo) {
-    const tracked = repo.files.filter((f) => ENV.test(f) && !TEMPLATE.test(f));
+    const tracked = repo.files.filter((f) => ENV.test(f) && !TEMPLATE.test(f) && !FIXTURES.test(f));
     if (tracked.length) return fail(`${tracked.length} .env file(s) are committed. Their values are in the git history.`, tracked);
-    const usesEnv = repo.files.some((f) => ENV.test(f)) || ["package.json", "composer.json"].some((m) => repo.files.includes(m));
-    if (usesEnv && !IGNORES_ENV.test(repo.read(".gitignore") ?? "")) {
-      return warn('.gitignore does not ignore .env. Add ".env" so local secrets are not committed by accident.');
+    if (!IGNORES_ENV.test(repo.read(".gitignore") ?? "")) {
+      const message = '.gitignore does not ignore .env. Add ".env" so local secrets are not committed by accident.';
+      // A template means the project expects a local .env; otherwise this is only a precaution.
+      if (repo.files.some((f) => ENV.test(f) && !FIXTURES.test(f))) return warn(message);
+      if (["package.json", "composer.json", "pyproject.toml"].some((m) => repo.files.includes(m))) return info(message);
     }
     return pass("No .env file is committed.");
   },

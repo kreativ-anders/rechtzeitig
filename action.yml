@@ -1,5 +1,5 @@
 name: vibecoda
-description: Check a website for German legal basics (GDPR, DDG, TDDDG) the way a first-time visitor sees it.
+description: Check a website and its repository for German legal basics (GDPR, DDG, TDDDG), security and an SBOM.
 author: kreativ-anders
 branding:
   icon: check-square
@@ -7,8 +7,8 @@ branding:
 
 inputs:
   url:
-    description: URL of the start page.
-    required: true
+    description: URL of the start page. Leave empty to scan only the repository.
+    default: ""
   language:
     description: Language of the site (de, en or all).
     default: de
@@ -21,6 +21,12 @@ inputs:
   max-pages:
     description: How many pages to visit at most.
     default: "10"
+  repository:
+    description: Folder to scan for lockfiles, licenses and secrets. Empty folder (no checkout) = skip.
+    default: ${{ github.workspace }}
+  ipinfo-token:
+    description: Optional IPinfo token. Looks up the country of third-party servers that vibecoda does not know.
+    default: ""
 
 outputs:
   result:
@@ -37,9 +43,11 @@ runs:
     - name: Install vibecoda
       shell: bash
       working-directory: ${{ github.action_path }}
+      env:
+        URL: ${{ inputs.url }}
       run: |
         npm ci --omit=dev --no-audit --no-fund
-        npx playwright install --with-deps --only-shell chromium
+        if [ -n "$URL" ]; then npx playwright install --with-deps --only-shell chromium; fi
 
     - name: Scan
       id: scan
@@ -50,9 +58,11 @@ runs:
         SUBSCRIPTIONS: ${{ inputs.subscriptions }}
         FAIL_ON: ${{ inputs.fail-on }}
         MAX_PAGES: ${{ inputs.max-pages }}
+        REPOSITORY: ${{ inputs.repository }}
+        IPINFO_TOKEN: ${{ inputs.ipinfo-token }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
-        --url "$URL" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
+        --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
         --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --out "$RUNNER_TEMP/vibecoda-report"
 
     - name: Upload report
@@ -60,5 +70,5 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: vibecoda-report
-        path: ${{ runner.temp }}/vibecoda-report.*
+        path: ${{ runner.temp }}/vibecoda-*
         if-no-files-found: ignore

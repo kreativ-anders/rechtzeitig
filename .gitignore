@@ -1,2 +1,6 @@
 node_modules/
 vibecoda-report.*
+vibecoda-sbom.cdx.json
+.env
+# Test sites need their .env files.
+!**/fixtures/**/.env

@@ -35,7 +35,7 @@ if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;
 if (!FAIL_ON[failOn]) exit(`fail-on must be one of: ${Object.keys(FAIL_ON).join(", ")}`);
 
 const startedAt = new Date().toISOString();
-const repo = values.repo ? await scanRepo(values.repo) : undefined;
+const repo = values.repo?.trim() ? await scanRepo(values.repo) : undefined;
 const web = url
   ? await scan(url, {
       language: values.language,

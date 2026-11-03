@@ -2,7 +2,7 @@
 
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { basename, join, relative, sep } from "node:path";
+import { basename, join, relative, resolve, sep } from "node:path";
 import { LOCKFILES, purl } from "./lockfiles.ts";
 import { queryOsv } from "./osv.ts";
 import type { Component, RepoContext } from "../sdk.ts";
@@ -16,7 +16,8 @@ export interface RepoOptions {
 }
 
 /** Returns undefined when the folder has no files (for example, no actions/checkout step). */
-export async function scanRepo(root: string, opts: RepoOptions = {}): Promise<RepoContext | undefined> {
+export async function scanRepo(path: string, opts: RepoOptions = {}): Promise<RepoContext | undefined> {
+  const root = resolve(path);
   const files = listFiles(root);
   if (!files.length) return undefined;
   const cache = new Map<string, string | undefined>();
@@ -49,7 +50,7 @@ function listFiles(root: string): string[] {
   if (!existsSync(root)) return [];
   if (existsSync(join(root, ".git"))) {
     try {
-      return execFileSync("git", ["-C", root, "ls-files", "-z"], { encoding: "utf8", maxBuffer: 64_000_000 }).split("\0").filter(Boolean);
+      return execFileSync("git", ["-C", root, "ls-files", "-z", "--cached", "--others", "--exclude-standard"], { encoding: "utf8", maxBuffer: 64_000_000 }).split("\0").filter(Boolean);
     } catch {
       // fall back to walking the folder
     }

@@ -4,8 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: URL of the start page
-        required: true
+        description: URL of the start page (empty = repository only)
         type: string
       language:
         description: Language of the site
@@ -29,6 +28,7 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
+      # Lets vibecoda read lockfiles, licenses and secrets. Remove to scan the website only.
       - uses: actions/checkout@v4
       - uses: ./
         with:
@@ -36,3 +36,5 @@ jobs:
           language: ${{ inputs.language }}
           subscriptions: ${{ inputs.subscriptions }}
           fail-on: ${{ inputs.fail-on }}
+          # Optional: add the secret IPINFO_TOKEN (free at ipinfo.io) to look up server countries.
+          ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
