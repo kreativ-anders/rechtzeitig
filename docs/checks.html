@@ -531,7 +531,7 @@
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DEPS-002" data-module="repo" data-severity="low" data-search="sec-deps-002 repo/sbom dependencies are locked and listed in an sbom abhängigkeiten sind gesperrt und in einer sbom erfasst cra annex i part ii reads all lockfiles (`src/repo/lockfiles.ts`), writes `rechtzeitig-sbom.cdx.json` and lists manifests without a lockfile.">
+<details class="rule" id="SEC-DEPS-002" data-module="repo" data-severity="low" data-search="sec-deps-002 repo/sbom dependencies are locked and listed in an sbom abhängigkeiten sind gesperrt und in einer sbom erfasst cra annex i part ii reads all lockfiles (`src/repo/lockfiles.ts`) for the sbom the report writes to `rechtzeitig-sbom.cdx.json`, and lists manifests without a lockfile in their folder or a parent folder.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
 <span class="rule-title">Dependencies are locked and listed in an SBOM</span>
@@ -539,7 +539,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads all lockfiles (<code>src/repo/lockfiles.ts</code>), writes <code>rechtzeitig-sbom.cdx.json</code> and lists manifests without a lockfile.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads all lockfiles (<code>src/repo/lockfiles.ts</code>) for the SBOM the report writes to <code>rechtzeitig-sbom.cdx.json</code>, and lists manifests without a lockfile in their folder or a parent folder.</dd></div>
 <div><dt>How to fix</dt><dd>Commit a lockfile for every manifest; keep the SBOM with each release.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/sbom"><code>checks/repo/sbom</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>

@@ -25,7 +25,7 @@ Both loads happen without interaction, so every request and cookie in the contex
 
 ## Repository
 
-`src/repo/scan.ts` lists tracked files, parses lockfiles with `src/repo/lockfiles.ts`, reads the project license, and asks [OSV](https://osv.dev) for known vulnerabilities (`src/repo/osv.ts`) unless the input `vulnerabilities` is `false`. `src/repo/sbom.ts` turns the result into CycloneDX 1.6.
+`src/repo/scan.ts` lists tracked files, parses lockfiles with `src/repo/lockfiles.ts`, reads the project license, and asks [OSV](https://osv.dev) for known vulnerabilities (`src/repo/osv.ts`) unless the input `vulnerabilities` is `false`. Every OSV hit is kept; details (summary, severity, fixed version) are loaded for up to 100 of them, and the status says when some are missing. `src/repo/sbom.ts` turns the result into CycloneDX 1.6.
 
 The repository is untrusted. Only regular files count: symlinks and devices are skipped, files are read up to 1 MB without following links, and git runs without fsmonitor and system config.
 
@@ -56,6 +56,8 @@ Messages and details carry text from the scanned site and repository. Every outp
 | `data/third-parties.yml` | Known services: hosts, country, consent, cookies |
 | `data/probes.yml` | Paths to request without a browser |
 | `data/secrets.yml` | Secret patterns |
+| `data/licenses.yml` | License groups: AGPL, GPL, restricted, permissive |
+| `data/update-tools.yml` | Dependabot ecosystem names, Renovate config paths, vulnerability scanners |
 | `test/helpers.ts` | Serves a fixture on localhost, builds repositories and contexts for tests |
 | `docs/` | User documentation: plain HTML and one `style.css`, published with GitHub Pages, no build. `npm run docs` writes the rule cards in `checks.html`. Header and footer are copied into every page, so change them in all of them. `privacy.html` must stay true when the site starts loading anything new |
 | `action.yml` | Composite action: Node 24, Playwright, scan, upload report |
