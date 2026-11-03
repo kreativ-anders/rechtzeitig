@@ -1,26 +1,41 @@
-import { defineRepoCheck, info, pass, warn } from "../../../src/sdk.ts";
+import { defineRepoCheck, info, loadYaml, pass, warn, type Component } from "../../../src/sdk.ts";
 
-const AGPL = /\bAGPL/i;
-const GPL = /(^|[^L])GPL/i;
-const RESTRICTED = /SSPL|BUSL|BSL-1|Commons.?Clause|CC-BY-NC|Elastic-2|proprietary/i;
-const PERMISSIVE = /^(MIT|ISC|BSD|Apache|0BSD|Unlicense|Zlib|MPL)/i;
+const groups = loadYaml<Record<"agpl" | "gpl" | "restricted" | "permissive", string[]>>("data/licenses.yml");
+const group = (name: keyof typeof groups) => new RegExp(groups[name].join("|"), "i");
+const AGPL = group("agpl");
+const GPL = group("gpl");
+const RESTRICTED = group("restricted");
+const PERMISSIVE = group("permissive");
+
+/** true when every alternative of an SPDX "A OR B" expression matches, so no choice avoids the license. */
+const only = (re: RegExp, license: string) => license.split(/\s+OR\s+/i).every((option) => re.test(option));
+
+function projectIssues(project: string): string[] {
+  if (GPL.test(project) && /Commons-Clause/i.test(project)) {
+    return [`Project: ${project}. GPL-3.0 § 7 lets recipients remove "further restrictions", so the Commons Clause may not hold.`];
+  }
+  return [];
+}
+
+function dependencyIssues(components: Component[], project: string): string[] {
+  return components.flatMap((c) => {
+    const license = c.license!;
+    const id = `${c.name}@${c.version}: ${license}`;
+    if (RESTRICTED.test(license)) return [`${id}. Restricts use, often commercial use.`];
+    if (only(AGPL, license) && !AGPL.test(project)) return [`${id}. AGPL also applies when you only offer the software over a network.`];
+    if (only(GPL, license) && !GPL.test(project)) {
+      return [`${id}. If you ship it (app, library, browser bundle), the whole work must be under the GPL${project ? `, not ${project}` : ""}.`];
+    }
+    return [];
+  });
+}
 
 export default defineRepoCheck({
   run(repo) {
     const project = repo.license;
-    const issues: string[] = [];
-    if (GPL.test(project) && /Commons-Clause/i.test(project)) {
-      issues.push(`Project: ${project}. GPL-3.0 § 7 lets recipients remove "further restrictions", so the Commons Clause may not hold.`);
-    }
-    for (const c of repo.components.filter((c) => !c.dev && c.license)) {
-      const id = `${c.name}@${c.version}: ${c.license}`;
-      if (RESTRICTED.test(c.license!)) issues.push(`${id}. Restricts use, often commercial use.`);
-      else if (AGPL.test(c.license!) && !AGPL.test(project)) issues.push(`${id}. AGPL also applies when you only offer the software over a network.`);
-      else if (GPL.test(c.license!) && !/OR/i.test(c.license!) && !GPL.test(project)) {
-        issues.push(`${id}. If you ship it (app, library, browser bundle), the whole work must be under the GPL${project ? `, not ${project}` : ""}.`);
-      }
-    }
-    const unknown = repo.components.filter((c) => !c.dev && !c.license && (c.ecosystem === "npm" || c.ecosystem === "composer"));
+    const production = repo.components.filter((c) => !c.dev);
+    const issues = [...projectIssues(project), ...dependencyIssues(production.filter((c) => c.license), project)];
+    const unknown = production.filter((c) => !c.license && (c.ecosystem === "npm" || c.ecosystem === "composer"));
     const notes = [
       ...(project ? [] : ["The project has no license: all rights reserved. Fine for private code."]),
       ...(unknown.length ? [`${unknown.length} production dependencies without a license in the lockfile: ${unknown.slice(0, 10).map((c) => c.name).join(", ")}${unknown.length > 10 ? ", ..." : ""}`] : []),

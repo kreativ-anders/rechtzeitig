@@ -45,6 +45,8 @@
         <li><a href="#secrets">Secrets</a></li>
         <li><a href="#report">The report</a></li>
         <li><a href="#visit">How the website is visited</a></li>
+        <li><a href="#data">Data that leaves the runner</a></li>
+        <li><a href="#safe">Safe use</a></li>
       </ol>
     </nav>
 
@@ -64,6 +66,8 @@
             <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Pages to visit at most.</td></tr>
             <tr><td><code>repository</code></td><td>workspace</td><td>Folder to read lockfiles, licenses and secrets from. Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
             <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Optional token from <a href="https://ipinfo.io">ipinfo.io</a> to look up the country of servers rechtzeitig does not know.</td></tr>
+            <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> sends nothing there and the vulnerability check is skipped.</td></tr>
+            <tr><td><code>retention-days</code></td><td><code>7</code></td><td>Days GitHub keeps the report artifact, see <a href="#report">The report</a>.</td></tr>
           </tbody>
         </table></div>
         <p>The output <code>result</code> is <code>pass</code>, <code>warn</code> or <code>fail</code>.</p>
@@ -107,12 +111,32 @@
           </tbody>
         </table></div>
         <p>Keep the SBOM with each release. It shows which versions you shipped and that you checked them.</p>
+        <p class="note">GitHub deletes the artifact after <code>retention-days</code> (default 7). On a public repository anyone signed in to GitHub can download it, including the list of your dependencies and where findings were found.</p>
       </section>
 
       <section id="visit">
         <h2><span class="par">§ 6</span>How the website is visited</h2>
         <p>Each page is loaded twice in a fresh Chromium, once with JavaScript off and once with it on. Nothing is clicked and no consent is given, so every request and cookie in the report happened before consent. rechtzeitig opens the start page, every legal page it finds, a sample of other pages, and a short list of paths that must not be public (<code>/.env</code>, <code>/.git/config</code>, backups).</p>
         <p class="note">GitHub's runners are in US data centers. A site that shows its consent banner only to EU visitors will look different here, and that is a finding in itself. Pages behind a login are not checked.</p>
+      </section>
+
+      <section id="data">
+        <h2><span class="par">§ 7</span>Data that leaves the runner</h2>
+        <p>Besides visiting your website, rechtzeitig sends data to two services. Nothing else leaves the runner.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://osv.dev">api.osv.dev</a></td><td>Package URLs (name and version) of all locked components, for example <code>pkg:npm/lodash@4.17.21</code></td><td>When the repository is scanned and <code>vulnerabilities</code> is not <code>false</code></td></tr>
+            <tr><td><a href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of third-party servers that rechtzeitig does not know</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="safe">
+        <h2><span class="par">§ 8</span>Safe use</h2>
+        <p class="note">Never run rechtzeitig in a workflow triggered by <code>pull_request_target</code>. That trigger runs with your secrets and a token that can write to the repository, while the scanned code comes from a fork. Use <code>workflow_dispatch</code>, <code>schedule</code>, <code>push</code> or <code>pull_request</code>.</p>
+        <p>Check out with <code>persist-credentials: false</code> as in the example workflow. rechtzeitig does not need the token, so it should not be left in the checkout.</p>
+        <p>rechtzeitig is a composite action and sets up Node 24 with <code>actions/setup-node</code>. That Node stays on the <code>PATH</code> for the steps after it in the same job. Set up your own Node version after rechtzeitig, or run it in a separate job.</p>
       </section>
     </div>
   </div>

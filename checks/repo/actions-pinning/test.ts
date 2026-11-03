@@ -16,3 +16,10 @@ test("lists actions pinned to a tag", async () => {
   assert.equal(result.status, "info");
   assert.deepEqual(result.details, [".github/workflows/ci.yml: actions/checkout@v4"]);
 });
+
+test("stays fast on many blank lines", async () => {
+  const files = { ".github/workflows/ci.yml": `${"\n".repeat(20_000)}x` };
+  const started = Date.now();
+  await runRepoCheck(here, files);
+  assert.ok(Date.now() - started < 500);
+});

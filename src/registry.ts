@@ -1,9 +1,6 @@
-import { readFileSync } from "node:fs";
-import { parse } from "yaml";
+import { loadYaml } from "./data.ts";
 import { normalize } from "./text.ts";
 import type { Vendor } from "./sdk.ts";
-
-const FILE = new URL("../data/third-parties.yml", import.meta.url);
 
 export interface Registry {
   vendors: Vendor[];
@@ -12,7 +9,7 @@ export interface Registry {
 }
 
 export function loadRegistry(): Registry {
-  const entries = parse(readFileSync(FILE, "utf8")) as Array<Vendor & { cookies?: string[] }>;
+  const entries = loadYaml<Array<Vendor & { cookies?: string[] }>>("data/third-parties.yml");
   const vendors = entries.map((e) => ({
     ...e,
     names: (e.names ?? [e.name]).map(normalize),

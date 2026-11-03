@@ -36,6 +36,12 @@ inputs:
   ipinfo-token:
     description: Optional IPinfo token. Looks up the country of third-party servers that rechtzeitig does not know.
     default: ""
+  vulnerabilities:
+    description: true to look up known vulnerabilities of locked components at api.osv.dev. false = send nothing, skip the rule.
+    default: "true"
+  retention-days:
+    description: Days to keep the report artifact. Artifacts of public repositories can be downloaded by anyone signed in to GitHub.
+    default: "7"
 
 outputs:
   result:
@@ -55,7 +61,7 @@ runs:
       env:
         URL: ${{ inputs.url }}
       run: |
-        npm ci --omit=dev --no-audit --no-fund
+        npm ci --omit=dev --ignore-scripts --no-audit --no-fund
         if [ -n "$URL" ]; then npx playwright install --with-deps --only-shell chromium; fi
 
     - name: Scan
@@ -72,11 +78,12 @@ runs:
         MAX_PAGES: ${{ inputs.max-pages }}
         REPOSITORY: ${{ inputs.repository }}
         IPINFO_TOKEN: ${{ inputs.ipinfo-token }}
+        VULNERABILITIES: ${{ inputs.vulnerabilities }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
         --sales "$SALES" --modules "$MODULES" --report-language "$REPORT_LANGUAGE"
-        --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --out "$RUNNER_TEMP/rechtzeitig-report"
+        --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES" --out "$RUNNER_TEMP/rechtzeitig-report"
 
     - name: Upload report
       if: always()
@@ -85,3 +92,4 @@ runs:
         name: rechtzeitig-report
         path: ${{ runner.temp }}/rechtzeitig-*
         if-no-files-found: ignore
+        retention-days: ${{ inputs.retention-days }}

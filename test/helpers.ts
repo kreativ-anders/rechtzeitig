@@ -7,8 +7,8 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSy
 import { tmpdir } from "node:os";
 import { dirname, extname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { chromium, type Browser } from "playwright";
-import { scan, type ScanOptions } from "../src/scan.ts";
+import type { Browser } from "playwright";
+import { launchBrowser, scan, type ScanOptions } from "../src/scan.ts";
 import { createContext } from "../src/context.ts";
 import type { CrawlData } from "../src/crawl.ts";
 import { loadLanguages } from "../src/lang.ts";
@@ -53,7 +53,7 @@ after(async () => (await browser)?.close());
 
 /** Scans a fixture folder. Requests to other hosts are recorded, then blocked. */
 export async function scanFixture(dir: string, opts: ScanOptions = {}): Promise<ScanContext> {
-  browser ??= chromium.launch();
+  browser ??= launchBrowser();
   const site = await serve(dir);
   try {
     return await scan(site.url, { offline: true, browser: await browser, timeout: 10_000, ...opts });
@@ -100,4 +100,10 @@ export async function repoFromFiles(files: Record<string, string>): Promise<Repo
 export async function runRepoCheck(checkDir: string, files: Record<string, string>, extra: Partial<RepoContext> = {}): Promise<Result> {
   const check = (await import(pathToFileURL(join(checkDir, "check.ts")).href)).default as RepoCheck;
   return check.run({ ...(await repoFromFiles(files)), ...extra });
+}
+
+/** package-lock.json text: package name → version, or → { version, license, dev }. */
+export function npmLock(pkgs: Record<string, string | { version: string; license?: string; dev?: boolean }>): string {
+  const packages = Object.fromEntries(Object.entries(pkgs).map(([name, p]) => [`node_modules/${name}`, typeof p === "string" ? { version: p } : p]));
+  return JSON.stringify({ lockfileVersion: 3, packages: { "": {}, ...packages } });
 }

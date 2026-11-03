@@ -4,12 +4,19 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Waits a week after a release, so a hijacked version is likely pulled before we update to it.
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
   # Updates the SHA pins and their version comments in action.yml and .github/workflows/.
   # examples/workflows/ is not covered: copy the new pins there (src/pinning.test.ts fails until you do).
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
     groups:
       actions:
         patterns: ["*"]

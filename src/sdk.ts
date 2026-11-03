@@ -1,5 +1,8 @@
 // Everything a check needs. Checks import from this file and nothing else.
 
+export { loadYaml } from "./data.ts";
+export { MANIFESTS } from "./repo/lockfiles.ts";
+
 export type Status = "pass" | "warn" | "fail" | "info" | "skip";
 
 export interface Result {
@@ -28,6 +31,9 @@ export const warn = (message: string, details?: string[]): Result => ({ status: 
 export const fail = (message: string, details?: string[]): Result => ({ status: "fail", message, details });
 export const info = (message: string, details?: string[]): Result => ({ status: "info", message, details });
 export const skip = (message: string, details?: string[]): Result => ({ status: "skip", message, details });
+
+/** GitHub Actions workflow files, for `repo.find(WORKFLOWS)`. */
+export const WORKFLOWS = /^\.github\/workflows\/.*\.ya?ml$/;
 
 /** Fewer visible characters than this count as an empty page. */
 export const MIN_TEXT = 100;
@@ -241,6 +247,10 @@ export interface RepoContext {
   files: string[];
   /** Text content of a file, or undefined for missing, binary or very large files. */
   read(path: string): string | undefined;
+  /** Tracked files whose path matches. */
+  find(pattern: RegExp): string[];
+  /** A YAML or JSON file, parsed. undefined when the file cannot be read or parsed. */
+  yaml<T = unknown>(path: string): T | undefined;
   /** Project license as found in package.json, composer.json or LICENSE. */
   license: string;
   components: Component[];
@@ -248,6 +258,6 @@ export interface RepoContext {
   lockfiles: string[];
   /** Known vulnerabilities from OSV. */
   vulnerabilities: Vulnerability[];
-  /** "ok", "skipped" (no network, tests) or an error message. */
+  /** "ok", "ok (details for N of M)" when OSV sent details for only some issues, "skipped" (no network, tests) or an error message. */
   osv: string;
 }

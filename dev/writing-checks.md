@@ -40,7 +40,7 @@
    });
    ```
 
-   A repository check uses `defineRepoCheck` and gets `repo` instead of `ctx`.
+   A repository check uses `defineRepoCheck` and gets `repo` instead of `ctx`: `repo.files`, `repo.find(pattern)` (for example `repo.find(WORKFLOWS)`), `repo.read(path)`, `repo.yaml(path)` for YAML or JSON, and the locked `repo.components`.
 
 4. Add `test.ts` and, for website checks, `fixtures/<case>/index.html` (plus more pages if needed). Each case is a tiny website. Cover one case that passes and one that does not.
 
@@ -91,5 +91,7 @@ The runner finds the check by itself. Nothing else needs to change.
 | `lang/<code>.yml` | Words. `links` concepts match link and button labels (the crawler opens matching links); `text` concepts match page text. Patterns run on normalized text: lowercase, `ä→ae ö→oe ü→ue ß→ss`. A new language is a new file with the same keys; a test checks this. Add the code to `examples/workflows/rechtzeitig.yml`. |
 | `data/third-parties.yml` | A service: hosts, country, whether it needs consent, how a privacy policy names it, its cookies, advice. |
 | `data/probes.yml` | A path to request. `kind: file` with an `expect` pattern for files that must not be public, `kind: error` for error pages. |
-| `data/secrets.yml` | A secret pattern with `fail` or `warn`. |
-| `src/repo/lockfiles.ts` | A lockfile parser: one function plus one entry in `LOCKFILES`. |
+| `data/secrets.yml` | A secret pattern with `fail` or `warn`. With `payload`, match group 1 is decoded as a JWT payload and must have the listed claims. |
+| `data/licenses.yml` | A license pattern in one of the groups `agpl`, `gpl`, `restricted`, `permissive`. |
+| `data/update-tools.yml` | A Dependabot ecosystem name, a Renovate config path or a vulnerability scanner. |
+| `src/repo/lockfiles.ts` | A lockfile parser: one function plus one entry in `LOCKFILES`; its manifest in `MANIFESTS`. |

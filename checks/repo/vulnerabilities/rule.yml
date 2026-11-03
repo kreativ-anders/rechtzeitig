@@ -8,7 +8,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO, CRA Anhang I"
   en: "Art. 32 GDPR, CRA Annex I"
-how: "Sends the package URLs of all locked components to the OSV API; high and critical issues in production dependencies fail."
+how: "Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues; high and critical issues in production dependencies fail. Skipped when the input vulnerabilities is false."
 fix_hint:
   de: "Betroffene Pakete mindestens auf die genannte Version mit Fix aktualisieren."
   en: "Update the affected packages to at least the fixed version shown."

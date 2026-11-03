@@ -19,12 +19,28 @@ export interface ScanOptions {
   ipinfoToken?: string;
   /** Reuse a running browser (tests). */
   browser?: Browser;
+  /** Called with problems that do not stop the scan, for the report. */
+  onWarning?: (message: string) => void;
+}
+
+// The browser gets only these variables, never tokens from the workflow (IPINFO_TOKEN, GITHUB_TOKEN, ...).
+const BROWSER_ENV = ["PATH", "HOME", "TMPDIR", "TMP", "TEMP", "LANG", "LC_ALL", "DISPLAY", "XDG_RUNTIME_DIR", "SystemRoot", "LOCALAPPDATA"];
+
+/** Starts Chromium with its sandbox. Where the runner cannot sandbox, it retries without and warns. */
+export async function launchBrowser(onWarning: (message: string) => void = () => {}): Promise<Browser> {
+  const env = Object.fromEntries(BROWSER_ENV.filter((k) => process.env[k] !== undefined).map((k) => [k, process.env[k]!]));
+  try {
+    return await chromium.launch({ env, chromiumSandbox: true });
+  } catch (e) {
+    onWarning(`Chrome sandbox not available on this runner, scanning without it (${(e as Error).message.split("\n")[0]})`);
+    return chromium.launch({ env, chromiumSandbox: false });
+  }
 }
 
 export async function scan(url: string, opts: ScanOptions = {}): Promise<ScanContext> {
   const languages = resolveLanguages(opts.language ?? "de");
   const lang = loadLanguages(languages);
-  const browser = opts.browser ?? (await chromium.launch());
+  const browser = opts.browser ?? (await launchBrowser(opts.onWarning));
   try {
     const chrome = browser.version().split(".")[0];
     const userAgent =

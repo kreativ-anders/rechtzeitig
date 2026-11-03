@@ -1,0 +1,20 @@
+# License groups for repo/licenses. Each entry is a pattern, matched case-insensitively
+# against the SPDX id or expression from a lockfile or the project license.
+
+# Copyleft that also applies when the software is only offered over a network.
+agpl:
+  - '\bAGPL'
+# Copyleft for shipped software. LGPL is not meant.
+gpl:
+  - '(^|[^L])GPL'
+# Licenses that restrict use, often commercial use. BSL-1.0 (Boost) is permissive and not listed; BUSL is Business Source.
+restricted:
+  - SSPL
+  - BUSL
+  - 'Commons.?Clause'
+  - CC-BY-NC
+  - Elastic-2
+  - proprietary
+# Project licenses that need no note about unknown dependency licenses.
+permissive:
+  - '^(MIT|ISC|BSD|Apache|0BSD|Unlicense|Zlib|MPL)'

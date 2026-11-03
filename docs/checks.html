@@ -475,7 +475,7 @@
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DBAI-001" data-module="repo" data-severity="critical" data-search="sec-dbai-001 repo/database-rules database rules do not open data to everyone datenbankregeln öffnen keine daten für alle art. 32 gdpr compares `create table` with `enable row level security` in `supabase/**/*.sql`; looks for `if true` in firebase rules.">
+<details class="rule" id="SEC-DBAI-001" data-module="repo" data-severity="critical" data-search="sec-dbai-001 repo/database-rules database rules do not open data to everyone datenbankregeln öffnen keine daten für alle art. 32 gdpr splits `supabase/**/*.sql` into statements and compares `create table` in the public schema with `enable row level security`; looks for `if true` and test mode (`request.time &lt; timestamp.date(...)`) in firebase rules.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DBAI-001</span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><b>critical</b></span></span>
 <span class="rule-title">Database rules do not open data to everyone</span>
@@ -483,13 +483,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Compares <code>create table</code> with <code>enable row level security</code> in <code>supabase/**/*.sql</code>; looks for <code>if true</code> in Firebase rules.</dd></div>
-<div><dt>How to fix</dt><dd>Enable row level security on every table and replace &quot;if true&quot; rules with checks on the signed-in user.</dd></div>
+<div><dt>How it is checked</dt><dd>Splits <code>supabase/**/*.sql</code> into statements and compares <code>create table</code> in the public schema with <code>enable row level security</code>; looks for <code>if true</code> and test mode (<code>request.time &lt; timestamp.date(...)</code>) in Firebase rules.</dd></div>
+<div><dt>How to fix</dt><dd>Enable row level security on every table and replace &quot;if true&quot; and test-mode rules with checks on the signed-in user.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/database-rules"><code>checks/repo/database-rules</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://supabase.com/docs/guides/database/postgres/row-level-security">supabase.com</a>, <a href="https://firebase.google.com/docs/rules/insecure-rules">firebase.google.com</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DEPS-003" data-module="repo" data-severity="medium" data-search="sec-deps-003 repo/dependency-updates dependency updates are automated abhängigkeits-updates sind automatisiert cra annex i part ii, art. 32 gdpr looks for `.github/dependabot.yml` (and which ecosystems it covers), renovate config, or scanners in workflows.">
+<details class="rule" id="SEC-DEPS-003" data-module="repo" data-severity="medium" data-search="sec-deps-003 repo/dependency-updates dependency updates are automated abhängigkeits-updates sind automatisiert cra annex i part ii, art. 32 gdpr looks for `.github/dependabot.yml` (and which ecosystems it covers), renovate config, or vulnerability scanners in workflows, as listed in `data/update-tools.yml`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-003</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Dependency updates are automated</span>
@@ -497,13 +497,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Looks for <code>.github/dependabot.yml</code> (and which ecosystems it covers), Renovate config, or scanners in workflows.</dd></div>
+<div><dt>How it is checked</dt><dd>Looks for <code>.github/dependabot.yml</code> (and which ecosystems it covers), Renovate config, or vulnerability scanners in workflows, as listed in <code>data/update-tools.yml</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Set up Dependabot or Renovate for every ecosystem in use.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/dependency-updates"><code>checks/repo/dependency-updates</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-SECRETS-002" data-module="repo" data-severity="high" data-search="sec-secrets-002 repo/env-files .env files stay out of git .env-dateien bleiben außerhalb von git art. 32 gdpr lists committed `.env*` files (except templates and fixtures) and checks that `.gitignore` ignores `.env`.">
+<details class="rule" id="SEC-SECRETS-002" data-module="repo" data-severity="high" data-search="sec-secrets-002 repo/env-files .env files stay out of git .env-dateien bleiben außerhalb von git art. 32 gdpr lists committed `.env*` files, also with several suffixes like `.env.production.local` (templates and fixtures excluded), and checks that `.gitignore` ignores `.env`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SECRETS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">.env files stay out of git</span>
@@ -511,13 +511,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files (except templates and fixtures) and checks that <code>.gitignore</code> ignores <code>.env</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files, also with several suffixes like <code>.env.production.local</code> (templates and fixtures excluded), and checks that <code>.gitignore</code> ignores <code>.env</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Add .env to .gitignore; revoke committed values and remove them from the history.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/env-files"><code>checks/repo/env-files</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-LIC-001" data-module="repo" data-severity="medium" data-search="leg-de-lic-001 repo/licenses dependency licenses fit the project lizenzen der abhängigkeiten passen zum projekt §§ 31, 69c urhg (german copyright act) compares licenses from npm and composer lockfiles with the project license (package.json, composer.json or license).">
+<details class="rule" id="LEG-DE-LIC-001" data-module="repo" data-severity="medium" data-search="leg-de-lic-001 repo/licenses dependency licenses fit the project lizenzen der abhängigkeiten passen zum projekt §§ 31, 69c urhg (german copyright act) compares licenses from npm and composer lockfiles with the project license (package.json, composer.json or license) using the groups in `data/licenses.yml`; an spdx `or` with a non-copyleft choice is not flagged.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-LIC-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Dependency licenses fit the project</span>
@@ -525,13 +525,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Compares licenses from npm and Composer lockfiles with the project license (package.json, composer.json or LICENSE).</dd></div>
+<div><dt>How it is checked</dt><dd>Compares licenses from npm and Composer lockfiles with the project license (package.json, composer.json or LICENSE) using the groups in <code>data/licenses.yml</code>; an SPDX <code>OR</code> with a non-copyleft choice is not flagged.</dd></div>
 <div><dt>How to fix</dt><dd>Review the license of each flagged dependency; replace it, buy a license or license the project to match.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/licenses"><code>checks/repo/licenses</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DEPS-002" data-module="repo" data-severity="low" data-search="sec-deps-002 repo/sbom dependencies are locked and listed in an sbom abhängigkeiten sind gesperrt und in einer sbom erfasst cra annex i part ii reads all lockfiles (`src/repo/lockfiles.ts`), writes `rechtzeitig-sbom.cdx.json` and lists manifests without a lockfile.">
+<details class="rule" id="SEC-DEPS-002" data-module="repo" data-severity="low" data-search="sec-deps-002 repo/sbom dependencies are locked and listed in an sbom abhängigkeiten sind gesperrt und in einer sbom erfasst cra annex i part ii reads all lockfiles (`src/repo/lockfiles.ts`) for the sbom the report writes to `rechtzeitig-sbom.cdx.json`, and lists manifests without a lockfile in their folder or a parent folder.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
 <span class="rule-title">Dependencies are locked and listed in an SBOM</span>
@@ -539,13 +539,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads all lockfiles (<code>src/repo/lockfiles.ts</code>), writes <code>rechtzeitig-sbom.cdx.json</code> and lists manifests without a lockfile.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads all lockfiles (<code>src/repo/lockfiles.ts</code>) for the SBOM the report writes to <code>rechtzeitig-sbom.cdx.json</code>, and lists manifests without a lockfile in their folder or a parent folder.</dd></div>
 <div><dt>How to fix</dt><dd>Commit a lockfile for every manifest; keep the SBOM with each release.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/sbom"><code>checks/repo/sbom</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-SECRETS-001" data-module="repo" data-severity="critical" data-search="sec-secrets-001 repo/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files line by line against `data/secrets.yml` and decodes jwts to find supabase `service_role` keys.">
+<details class="rule" id="SEC-SECRETS-001" data-module="repo" data-severity="critical" data-search="sec-secrets-001 repo/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files line by line against `data/secrets.yml`, decoding jwt payloads where a pattern names claims (supabase `service_role` keys); shows only the first 4 characters and the length of each find.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SECRETS-001</span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><b>critical</b></span></span>
 <span class="rule-title">No secrets in the repository</span>
@@ -553,13 +553,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Matches tracked files line by line against <code>data/secrets.yml</code> and decodes JWTs to find Supabase <code>service_role</code> keys.</dd></div>
+<div><dt>How it is checked</dt><dd>Matches tracked files line by line against <code>data/secrets.yml</code>, decoding JWT payloads where a pattern names claims (Supabase <code>service_role</code> keys); shows only the first 4 characters and the length of each find.</dd></div>
 <div><dt>How to fix</dt><dd>Revoke found keys right away, then remove them from code and git history and store them as secrets or environment variables.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/secrets"><code>checks/repo/secrets</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DEPS-001" data-module="repo" data-severity="high" data-search="sec-deps-001 repo/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i sends the package urls of all locked components to the osv api; high and critical issues in production dependencies fail.">
+<details class="rule" id="SEC-DEPS-001" data-module="repo" data-severity="high" data-search="sec-deps-001 repo/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i sends the package urls of all locked components to the osv api and loads details for up to 100 issues; high and critical issues in production dependencies fail. skipped when the input vulnerabilities is false.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">No dependencies with known vulnerabilities</span>
@@ -567,7 +567,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API; high and critical issues in production dependencies fail.</dd></div>
+<div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues; high and critical issues in production dependencies fail. Skipped when the input vulnerabilities is false.</dd></div>
 <div><dt>How to fix</dt><dd>Update the affected packages to at least the fixed version shown.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/vulnerabilities"><code>checks/repo/vulnerabilities</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://osv.dev">osv.dev</a></dd></div>

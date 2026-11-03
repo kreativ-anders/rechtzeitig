@@ -1,10 +1,12 @@
 // Reads the repository the workflow runs in: tracked files, lockfiles, project license, OSV vulnerabilities.
 
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { basename, join, relative, resolve, sep } from "node:path";
-import { LOCKFILES, purl } from "./lockfiles.ts";
+import { closeSync, constants, existsSync, fstatSync, lstatSync, openSync, readdirSync, readSync } from "node:fs";
+import { join, relative, resolve, sep } from "node:path";
+import { parse as parseYaml } from "yaml";
+import { parserFor, purl } from "./lockfiles.ts";
 import { queryOsv } from "./osv.ts";
+import { componentRef } from "./sbom.ts";
 import type { Component, RepoContext } from "../sdk.ts";
 
 const SKIP_DIRS = new Set([".git", "node_modules", "vendor", ".venv", "venv", "dist", "build", ".next", "target"]);
@@ -29,8 +31,7 @@ export async function scanRepo(path: string, opts: RepoOptions = {}): Promise<Re
   const components: Component[] = [];
   const lockfiles: string[] = [];
   for (const file of files) {
-    const name = /^requirements.*\.txt$/.test(basename(file)) ? "requirements.txt" : basename(file);
-    const parser = Object.hasOwn(LOCKFILES, name) ? LOCKFILES[name] : undefined;
+    const parser = parserFor(file);
     const text = parser && read(file);
     if (!parser || !text) continue;
     try {
@@ -41,16 +42,31 @@ export async function scanRepo(path: string, opts: RepoOptions = {}): Promise<Re
     }
   }
 
-  const unique = [...new Map(components.map((c) => [`${c.purl}|${c.source}`, c])).values()];
+  const unique = [...new Map(components.map((c) => [componentRef(c), c])).values()];
   const { vulnerabilities, status } = opts.osv === false ? { vulnerabilities: [], status: "skipped" } : await queryOsv(unique);
-  return { root, files, read, license: projectLicense(read), components: unique, lockfiles, vulnerabilities, osv: status };
+  const find = (pattern: RegExp) => files.filter((f) => pattern.test(f));
+  const yaml = <T>(path: string): T | undefined => {
+    const text = read(path);
+    try {
+      return text === undefined ? undefined : ((parseYaml(text) ?? undefined) as T | undefined);
+    } catch {
+      return undefined;
+    }
+  };
+  return { root, files, read, find, yaml, license: projectLicense(read), components: unique, lockfiles, vulnerabilities, osv: status };
 }
 
+/** Regular files only: a symlink could point outside the repository or at a device that never ends. */
 function listFiles(root: string): string[] {
   if (!existsSync(root)) return [];
   if (existsSync(join(root, ".git"))) {
     try {
-      return execFileSync("git", ["-C", root, "ls-files", "-z", "--cached", "--others", "--exclude-standard"], { encoding: "utf8", maxBuffer: 64_000_000 }).split("\0").filter(Boolean);
+      // No fsmonitor and no system config: the scanned repository must not make git run programs.
+      return execFileSync("git", ["-c", "core.fsmonitor=false", "-C", root, "ls-files", "-z", "--cached", "--others", "--exclude-standard"], {
+        encoding: "utf8",
+        maxBuffer: 64_000_000,
+        env: { ...process.env, GIT_CONFIG_NOSYSTEM: "1" },
+      }).split("\0").filter((f) => f && isRegularFile(join(root, f)));
     } catch {
       // fall back to walking the folder
     }
@@ -66,13 +82,30 @@ function listFiles(root: string): string[] {
   return out.sort();
 }
 
-function readText(path: string): string | undefined {
+function isRegularFile(path: string): boolean {
   try {
-    if (statSync(path).size > MAX_FILE) return undefined;
-    const buf = readFileSync(path);
-    return buf.includes(0) ? undefined : buf.toString("utf8");
+    return lstatSync(path).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/** Reads at most MAX_FILE bytes of a regular file. Symlinks, devices, binary and larger files give undefined. */
+function readText(path: string): string | undefined {
+  let fd: number | undefined;
+  try {
+    fd = openSync(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0) | (constants.O_NONBLOCK ?? 0));
+    const stat = fstatSync(fd);
+    if (!stat.isFile() || stat.size > MAX_FILE) return undefined;
+    const buf = Buffer.alloc(stat.size + 1); // one byte more shows a file that grew
+    let size = 0;
+    for (let n = 1; n > 0 && size < buf.length; size += n) n = readSync(fd, buf, size, buf.length - size, null);
+    if (size > MAX_FILE || buf.subarray(0, size).includes(0)) return undefined;
+    return buf.toString("utf8", 0, size);
   } catch {
     return undefined;
+  } finally {
+    if (fd !== undefined) closeSync(fd);
   }
 }
 

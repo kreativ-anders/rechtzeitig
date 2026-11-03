@@ -1,8 +1,7 @@
 // Rule metadata: checks/<category>/<name>/rule.yml. Detection lives in check.ts next to it.
 // Legal and wording updates are data updates here, never engine changes.
 
-import { readFileSync } from "node:fs";
-import { parse } from "yaml";
+import { loadYaml } from "./data.ts";
 
 export const LANGUAGES = ["de", "en"] as const;
 export type UiLanguage = (typeof LANGUAGES)[number];
@@ -31,7 +30,7 @@ export interface Rule {
 }
 
 export function loadRule(file: string): Rule {
-  const rule = parse(readFileSync(file, "utf8")) as Rule;
+  const rule = loadYaml<Rule>(file);
   const problems = validateRule(rule);
   if (problems.length) throw new Error(`${file}: ${problems.join("; ")}`);
   return rule;

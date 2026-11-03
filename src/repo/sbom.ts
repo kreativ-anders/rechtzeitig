@@ -2,12 +2,16 @@
 
 import { randomUUID } from "node:crypto";
 import { basename } from "node:path";
-import type { RepoContext } from "../sdk.ts";
+import type { Component, RepoContext } from "../sdk.ts";
+
+/** Unique per component and lockfile; the same package in two lockfiles stays two entries. */
+export const componentRef = (c: Pick<Component, "purl" | "source">) => `${c.purl}|${c.source}`;
 
 export function toCycloneDx(repo: RepoContext, version: string): string {
+  const byPurl = Map.groupBy(repo.components, (c) => c.purl);
   const components = repo.components.map((c) => ({
     type: "library",
-    "bom-ref": `${c.purl}|${c.source}`,
+    "bom-ref": componentRef(c),
     name: c.name,
     version: c.version,
     purl: c.purl,
@@ -20,7 +24,7 @@ export function toCycloneDx(repo: RepoContext, version: string): string {
     source: { name: "OSV", url: `https://osv.dev/vulnerability/${v.id}` },
     ...(v.severity ? { ratings: [{ severity: v.severity.toLowerCase().replace("moderate", "medium") }] } : {}),
     description: v.summary,
-    affects: repo.components.filter((c) => c.purl === v.purl).map((c) => ({ ref: `${c.purl}|${c.source}` })),
+    affects: (byPurl.get(v.purl) ?? []).map((c) => ({ ref: componentRef(c) })),
   }));
   return JSON.stringify(
     {

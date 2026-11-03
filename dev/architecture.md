@@ -15,15 +15,19 @@ flowchart LR
 ## Website
 
 1. `src/crawl.ts` visits the start page, every link a language file names as a legal page, then a sample of the site's own pages, up to `max-pages`.
-2. `src/capture.ts` loads each page twice in Chromium, JavaScript off and on. It records status, headers and their `<meta>` equivalents, text, links and buttons (also in shadow roots), forms, checkboxes, requests, cookies with flags, and localStorage. It never clicks.
+2. `src/capture.ts` loads each page twice in Chromium, JavaScript off and on. It records status, headers and their `<meta>` equivalents, text, links and buttons (also in shadow roots), forms, checkboxes, requests, cookies with flags, and localStorage. It never clicks. Chromium runs with its sandbox (without it only where the runner cannot, with a warning in the report), gets only `PATH`, `HOME` and locale variables, no tokens, and blocks downloads and service workers. Each load has an overall deadline, so a page that never yields becomes an error. Text (200 KB), links (2000), link labels (300 characters) and requests (5000) are capped.
 3. `src/probe.ts` does the lookups that need no browser: paths from `data/probes.yml`, plain HTTP, the `www.` variant, TLS, SPF/DMARC, and IP countries when an IPinfo token is set.
-4. `src/context.ts` wraps everything in a read-only `ScanContext` with helpers.
+   They run against the start page's final URL only if it is on the same site as the input URL, otherwise against the input URL.
+4. `src/net.ts` keeps the scan off private networks. Before each request without a browser, and before visiting any page, the host must resolve to public addresses only; redirects are followed by hand and checked per hop. In the browser, requests to `localhost` and private IP literals are aborted. The host of the input URL is always allowed, so local dev servers and test fixtures work.
+5. `src/context.ts` wraps everything in a read-only `ScanContext` with helpers.
 
 Both loads happen without interaction, so every request and cookie in the context happened before consent. Comparing the two loads shows what needs JavaScript.
 
 ## Repository
 
-`src/repo/scan.ts` lists tracked files, parses lockfiles with `src/repo/lockfiles.ts`, reads the project license, and asks [OSV](https://osv.dev) for known vulnerabilities (`src/repo/osv.ts`). `src/repo/sbom.ts` turns the result into CycloneDX 1.6.
+`src/repo/scan.ts` lists tracked files, parses lockfiles with `src/repo/lockfiles.ts`, reads the project license, and asks [OSV](https://osv.dev) for known vulnerabilities (`src/repo/osv.ts`) unless the input `vulnerabilities` is `false`. Every OSV hit is kept; details (summary, severity, fixed version) are loaded for up to 100 of them, and the status says when some are missing. `src/repo/sbom.ts` turns the result into CycloneDX 1.6.
+
+The repository is untrusted. Only regular files count: symlinks and devices are skipped, files are read up to 1 MB without following links, and git runs without fsmonitor and system config.
 
 ## Rules and checks
 
@@ -32,6 +36,8 @@ Each check folder has `rule.yml` (metadata: id, severity, tier, titles, legal ba
 `src/runner.ts` loads every `checks/**/check.ts` with its `rule.yml`. Website checks get the `ScanContext`, repository checks (`checks/repo/`) get the `RepoContext`. Each runs on its own with a timeout; a broken check becomes `error` and the rest still run. `src/main.ts` sets the exit code from `fail-on`.
 
 ## Findings
+
+Messages and details carry text from the scanned site and repository. Every output passes them through `oneLine()` in `src/text.ts` (no control characters, at most 300 characters). The step summary escapes Markdown and HTML; the log is wrapped in `::stop-commands::` with a random token, so no line becomes a workflow command.
 
 `toFindings` in `src/report.ts` builds `rechtzeitig-report.json`: rule id, severity, status, message and locations, never page text or file contents. Findings stay in the workflow artifact; nothing is sent anywhere.
 
@@ -43,12 +49,15 @@ Each check folder has `rule.yml` (metadata: id, severity, tier, titles, legal ba
 |---|---|
 | `src/sdk.ts` | The only API for checks: types, result helpers, both contexts |
 | `src/`, `src/repo/` | Crawler, probes, repository scan, runner, report and findings format, CLI |
+| `src/net.ts`, `src/text.ts` | Public-address checks for every request; `oneLine()` for untrusted text in outputs |
 | `checks/<module>/<name>/` | One check: `rule.yml`, `check.ts`, `test.ts`, `fixtures/` |
 | `src/rules.ts`, `src/docs.ts` | Rule schema and validator; generator for `docs/checks.html` |
 | `lang/*.yml` | Words per language, as regular expressions |
 | `data/third-parties.yml` | Known services: hosts, country, consent, cookies |
 | `data/probes.yml` | Paths to request without a browser |
 | `data/secrets.yml` | Secret patterns |
+| `data/licenses.yml` | License groups: AGPL, GPL, restricted, permissive |
+| `data/update-tools.yml` | Dependabot ecosystem names, Renovate config paths, vulnerability scanners |
 | `test/helpers.ts` | Serves a fixture on localhost, builds repositories and contexts for tests |
 | `docs/` | User documentation: plain HTML and one `style.css`, published with GitHub Pages, no build. `npm run docs` writes the rule cards in `checks.html`. Header and footer are copied into every page, so change them in all of them. `privacy.html` must stay true when the site starts loading anything new |
 | `action.yml` | Composite action: Node 24, Playwright, scan, upload report |
