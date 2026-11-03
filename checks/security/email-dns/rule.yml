@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Reads the SPF TXT record of the domain and the DMARC record at `_dmarc.`; flags missing ones and `p=none`."
+how: "Reads the SPF TXT record of the registrable domain and the DMARC record at `_dmarc.`; flags missing ones, SPF that allows every server (`+all`, `?all`) and DMARC `p=none`."
 fix_hint:
   de: "SPF- und DMARC-Eintrag im DNS anlegen; ohne Mailversand reichen \"v=spf1 -all\" und \"v=DMARC1; p=reject\"."
   en: "Publish SPF and DMARC records; a domain without mail needs only \"v=spf1 -all\" and \"v=DMARC1; p=reject\"."

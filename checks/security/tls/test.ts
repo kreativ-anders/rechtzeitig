@@ -21,3 +21,9 @@ test("fails for an untrusted certificate", async () => {
 test("fails for TLS 1.0", async () => {
   assert.equal((await runFake(here, {}, tls({ protocol: "TLSv1" }))).status, "fail");
 });
+
+test("an untrusted certificate without an error text says so plainly", async () => {
+  const result = await runFake(here, {}, tls({ authorized: false }));
+  assert.equal(result.status, "fail");
+  assert.equal(result.message, "The certificate is not trusted.");
+});

@@ -14,6 +14,10 @@ test("fails when an error page shows a stack trace", async () => {
   assert.ok(result.details?.some((d) => d.includes("/var/www/html/index.php")));
 });
 
+test("ignores links, scripts and prose that only look like errors", async () => {
+  assert.equal((await runCheck(here, "prose")).status, "pass");
+});
+
 test("warns for version headers", async () => {
   const result = await runCheck(here, "version-header");
   assert.equal(result.status, "warn");

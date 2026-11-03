@@ -20,3 +20,7 @@ test("fails when HTTP serves the page unencrypted", async () => {
 test("fails for an http:// site", async () => {
   assert.equal((await runFake(here, { finalUrl: "http://example.de/" })).status, "fail");
 });
+
+test("skips when plain HTTP was not checked", async () => {
+  assert.equal((await runFake(here, {})).status, "skip");
+});

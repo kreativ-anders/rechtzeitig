@@ -3,7 +3,7 @@
 # Traces of PHP, Node, Python, Java, .NET, Laravel and SQL errors, and server paths.
 # Regular expressions, case-sensitive, matched against the visible text of error pages (tags removed).
 patterns:
-  - '[Ff]atal [Ee]rror:?.{0,200}'
+  - 'Fatal error: .{0,200}'
   - 'Stack trace:.{0,120}'
   - 'Traceback \(most recent call last\).{0,120}'
   - 'Uncaught \w*(Error|Exception).{0,120}'
