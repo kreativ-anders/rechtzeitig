@@ -5,6 +5,15 @@ import { mkdtempSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { scanRepo } from "./scan.ts";
+import { LOCKFILES } from "./lockfiles.ts";
+
+test("go.mod: reads require blocks and single lines, fast on any input", () => {
+  const mod = "module x\n\nrequire (\n\tgithub.com/a/b v1.2.3\n\tgithub.com/c/d v0.1.0 // indirect\n)\n\nrequire github.com/e/f v2.0.0\n";
+  assert.deepEqual(LOCKFILES["go.mod"](mod).map((c) => `${c.name}@${c.version}`), ["github.com/a/b@v1.2.3", "github.com/c/d@v0.1.0", "github.com/e/f@v2.0.0"]);
+  const started = Date.now();
+  LOCKFILES["go.mod"](`require (\n${"\n".repeat(1_000_000)}`);
+  assert.ok(Date.now() - started < 500);
+});
 
 // Symlinks are created at runtime, so the repository itself contains none.
 function withLinks(git: boolean): string {

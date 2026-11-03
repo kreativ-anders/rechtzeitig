@@ -127,9 +127,10 @@ function requirements(text: string): Parsed[] {
 }
 
 function goMod(text: string): Parsed[] {
-  const block = /^require\s*\(([\s\S]*?)^\)/m.exec(text)?.[1] ?? "";
-  const single = [...text.matchAll(/^require\s+(\S+)\s+(\S+)/gm)].map((m) => `${m[1]} ${m[2]}`);
-  return [...block.split("\n"), ...single].flatMap((line) => {
+  // Text after each "require (" up to the closing ")" line. Split instead of a lazy regex: linear on any input.
+  const blocks = text.split(/^require[ \t]*\(/m).slice(1).flatMap((b) => b.split("\n)")[0].split("\n"));
+  const single = [...text.matchAll(/^require[ \t]+(\S+)[ \t]+(\S+)/gm)].map((m) => `${m[1]} ${m[2]}`);
+  return [...blocks, ...single].flatMap((line) => {
     const m = /^\s*(\S+)\s+(v\S+)/.exec(line);
     return m ? [{ ecosystem: "go" as const, name: m[1], version: m[2], dev: false }] : [];
   });
