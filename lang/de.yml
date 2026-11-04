@@ -103,6 +103,12 @@ text:
     - '\bpersonalisierung\b'
     - '\bexterne medien\b'
     - '\bkomfort\b'
+  # Confirmation shaming: a refusal worded so that saying no sounds like a loss. Only clear phrases.
+  consent_shaming:
+    - '\b(nein|ich (moechte|will) kein\w*|ich verzichte)\b.{0,40}\bbessere[nmrs]? (angebote?|inhalte?|werbung|erlebnis|nutzererlebnis|empfehlungen|preise)\b'
+    - '\bich (moechte|will) (nicht|kein\w*) (sparen|profitieren|unterstuetzen)\b'
+    - '\bich (zahle|bezahle) lieber (den )?vollen? preis\b'
+    - '\bich bevorzuge (ein |eine )?schlechtere'
 
 # Report sentences. Checks return a key and parameters; {name} is replaced by a parameter.
 # A value with one/other is picked by the parameter count. Groups are check ids; `common` is shared.
@@ -233,6 +239,17 @@ messages:
     found: "„{text}“ gefunden."
 
   # ---------- privacy
+  privacy/consent-equal-choice:
+    no_banner: "Kein Consent-Banner auf der Startseite gefunden."
+    no_reject: "Das Banner hat keinen Ablehnen-Button auf der ersten Ebene (siehe privacy/consent-reject)."
+    shaming: "„{text}“: die Ablehnung ist abwertend formuliert."
+    smaller: "„{reject}“ hat nur {percent} % der Fläche von „{accept}“."
+    smaller_font: "„{reject}“ hat {reject_size} px Schrift, „{accept}“ {accept_size} px."
+    low_contrast: "„{reject}“ hat einen Kontrast von {reject_ratio}:1, „{accept}“ {accept_ratio}:1."
+    unequal:
+      one: "Ablehnen wirkt im Banner weniger gleichwertig als Zustimmen ({count} Hinweis). Bitte im Browser ansehen."
+      other: "Ablehnen wirkt im Banner weniger gleichwertig als Zustimmen ({count} Hinweise). Bitte im Browser ansehen."
+    equal: "„{accept}“ und „{reject}“ sind ähnlich groß und lesbar."
   privacy/consent-preselected:
     no_categories: "Keine optionalen Cookie-Kategorien auf der Startseite gefunden."
     preselected:
@@ -245,6 +262,19 @@ messages:
     no_banner: "Kein Consent-Banner auf der Startseite gefunden."
     no_reject: "Das Banner bietet „{accept}“, aber keine Ablehnung auf derselben Ebene. Ablehnen muss so einfach sein wie Zustimmen."
     both: "Das Banner bietet „{accept}“ und „{reject}“."
+  privacy/cookie-lifetime:
+    none: "Keine Cookies auf den besuchten Seiten gesetzt."
+    tracking_cookie: "{name} ({domain}, gesetzt auf {page}): Tracking-Cookie von {vendor}, läuft in {days} Tagen ab"
+    cookie: "{name} ({domain}, gesetzt auf {page}): läuft in {days} Tagen ab"
+    too_long:
+      one: "{count} Cookie, das eine Einwilligung braucht, läuft länger als {max} Tage (13 Monate)."
+      other: "{count} Cookies, die eine Einwilligung brauchen, laufen länger als {max} Tage (13 Monate)."
+    own_long:
+      one: "{count} eigenes Cookie läuft länger als {max} Tage. Bitte prüfen, ob diese Laufzeit nötig ist."
+      other: "{count} eigene Cookies laufen länger als {max} Tage. Bitte prüfen, ob diese Laufzeit nötig ist."
+    within:
+      one: "{count} Cookie, es läuft nicht länger als {max} Tage."
+      other: "{count} Cookies, keines läuft länger als {max} Tage."
   privacy/cookies-before-consent:
     tracking_cookie: "{name} ({domain}, gesetzt auf {page}): Tracking-Cookie von {vendor}"
     third_party_cookie: "{name} ({domain}, gesetzt auf {page}): Drittanbieter-Cookie"

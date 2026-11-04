@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-CNS-007
+severity: medium
+title:
+  de: "Ablehnen ist im Consent-Banner so sichtbar wie Zustimmen"
+  en: "Rejecting is as visible as accepting in the consent banner"
+legal_basis:
+  de: "§ 25 TDDDG, Art. 4 Nr. 11 und Art. 7 DSGVO"
+  en: "§ 25 TDDDG, Art. 4(11) and Art. 7 GDPR"
+how: "In the start page's banner with JavaScript, compares the largest accept button (`consent_accept`) with the largest reject button (`consent_reject`) and warns when reject has under half the area, under 80 % of the font size, or a WCAG contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/consent-design.yml`), or when a banner button uses shaming words (`consent_shaming`)."
+fix_hint:
+  de: "\"Alle ablehnen\" in gleicher Größe, Schrift und Lesbarkeit wie \"Alle akzeptieren\" anbieten und neutral beschriften."
+  en: "Show \"Reject all\" in the same size, font and readability as \"Accept all\", with a neutral label."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.gesetze-im-internet.de/ttdsg/__25.html
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://www.datenschutzkonferenz-online.de/media/oh/20221205_oh_Telemedien_2021_Version_1_1_Vorlage_104_DSK_final.pdf
+  - https://www.edpb.europa.eu/system/files/2023-01/edpb_20230118_report_cookie_banner_taskforce_en.pdf
+  - https://www.edpb.europa.eu/system/files/documents/2023-02/edpb_03-2022_guidelines_on_deceptive_design_patterns_in_social_media_platform_interfaces_v2_en_0.pdf
