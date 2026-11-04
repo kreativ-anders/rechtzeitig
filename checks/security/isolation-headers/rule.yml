@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-HDR-004
+severity: low
+title:
+  de: "Permissions-Policy und Cross-Origin-Opener-Policy sind gesetzt"
+  en: "Permissions-Policy and Cross-Origin-Opener-Policy are set"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Reads the response headers of the start page for Permissions-Policy and a Cross-Origin-Opener-Policy other than unsafe-none, and names both when they appear only in <meta>, where browsers ignore them, or COOP only as report-only."
+fix_hint:
+  de: "Im Webserver Permissions-Policy setzen und nicht benötigte Funktionen abschalten (zum Beispiel camera=(), microphone=(), geolocation=()), dazu Cross-Origin-Opener-Policy: same-origin, oder same-origin-allow-popups, wenn die Seite Login- oder Zahlungsfenster öffnet."
+  en: "Set Permissions-Policy in the web server and turn off features the site does not use (for example camera=(), microphone=(), geolocation=()), plus Cross-Origin-Opener-Policy: same-origin, or same-origin-allow-popups when the site opens login or payment windows."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://www.w3.org/TR/permissions-policy/#permissions-policy-http-header-field
+  - https://html.spec.whatwg.org/multipage/browsers.html#the-coop-headers

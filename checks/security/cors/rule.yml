@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-HDR-005
+severity: medium
+title:
+  de: "CORS gibt Antworten mit Anmeldedaten nicht an beliebige Websites frei"
+  en: "CORS does not share answers with credentials to any site"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Reads the response headers of the site's own pages and fails when Access-Control-Allow-Credentials: true comes with Access-Control-Allow-Origin * or null; it sends no foreign Origin, so a server that mirrors any Origin is not detected."
+fix_hint:
+  de: "Access-Control-Allow-Credentials nur zusammen mit einer festen Liste vertrauenswürdiger Origins senden, nie mit * oder null, und Origins nicht ungeprüft aus der Anfrage übernehmen. Brauchen die Seiten kein CORS, beide Header weglassen."
+  en: "Send Access-Control-Allow-Credentials only with a fixed list of trusted origins, never with * or null, and do not copy the Origin from the request unchecked. If the pages need no CORS, leave out both headers."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://fetch.spec.whatwg.org/#cors-protocol-and-credentials
+  - https://fetch.spec.whatwg.org/#cors-check

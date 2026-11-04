@@ -1,0 +1,37 @@
+# Hosts of other sites whose scripts and stylesheets change under the same URL, so an integrity
+# hash would block them after the next update. Used by security/subresource-integrity: files from
+# these hosts are named as excluded, never as missing. A host counts with all its subdomains.
+# Add a host only when the vendor serves a changing file on purpose (loader, tag manager, consent
+# tool, payment or captcha widget, CSS built per browser), not when it merely publishes no hashes.
+moving:
+  # Tag managers, analytics and advertising loaders.
+  - googletagmanager.com
+  - google-analytics.com
+  - googleadservices.com
+  - googlesyndication.com
+  - doubleclick.net
+  - connect.facebook.net
+  - snap.licdn.com
+  - bat.bing.com
+  - analytics.tiktok.com
+  - static.hotjar.com
+  # Consent tools.
+  - cookiebot.com
+  - usercentrics.eu
+  - cookielaw.org
+  - onetrust.com
+  - consentmanager.net
+  # Payment and captcha widgets, which their vendors want loaded unchanged from their own servers.
+  - js.stripe.com
+  - paypal.com
+  - paypalobjects.com
+  - google.com
+  - gstatic.com
+  - hcaptcha.com
+  - challenges.cloudflare.com
+  # Maps, video players and font kits: loaders, and CSS that differs per browser or changes with the kit.
+  - maps.googleapis.com
+  - fonts.googleapis.com
+  - youtube.com
+  - use.typekit.net
+  - kit.fontawesome.com
