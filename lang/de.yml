@@ -338,6 +338,11 @@ messages:
       one: "{count} Ressource lädt über unverschlüsseltes HTTP."
       other: "{count} Ressourcen laden über unverschlüsseltes HTTP."
     all_https: "Alle Ressourcen laden über HTTPS."
+  security/security-txt:
+    missing: "Keine security.txt mit Contact-Feld. Wer eine Sicherheitslücke findet, weiß nicht, wohin damit."
+    no_expires: "security.txt hat kein Expires-Feld, das RFC 9116 verlangt."
+    expired: "security.txt ist am {date} abgelaufen. Leser halten den Kontakt womöglich für veraltet."
+    found: "security.txt nennt einen Kontakt: {contact}."
   security/tls:
     none: "Keine TLS-Verbindung zum Prüfen."
     failed: "TLS-Verbindung fehlgeschlagen: {error}"
@@ -449,6 +454,12 @@ messages:
       one: "{count} Schlüssel gefunden, der absichtlich öffentlich sein kann. Prüfen, ob er eingeschränkt ist."
       other: "{count} Schlüssel gefunden, die absichtlich öffentlich sein können. Prüfen, ob jeder eingeschränkt ist."
     none: "Keine Secrets in den versionierten Dateien gefunden."
+  repo/security-contact:
+    no_project: "Kein Paketmanifest im Hauptverzeichnis, also kein Softwareprojekt, für das Lücken gemeldet würden."
+    missing: "Keine SECURITY.md und keine security.txt. Ohne Kontakt werden Lücken öffentlich gemeldet oder gar nicht."
+    txt_no_contact: "security.txt hat kein Contact-Feld."
+    txt_expired: "security.txt ist am {date} abgelaufen."
+    found: "Ein Kontakt für Sicherheitslücken ist genannt."
   repo/vulnerabilities:
     no_components: "Keine Abhängigkeiten mit Lockfile zu prüfen."
     osv_error: "OSV-Abfrage fehlgeschlagen: {error}"

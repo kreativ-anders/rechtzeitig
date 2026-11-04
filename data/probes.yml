@@ -3,6 +3,7 @@
 # kind: file  = must not be public. It counts as exposed when the answer is 200 and the body matches `expect`
 #               (this filters out servers that answer every path with their start page).
 # kind: error = provokes an error page. security/error-disclosure looks for stack traces and versions in it.
+# kind: public = should be public. security/security-txt reads it.
 
 - path: /.env
   kind: file
@@ -55,3 +56,5 @@
   kind: error
 - path: /index.php?rechtzeitig[]=%00'
   kind: error
+- path: /.well-known/security.txt
+  kind: public

@@ -8,7 +8,7 @@ Include what you did, what happened and, if you can, a small site or repository 
 
 ## Supported versions
 
-rechtzeitig has no release yet. Only the latest commit on `main` gets fixes.
+rechtzeitig is before v1.0.0. Only the latest release gets fixes.
 
 ## Scope
 

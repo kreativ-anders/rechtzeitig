@@ -319,6 +319,11 @@ messages:
       one: "{count} resource loads over plain HTTP."
       other: "{count} resources load over plain HTTP."
     all_https: "All resources load over HTTPS."
+  security/security-txt:
+    missing: "No security.txt with a Contact field. Researchers who find a vulnerability do not know where to report it."
+    no_expires: "security.txt has no Expires field, which RFC 9116 requires."
+    expired: "security.txt expired on {date}. Readers may take the contact as outdated."
+    found: "security.txt names a contact: {contact}."
   security/tls:
     none: "No TLS connection to check."
     failed: "TLS connection failed: {error}"
@@ -430,6 +435,12 @@ messages:
       one: "{count} key found that may be public by design. Check that it is restricted."
       other: "{count} keys found that may be public by design. Check that each is restricted."
     none: "No secrets found in tracked files."
+  repo/security-contact:
+    no_project: "No package manifest in the root, so no software project to report vulnerabilities for."
+    missing: "No SECURITY.md and no security.txt. Without a contact, vulnerabilities are reported publicly or not at all."
+    txt_no_contact: "security.txt has no Contact field."
+    txt_expired: "security.txt expired on {date}."
+    found: "A contact for vulnerabilities is named."
   repo/vulnerabilities:
     no_components: "No locked dependencies to check."
     osv_error: "Could not query OSV: {error}"

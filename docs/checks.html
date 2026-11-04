@@ -318,7 +318,7 @@
 </div>
 </section>
 <section class="module" data-module="security">
-<h3>Security <small>9 rules</small></h3>
+<h3>Security <small>10 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-HDR-002" data-module="security" data-severity="medium" data-search="sec-hdr-002 security/cookie-flags cookies use secure flags cookies nutzen sichere flags art. 32 gdpr checks secure on every cookie set without login (https sites, and always with `samesite=none`) and httponly on cookies whose name looks like a session (`data/cookies.yml`); cookies of other sites only give info.">
 <summary>
@@ -440,6 +440,21 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-CVD-002" data-module="security" data-severity="low" data-search="sec-cvd-002 security/security-txt security.txt names a contact for vulnerabilities security.txt nennt einen kontakt für sicherheitslücken  requests `/.well-known/security.txt` (in `data/probes.yml`) and reads its `contact` and `expires` fields.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-CVD-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">security.txt names a contact for vulnerabilities</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Requests <code>/.well-known/security.txt</code> (in <code>data/probes.yml</code>) and reads its <code>Contact</code> and <code>Expires</code> fields.</dd></div>
+<div><dt>How to fix</dt><dd>Publish /.well-known/security.txt with Contact: (email or URL) and Expires: (at most a year ahead), and renew it before it expires.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/security-txt"><code>checks/security/security-txt</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.rfc-editor.org/rfc/rfc9116">rfc-editor.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-TLS-002" data-module="security" data-severity="high" data-search="sec-tls-002 security/tls tls certificate is valid and current tls-zertifikat ist gültig und aktuell art. 32 gdpr opens a tls connection to the host and reads protocol, trust and expiry date of the certificate.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-TLS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
@@ -513,7 +528,7 @@
 </div>
 </section>
 <section class="module" data-module="repo">
-<h3>Repository <small>9 rules</small></h3>
+<h3>Repository <small>10 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-DEPS-005" data-module="repo" data-severity="low" data-search="sec-deps-005 repo/actions-pinning github actions are pinned to a commit github actions sind auf einen commit gepinnt cra art. 13(5), due diligence for third-party components (from 11 dec 2027) reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit sha.">
 <summary>
@@ -618,6 +633,21 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/secrets"><code>checks/repo/secrets</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-CVD-001" data-module="repo" data-severity="low" data-search="sec-cvd-001 repo/security-contact the project names a contact for vulnerabilities das projekt nennt einen kontakt für sicherheitslücken cra annex i part ii(5) and (6), contact address and vulnerability disclosure (from 11 dec 2027) looks for `security.md` in the root, `.github/` or `docs/` and for `.well-known/security.txt` anywhere, whose `contact` and `expires` fields it reads; skips repositories without a manifest.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-CVD-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">The project names a contact for vulnerabilities</span>
+<span class="rule-law">CRA Annex I Part II(5) and (6), contact address and vulnerability disclosure (from 11 Dec 2027)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Looks for <code>SECURITY.md</code> in the root, <code>.github/</code> or <code>docs/</code> and for <code>.well-known/security.txt</code> anywhere, whose <code>Contact</code> and <code>Expires</code> fields it reads; skips repositories without a manifest.</dd></div>
+<div><dt>How to fix</dt><dd>Add SECURITY.md with a reporting channel (email or GitHub private vulnerability reporting) and a response time. A SECURITY.md in the organization's .github repository counts too, but is not visible here.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/security-contact"><code>checks/repo/security-contact</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.github.com/en/code-security/getting-started/adding-a-security-policy-to-your-repository">docs.github.com</a>, <a href="https://www.rfc-editor.org/rfc/rfc9116">rfc-editor.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-DEPS-001" data-module="repo" data-severity="high" data-search="sec-deps-001 repo/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i part i(2)(a) and part ii(2) (from 11 dec 2027) sends the package urls of all locked components to the osv api and loads details for up to 100 issues; high and critical issues in production dependencies fail. vulnerabilities">

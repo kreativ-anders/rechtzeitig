@@ -85,6 +85,27 @@ export function unique<T>(items: T[], key: (item: T) => string): T[] {
 /** Line number (from 1) of a character index in a text. */
 export const lineAt = (text: string, index: number) => text.slice(0, index).split("\n").length;
 
+/** Fields of a security.txt (RFC 9116) that the checks read. */
+export interface SecurityTxt {
+  contact: string[];
+  /** Expires as written. */
+  expires?: string;
+  /** Expires lies before `now`. */
+  expired: boolean;
+}
+
+const SECURITY_FIELD = /^[ \t]*(Contact|Expires):[ \t]*(\S.*?)[ \t\r]*$/gim;
+
+/** Parses a security.txt. undefined when it has no Contact field, for example an HTML page served for every path. */
+export function parseSecurityTxt(text: string, now = Date.now()): SecurityTxt | undefined {
+  const fields = [...text.matchAll(SECURITY_FIELD)];
+  const contact = fields.filter((m) => m[1].toLowerCase() === "contact").map((m) => m[2]);
+  if (!contact.length) return undefined;
+  const expires = fields.find((m) => m[1].toLowerCase() === "expires")?.[2];
+  const time = expires ? Date.parse(expires) : NaN;
+  return { contact, expires, expired: !Number.isNaN(time) && time < now };
+}
+
 /** true when the snapshot loaded with HTTP 2xx/3xx. */
 export const loaded = (s?: Snapshot): s is Snapshot => !!s && s.status > 0 && s.status < 400;
 
@@ -307,7 +328,8 @@ export interface Page {
 /** A path from data/probes.yml, fetched once without a browser. */
 export interface Probe {
   path: string;
-  kind: "file" | "error";
+  /** file: must not be public; error: provokes an error page; public: should be public, read by a check. */
+  kind: "file" | "error" | "public";
   status: number;
   headers: Record<string, string>;
   /** First 50 kB of the body. */

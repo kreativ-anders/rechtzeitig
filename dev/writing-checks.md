@@ -97,7 +97,7 @@ The runner finds the check by itself. Nothing else needs to change.
 |---|---|
 | `lang/<code>.yml` | Words. `links` concepts match link and button labels (the crawler opens matching links); `text` concepts match page text. Patterns run on normalized text: lowercase, `ä→ae ö→oe ü→ue ß→ss`. A new language is a new file with the same keys; a test checks this. Add the code to `examples/workflows/rechtzeitig.yml`. |
 | `data/third-parties.yml` | A service: hosts, country, whether it needs consent, how a privacy policy names it, its cookies, advice in every report language (`de`, `en`; the loader rejects a missing one). |
-| `data/probes.yml` | A path to request. `kind: file` with an `expect` pattern for files that must not be public, `kind: error` for error pages. |
+| `data/probes.yml` | A path to request. `kind: file` with an `expect` pattern for files that must not be public, `kind: error` for error pages, `kind: public` for files that should be public and a check reads (`security.txt`). |
 | `data/secrets.yml` | A secret pattern with `fail` or `warn`. With `payload`, match group 1 is decoded as a JWT payload and must have the listed claims. |
 | `data/licenses.yml` | A license pattern in one of the groups `agpl`, `gpl`, `restricted`, `permissive`. |
 | `data/update-tools.yml` | A Dependabot ecosystem name, a Renovate config path or a vulnerability scanner. |

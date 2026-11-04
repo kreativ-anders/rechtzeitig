@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-CVD-001
+severity: low
+title:
+  de: "Das Projekt nennt einen Kontakt für Sicherheitslücken"
+  en: "The project names a contact for vulnerabilities"
+legal_basis:
+  de: "CRA Anhang I Teil II Nr. 5 und 6, Kontaktadresse und Offenlegung von Schwachstellen (ab 11.12.2027)"
+  en: "CRA Annex I Part II(5) and (6), contact address and vulnerability disclosure (from 11 Dec 2027)"
+how: "Looks for `SECURITY.md` in the root, `.github/` or `docs/` and for `.well-known/security.txt` anywhere, whose `Contact` and `Expires` fields it reads; skips repositories without a manifest."
+fix_hint:
+  de: "SECURITY.md mit Meldeweg (E-Mail oder GitHub Private Vulnerability Reporting) und Antwortzeit anlegen. Eine SECURITY.md im .github-Repository der Organisation gilt auch, ist hier aber nicht sichtbar."
+  en: "Add SECURITY.md with a reporting channel (email or GitHub private vulnerability reporting) and a response time. A SECURITY.md in the organization's .github repository counts too, but is not visible here."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj
+  - https://docs.github.com/en/code-security/getting-started/adding-a-security-policy-to-your-repository
+  - https://www.rfc-editor.org/rfc/rfc9116

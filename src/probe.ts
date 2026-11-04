@@ -10,7 +10,7 @@ import type { Probe, ScanContext } from "./sdk.ts";
 
 const PROBES = loadYaml<Array<{
   path: string;
-  kind: "file" | "error";
+  kind: Probe["kind"];
   expect?: string;
 }>>("data/probes.yml");
 const MAX_BODY = 50_000;

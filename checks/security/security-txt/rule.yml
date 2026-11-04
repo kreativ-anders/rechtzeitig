@@ -1,0 +1,14 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-CVD-002
+severity: low
+title:
+  de: "security.txt nennt einen Kontakt für Sicherheitslücken"
+  en: "security.txt names a contact for vulnerabilities"
+how: "Requests `/.well-known/security.txt` (in `data/probes.yml`) and reads its `Contact` and `Expires` fields."
+fix_hint:
+  de: "/.well-known/security.txt mit Contact: (E-Mail oder URL) und Expires: (höchstens ein Jahr in der Zukunft) veröffentlichen und vor Ablauf erneuern."
+  en: "Publish /.well-known/security.txt with Contact: (email or URL) and Expires: (at most a year ahead), and renew it before it expires."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.rfc-editor.org/rfc/rfc9116

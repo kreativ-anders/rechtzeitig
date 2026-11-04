@@ -20,13 +20,12 @@ Open points from the audit of 2026-11-03, after the fixes.
 2. Third-party services in the code: hosts and SDK packages from `data/third-parties.yml`, e.g. Google Fonts URLs (§ 25 TDDDG, Art. 13 DSGVO).
 3. Secret-looking names behind public env prefixes (`NEXT_PUBLIC_`, `VITE_`, `PUBLIC_`) that end up in the client bundle.
 4. Package names that do not exist or look like typos of popular ones.
-5. A vulnerability contact: `SECURITY.md` or `.well-known/security.txt` (CRA Annex I Part II).
-6. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
-7. SBOM fields as BSI TR-03183-2 asks (CRA Annex I Part II).
-8. `cors` with `origin: *` and credentials, admin routes without an auth check.
-9. License headers of other projects inside your own files.
-10. Google Tag Manager container exports in the repo: tags, triggers, Consent Mode wiring.
-11. Repository health beyond the audit list: LICENSE file present, recent maintenance, CI tests configured.
+5. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
+6. SBOM fields as BSI TR-03183-2 asks (CRA Annex I Part II).
+7. `cors` with `origin: *` and credentials, admin routes without an auth check.
+8. License headers of other projects inside your own files.
+9. Google Tag Manager container exports in the repo: tags, triggers, Consent Mode wiring.
+10. Repository health beyond the audit list: LICENSE file present, recent maintenance, CI tests configured.
 
 ## Next: repository and website together
 
@@ -44,34 +43,33 @@ Start page and legal pages only. No full-site crawl.
 
 1. After a click on "reject": check that no tracker loads. The only check that would need a click.
 2. Outdated references in imprint and privacy policy: TMG, TTDSG, Privacy Shield (DDG, TDDDG, EuGH C-311/18).
-3. `security.txt` (RFC 9116), as a probe.
-4. Order button labeled "zahlungspflichtig bestellen" for shops (§ 312j BGB).
-5. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
-6. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
-7. A few unambiguous accessibility checks and the accessibility information for shops (BFSG, § 14 and Anlage 3), not a full axe-core run.
-8. Total prices including VAT where prices appear (PAngV).
-9. Withdrawal notice says where the withdrawal function is, with `sales: true` (Art. 246a § 1 Abs. 2 EGBGB).
-10. A link to change consent on the start page once a banner was found (Art. 7 Abs. 3 DSGVO).
-11. Forms that send to another site: receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO).
-12. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
-13. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.
-14. A named natural person as editorially responsible when the site has journalistic content, blog, news or podcast (§ 18 Abs. 2 MStV).
-15. Newsletter signup: double opt-in wording and an unsubscribe link next to the form (UWG § 7).
-16. With `sales: true`: T&Cs linked and reachable, and the full withdrawal instruction with the model form (Art. 246a § 1 EGBGB), not only the pointer to the withdrawal function (item 9).
-17. With `sales: true`, PAngV beyond item 8: base price (Grundpreis), shipping cost notice, and the 30-day rule for strikethrough prices.
-18. With `sales: true`: product pages name manufacturer, importer or responsible person and safety information (Reg. (EU) 2023/988, since 13.12.2024); packaging registration number (VerpackG § 9, LUCID) in the imprint; PPWR packaging labeling from 12.08.2026.
-19. With `sales: true`: legal guarantee and commercial guarantee labels per Directive (EU) 2024/825 from 27.09.2026, besides the environmental claims in item 12.
-20. Dark patterns in the consent banner: reject as prominent as accept (size, contrast), no confirmation shaming (UWG § 3, Art. 7 Abs. 3 DSGVO).
-21. Global Privacy Control (GPC) signal honored by the consent tool, as a warning.
-22. Lifetimes of non-essential cookies beyond the ~13-month guideline, as a warning.
-23. The served HTML and client JS of normal pages: suspicious comments, personal data, exposed API keys.
-24. Client-side JS libraries in the served bundle with known CVEs; the repo vulnerability check covers dependencies, not the bundle.
-25. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs.
-26. Subresource integrity attributes on third-party scripts.
-27. DNSSEC and CAA records of the domain and the depth of SPF includes; `email-dns` today covers only SPF, DMARC and MX.
-28. Permissive `crossdomain.xml` / `clientaccesspolicy.xml` and directory listings beyond the probe list.
-29. Subdomain takeover: dangling DNS records of own subdomains via certificate transparency logs and a fingerprint list. Sends subdomain names to external log services, so off by default with an input.
-30. Open ports and exposed services on the scanned host only, a port scan from the runner.
+3. Order button labeled "zahlungspflichtig bestellen" for shops (§ 312j BGB).
+4. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
+5. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
+6. A few unambiguous accessibility checks and the accessibility information for shops (BFSG, § 14 and Anlage 3), not a full axe-core run.
+7. Total prices including VAT where prices appear (PAngV).
+8. Withdrawal notice says where the withdrawal function is, with `sales: true` (Art. 246a § 1 Abs. 2 EGBGB).
+9. A link to change consent on the start page once a banner was found (Art. 7 Abs. 3 DSGVO).
+10. Forms that send to another site: receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO).
+11. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
+12. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.
+13. A named natural person as editorially responsible when the site has journalistic content, blog, news or podcast (§ 18 Abs. 2 MStV).
+14. Newsletter signup: double opt-in wording and an unsubscribe link next to the form (UWG § 7).
+15. With `sales: true`: T&Cs linked and reachable, and the full withdrawal instruction with the model form (Art. 246a § 1 EGBGB), not only the pointer to the withdrawal function (item 9).
+16. With `sales: true`, PAngV beyond item 8: base price (Grundpreis), shipping cost notice, and the 30-day rule for strikethrough prices.
+17. With `sales: true`: product pages name manufacturer, importer or responsible person and safety information (Reg. (EU) 2023/988, since 13.12.2024); packaging registration number (VerpackG § 9, LUCID) in the imprint; PPWR packaging labeling from 12.08.2026.
+18. With `sales: true`: legal guarantee and commercial guarantee labels per Directive (EU) 2024/825 from 27.09.2026, besides the environmental claims in item 12.
+19. Dark patterns in the consent banner: reject as prominent as accept (size, contrast), no confirmation shaming (UWG § 3, Art. 7 Abs. 3 DSGVO).
+20. Global Privacy Control (GPC) signal honored by the consent tool, as a warning.
+21. Lifetimes of non-essential cookies beyond the ~13-month guideline, as a warning.
+22. The served HTML and client JS of normal pages: suspicious comments, personal data, exposed API keys.
+23. Client-side JS libraries in the served bundle with known CVEs; the repo vulnerability check covers dependencies, not the bundle.
+24. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs.
+25. Subresource integrity attributes on third-party scripts.
+26. DNSSEC and CAA records of the domain and the depth of SPF includes; `email-dns` today covers only SPF, DMARC and MX.
+27. Permissive `crossdomain.xml` / `clientaccesspolicy.xml` and directory listings beyond the probe list.
+28. Subdomain takeover: dangling DNS records of own subdomains via certificate transparency logs and a fingerprint list. Sends subdomain names to external log services, so off by default with an input.
+29. Open ports and exposed services on the scanned host only, a port scan from the runner.
 
 ## Next: sustainability
 
