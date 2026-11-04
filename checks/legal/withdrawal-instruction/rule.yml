@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-WDR-001
+severity: high
+title:
+  de: "Widerrufsbelehrung mit Muster-Widerrufsformular und Hinweis auf die Widerrufsfunktion"
+  en: "Withdrawal instructions with the model form and a pointer to the withdrawal function"
+legal_basis:
+  de: "Art. 246a § 1 Abs. 2 Satz 1 Nr. 1 EGBGB mit Anlage 2, § 356a BGB (seit 19.06.2026)"
+  en: "Art. 246a § 1(2) sentence 1 no. 1 EGBGB with Annex 2, § 356a BGB (since 19 June 2026)"
+how: "Opens the withdrawal instructions linked from the start page (`withdrawal_info` in `lang/*.yml`), else the T&Cs when they contain them (`withdrawal_instruction`), and warns without the model form in the text or a link (`model_form`) or without a note on where the withdrawal function is (`withdraw_function_hint`)."
+requires: [sales]
+fix_hint:
+  de: "Eine Widerrufsbelehrung nach dem Muster der Anlage 1 EGBGB verlinken, mit dem Muster-Widerrufsformular der Anlage 2 und dem Satz, wo die Widerrufsfunktion „Vertrag widerrufen“ zu finden ist („Sie können Ihr Widerrufsrecht auch online unter … ausüben“)."
+  en: "Link withdrawal instructions following the model in Annex 1 EGBGB, with the model withdrawal form from Annex 2 and a sentence on where the withdrawal function \"Vertrag widerrufen\" is (\"Sie können Ihr Widerrufsrecht auch online unter … ausüben\")."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.gesetze-im-internet.de/bgbeg/art_246a__1.html
+  - https://www.gesetze-im-internet.de/bgbeg/art_253anlage_1.html
+  - https://www.gesetze-im-internet.de/bgbeg/art_253anlage_2.html
+  - https://www.gesetze-im-internet.de/bgb/__356a.html

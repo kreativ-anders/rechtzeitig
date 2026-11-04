@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-BTN-003
+severity: high
+title:
+  de: "Bestellbutton „zahlungspflichtig bestellen“"
+  en: "Order button \"zahlungspflichtig bestellen\""
+legal_basis:
+  de: "§ 312j Abs. 3 und 4 BGB"
+  en: "§ 312j(3) and (4) BGB (German Civil Code)"
+how: "On every visited page that names a payment method and a total (`checkout_payment`, `checkout_total` in `lang/*.yml`), and in forms with an address field (`address_field` in `data/shop.yml`), reads the button texts: `order_button` passes, `order_wrong` fails on a checkout page and warns in a form, `order_generic` (\"Weiter\") warns; skipped when no such page is visited."
+requires: [sales]
+fix_hint:
+  de: "Den Button, mit dem die Bestellung abgeschickt wird, gut lesbar nur mit „zahlungspflichtig bestellen“ oder einer ebenso eindeutigen Formulierung wie „kaufen“ beschriften. Sonst kommt kein Vertrag zustande. Der Bestellabschluss liegt meist hinter dem Warenkorb: dafür den Scan auf die Bestellübersicht richten."
+  en: "Label the button that sends the order, clearly legible, with nothing but \"zahlungspflichtig bestellen\" or equally clear wording such as \"kaufen\". Otherwise no contract is formed. The last step usually sits behind the cart: point the scan at the order summary to check it."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.gesetze-im-internet.de/bgb/__312j.html

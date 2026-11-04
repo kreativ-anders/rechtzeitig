@@ -17,6 +17,8 @@ const patterns: Array<[string, RegExp]> = [
   ...loadYaml<{ odr: string[] }>("data/outdated-links.yml").odr.map((p): [string, RegExp] => [`outdated-links.yml ${p}`, new RegExp(p, "i")]),
   ...Object.entries(loadYaml<Record<string, string[]>>("data/licenses.yml"))
     .flatMap(([group, list]) => list.map((p): [string, RegExp] => [`licenses.yml ${group}`, new RegExp(p, "i")])),
+  ...Object.entries(loadYaml<Record<string, string[]>>("data/shop.yml"))
+    .flatMap(([group, list]) => list.map((p): [string, RegExp] => [`shop.yml ${group}`, new RegExp(p, "i")])),
   ["update-tools.yml renovate", new RegExp(loadYaml<{ renovate: string }>("data/update-tools.yml").renovate)],
   ...data("probes.yml").filter((p) => p.expect).map((p): [string, RegExp] => [`probes.yml ${p.path}`, new RegExp(p.expect, "m")]),
   ...Object.entries({ ...all.links, ...all.text })

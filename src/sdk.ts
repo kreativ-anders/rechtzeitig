@@ -137,10 +137,15 @@ export const LEGAL_PAGES = [
   { concept: "imprint", check: "legal/imprint" },
   { concept: "privacy", check: "legal/privacy-policy" },
 ] as const;
+/** Pages a shop links besides those, read only by checks that need `sales: true`. */
+export const SALES_PAGES = [
+  { concept: "terms", check: "legal/terms-link" },
+  { concept: "withdrawal_info", check: "legal/withdrawal-instruction" },
+] as const;
+export type LegalConcept = (typeof LEGAL_PAGES)[number]["concept"] | (typeof SALES_PAGES)[number]["concept"];
 /** The page's name as a message (`messages.common.page_<concept>`). */
 export const pageName = (concept: LegalConcept): Msg => msg(`page_${concept}`);
-export type LegalConcept = (typeof LEGAL_PAGES)[number]["concept"];
-const legal = (concept: LegalConcept) => LEGAL_PAGES.find((p) => p.concept === concept)!;
+const legal = (concept: LegalConcept) => [...LEGAL_PAGES, ...SALES_PAGES].find((p) => p.concept === concept)!;
 
 /** The page a legal link leads to, if it was visited and loaded. */
 function loadedPage(ctx: ScanContext, concept: string): Page | undefined {
@@ -362,6 +367,8 @@ export interface Snapshot {
   links: Link[];
   forms: Form[];
   checkboxes: Checkbox[];
+  /** Short texts with a digit that are struck through (<del>, <s>, CSS line-through), such as old prices. At most 100. */
+  struck: string[];
   requests: Request[];
   /** Cookies this load added. */
   cookies: Cookie[];

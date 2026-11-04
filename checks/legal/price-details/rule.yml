@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-PRICE-001
+severity: medium
+title:
+  de: "Preisangaben mit MwSt., Versand, Grundpreis und 30-Tage-Preis"
+  en: "Prices with VAT, shipping, base price and 30-day price"
+legal_basis:
+  de: "§§ 3, 4, 6 und 11 PAngV"
+  en: "§§ 3, 4, 6 and 11 PAngV (German Price Indication Ordinance)"
+how: "On every visited own page, legal and shipping pages left out, that shows a price (`price` in `data/shop.yml`) and a cart or buy link (`shop` in `lang/*.yml`), warns without `vat_included` and `shipping_costs`, for a `quantity` without `unit_price` or `base_price`, and for a struck-through price without `lowest_price` unless `rrp` is named."
+requires: [sales]
+fix_hint:
+  de: "Bei Preisen angeben, dass sie die Umsatzsteuer enthalten und ob Versandkosten anfallen („inkl. MwSt., zzgl. Versand“ mit Link zu den Versandkosten). Bei Ware nach Gewicht oder Volumen den Grundpreis nennen (z. B. „17,98 €/kg“). Bei jeder Preissenkung den niedrigsten Preis der letzten 30 Tage angeben."
+  en: "Next to prices, say that they include VAT and whether shipping costs apply (\"inkl. MwSt., zzgl. Versand\" with a link to the shipping costs). For goods sold by weight or volume, give the base price (for example \"17,98 €/kg\"). For every price reduction, give the lowest price of the last 30 days."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.gesetze-im-internet.de/pangv_2022/__3.html
+  - https://www.gesetze-im-internet.de/pangv_2022/__4.html
+  - https://www.gesetze-im-internet.de/pangv_2022/__6.html
+  - https://www.gesetze-im-internet.de/pangv_2022/__11.html

@@ -61,7 +61,11 @@
 <tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before rechtzeitig (folder: input <code>repository</code>).</td></tr>
 <tr><td>A group of checks</td><td><code>modules</code> picks groups: legal, privacy, security, sustainability, accessibility, repo. Empty runs all.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-001">Cancellation button for subscriptions</a><br><small>LEG-DE-BTN-001</small></td><td>Opt-in: only with <code>subscriptions: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-BTN-003">Order button &quot;zahlungspflichtig bestellen&quot;</a><br><small>LEG-DE-BTN-003</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-PRICE-001">Prices with VAT, shipping, base price and 30-day price</a><br><small>LEG-DE-PRICE-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-AGB-001">Terms and conditions are linked and reachable</a><br><small>LEG-DE-AGB-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-WDR-001">Withdrawal instructions with the model form and a pointer to the withdrawal function</a><br><small>LEG-DE-WDR-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to ipinfo.io (opt-in)</a></td></tr>
 <tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
 <tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
@@ -80,7 +84,7 @@
   <div id="list">
 <!-- checks:start -->
 <section class="module" data-module="legal">
-<h3>Legal <small>10 rules</small></h3>
+<h3>Legal <small>14 rules</small></h3>
 <div class="rules">
 <details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a button labeled &quot;verträge hier kündigen&quot; on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and &quot;jetzt kündigen&quot; (`cancel_confirm`) on its target page; info when it cannot be followed. subscriptions">
 <summary>
@@ -173,6 +177,22 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-DE-BTN-003" data-module="legal" data-severity="high" data-search="leg-de-btn-003 legal/order-button order button &quot;zahlungspflichtig bestellen&quot; bestellbutton „zahlungspflichtig bestellen“ § 312j(3) and (4) bgb (german civil code) on every visited page that names a payment method and a total (`checkout_payment`, `checkout_total` in `lang/*.yml`), and in forms with an address field (`address_field` in `data/shop.yml`), reads the button texts: `order_button` passes, `order_wrong` fails on a checkout page and warns in a form, `order_generic` (&quot;weiter&quot;) warns; skipped when no such page is visited. sales">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-BTN-003</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Order button &quot;zahlungspflichtig bestellen&quot;</span>
+<span class="rule-law">§ 312j(3) and (4) BGB (German Civil Code)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>On every visited page that names a payment method and a total (<code>checkout_payment</code>, <code>checkout_total</code> in <code>lang/*.yml</code>), and in forms with an address field (<code>address_field</code> in <code>data/shop.yml</code>), reads the button texts: <code>order_button</code> passes, <code>order_wrong</code> fails on a checkout page and warns in a form, <code>order_generic</code> (&quot;Weiter&quot;) warns; skipped when no such page is visited.</dd></div>
+<div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Label the button that sends the order, clearly legible, with nothing but &quot;zahlungspflichtig bestellen&quot; or equally clear wording such as &quot;kaufen&quot;. Otherwise no contract is formed. The last step usually sits behind the cart: point the scan at the order summary to check it.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/order-button"><code>checks/legal/order-button</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312j.html">gesetze-im-internet.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-DE-REF-001" data-module="legal" data-severity="low" data-search="leg-de-ref-001 legal/outdated-references imprint and privacy policy name no repealed laws impressum und datenschutzerklärung nennen keine aufgehobenen gesetze ddg and tdddg (since 14 may 2024), mstv (since 7 nov 2020), cjeu c-311/18 on the privacy shield searches the imprint and the privacy policy for the old names in `data/outdated-laws.yml` (tmg, ttdsg, rstv, privacy shield) and ignores a page that also names what applies instead.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-REF-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
@@ -185,6 +205,22 @@
 <div><dt>How to fix</dt><dd>Replace TMG with DDG (imprint: § 5 DDG), TTDSG with TDDDG (§ 25 TDDDG), RStV with MStV (§ 18(2) MStV); base US transfers on the EU-US Data Privacy Framework or standard contractual clauses instead of the Privacy Shield.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/outdated-references"><code>checks/legal/outdated-references</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-bayern.de/Content/Document/MStV">gesetze-bayern.de</a>, <a href="https://curia.europa.eu/juris/liste.jsf?num=C-311/18">curia.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-PRICE-001" data-module="legal" data-severity="medium" data-search="leg-de-price-001 legal/price-details prices with vat, shipping, base price and 30-day price preisangaben mit mwst., versand, grundpreis und 30-tage-preis §§ 3, 4, 6 and 11 pangv (german price indication ordinance) on every visited own page, legal and shipping pages left out, that shows a price (`price` in `data/shop.yml`) and a cart or buy link (`shop` in `lang/*.yml`), warns without `vat_included` and `shipping_costs`, for a `quantity` without `unit_price` or `base_price`, and for a struck-through price without `lowest_price` unless `rrp` is named. sales">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-PRICE-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Prices with VAT, shipping, base price and 30-day price</span>
+<span class="rule-law">§§ 3, 4, 6 and 11 PAngV (German Price Indication Ordinance)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>On every visited own page, legal and shipping pages left out, that shows a price (<code>price</code> in <code>data/shop.yml</code>) and a cart or buy link (<code>shop</code> in <code>lang/*.yml</code>), warns without <code>vat_included</code> and <code>shipping_costs</code>, for a <code>quantity</code> without <code>unit_price</code> or <code>base_price</code>, and for a struck-through price without <code>lowest_price</code> unless <code>rrp</code> is named.</dd></div>
+<div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Next to prices, say that they include VAT and whether shipping costs apply (&quot;inkl. MwSt., zzgl. Versand&quot; with a link to the shipping costs). For goods sold by weight or volume, give the base price (for example &quot;17,98 €/kg&quot;). For every price reduction, give the lowest price of the last 30 days.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/price-details"><code>checks/legal/price-details</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/pangv_2022/__3.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/pangv_2022/__4.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/pangv_2022/__6.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/pangv_2022/__11.html">gesetze-im-internet.de</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
@@ -218,6 +254,22 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-DE-AGB-001" data-module="legal" data-severity="medium" data-search="leg-de-agb-001 legal/terms-link terms and conditions are linked and reachable agb sind verlinkt und erreichbar § 312i(1) sentence 1 no. 4 and § 305(2) bgb (german civil code) finds the t&amp;c link on the start page (`terms` in `lang/*.yml`), loads it and checks http status and that it has text; warns without a link, since t&amp;cs are optional. sales">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-AGB-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Terms and conditions are linked and reachable</span>
+<span class="rule-law">§ 312i(1) sentence 1 no. 4 and § 305(2) BGB (German Civil Code)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds the T&amp;C link on the start page (<code>terms</code> in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text; warns without a link, since T&amp;Cs are optional.</dd></div>
+<div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Link the terms from the start page and the checkout, for example in the footer, labeled &quot;AGB&quot;. Customers must be able to open and save them when they sign the contract.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/terms-link"><code>checks/legal/terms-link</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312i.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bgb/__305.html">gesetze-im-internet.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-DE-BTN-002" data-module="legal" data-severity="high" data-search="leg-de-btn-002 legal/withdrawal-button withdrawal button for online contracts widerrufsbutton für online-verträge § 356a bgb (german civil code, since 19 june 2026) finds a button labeled &quot;vertrag widerrufen&quot; on the start page (`withdraw` in `lang/*.yml`, else `withdraw_similar` on the visible text, which warns) and &quot;widerruf bestätigen&quot; (`withdraw_confirm`) on its target page; info when it cannot be followed. sales">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-BTN-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
@@ -232,6 +284,22 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/withdrawal-button"><code>checks/legal/withdrawal-button</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__356a.html">gesetze-im-internet.de</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-WDR-001" data-module="legal" data-severity="high" data-search="leg-de-wdr-001 legal/withdrawal-instruction withdrawal instructions with the model form and a pointer to the withdrawal function widerrufsbelehrung mit muster-widerrufsformular und hinweis auf die widerrufsfunktion art. 246a § 1(2) sentence 1 no. 1 egbgb with annex 2, § 356a bgb (since 19 june 2026) opens the withdrawal instructions linked from the start page (`withdrawal_info` in `lang/*.yml`), else the t&amp;cs when they contain them (`withdrawal_instruction`), and warns without the model form in the text or a link (`model_form`) or without a note on where the withdrawal function is (`withdraw_function_hint`). sales">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-WDR-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Withdrawal instructions with the model form and a pointer to the withdrawal function</span>
+<span class="rule-law">Art. 246a § 1(2) sentence 1 no. 1 EGBGB with Annex 2, § 356a BGB (since 19 June 2026)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Opens the withdrawal instructions linked from the start page (<code>withdrawal_info</code> in <code>lang/*.yml</code>), else the T&amp;Cs when they contain them (<code>withdrawal_instruction</code>), and warns without the model form in the text or a link (<code>model_form</code>) or without a note on where the withdrawal function is (<code>withdraw_function_hint</code>).</dd></div>
+<div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Link withdrawal instructions following the model in Annex 1 EGBGB, with the model withdrawal form from Annex 2 and a sentence on where the withdrawal function &quot;Vertrag widerrufen&quot; is (&quot;Sie können Ihr Widerrufsrecht auch online unter … ausüben&quot;).</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/withdrawal-instruction"><code>checks/legal/withdrawal-instruction</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgbeg/art_246a__1.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bgbeg/art_253anlage_1.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bgbeg/art_253anlage_2.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bgb/__356a.html">gesetze-im-internet.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
 </div>

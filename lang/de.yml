@@ -14,6 +14,15 @@ links:
     - '\banbieterkennzeichnung\b'
   privacy:
     - '\bdatenschutz(erklaerung|hinweise?|information(en)?|richtlinie|bestimmungen)?\b'
+  # General terms and conditions (AGB), § 312i Abs. 1 Satz 1 Nr. 4 BGB. Read with sales: true.
+  terms:
+    - '\bagb\b'
+    - '\b(allgemeine )?(geschaefts|verkaufs|liefer)bedingungen\b'
+  # Withdrawal instructions, Art. 246a § 1 Abs. 2 EGBGB. Read with sales: true.
+  withdrawal_info:
+    - '\bwiderrufsbelehrung(en)?\b'
+    - '\bwiderrufsrecht\b'
+    - '\bwiderrufsinformation(en)?\b'
   # Wording required by § 312k Abs. 2 BGB.
   cancel:
     - '\bvertraege (hier )?kuendigen\b'
@@ -53,6 +62,67 @@ text:
   # Confirmation button of the withdrawal function, § 356a Abs. 3 BGB.
   withdraw_confirm:
     - '\bwiderruf bestaetigen\b'
+  # Shops, read with sales: true.
+  # Final order button, § 312j Abs. 3 BGB. Matched against the whole button text.
+  order_button:
+    - '^(jetzt )?(zahlungs|kosten)pflichtig (bestellen|kaufen|buchen|mieten|abonnieren)$'
+    - '^(jetzt )?(zahlungs|kosten)pflichtige[nr]? (vertrag|auftrag|bestellung) (abschliessen|schliessen|absenden|erteilen)$'
+    - '^(jetzt )?kaufen$'
+  # Order buttons that do not say that the order costs money.
+  order_wrong:
+    - '^(jetzt )?(verbindlich |kostenlos |unverbindlich )?bestellen$'
+    - '^(kauf|bestellung|auftrag) (jetzt )?(absenden|abschicken|abschliessen|aufgeben|bestaetigen|senden|erteilen)$'
+  # Generic labels that may be the last step of a checkout.
+  order_generic:
+    - '^(weiter|absenden|abschicken|abschliessen|bestaetigen|fertig|senden)$'
+  # A checkout page names a payment method and a total.
+  checkout_payment:
+    - '\b(zahlungsart|zahlungsmethode|zahlungsweise|bezahlart|bezahlmethode)(en)?\b'
+  checkout_total:
+    - '\b(gesamtsumme|gesamtbetrag|gesamtpreis|endbetrag|endsumme|zwischensumme)\b'
+  # Links and buttons of a shop. Shop systems often use English paths.
+  shop:
+    - '\bwarenkorb'
+    - '\beinkaufswagen\b'
+    - '\bzur kasse\b'
+    - '\b(jetzt )?(kaufen|bestellen)\b'
+    - '\b(cart|basket|checkout)\b'
+  # Price notices, § 6 Abs. 1 PAngV. § 19 UStG: small businesses charge no VAT and say so.
+  vat_included:
+    - '\binkl(\.|usive)? (\S+ ){0,3}(mwst|ust|mehrwertsteuer|umsatzsteuer)'
+    - '\b(mwst|ust|mehrwertsteuer|umsatzsteuer)\.? (\S+ ){0,2}(enthalten|inbegriffen|inklusive|inkl)'
+    - '\b19 ustg\b'
+    - '\bkleinunternehmer'
+  shipping_costs:
+    - '\b(zzgl|zuzueglich|exkl|exklusive|plus)\.? (\S+ ){0,2}(versand|liefer|porto|fracht)'
+    - '\b(versand|liefer)kosten'
+    - '\b(kostenlose[rn]?|gratis) (versand|lieferung)\b'
+    - '\bversand (&|und) zahlung\b'
+  # Base price, § 4 PAngV. Number formats are in data/shop.yml.
+  base_price:
+    - '\bgrundpreis'
+  # Lowest price of the last 30 days next to a price reduction, § 11 PAngV.
+  lowest_price:
+    - '\b(niedrigste|guenstigste|tiefste)[nr]? (\S+ ){0,3}preis(es)? (\S+ ){0,5}(30|dreissig) tage'
+    - '\b30 ?-?tage-?(bestpreis|tiefstpreis|niedrigstpreis)'
+    - '\b(letzten|vergangenen) (30|dreissig) tage'
+  # Manufacturer's recommended price. Comparing with it is no reduction of the own price.
+  rrp:
+    - '\buvp\b'
+    - '\bunverbindliche (\S+ )?preisempfehlung\b'
+  # Withdrawal instructions, Art. 246a § 1 Abs. 2 EGBGB, model form from Anlage 2.
+  withdrawal_instruction:
+    - '\bwiderrufsbelehrung\b'
+    - '\bwiderrufsrecht\b'
+  model_form:
+    - '\bmuster[- ]?widerrufsformular\b'
+    - '\bhiermit widerrufe(\(n\))? ich\b'
+  # Where the withdrawal function of § 356a BGB is. Not the model form's "den Vertrag widerrufen wollen".
+  withdraw_function_hint:
+    - '\bwiderrufsfunktion\b'
+    - '\bwiderrufsrecht (\S+ ){0,3}online\b'
+    - '\bonline (\S+ ){0,3}widerrufen\b'
+    - '[„"“]vertrag widerrufen[“"”]'
   # Second way of contact in an imprint besides email, § 5 Abs. 1 Nr. 2 DDG.
   contact_form:
     - '\bkontaktformular'
@@ -122,6 +192,8 @@ messages:
   common:
     page_imprint: "Impressum"
     page_privacy: "Datenschutzerklärung"
+    page_terms: "AGB"
+    page_withdrawal_info: "Widerrufsbelehrung"
     no_link: "{page}: kein Link auf der Startseite."
     not_loaded: "{page}: der Link {where} ließ sich nicht laden."
     http_error: "{page}: {where} antwortet mit HTTP {status}."
@@ -208,6 +280,25 @@ messages:
   legal/odr-link:
     found: "Die EU-Plattform zur Online-Streitbeilegung ist seit 20. Juli 2025 abgeschaltet. Link und Hinweis darauf entfernen."
     none: "Kein veralteter Link zur EU-Streitbeilegungsplattform."
+  legal/order-button:
+    ok: "{where}: Bestellbutton „{text}“."
+    wrong: "{where}: Bestellbutton „{text}“ auf der Bestellübersicht. Das Gesetz verlangt „zahlungspflichtig bestellen“ oder eine ebenso eindeutige Formulierung, sonst kommt kein Vertrag zustande."
+    wrong_form: "{where}: „{text}“ in einem Formular mit persönlichen Daten. Ist das der letzte Schritt der Bestellung, verlangt das Gesetz „zahlungspflichtig bestellen“ oder eine ebenso eindeutige Formulierung."
+    generic: "{where}: Die Bestellübersicht hat nur den Button „{text}“. Ist das der letzte Schritt, verlangt das Gesetz „zahlungspflichtig bestellen“ oder eine ebenso eindeutige Formulierung."
+    unrecognized: "{where}: Seite mit Zahlungsart und Gesamtsumme, aber kein Bestellbutton erkannt."
+    wrong_found:
+      one: "{count} Bestellbutton ohne „zahlungspflichtig bestellen“ oder eine ebenso eindeutige Formulierung."
+      other: "{count} Bestellbuttons ohne „zahlungspflichtig bestellen“ oder eine ebenso eindeutige Formulierung."
+    unclear:
+      one: "{count} Button könnte der Bestellbutton sein, sagt aber nicht, dass die Bestellung etwas kostet."
+      other: "{count} Buttons könnten der Bestellbutton sein, sagen aber nicht, dass die Bestellung etwas kostet."
+    found:
+      one: "Bestellbutton mit eindeutiger Beschriftung gefunden."
+      other: "{count} Bestellbuttons mit eindeutiger Beschriftung gefunden."
+    not_recognized: "Seite mit Zahlungsart und Gesamtsumme gefunden, aber kein Bestellbutton erkannt. Die Beschriftung von Hand prüfen."
+    none:
+      one: "Keine Bestellübersicht und kein Bestellformular auf der besuchten Seite. Der Bestellbutton liegt meist hinter dem Warenkorb; zum Prüfen den Scan mit url auf die Bestellübersicht richten."
+      other: "Keine Bestellübersicht und kein Bestellformular unter {count} besuchten Seiten. Der Bestellbutton liegt meist hinter dem Warenkorb; zum Prüfen den Scan mit url auf die Bestellübersicht richten."
   legal/outdated-references:
     no_pages: "Weder Impressum noch Datenschutzerklärung geladen."
     found:
@@ -233,6 +324,23 @@ messages:
     complete:
       one: "{count} Pflichtthema gefunden."
       other: "Alle {count} Pflichtthemen gefunden."
+  legal/price-details:
+    no_vat: "{where}: Preise ohne Hinweis, dass sie die Umsatzsteuer enthalten („inkl. MwSt.“)."
+    no_shipping: "{where}: Preise ohne Hinweis auf Versandkosten („zzgl. Versand“ oder Link zu den Versandkosten)."
+    no_base_price: "{where}: Menge „{quantity}“ neben Preisen, aber kein Grundpreis wie „€/kg“. Nötig bei Ware nach Gewicht, Volumen, Länge oder Fläche."
+    no_lowest_price: "{where}: durchgestrichener Preis „{price}“ ohne den niedrigsten Preis der letzten 30 Tage."
+    rrp: "{where}: durchgestrichener Preis „{price}“ neben einer UVP. Ein Vergleich mit der UVP ist keine Senkung des eigenen Preises; nicht weiter geprüft."
+    missing:
+      one: "{count} Preisangabe womöglich unvollständig."
+      other: "{count} Preisangaben womöglich unvollständig."
+    complete:
+      one: "Preisangaben auf der Shop-Seite gefunden."
+      other: "Preisangaben auf allen {count} Shop-Seiten gefunden."
+    none:
+      one: "Die besuchte Seite zeigt keine Preise mit Warenkorb oder Kaufbutton. Zum Prüfen den Scan mit url auf eine Produktseite richten."
+      other: "Keine der {count} besuchten Seiten zeigt Preise mit Warenkorb oder Kaufbutton. Zum Prüfen den Scan mit url auf eine Produktseite richten."
+  legal/terms-link:
+    no_link: "Kein Link zu AGB auf der Startseite. Wer AGB verwendet, muss sie bei Vertragsschluss abrufbar und speicherbar machen."
   legal/withdrawal-button:
     missing: "Keine Widerrufsfunktion auf der Startseite. Seit 19. Juni 2026 verlangt das Gesetz „Vertrag widerrufen“."
     not_followed: "„{text}“ ließ sich nicht bis zur Widerrufsseite {where} verfolgen; der Bestätigungsbutton „Widerruf bestätigen“ wurde nicht geprüft."
@@ -242,6 +350,15 @@ messages:
     unconfirmed: "„{text}“ gefunden, die Bestätigungsseite ließ sich aber nicht erreichen."
     incomplete: "„{text}“ gefunden, die Widerrufsseite wirkt aber unvollständig."
     found: "„{text}“ gefunden."
+  legal/withdrawal-instruction:
+    no_page: "Keine Widerrufsbelehrung gefunden, weder als Seite von der Startseite verlinkt noch in den AGB."
+    in_terms: "Widerrufsbelehrung in den AGB gefunden: {where}."
+    no_model_form: "{where}: kein Muster-Widerrufsformular (Anlage 2 EGBGB), weder im Text noch als Link."
+    no_function_hint: "{where}: kein Hinweis, wo die Widerrufsfunktion „Vertrag widerrufen“ zu finden ist. Pflicht seit 19. Juni 2026."
+    incomplete:
+      one: "Der Widerrufsbelehrung fehlt womöglich {count} Pflichtangabe."
+      other: "Der Widerrufsbelehrung fehlen womöglich {count} Pflichtangaben."
+    complete: "Widerrufsbelehrung mit Muster-Widerrufsformular und Hinweis auf die Widerrufsfunktion: {where}."
 
   # ---------- privacy
   privacy/consent-equal-choice:
