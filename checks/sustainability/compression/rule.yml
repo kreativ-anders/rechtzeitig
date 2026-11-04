@@ -1,0 +1,15 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SUS-ZIP-001
+severity: low
+title:
+  de: "Eigene Textdateien kommen komprimiert"
+  en: "Own text files are sent compressed"
+how: "Lists the site's own answers with HTTP 200 and a text Content-Type (`compress` in `data/file-formats.yml`: HTML, CSS, JavaScript, JSON, SVG, XML) that have no Content-Encoding, leaving out answers whose Content-Length is below `min_bytes`."
+fix_hint:
+  de: "Im Webserver oder CDN Brotli oder gzip für Textformate einschalten (bei nginx zum Beispiel gzip on; gzip_types text/css application/javascript image/svg+xml;)."
+  en: "Turn on Brotli or gzip for text formats in the web server or CDN (in nginx, for example, gzip on; gzip_types text/css application/javascript image/svg+xml;)."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.w3.org/TR/web-sustainability-guidelines/#server-side-compression
+  - https://www.rfc-editor.org/rfc/rfc9110#section-8.4

@@ -33,6 +33,7 @@ authorities:
 # Standards and specifications.
 standards:
   - w3.org
+  - whatwg.org
   - etsi.org
   - rfc-editor.org
   - cyclonedx.org

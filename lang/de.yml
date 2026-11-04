@@ -300,6 +300,16 @@ messages:
     all_set:
       one: "{count} Cookie hat die erwarteten Flags."
       other: "Alle {count} Cookies haben die erwarteten Flags."
+  security/cors:
+    no_pages: "Keine Seite der Website geladen."
+    credentials:
+      one: "{count} Seite gibt ihre Antworten samt Cookies der Besucher an jede Website frei (CORS)."
+      other: "{count} Seiten geben ihre Antworten samt Cookies der Besucher an jede Website frei (CORS)."
+    wildcard: "{page}: Access-Control-Allow-Origin: * mit Access-Control-Allow-Credentials: true. Browser lehnen dieses Paar ab, es zeigt aber, dass Anmeldedaten für jeden Origin gedacht sind; so eingerichtete Server übernehmen oft stattdessen den Origin der Anfrage."
+    null_origin: "{page}: Access-Control-Allow-Origin: null mit Access-Control-Allow-Credentials: true. Sandbox-Frames und lokale Dateien jeder Website senden den Origin null."
+    ok:
+      one: "{count} Seite geprüft, keine CORS-Freigabe mit Anmeldedaten an beliebige Websites."
+      other: "{count} Seiten geprüft, keine CORS-Freigabe mit Anmeldedaten an beliebige Websites."
   security/email-dns:
     not_checked: "DNS wurde nicht geprüft."
     no_spf: "Kein SPF-Eintrag. Die eigenen Mailserver eintragen."
@@ -342,6 +352,14 @@ messages:
     no_http: "Über HTTPS ausgeliefert. Unverschlüsseltes HTTP wird nicht angeboten."
     redirects: "Über HTTPS ausgeliefert. Unverschlüsseltes HTTP leitet auf HTTPS weiter."
     no_redirect: "Unverschlüsseltes HTTP antwortet mit {status}, statt auf HTTPS weiterzuleiten."
+  security/isolation-headers:
+    meta_ignored: "{name} nur als <meta>, das Browser für diese Richtlinie ignorieren"
+    coop_unsafe: "Cross-Origin-Opener-Policy: unsafe-none (der Standard, keine Trennung)"
+    coop_report_only: "Cross-Origin-Opener-Policy-Report-Only meldet nur, es trennt nicht."
+    missing:
+      one: "{count} Isolations-Header fehlt."
+      other: "{count} Isolations-Header fehlen."
+    all_set: "Permissions-Policy und Cross-Origin-Opener-Policy sind gesetzt."
   security/mixed-content:
     no_https: "Die Website nutzt kein HTTPS (siehe security/https)."
     on_page: "{url} auf {page}"
@@ -354,6 +372,21 @@ messages:
     no_expires: "security.txt hat kein Expires-Feld, das RFC 9116 verlangt."
     expired: "security.txt ist am {date} abgelaufen. Leser halten den Kontakt womöglich für veraltet."
     found: "security.txt nennt einen Kontakt: {contact}."
+  security/subresource-integrity:
+    no_pages: "Keine Seite der Website geladen."
+    no_foreign: "Die Seiten laden in ihrem HTML keine Skripte oder Stylesheets anderer Websites."
+    signed:
+      one: "{count} Skript oder Stylesheet einer anderen Website hat einen Integritäts-Hash."
+      other: "Alle {count} Skripte und Stylesheets anderer Websites haben einen Integritäts-Hash."
+    unsigned:
+      one: "{count} von {total} Skripten und Stylesheets anderer Websites hat keinen Integritäts-Hash. Wird diese Website kompromittiert, läuft veränderter Code auf Ihren Seiten."
+      other: "{count} von {total} Skripten und Stylesheets anderer Websites haben keinen Integritäts-Hash. Werden diese Websites kompromittiert, läuft veränderter Code auf Ihren Seiten."
+    script: "Skript {url}"
+    stylesheet: "Stylesheet {url}"
+    moving: "Ausgenommen: {host} ändert seine Dateien unter derselben URL, ein Hash würde sie blockieren."
+    more:
+      one: "und {count} weitere Datei"
+      other: "und {count} weitere Dateien"
   security/tls:
     none: "Keine TLS-Verbindung zum Prüfen."
     failed: "TLS-Verbindung fehlgeschlagen: {error}"
@@ -380,6 +413,17 @@ messages:
     uncached:
       one: "{count} von {total} eigenen statischen Dateien hat keine ausdrückliche Cache-Dauer, der Browser fragt sie womöglich bei jedem Besuch neu an oder lädt sie neu."
       other: "{count} von {total} eigenen statischen Dateien haben keine ausdrückliche Cache-Dauer, der Browser fragt sie womöglich bei jedem Besuch neu an oder lädt sie neu."
+    more:
+      one: "und {count} weitere Datei"
+      other: "und {count} weitere Dateien"
+  sustainability/compression:
+    no_files: "Keine eigenen Textdateien (HTML, CSS, JavaScript, SVG) ab 1 KB geladen."
+    compressed:
+      one: "{count} eigene Textdatei kommt komprimiert."
+      other: "Alle {count} eigenen Textdateien kommen komprimiert."
+    uncompressed:
+      one: "{count} von {total} eigenen Textdateien kommt ohne gzip oder Brotli, jeder Besuch überträgt dadurch ein Vielfaches der Bytes."
+      other: "{count} von {total} eigenen Textdateien kommen ohne gzip oder Brotli, jeder Besuch überträgt dadurch ein Vielfaches der Bytes."
     more:
       one: "und {count} weitere Datei"
       other: "und {count} weitere Dateien"

@@ -334,7 +334,7 @@
 </div>
 </section>
 <section class="module" data-module="security">
-<h3>Security <small>10 rules</small></h3>
+<h3>Security <small>13 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-HDR-002" data-module="security" data-severity="medium" data-search="sec-hdr-002 security/cookie-flags cookies use secure flags cookies nutzen sichere flags art. 32 gdpr checks secure on every cookie set without login (https sites, and always with `samesite=none`) and httponly on cookies whose name looks like a session (`data/cookies.yml`); cookies of other sites only give info.">
 <summary>
@@ -349,6 +349,21 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/cookie-flags"><code>checks/security/cookie-flags</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-HDR-005" data-module="security" data-severity="medium" data-search="sec-hdr-005 security/cors cors does not share answers with credentials to any site cors gibt antworten mit anmeldedaten nicht an beliebige websites frei art. 32 gdpr reads the response headers of the site's own pages and fails when access-control-allow-credentials: true comes with access-control-allow-origin * or null; it sends no foreign origin, so a server that mirrors any origin is not detected.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-HDR-005</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">CORS does not share answers with credentials to any site</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the response headers of the site's own pages and fails when Access-Control-Allow-Credentials: true comes with Access-Control-Allow-Origin * or null; it sends no foreign Origin, so a server that mirrors any Origin is not detected.</dd></div>
+<div><dt>How to fix</dt><dd>Send Access-Control-Allow-Credentials only with a fixed list of trusted origins, never with * or null, and do not copy the Origin from the request unchecked. If the pages need no CORS, leave out both headers.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/cors"><code>checks/security/cors</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://fetch.spec.whatwg.org/#cors-protocol-and-credentials">fetch.spec.whatwg.org</a>, <a href="https://fetch.spec.whatwg.org/#cors-check">fetch.spec.whatwg.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-DNS-001" data-module="security" data-severity="medium" data-search="sec-dns-001 security/email-dns domain is protected against email spoofing domain ist gegen e-mail-spoofing geschützt art. 32 gdpr reads the spf txt record of the registrable domain and the dmarc record at `_dmarc.`; flags missing ones, spf that allows every server (`+all`, `?all`) and dmarc `p=none`.">
@@ -441,6 +456,21 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-HDR-004" data-module="security" data-severity="low" data-search="sec-hdr-004 security/isolation-headers permissions-policy and cross-origin-opener-policy are set permissions-policy und cross-origin-opener-policy sind gesetzt art. 32 gdpr reads the response headers of the start page for permissions-policy and a cross-origin-opener-policy other than unsafe-none, and names both when they appear only in &lt;meta&gt;, where browsers ignore them, or coop only as report-only.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-HDR-004</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Permissions-Policy and Cross-Origin-Opener-Policy are set</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the response headers of the start page for Permissions-Policy and a Cross-Origin-Opener-Policy other than unsafe-none, and names both when they appear only in &lt;meta&gt;, where browsers ignore them, or COOP only as report-only.</dd></div>
+<div><dt>How to fix</dt><dd>Set Permissions-Policy in the web server and turn off features the site does not use (for example camera=(), microphone=(), geolocation=()), plus Cross-Origin-Opener-Policy: same-origin, or same-origin-allow-popups when the site opens login or payment windows.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/isolation-headers"><code>checks/security/isolation-headers</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/permissions-policy/#permissions-policy-http-header-field">w3.org</a>, <a href="https://html.spec.whatwg.org/multipage/browsers.html#the-coop-headers">html.spec.whatwg.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-TLS-003" data-module="security" data-severity="medium" data-search="sec-tls-003 security/mixed-content no unencrypted resources on https pages keine unverschlüsselten ressourcen auf https-seiten art. 32 gdpr lists `http://` requests made by pages of an https site.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-TLS-003</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
@@ -471,6 +501,21 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-HDR-003" data-module="security" data-severity="low" data-search="sec-hdr-003 security/subresource-integrity scripts and stylesheets from other sites carry an integrity hash skripte und stylesheets anderer websites haben einen integritäts-hash art. 32 gdpr lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the html of the site's own pages (load without javascript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same url (`data/subresource-integrity.yml`).">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-HDR-003</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Scripts and stylesheets from other sites carry an integrity hash</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same URL (<code>data/subresource-integrity.yml</code>).</dd></div>
+<div><dt>How to fix</dt><dd>Load fixed versions of other sites' files with integrity=&quot;sha384-…&quot; and crossorigin=&quot;anonymous&quot; (most CDNs show the hash), or host the file yourself.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/subresource-integrity"><code>checks/security/subresource-integrity</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/SRI/#resource-integrity">w3.org</a>, <a href="https://www.w3.org/TR/SRI/#the-integrity-attribute">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-TLS-002" data-module="security" data-severity="high" data-search="sec-tls-002 security/tls tls certificate is valid and current tls-zertifikat ist gültig und aktuell art. 32 gdpr opens a tls connection to the host and reads protocol, trust and expiry date of the certificate.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-TLS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
@@ -489,7 +534,7 @@
 </div>
 </section>
 <section class="module" data-module="sustainability">
-<h3>Sustainability <small>5 rules</small></h3>
+<h3>Sustainability <small>6 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SUS-CACHE-001" data-module="sustainability" data-severity="low" data-search="sus-cache-001 sustainability/cache-headers own static files may stay in the browser cache eigene statische dateien dürfen im browser-cache bleiben  loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (`static` in `data/file-formats.yml`) whose answer has no positive `max-age`, no `immutable` and no future `expires`, or says `no-store` or `no-cache`.">
 <summary>
@@ -503,6 +548,21 @@
 <div><dt>How to fix</dt><dd>Send Cache-Control: public, max-age=31536000, immutable for files with a version or hash in their name, and a shorter max-age for other static files.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/cache-headers"><code>checks/sustainability/cache-headers</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#client-side-caching">w3.org</a>, <a href="https://www.rfc-editor.org/rfc/rfc9111#section-4.2.2">rfc-editor.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SUS-ZIP-001" data-module="sustainability" data-severity="low" data-search="sus-zip-001 sustainability/compression own text files are sent compressed eigene textdateien kommen komprimiert  lists the site's own answers with http 200 and a text content-type (`compress` in `data/file-formats.yml`: html, css, javascript, json, svg, xml) that have no content-encoding, leaving out answers whose content-length is below `min_bytes`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SUS-ZIP-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Own text files are sent compressed</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists the site's own answers with HTTP 200 and a text Content-Type (<code>compress</code> in <code>data/file-formats.yml</code>: HTML, CSS, JavaScript, JSON, SVG, XML) that have no Content-Encoding, leaving out answers whose Content-Length is below <code>min_bytes</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Turn on Brotli or gzip for text formats in the web server or CDN (in nginx, for example, gzip on; gzip_types text/css application/javascript image/svg+xml;).</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/compression"><code>checks/sustainability/compression</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#server-side-compression">w3.org</a>, <a href="https://www.rfc-editor.org/rfc/rfc9110#section-8.4">rfc-editor.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>

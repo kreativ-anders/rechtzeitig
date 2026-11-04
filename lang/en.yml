@@ -281,6 +281,16 @@ messages:
     all_set:
       one: "{count} cookie has the expected flags."
       other: "All {count} cookies have the expected flags."
+  security/cors:
+    no_pages: "No page of the site loaded."
+    credentials:
+      one: "{count} page shares its answers, including the visitor's cookies, with any site (CORS)."
+      other: "{count} pages share their answers, including the visitor's cookies, with any site (CORS)."
+    wildcard: "{page}: Access-Control-Allow-Origin: * with Access-Control-Allow-Credentials: true. Browsers refuse this pair, but it shows credentials are meant for any origin; servers set up like this often copy the Origin of the request instead."
+    null_origin: "{page}: Access-Control-Allow-Origin: null with Access-Control-Allow-Credentials: true. Sandboxed frames and local files of any site send the origin null."
+    ok:
+      one: "{count} page checked, no CORS sharing with credentials to any site."
+      other: "{count} pages checked, no CORS sharing with credentials to any site."
   security/email-dns:
     not_checked: "DNS was not checked."
     no_spf: "No SPF record. List your mail servers."
@@ -323,6 +333,14 @@ messages:
     no_http: "Served over HTTPS. Plain HTTP is not offered."
     redirects: "Served over HTTPS. Plain HTTP redirects to HTTPS."
     no_redirect: "Plain HTTP answers with {status} instead of redirecting to HTTPS."
+  security/isolation-headers:
+    meta_ignored: "{name} only as <meta>, which browsers ignore for this policy"
+    coop_unsafe: "Cross-Origin-Opener-Policy: unsafe-none (the default, no isolation)"
+    coop_report_only: "Cross-Origin-Opener-Policy-Report-Only only reports, it does not isolate."
+    missing:
+      one: "{count} isolation header missing."
+      other: "{count} isolation headers missing."
+    all_set: "Permissions-Policy and Cross-Origin-Opener-Policy are set."
   security/mixed-content:
     no_https: "The site does not use HTTPS (see security/https)."
     on_page: "{url} on {page}"
@@ -335,6 +353,21 @@ messages:
     no_expires: "security.txt has no Expires field, which RFC 9116 requires."
     expired: "security.txt expired on {date}. Readers may take the contact as outdated."
     found: "security.txt names a contact: {contact}."
+  security/subresource-integrity:
+    no_pages: "No page of the site loaded."
+    no_foreign: "The pages load no scripts or stylesheets from other sites in their HTML."
+    signed:
+      one: "{count} script or stylesheet from another site carries an integrity hash."
+      other: "All {count} scripts and stylesheets from other sites carry an integrity hash."
+    unsigned:
+      one: "{count} of {total} scripts and stylesheets from other sites has no integrity hash. If that site is compromised, changed code runs on your pages."
+      other: "{count} of {total} scripts and stylesheets from other sites have no integrity hash. If those sites are compromised, changed code runs on your pages."
+    script: "Script {url}"
+    stylesheet: "Stylesheet {url}"
+    moving: "Left out: {host} changes its files under the same URL, so a hash would break them."
+    more:
+      one: "and {count} more file"
+      other: "and {count} more files"
   security/tls:
     none: "No TLS connection to check."
     failed: "TLS connection failed: {error}"
@@ -361,6 +394,17 @@ messages:
     uncached:
       one: "{count} of {total} own static files has no explicit cache lifetime, so the browser may ask for it or load it again on every visit."
       other: "{count} of {total} own static files have no explicit cache lifetime, so the browser may ask for them or load them again on every visit."
+    more:
+      one: "and {count} more file"
+      other: "and {count} more files"
+  sustainability/compression:
+    no_files: "No own text files (HTML, CSS, JavaScript, SVG) of 1 KB or more loaded."
+    compressed:
+      one: "{count} own text file comes compressed."
+      other: "All {count} own text files come compressed."
+    uncompressed:
+      one: "{count} of {total} own text files comes without gzip or Brotli, so every visit transfers several times the bytes."
+      other: "{count} of {total} own text files come without gzip or Brotli, so every visit transfers several times the bytes."
     more:
       one: "and {count} more file"
       other: "and {count} more files"
