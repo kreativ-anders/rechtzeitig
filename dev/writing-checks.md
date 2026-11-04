@@ -23,7 +23,7 @@
      sources: ["https://www.gesetze-im-internet.de/ddg/__5.html"]
    ```
 
-   A test validates every rule. It fails when `last_reviewed` is older than a year, so legal texts get looked at again.
+   A test validates every rule. It fails when `last_reviewed` is older than a year, so legal texts get looked at again, and when a source is not on a domain in `data/source-domains.yml` (primary sources only: laws, courts, authorities, standards, vendor docs). To review sources and look for changes, use the Claude Code skill `.claude/skills/review-sources/` (`/review-sources`, optionally with a rule id or module).
 
 3. Add `check.ts` with the detection:
 

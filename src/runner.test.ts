@@ -21,6 +21,10 @@ test("the rule validator rejects broken rules", () => {
   assert.match(validateRule({ ...rule, id: "imprint" }).join(), /does not match/);
   assert.match(validateRule({ ...rule, title: { de: "t" } as Rule["title"] }).join(), /title\.en is missing/);
   assert.match(validateRule(rule, new Date("2028-01-01")).join(), /older than 365 days/);
+  const cited = (url: string) => validateRule({ ...rule, meta: { ...rule.meta, sources: [url] } }, new Date("2026-11-03"));
+  assert.deepEqual(cited("https://www.gesetze-im-internet.de/bgb/__312k.html"), []);
+  assert.match(cited("https://some-law-blog.example/cookies").join(), /not from a domain in data\/source-domains\.yml/);
+  assert.match(cited("https://eur-lex.europa.eu.evil.example/").join(), /not from a domain/);
 });
 
 test("repository checks live in checks/repo/ and website checks elsewhere", async () => {

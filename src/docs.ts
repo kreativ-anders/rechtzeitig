@@ -42,6 +42,7 @@ function card(c: LoadedCheck, module: string): string {
     `<div><dt>How to fix</dt><dd>${text(r.fix_hint.en)}</dd></div>`,
     `<div><dt>Code</dt><dd><a href="${SOURCE}/${c.id}"><code>checks/${c.id}</code></a></dd></div>`,
     sources ? `<div><dt>Sources</dt><dd>${sources}</dd></div>` : "",
+    `<div><dt>Reviewed</dt><dd><time datetime="${esc(r.meta.last_reviewed)}">${esc(r.meta.last_reviewed)}</time></dd></div>`,
     `</dl></div>`,
     `</details>`,
   ].filter(Boolean).join("\n");

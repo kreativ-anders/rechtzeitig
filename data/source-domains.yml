@@ -1,0 +1,46 @@
+# Domains a rule may cite in meta.sources. Only primary sources: laws, courts, authorities,
+# standards bodies, and a vendor's own documentation for technical facts about that vendor.
+# Blogs, law firm articles and private sites may help to find a source, but are never cited.
+# A new domain needs a reason in the commit message. Subdomains count (www.example.org matches example.org).
+
+# Laws and official journals.
+law:
+  - eur-lex.europa.eu
+  - gesetze-im-internet.de
+  - gesetze-bayern.de
+  - recht.nrw.de
+
+# Courts.
+courts:
+  - curia.europa.eu
+  - bundesgerichtshof.de
+  - bundesverfassungsgericht.de
+  - rechtsprechung-im-internet.de
+  - justiz.nrw.de
+
+# Authorities and official bodies.
+authorities:
+  - edpb.europa.eu
+  - enisa.europa.eu
+  - commission.europa.eu
+  - digital-strategy.ec.europa.eu
+  - datenschutzkonferenz-online.de
+  - bfdi.bund.de
+  - bsi.bund.de
+  - bundesnetzagentur.de
+  - bundesfachstelle-barrierefreiheit.de
+
+# Standards and specifications.
+standards:
+  - w3.org
+  - etsi.org
+  - rfc-editor.org
+  - cyclonedx.org
+  - spdx.org
+
+# Vendor documentation, only for technical facts about that vendor's product.
+vendors:
+  - osv.dev
+  - supabase.com
+  - firebase.google.com
+  - docs.github.com

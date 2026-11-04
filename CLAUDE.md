@@ -15,6 +15,8 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | License groups, update tools | `data/licenses.yml`, `data/update-tools.yml` |
 | Lists for single checks (countries, cookie names, error traces, closed services) | `data/*.yml` |
 | Lockfile parsers | `src/repo/lockfiles.ts` |
+| Allowed source domains for `meta.sources` | `data/source-domains.yml` |
+| Periodic review of rule sources | `.claude/skills/review-sources/` |
 | Inputs of the action | `action.yml`, documented in `docs/workflow.md` |
 
 ## Keep the documentation true

@@ -14,6 +14,17 @@ const ID = /^(SEC|LEG-DE|LEG-EU|A11Y|PRC|SUS)-[A-Z0-9]+-\d{3}$/;
 /** A rule whose review is older than this fails the tests, so legal texts get looked at again. */
 const REVIEW_DAYS = 365;
 
+/** Domains a source may come from (data/source-domains.yml): primary sources only. */
+const SOURCE_DOMAINS = Object.values(loadYaml<Record<string, string[]>>("data/source-domains.yml")).flat();
+const officialSource = (url: string): boolean => {
+  try {
+    const host = new URL(url).hostname;
+    return SOURCE_DOMAINS.some((d) => host === d || host.endsWith(`.${d}`));
+  } catch {
+    return false;
+  }
+};
+
 type Text = Record<UiLanguage, string>;
 
 export interface Rule {
@@ -55,5 +66,8 @@ export function validateRule(rule: Rule, today = new Date()): string[] {
   else if ((today.getTime() - reviewed.getTime()) / DAY > REVIEW_DAYS) p.push(`meta.last_reviewed is older than ${REVIEW_DAYS} days`);
   if (!Array.isArray(rule?.meta?.sources)) p.push("meta.sources must be a list");
   if (rule?.legal_basis && !rule.meta?.sources?.length) p.push("a rule with a legal basis needs at least one source");
+  for (const url of rule?.meta?.sources ?? []) {
+    if (!officialSource(url)) p.push(`source ${url} is not from a domain in data/source-domains.yml`);
+  }
   return p;
 }

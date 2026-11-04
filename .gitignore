@@ -4,6 +4,7 @@ rechtzeitig-sbom.cdx.json
 .env
 # Test sites need their .env files.
 !**/fixtures/**/.env
-# Local tooling: Claude Code worktrees and settings, OS files.
-.claude/
+# Local tooling: Claude Code worktrees and settings, OS files. Shared skills are checked in.
+.claude/*
+!.claude/skills/
 .DS_Store
