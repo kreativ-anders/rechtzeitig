@@ -38,6 +38,6 @@ Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/
 - Words belong in `lang/*.yml`, services and patterns in `data/`, never in check code.
 - No paid features or paid code paths in this repository.
 - Findings are technical risk hints with location and legal basis, never legal advice.
-- A check that asks an outside service only runs with that service's official API and the user's own token: the rule lists the token input in `requires` (`SWITCHES` in `src/rules.ts`), so it is skipped without the secret. No unofficial endpoints, no scraping, no fallback that sends data without a token.
+- A check that asks an outside service only uses that service's official API. With a token, the check is opt-in: it runs only when the user sets the secret. An official API without a token may be on by default, but needs an input to turn it off, documented in `docs/workflow.html` ("What runs when", "Data that leaves the runner"). Both kinds are listed in `SWITCHES` in `src/rules.ts` and named in the rule's `requires`. No unofficial endpoints, no scraping, no fallback that sends data without a token.
 - The repository is private for now. Commercialization plans go into the section "Commercialization" of `dev/roadmap.md`, nowhere else. No prices or competitor names. Before the repository goes public, review that section.
 - Docs are English, short and plain. `docs/` is for users (GitHub Pages), `dev/` for contributors.

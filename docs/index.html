@@ -58,7 +58,7 @@
     <li><span>Read the report on the run's summary page.</span></li>
   </ol>
 
-  <p>You need no secret to start. Checks that call an API with a token run only after you add that token as a repository secret. Without it they are skipped and send nothing. See <a href="workflow.html#secrets">Secrets</a>.</p>
+  <p>You need no secret to start. Checks that call an API with a token run only after you add that token as a repository secret. Without it they are skipped and send nothing. See <a href="workflow.html#secrets">Secrets</a>. One official API without a token is on by default: the vulnerability lookup sends the names and versions of your locked packages to <a href="https://osv.dev">osv.dev</a>. Turn it off with <code>vulnerabilities: false</code>. See <a href="workflow.html#scope">What runs when</a>.</p>
 
   <h2>Read on</h2>
   <div class="cards">
