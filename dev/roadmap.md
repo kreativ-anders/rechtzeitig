@@ -6,9 +6,6 @@ Items are listed in order of priority.
 
 ## Next: repository settings
 
-- Turn on private vulnerability reporting, which `SECURITY.md` points to. Confirm the answer time stated there.
-- A ruleset for `main`: pull requests only, status check `test` required, no force push, signed commits.
-- A ruleset for `v*` tags: no update, no delete.
 - The OpenSSF Scorecard action.
 - `CODEOWNERS`.
 
@@ -19,7 +16,8 @@ Open points from the audit of 2026-11-03, after the fixes.
 1. SARIF output for code scanning. Untrusted text is already sanitized in `toFindings`, so a writer can build on it.
 2. `step-security/harden-runner` with an egress allowlist in `test.yml`.
 3. Dependabot for `examples/workflows/`, if the `github-actions` ecosystem reads workflow files outside `.github/`; until then `src/pinning.test.ts` catches drift.
-4. Timing tests (`capture.test.ts`, the backtracking tests) measure CPU time instead of wall time, so they no longer fail when the machine sleeps during the run.
+4. Require pull requests, the `test` check and signed commits on `main`. Needs a release workflow that does not push to `main` with `GITHUB_TOKEN`, which cannot bypass a ruleset; today the ruleset only blocks deletion and force pushes.
+5. Timing tests (`capture.test.ts`, the backtracking tests) measure CPU time instead of wall time, so they no longer fail when the machine sleeps during the run.
 
 ## Next: repository
 
