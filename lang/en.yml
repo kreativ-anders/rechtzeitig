@@ -108,12 +108,58 @@ messages:
   legal/withdrawal-button: {}
 
   # ---------- privacy
-  privacy/consent-preselected: {}
-  privacy/consent-reject: {}
-  privacy/cookies-before-consent: {}
-  privacy/third-country: {}
-  privacy/third-parties-before-consent: {}
-  privacy/vendors-in-privacy-policy: {}
+  privacy/consent-preselected:
+    no_categories: "No optional cookie categories found on the start page."
+    preselected:
+      one: "An optional category is ticked before the visitor chooses."
+      other: "Optional categories are ticked before the visitor chooses."
+    unticked:
+      one: "{count} optional category is unticked."
+      other: "{count} optional categories are unticked."
+  privacy/consent-reject:
+    no_banner: "No consent banner found on the start page."
+    no_reject: "The banner offers \"{accept}\" but no way to reject on the same layer. Rejecting must be as easy as accepting."
+    both: "The banner offers \"{accept}\" and \"{reject}\"."
+  privacy/cookies-before-consent:
+    tracking_cookie: "{name} ({domain}, set on {page}): tracking cookie of {vendor}"
+    third_party_cookie: "{name} ({domain}, set on {page}): third-party cookie"
+    own_cookie: "{name} ({domain}, set on {page})"
+    storage: "localStorage: {key}"
+    tracking:
+      one: "{count} tracking cookie set before consent."
+      other: "{count} tracking cookies set before consent."
+    third_party:
+      one: "{count} third-party cookie set before consent."
+      other: "{count} third-party cookies set before consent."
+    review:
+      one: "{count} cookie or storage entry set before consent. Without consent, only strictly necessary ones are allowed."
+      other: "{count} cookies or storage entries set before consent. Without consent, only strictly necessary ones are allowed."
+    none: "No cookies or local storage before consent."
+  privacy/third-country:
+    country_unknown: "Country unknown for {names}. Set the ipinfo-token input to look it up."
+    no_services: "No third-party service contacted."
+    all_unknown:
+      one: "Country unknown for the only third-party service; transfers outside the EU/EEA could not be checked."
+      other: "Country unknown for all {count} third-party services; transfers outside the EU/EEA could not be checked."
+    none_outside: "No service outside the EU/EEA detected."
+    covered: "The privacy policy covers transfers outside the EU/EEA."
+    not_covered:
+      one: "{count} service outside the EU/EEA, but the privacy policy does not mention third countries."
+      other: "{count} services outside the EU/EEA, but the privacy policy does not mention third countries."
+  privacy/third-parties-before-consent:
+    service: "{name} ({hosts}) on {pages}."
+    service_advice: "{name} ({hosts}) on {pages}. {advice}"
+    consent_required: "Loaded before consent: {names}. Each visit sends the visitor's IP address to them."
+    check_basis: "Contacted before consent: {names}. Check the legal basis and name them in the privacy policy."
+    none: "Only the site's own servers are contacted before consent."
+  privacy/vendors-in-privacy-policy:
+    no_services: "The site uses no third-party services before consent."
+    missing:
+      one: "The privacy policy does not mention {missing} of {count} service the site uses."
+      other: "The privacy policy does not mention {missing} of {count} services the site uses."
+    all:
+      one: "The {count} service is mentioned in the privacy policy."
+      other: "All {count} services are mentioned in the privacy policy."
 
   # ---------- security
   security/cookie-flags: {}

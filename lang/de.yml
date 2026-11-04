@@ -127,12 +127,58 @@ messages:
   legal/withdrawal-button: {}
 
   # ---------- privacy
-  privacy/consent-preselected: {}
-  privacy/consent-reject: {}
-  privacy/cookies-before-consent: {}
-  privacy/third-country: {}
-  privacy/third-parties-before-consent: {}
-  privacy/vendors-in-privacy-policy: {}
+  privacy/consent-preselected:
+    no_categories: "Keine optionalen Cookie-Kategorien auf der Startseite gefunden."
+    preselected:
+      one: "Eine optionale Kategorie ist vor der Auswahl angehakt."
+      other: "Optionale Kategorien sind vor der Auswahl angehakt."
+    unticked:
+      one: "{count} optionale Kategorie ist nicht angehakt."
+      other: "{count} optionale Kategorien sind nicht angehakt."
+  privacy/consent-reject:
+    no_banner: "Kein Consent-Banner auf der Startseite gefunden."
+    no_reject: "Das Banner bietet „{accept}“, aber keine Ablehnung auf derselben Ebene. Ablehnen muss so einfach sein wie Zustimmen."
+    both: "Das Banner bietet „{accept}“ und „{reject}“."
+  privacy/cookies-before-consent:
+    tracking_cookie: "{name} ({domain}, gesetzt auf {page}): Tracking-Cookie von {vendor}"
+    third_party_cookie: "{name} ({domain}, gesetzt auf {page}): Drittanbieter-Cookie"
+    own_cookie: "{name} ({domain}, gesetzt auf {page})"
+    storage: "localStorage: {key}"
+    tracking:
+      one: "{count} Tracking-Cookie vor der Einwilligung gesetzt."
+      other: "{count} Tracking-Cookies vor der Einwilligung gesetzt."
+    third_party:
+      one: "{count} Drittanbieter-Cookie vor der Einwilligung gesetzt."
+      other: "{count} Drittanbieter-Cookies vor der Einwilligung gesetzt."
+    review:
+      one: "{count} Cookie oder Speichereintrag vor der Einwilligung gesetzt. Ohne Einwilligung sind nur unbedingt erforderliche erlaubt."
+      other: "{count} Cookies oder Speichereinträge vor der Einwilligung gesetzt. Ohne Einwilligung sind nur unbedingt erforderliche erlaubt."
+    none: "Keine Cookies und kein lokaler Speicher vor der Einwilligung."
+  privacy/third-country:
+    country_unknown: "Land unbekannt für {names}. Zum Nachschlagen den Input ipinfo-token setzen."
+    no_services: "Kein Drittanbieter-Dienst kontaktiert."
+    all_unknown:
+      one: "Land des einzigen Drittanbieter-Dienstes unbekannt; Übermittlungen außerhalb von EU/EWR ließen sich nicht prüfen."
+      other: "Land aller {count} Drittanbieter-Dienste unbekannt; Übermittlungen außerhalb von EU/EWR ließen sich nicht prüfen."
+    none_outside: "Kein Dienst außerhalb von EU/EWR erkannt."
+    covered: "Die Datenschutzerklärung behandelt Übermittlungen außerhalb von EU/EWR."
+    not_covered:
+      one: "{count} Dienst außerhalb von EU/EWR, aber die Datenschutzerklärung nennt keine Drittländer."
+      other: "{count} Dienste außerhalb von EU/EWR, aber die Datenschutzerklärung nennt keine Drittländer."
+  privacy/third-parties-before-consent:
+    service: "{name} ({hosts}) auf {pages}."
+    service_advice: "{name} ({hosts}) auf {pages}. {advice}"
+    consent_required: "Vor der Einwilligung geladen: {names}. Jeder Besuch übermittelt dorthin die IP-Adresse."
+    check_basis: "Vor der Einwilligung kontaktiert: {names}. Rechtsgrundlage prüfen und in der Datenschutzerklärung nennen."
+    none: "Vor der Einwilligung werden nur eigene Server kontaktiert."
+  privacy/vendors-in-privacy-policy:
+    no_services: "Die Website nutzt vor der Einwilligung keine Drittanbieter-Dienste."
+    missing:
+      one: "Der genutzte Dienst fehlt in der Datenschutzerklärung."
+      other: "Die Datenschutzerklärung nennt {missing} von {count} genutzten Diensten nicht."
+    all:
+      one: "Der genutzte Dienst steht in der Datenschutzerklärung."
+      other: "Alle {count} genutzten Dienste stehen in der Datenschutzerklärung."
 
   # ---------- security
   security/cookie-flags: {}
