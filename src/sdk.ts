@@ -259,6 +259,17 @@ export interface Link {
   label: string;
   area: Area;
   button: boolean;
+  /** Rendered size and colors, only for buttons and links in the banner area (consent banners). */
+  style?: Style;
+}
+
+/** Rendered box of an element: CSS pixels, computed colors as rgb()/rgba(), background taken from the first non-transparent ancestor. */
+export interface Style {
+  width: number;
+  height: number;
+  fontSize: number;
+  color: string;
+  background: string;
 }
 
 export interface Request {
@@ -271,6 +282,10 @@ export interface Request {
   contentType?: string;
   cacheControl?: string;
   expires?: string;
+  /** Content-Encoding header of the answer (gzip, br, zstd ...). */
+  contentEncoding?: string;
+  /** Content-Length header of the answer in bytes, when the server sent one. */
+  contentLength?: number;
 }
 
 export interface Cookie {
@@ -279,6 +294,35 @@ export interface Cookie {
   secure: boolean;
   httpOnly: boolean;
   sameSite: string;
+  /** Expiry in seconds since the epoch; -1 for a session cookie. */
+  expires: number;
+}
+
+/** A <script src> or <link rel=stylesheet> in the DOM. */
+export interface Subresource {
+  url: string;
+  type: "script" | "stylesheet";
+  /** true when the element has a non-empty integrity attribute. */
+  integrity: boolean;
+}
+
+/** An <img> in the DOM. belowFold: its top edge is below the first viewport (1280x720). */
+export interface Image {
+  url: string;
+  /** Value of the loading attribute, lowercase, "" when missing. */
+  loading: string;
+  belowFold: boolean;
+  width: number;
+  height: number;
+}
+
+/** A <video> in the DOM, with its attributes as the page sets them. */
+export interface Video {
+  url: string;
+  autoplay: boolean;
+  muted: boolean;
+  controls: boolean;
+  loop: boolean;
 }
 
 export interface Form {
@@ -322,6 +366,10 @@ export interface Snapshot {
   cookies: Cookie[];
   /** localStorage keys (only filled with JavaScript on). */
   storage: string[];
+  /** Scripts and stylesheets referenced in the DOM, with their integrity attribute. */
+  subresources: Subresource[];
+  images: Image[];
+  videos: Video[];
 }
 
 export interface Page {
