@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-AGB-001
+severity: medium
+title:
+  de: "AGB sind verlinkt und erreichbar"
+  en: "Terms and conditions are linked and reachable"
+legal_basis:
+  de: "§ 312i Abs. 1 Satz 1 Nr. 4 BGB, § 305 Abs. 2 BGB"
+  en: "§ 312i(1) sentence 1 no. 4 and § 305(2) BGB (German Civil Code)"
+how: "Finds the T&C link on the start page (`terms` in `lang/*.yml`), loads it and checks HTTP status and that it has text; warns without a link, since T&Cs are optional."
+requires: [sales]
+fix_hint:
+  de: "AGB auf der Startseite und im Bestellablauf verlinken, z. B. im Footer mit „AGB“. Kunden müssen sie bei Vertragsschluss abrufen und speichern können."
+  en: "Link the terms from the start page and the checkout, for example in the footer, labeled \"AGB\". Customers must be able to open and save them when they sign the contract."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.gesetze-im-internet.de/bgb/__312i.html
+  - https://www.gesetze-im-internet.de/bgb/__305.html

@@ -10,6 +10,13 @@ links:
   privacy:
     - '\bprivacy\b'
     - '\bdata protection\b'
+  terms:
+    - '\bterms (and|&) conditions\b'
+    - '\bterms of (sale|service|business)\b'
+    - '\bgeneral terms\b'
+  withdrawal_info:
+    - '\bright of withdrawal\b'
+    - '\bwithdrawal (policy|instructions?|information)\b'
   cancel:
     - '\bcancel contracts? here\b'
   cancel_similar:
@@ -36,6 +43,49 @@ text:
     - '\bconfirm (the )?withdrawal\b'
   contact_form:
     - '\bcontact form\b'
+  order_button:
+    - '^(order|buy) with obligation to pay$'
+    - '^(place )?order (and pay|with obligation to pay)$'
+    - '^buy( now)?$'
+  order_wrong:
+    - '^(place )?order( now)?$'
+    - '^(submit|send|complete|confirm) (my )?(order|purchase)$'
+  order_generic:
+    - '^(continue|next|submit|send|confirm|done|finish)$'
+  checkout_payment:
+    - '\bpayment (method|option)s?\b'
+  checkout_total:
+    - '\b(order total|subtotal|grand total|total)\b'
+  shop:
+    - '\b(add to )?(cart|basket|bag)\b'
+    - '\bcheckout\b'
+    - '\bbuy( now)?\b'
+  vat_included:
+    - '\b(incl\.?|including|includes) (\S+ ){0,2}(vat|tax(es)?)\b'
+    - '\bvat (included|incl)\b'
+  shipping_costs:
+    - '\b(plus|excl\.?|excluding|\+) (\S+ )?(shipping|delivery|postage)\b'
+    - '\b(shipping|delivery) (costs?|fees?|charges?|rates?)\b'
+    - '\bfree (shipping|delivery)\b'
+  base_price:
+    - '\bunit price\b'
+    - '\bprice per (kg|kilogram|litre|liter|100)\b'
+  lowest_price:
+    - '\blowest price (\S+ ){0,4}(30|thirty) days\b'
+    - '\b(last|past|previous) (30|thirty) days\b'
+  rrp:
+    - '\b(rrp|msrp)\b'
+    - '\brecommended retail price\b'
+  withdrawal_instruction:
+    - '\bright of withdrawal\b'
+    - '\bright to withdraw\b'
+  model_form:
+    - '\bmodel withdrawal form\b'
+    - '\bhereby give notice that i\b'
+  withdraw_function_hint:
+    - '\bwithdrawal function\b'
+    - '\bwithdraw (\S+ ){0,3}online\b'
+    - '["“]withdraw from (the )?contract["”]'
   controller:
     - '\bcontroller\b'
     - '\bresponsible\b'
@@ -92,6 +142,8 @@ messages:
   common:
     page_imprint: "imprint (Impressum)"
     page_privacy: "privacy policy (Datenschutzerklärung)"
+    page_terms: "terms and conditions (AGB)"
+    page_withdrawal_info: "withdrawal instructions (Widerrufsbelehrung)"
     no_link: "No link to the {page} on the start page."
     not_loaded: "The {page} link {where} could not be loaded."
     http_error: "The {page} at {where} returns HTTP {status}."
@@ -178,6 +230,25 @@ messages:
   legal/odr-link:
     found: "The EU online dispute resolution platform closed on 20 July 2025. Remove the link and the notice about it."
     none: "No outdated link to the EU dispute platform."
+  legal/order-button:
+    ok: '{where}: order button "{text}".'
+    wrong: '{where}: order button "{text}" on the order summary. The law asks for "zahlungspflichtig bestellen" or equally clear wording; otherwise no contract is formed.'
+    wrong_form: '{where}: "{text}" in a form that asks for personal data. If this is the last step of the order, the law asks for "zahlungspflichtig bestellen" or equally clear wording.'
+    generic: '{where}: the order summary only has the button "{text}". If this is the last step, the law asks for "zahlungspflichtig bestellen" or equally clear wording.'
+    unrecognized: "{where}: a page with payment method and total, but no order button recognized."
+    wrong_found:
+      one: '{count} order button without "zahlungspflichtig bestellen" or equally clear wording.'
+      other: '{count} order buttons without "zahlungspflichtig bestellen" or equally clear wording.'
+    unclear:
+      one: "{count} button may be the order button, but does not say that the order costs money."
+      other: "{count} buttons may be the order button, but do not say that the order costs money."
+    found:
+      one: "Order button with clear wording found."
+      other: "{count} order buttons with clear wording found."
+    not_recognized: "Found a page with payment method and total, but no order button. Check its label by hand."
+    none:
+      one: "No order summary or order form on the visited page. The order button usually sits behind the cart; to check it, point url at the order summary."
+      other: "No order summary or order form on the {count} visited pages. The order button usually sits behind the cart; to check it, point url at the order summary."
   legal/outdated-references:
     no_pages: "Neither imprint nor privacy policy loaded."
     found:
@@ -203,6 +274,23 @@ messages:
     complete:
       one: "{count} required topic found."
       other: "All {count} required topics found."
+  legal/price-details:
+    no_vat: '{where}: prices without a note that they include VAT ("inkl. MwSt.").'
+    no_shipping: '{where}: prices without a note on shipping costs ("zzgl. Versand" or a link to the shipping costs).'
+    no_base_price: '{where}: quantity "{quantity}" next to prices, but no base price such as "€/kg". Needed for goods sold by weight, volume, length or area.'
+    no_lowest_price: '{where}: struck-through price "{price}" without the lowest price of the last 30 days.'
+    rrp: "{where}: struck-through price \"{price}\" next to a recommended retail price (UVP). Comparing with it is no reduction of your own price; not checked further."
+    missing:
+      one: "{count} price notice may be missing."
+      other: "{count} price notices may be missing."
+    complete:
+      one: "Price notices found on the shop page."
+      other: "Price notices found on all {count} shop pages."
+    none:
+      one: "The visited page shows no prices with a cart or buy button. To check, point url at a product page."
+      other: "None of the {count} visited pages shows prices with a cart or buy button. To check, point url at a product page."
+  legal/terms-link:
+    no_link: "No link to terms and conditions (AGB) on the start page. If you use terms, customers must be able to open and save them when they sign the contract."
   legal/withdrawal-button:
     missing: 'No withdrawal function on the start page. Since 19 June 2026 the law asks for "Vertrag widerrufen".'
     not_followed: 'Could not follow "{text}" to the withdrawal page {where}; the confirmation button "Widerruf bestätigen" was not checked.'
@@ -212,6 +300,15 @@ messages:
     unconfirmed: 'Found "{text}", but could not follow it to the confirmation page.'
     incomplete: 'Found "{text}", but the withdrawal page looks incomplete.'
     found: 'Found "{text}".'
+  legal/withdrawal-instruction:
+    no_page: "No withdrawal instructions (Widerrufsbelehrung) found, neither as a page linked from the start page nor in the terms."
+    in_terms: "Withdrawal instructions found in the terms: {where}."
+    no_model_form: "{where}: no model withdrawal form (Muster-Widerrufsformular, Anlage 2 EGBGB), neither in the text nor as a link."
+    no_function_hint: '{where}: no note on where to find the withdrawal function "Vertrag widerrufen". Required since 19 June 2026.'
+    incomplete:
+      one: "The withdrawal instructions may lack {count} required item."
+      other: "The withdrawal instructions may lack {count} required items."
+    complete: "Withdrawal instructions with the model form and a note on the withdrawal function: {where}."
 
   # ---------- privacy
   privacy/consent-preselected:
