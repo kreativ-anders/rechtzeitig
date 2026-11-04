@@ -1,0 +1,22 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: A11Y-MOTION-001
+severity: medium
+title:
+  de: "Automatisch startende Videos lassen sich anhalten"
+  en: "Videos that start automatically can be paused"
+legal_basis:
+  de: "BFSG mit § 3 BFSGV; EN 301 549 V3.2.1 Nr. 9.2.2.2 (WCAG 2.1 Erfolgskriterium 2.2.2) und, bei Ton, Nr. 9.1.4.2 (WCAG 2.1 Erfolgskriterium 1.4.2)"
+  en: "BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.2.2.2 (WCAG 2.1 success criterion 2.2.2) and, with sound, clause 9.1.4.2 (WCAG 2.1 success criterion 1.4.2)"
+how: "Lists `<video autoplay>` elements without the controls attribute on all visited own pages, loaded with JavaScript, and names those that are not muted as playing sound; it cannot see the video's length or custom play buttons, so it only warns."
+fix_hint:
+  de: "Videos nicht automatisch starten lassen oder das Attribut controls bzw. einen eigenen Pause-Knopf anbieten. Ton nie automatisch abspielen. Autoplay lädt außerdem Daten, die viele Besucher nie ansehen; preload=\"none\" und ein Vorschaubild (poster) sparen sie."
+  en: "Do not start videos automatically, or offer the controls attribute or your own pause button. Never play sound automatically. Autoplay also loads data many visitors never watch; preload=\"none\" and a poster image save it."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.gesetze-im-internet.de/bfsg/
+  - https://www.gesetze-im-internet.de/bfsgv/
+  - https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf
+  - https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html
+  - https://www.w3.org/WAI/WCAG21/Understanding/audio-control.html
+  - https://www.w3.org/TR/web-sustainability-guidelines/#user-controlled-media

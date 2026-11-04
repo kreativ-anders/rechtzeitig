@@ -101,5 +101,6 @@ The runner finds the check by itself. Nothing else needs to change.
 | `data/secrets.yml` | A secret pattern with `fail` or `warn`. With `payload`, match group 1 is decoded as a JWT payload and must have the listed claims. |
 | `data/licenses.yml` | A license pattern in one of the groups `agpl`, `gpl`, `restricted`, `permissive`. |
 | `data/update-tools.yml` | A Dependabot ecosystem name, a Renovate config path or a vulnerability scanner. |
-| `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml` | Country groups, cookie name patterns, error page traces and version headers, links to closed services. |
+| `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml`, `data/subresource-integrity.yml`, `data/file-formats.yml`, `data/google-tags.yml`, `data/shop.yml` | Country groups, cookie name patterns, error page traces and version headers, links to closed services, hosts whose files change under the same URL, file formats, Google tag endpoints and consent parameters, price and address field formats for the shop checks. |
+| `data/thresholds.yml` | A number a check decides by (limit, ratio, days), in the section named after the check's path, e.g. `security/tls`. Never a constant in `check.ts`. Lists in a finding go through `capped()`, which keeps `common.max_listed` items and adds `more`. |
 | `src/repo/lockfiles.ts` | A lockfile parser: one function plus one entry in `LOCKFILES`; its manifest in `MANIFESTS`. |

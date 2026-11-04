@@ -5,7 +5,7 @@ import { runFake } from "../../../test/helpers.ts";
 const here = import.meta.dirname;
 
 const cookie = (name: string, flags: Partial<{ secure: boolean; httpOnly: boolean; sameSite: string }> = {}) =>
-  ({ name, domain: "example.de", secure: true, httpOnly: true, sameSite: "Lax", ...flags });
+  ({ name, domain: "example.de", secure: true, httpOnly: true, sameSite: "Lax", expires: -1, ...flags });
 
 test("passes for secure session cookies", async () => {
   assert.equal((await runFake(here, { cookies: [cookie("session")] })).status, "pass");

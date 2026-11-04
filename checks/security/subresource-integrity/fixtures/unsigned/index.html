@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <title>Ohne Hash</title>
+  <link rel="stylesheet" href="https://cdn.example.com/lib.css">
+  <script src="https://cdn.example.com/lib.js"></script>
+  <script src="https://unpkg.com/some-lib@1.0.0/dist/lib.min.js" integrity=""></script>
+  <script src="/app.js"></script>
+  <script>
+    // Added at run time, so not in the HTML as written: not the site's to sign.
+    const s = document.createElement("script");
+    s.src = "https://cdn.other.com/added.js";
+    document.head.append(s);
+  </script>
+</head>
+<body>
+  <p>Fremde Dateien ohne Integritäts-Hash.</p>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-HDR-003
+severity: low
+title:
+  de: "Skripte und Stylesheets anderer Websites haben einen Integritäts-Hash"
+  en: "Scripts and stylesheets from other sites carry an integrity hash"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Lists <script src> and <link rel=stylesheet> elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same URL (`data/subresource-integrity.yml`)."
+fix_hint:
+  de: "Feste Versionen fremder Dateien mit integrity=\"sha384-…\" und crossorigin=\"anonymous\" einbinden (die meisten CDNs zeigen den Hash an) oder die Datei selbst hosten."
+  en: "Load fixed versions of other sites' files with integrity=\"sha384-…\" and crossorigin=\"anonymous\" (most CDNs show the hash), or host the file yourself."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://www.w3.org/TR/SRI/#resource-integrity
+  - https://www.w3.org/TR/SRI/#the-integrity-attribute

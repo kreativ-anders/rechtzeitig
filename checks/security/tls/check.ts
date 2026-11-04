@@ -1,7 +1,7 @@
-import { defineCheck, fail, msg, pass, skip, warn } from "../../../src/sdk.ts";
+import { defineCheck, fail, loadYaml, msg, pass, skip, warn } from "../../../src/sdk.ts";
 
 const OLD = new Set(["SSLv3", "TLSv1", "TLSv1.1"]);
-const WARN_DAYS = 14;
+const { warn_days: WARN_DAYS } = loadYaml<Record<string, { warn_days: number }>>("data/thresholds.yml")["security/tls"];
 
 export default defineCheck({
   run(ctx) {

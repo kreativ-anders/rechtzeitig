@@ -10,6 +10,13 @@ links:
   privacy:
     - '\bprivacy\b'
     - '\bdata protection\b'
+  terms:
+    - '\bterms (and|&) conditions\b'
+    - '\bterms of (sale|service|business)\b'
+    - '\bgeneral terms\b'
+  withdrawal_info:
+    - '\bright of withdrawal\b'
+    - '\bwithdrawal (policy|instructions?|information)\b'
   cancel:
     - '\bcancel contracts? here\b'
   cancel_similar:
@@ -27,6 +34,9 @@ links:
     - '\b(only )?(necessary|essential|required)( cookies)? only\b'
     - '\bonly (necessary|essential|required)\b'
     - '\bcontinue without (accepting|consent)\b'
+  consent_settings:
+    - '\b(cookie|privacy|consent|tracking)[- ]?(settings|preferences|options|choices|manager|center|centre)\b'
+    - '\b(manage|change|update|edit|withdraw|revoke) (\w+ ){0,2}(cookies|consent|cookie settings|privacy settings)\b'
 
 text:
   cancel_confirm:
@@ -36,6 +46,49 @@ text:
     - '\bconfirm (the )?withdrawal\b'
   contact_form:
     - '\bcontact form\b'
+  order_button:
+    - '^(order|buy) with obligation to pay$'
+    - '^(place )?order (and pay|with obligation to pay)$'
+    - '^buy( now)?$'
+  order_wrong:
+    - '^(place )?order( now)?$'
+    - '^(submit|send|complete|confirm) (my )?(order|purchase)$'
+  order_generic:
+    - '^(continue|next|submit|send|confirm|done|finish)$'
+  checkout_payment:
+    - '\bpayment (method|option)s?\b'
+  checkout_total:
+    - '\b(order total|subtotal|grand total|total)\b'
+  shop:
+    - '\b(add to )?(cart|basket|bag)\b'
+    - '\bcheckout\b'
+    - '\bbuy( now)?\b'
+  vat_included:
+    - '\b(incl\.?|including|includes) (\S+ ){0,2}(vat|tax(es)?)\b'
+    - '\bvat (included|incl)\b'
+  shipping_costs:
+    - '\b(plus|excl\.?|excluding|\+) (\S+ )?(shipping|delivery|postage)\b'
+    - '\b(shipping|delivery) (costs?|fees?|charges?|rates?)\b'
+    - '\bfree (shipping|delivery)\b'
+  base_price:
+    - '\bunit price\b'
+    - '\bprice per (kg|kilogram|litre|liter|100)\b'
+  lowest_price:
+    - '\blowest price (\S+ ){0,4}(30|thirty) days\b'
+    - '\b(last|past|previous) (30|thirty) days\b'
+  rrp:
+    - '\b(rrp|msrp)\b'
+    - '\brecommended retail price\b'
+  withdrawal_instruction:
+    - '\bright of withdrawal\b'
+    - '\bright to withdraw\b'
+  model_form:
+    - '\bmodel withdrawal form\b'
+    - '\bhereby give notice that i\b'
+  withdraw_function_hint:
+    - '\bwithdrawal function\b'
+    - '\bwithdraw (\S+ ){0,3}online\b'
+    - '["“]withdraw from (the )?contract["”]'
   controller:
     - '\bcontroller\b'
     - '\bresponsible\b'
@@ -84,6 +137,12 @@ text:
     - '\badvertis'
     - '\bpersonali[sz]ation\b'
     - '\bexternal media\b'
+  # Confirmation shaming: a refusal worded so that saying no sounds like a loss. Only clear phrases.
+  consent_shaming:
+    - '\b(no|i don.?t want|i do not want)\b.{0,40}\bbetter (offers?|content|ads|experience|deals|recommendations|prices)\b'
+    - '\bi (don.?t|do not) (want to|like to) (save|support)\b'
+    - '\bi.?d rather pay (the )?full price\b'
+    - '\bi prefer (a )?worse\b'
 
 # Report sentences. Checks return a key and parameters; {name} is replaced by a parameter.
 # A value with one/other is picked by the parameter count. Groups are check ids; `common` is shared.
@@ -92,6 +151,8 @@ messages:
   common:
     page_imprint: "imprint (Impressum)"
     page_privacy: "privacy policy (Datenschutzerklärung)"
+    page_terms: "terms and conditions (AGB)"
+    page_withdrawal_info: "withdrawal instructions (Widerrufsbelehrung)"
     no_link: "No link to the {page} on the start page."
     not_loaded: "The {page} link {where} could not be loaded."
     http_error: "The {page} at {where} returns HTTP {status}."
@@ -178,6 +239,25 @@ messages:
   legal/odr-link:
     found: "The EU online dispute resolution platform closed on 20 July 2025. Remove the link and the notice about it."
     none: "No outdated link to the EU dispute platform."
+  legal/order-button:
+    ok: '{where}: order button "{text}".'
+    wrong: '{where}: order button "{text}" on the order summary. The law asks for "zahlungspflichtig bestellen" or equally clear wording; otherwise no contract is formed.'
+    wrong_form: '{where}: "{text}" in a form that asks for personal data. If this is the last step of the order, the law asks for "zahlungspflichtig bestellen" or equally clear wording.'
+    generic: '{where}: the order summary only has the button "{text}". If this is the last step, the law asks for "zahlungspflichtig bestellen" or equally clear wording.'
+    unrecognized: "{where}: a page with payment method and total, but no order button recognized."
+    wrong_found:
+      one: '{count} order button without "zahlungspflichtig bestellen" or equally clear wording.'
+      other: '{count} order buttons without "zahlungspflichtig bestellen" or equally clear wording.'
+    unclear:
+      one: "{count} button may be the order button, but does not say that the order costs money."
+      other: "{count} buttons may be the order button, but do not say that the order costs money."
+    found:
+      one: "Order button with clear wording found."
+      other: "{count} order buttons with clear wording found."
+    not_recognized: "Found a page with payment method and total, but no order button. Check its label by hand."
+    none:
+      one: "No order summary or order form on the visited page. The order button usually sits behind the cart; to check it, point url at the order summary."
+      other: "No order summary or order form on the {count} visited pages. The order button usually sits behind the cart; to check it, point url at the order summary."
   legal/outdated-references:
     no_pages: "Neither imprint nor privacy policy loaded."
     found:
@@ -203,6 +283,23 @@ messages:
     complete:
       one: "{count} required topic found."
       other: "All {count} required topics found."
+  legal/price-details:
+    no_vat: '{where}: prices without a note that they include VAT ("inkl. MwSt.").'
+    no_shipping: '{where}: prices without a note on shipping costs ("zzgl. Versand" or a link to the shipping costs).'
+    no_base_price: '{where}: quantity "{quantity}" next to prices, but no base price such as "€/kg". Needed for goods sold by weight, volume, length or area.'
+    no_lowest_price: '{where}: struck-through price "{price}" without the lowest price of the last 30 days.'
+    rrp: "{where}: struck-through price \"{price}\" next to a recommended retail price (UVP). Comparing with it is no reduction of your own price; not checked further."
+    missing:
+      one: "{count} price notice may be missing."
+      other: "{count} price notices may be missing."
+    complete:
+      one: "Price notices found on the shop page."
+      other: "Price notices found on all {count} shop pages."
+    none:
+      one: "The visited page shows no prices with a cart or buy button. To check, point url at a product page."
+      other: "None of the {count} visited pages shows prices with a cart or buy button. To check, point url at a product page."
+  legal/terms-link:
+    no_link: "No link to terms and conditions (AGB) on the start page. If you use terms, customers must be able to open and save them when they sign the contract."
   legal/withdrawal-button:
     missing: 'No withdrawal function on the start page. Since 19 June 2026 the law asks for "Vertrag widerrufen".'
     not_followed: 'Could not follow "{text}" to the withdrawal page {where}; the confirmation button "Widerruf bestätigen" was not checked.'
@@ -212,8 +309,28 @@ messages:
     unconfirmed: 'Found "{text}", but could not follow it to the confirmation page.'
     incomplete: 'Found "{text}", but the withdrawal page looks incomplete.'
     found: 'Found "{text}".'
+  legal/withdrawal-instruction:
+    no_page: "No withdrawal instructions (Widerrufsbelehrung) found, neither as a page linked from the start page nor in the terms."
+    in_terms: "Withdrawal instructions found in the terms: {where}."
+    no_model_form: "{where}: no model withdrawal form (Muster-Widerrufsformular, Anlage 2 EGBGB), neither in the text nor as a link."
+    no_function_hint: '{where}: no note on where to find the withdrawal function "Vertrag widerrufen". Required since 19 June 2026.'
+    incomplete:
+      one: "The withdrawal instructions may lack {count} required item."
+      other: "The withdrawal instructions may lack {count} required items."
+    complete: "Withdrawal instructions with the model form and a note on the withdrawal function: {where}."
 
   # ---------- privacy
+  privacy/consent-equal-choice:
+    no_banner: "No consent banner found on the start page."
+    no_reject: "The banner has no reject button on the first layer (see privacy/consent-reject)."
+    shaming: "\"{text}\": the refusal is worded to make users feel bad."
+    smaller: "\"{reject}\" has only {percent} % of the area of \"{accept}\"."
+    smaller_font: "\"{reject}\" uses a {reject_size} px font, \"{accept}\" {accept_size} px."
+    low_contrast: "\"{reject}\" has a contrast of {reject_ratio}:1, \"{accept}\" {accept_ratio}:1."
+    unequal:
+      one: "Rejecting looks less equal than accepting in the banner ({count} hint). Please look at it in a browser."
+      other: "Rejecting looks less equal than accepting in the banner ({count} hints). Please look at it in a browser."
+    equal: "\"{accept}\" and \"{reject}\" are of similar size and readability."
   privacy/consent-preselected:
     no_categories: "No optional cookie categories found on the start page."
     preselected:
@@ -226,6 +343,25 @@ messages:
     no_banner: "No consent banner found on the start page."
     no_reject: "The banner offers \"{accept}\" but no way to reject on the same layer. Rejecting must be as easy as accepting."
     both: "The banner offers \"{accept}\" and \"{reject}\"."
+  privacy/cookie-lifetime:
+    none: "No cookies set on the visited pages."
+    tracking_cookie: "{name} ({domain}, set on {page}): tracking cookie of {vendor}, expires in {days} days"
+    cookie: "{name} ({domain}, set on {page}): expires in {days} days"
+    too_long:
+      one: "{count} cookie that needs consent lives longer than {max} days (13 months)."
+      other: "{count} cookies that need consent live longer than {max} days (13 months)."
+    own_long:
+      one: "{count} own cookie lives longer than {max} days. Please check whether this lifetime is needed."
+      other: "{count} own cookies live longer than {max} days. Please check whether this lifetime is needed."
+    within:
+      one: "{count} cookie, it lives no longer than {max} days."
+      other: "{count} cookies, none lives longer than {max} days."
+  privacy/consent-withdraw-link:
+    no_banner: "No consent banner found on the start page."
+    found: "The start page offers \"{text}\" outside the banner to change consent later."
+    privacy_only: "\"{text}\" found only in the privacy policy ({where}). That is enough only if the link leads straight to the settings without searching; a link on every page is better."
+    banner_only: "\"{text}\" found only inside the banner. Check that a link or icon that opens the settings again stays visible after a choice."
+    missing: "No link or icon found to change or withdraw consent later. The scan does not click; an icon that appears only after a choice is not seen."
   privacy/cookies-before-consent:
     tracking_cookie: "{name} ({domain}, set on {page}): tracking cookie of {vendor}"
     third_party_cookie: "{name} ({domain}, set on {page}): third-party cookie"
@@ -241,6 +377,21 @@ messages:
       one: "{count} cookie or storage entry set before consent. Without consent, only strictly necessary ones are allowed."
       other: "{count} cookies or storage entries set before consent. Without consent, only strictly necessary ones are allowed."
     none: "No cookies or local storage before consent."
+  privacy/google-consent-mode:
+    no_requests: "No Google measurement or ads tag sent a request before consent."
+    request: "{request} on {page}, gcs={gcs}"
+    granted:
+      one: "{count} Google tag request reports ad or analytics storage as granted (gcs) before anyone chose. The Consent Mode default should be \"denied\"."
+      other: "{count} Google tag requests report ad or analytics storage as granted (gcs) before anyone chose. The Consent Mode default should be \"denied\"."
+    tcf:
+      one: "{count} Google tag request carries a TCF consent string (gdpr_consent) before anyone chose."
+      other: "{count} Google tag requests carry a TCF consent string (gdpr_consent) before anyone chose."
+    no_signal:
+      one: "{count} Google tag request without a Consent Mode state (gcs). Consent Mode is not set up or reports no state, so it is unclear whether the tag uses cookies before consent."
+      other: "{count} Google tag requests without a Consent Mode state (gcs). Consent Mode is not set up or reports no state, so it is unclear whether the tags use cookies before consent."
+    denied:
+      one: "{count} Google tag request reports storage as denied. It still reaches Google before consent; see \"No third-party servers before consent\"."
+      other: "{count} Google tag requests report storage as denied. They still reach Google before consent; see \"No third-party servers before consent\"."
   privacy/third-country:
     country_unknown: "Country unknown for {names}."
     no_services: "No third-party service contacted."
@@ -281,6 +432,16 @@ messages:
     all_set:
       one: "{count} cookie has the expected flags."
       other: "All {count} cookies have the expected flags."
+  security/cors:
+    no_pages: "No page of the site loaded."
+    credentials:
+      one: "{count} page shares its answers, including the visitor's cookies, with any site (CORS)."
+      other: "{count} pages share their answers, including the visitor's cookies, with any site (CORS)."
+    wildcard: "{page}: Access-Control-Allow-Origin: * with Access-Control-Allow-Credentials: true. Browsers refuse this pair, but it shows credentials are meant for any origin; servers set up like this often copy the Origin of the request instead."
+    null_origin: "{page}: Access-Control-Allow-Origin: null with Access-Control-Allow-Credentials: true. Sandboxed frames and local files of any site send the origin null."
+    ok:
+      one: "{count} page checked, no CORS sharing with credentials to any site."
+      other: "{count} pages checked, no CORS sharing with credentials to any site."
   security/email-dns:
     not_checked: "DNS was not checked."
     no_spf: "No SPF record. List your mail servers."
@@ -323,6 +484,14 @@ messages:
     no_http: "Served over HTTPS. Plain HTTP is not offered."
     redirects: "Served over HTTPS. Plain HTTP redirects to HTTPS."
     no_redirect: "Plain HTTP answers with {status} instead of redirecting to HTTPS."
+  security/isolation-headers:
+    meta_ignored: "{name} only as <meta>, which browsers ignore for this policy"
+    coop_unsafe: "Cross-Origin-Opener-Policy: unsafe-none (the default, no isolation)"
+    coop_report_only: "Cross-Origin-Opener-Policy-Report-Only only reports, it does not isolate."
+    missing:
+      one: "{count} isolation header missing."
+      other: "{count} isolation headers missing."
+    all_set: "Permissions-Policy and Cross-Origin-Opener-Policy are set."
   security/mixed-content:
     no_https: "The site does not use HTTPS (see security/https)."
     on_page: "{url} on {page}"
@@ -335,6 +504,21 @@ messages:
     no_expires: "security.txt has no Expires field, which RFC 9116 requires."
     expired: "security.txt expired on {date}. Readers may take the contact as outdated."
     found: "security.txt names a contact: {contact}."
+  security/subresource-integrity:
+    no_pages: "No page of the site loaded."
+    no_foreign: "The pages load no scripts or stylesheets from other sites in their HTML."
+    signed:
+      one: "{count} script or stylesheet from another site carries an integrity hash."
+      other: "All {count} scripts and stylesheets from other sites carry an integrity hash."
+    unsigned:
+      one: "{count} of {total} scripts and stylesheets from other sites has no integrity hash. If that site is compromised, changed code runs on your pages."
+      other: "{count} of {total} scripts and stylesheets from other sites have no integrity hash. If those sites are compromised, changed code runs on your pages."
+    script: "Script {url}"
+    stylesheet: "Stylesheet {url}"
+    moving: "Left out: {host} changes its files under the same URL, so a hash would break them."
+    more:
+      one: "and {count} more file"
+      other: "and {count} more files"
   security/tls:
     none: "No TLS connection to check."
     failed: "TLS connection failed: {error}"
@@ -351,6 +535,25 @@ messages:
     missing: "The start page has no <html lang> attribute. Screen readers then have to guess the language."
     mismatch: 'The page declares lang="{lang}", but the scan used {languages}. Pick the matching language when you start the scan.'
     declared: 'The page declares lang="{lang}".'
+  accessibility/autoplay-media:
+    no_videos: "No videos on the visited pages."
+    no_autoplay:
+      one: "{count} video, it does not start by itself."
+      other: "{count} videos, none starts by itself."
+    controls:
+      one: "{count} video starts by itself and has controls to pause it."
+      other: "{count} videos start by themselves and have controls to pause them."
+    uncontrolled:
+      one: "{count} video starts by itself without controls. If it runs longer than 5 seconds and has no pause button of its own, visitors cannot stop it. The scan cannot tell whether the BFSG applies to this site."
+      other: "{count} videos start by themselves without controls. If they run longer than 5 seconds and have no pause button of their own, visitors cannot stop them. The scan cannot tell whether the BFSG applies to this site."
+    uncontrolled_sound:
+      one: "{count} video starts by itself without controls, and not muted. Sound that plays for more than 3 seconds needs a way to stop it. The scan cannot tell whether the BFSG applies to this site."
+      other: "{count} videos start by themselves without controls, some not muted. Sound that plays for more than 3 seconds needs a way to stop it. The scan cannot tell whether the BFSG applies to this site."
+    sound: "{url} on {page}: starts with sound and has no controls."
+    motion: "{url} on {page}: starts muted and has no controls."
+    more:
+      one: "and {count} more video"
+      other: "and {count} more videos"
 
   # ---------- sustainability
   sustainability/cache-headers:
@@ -361,6 +564,17 @@ messages:
     uncached:
       one: "{count} of {total} own static files has no explicit cache lifetime, so the browser may ask for it or load it again on every visit."
       other: "{count} of {total} own static files have no explicit cache lifetime, so the browser may ask for them or load them again on every visit."
+    more:
+      one: "and {count} more file"
+      other: "and {count} more files"
+  sustainability/compression:
+    no_files: "No own text files (HTML, CSS, JavaScript, SVG) of 1 KB or more loaded."
+    compressed:
+      one: "{count} own text file comes compressed."
+      other: "All {count} own text files come compressed."
+    uncompressed:
+      one: "{count} of {total} own text files comes without gzip or Brotli, so every visit transfers several times the bytes."
+      other: "{count} of {total} own text files come without gzip or Brotli, so every visit transfers several times the bytes."
     more:
       one: "and {count} more file"
       other: "and {count} more files"
@@ -389,6 +603,18 @@ messages:
     choose_green: "Check whether your host publishes proof of renewable energy. If it does, it can submit it to the Green Web Foundation; if not, consider a host that does."
 
   # ---------- repo
+  sustainability/lazy-loading:
+    none: "No images below the first screen on the visited pages."
+    lazy:
+      one: "{count} image below the first screen loads lazily."
+      other: "All {count} images below the first screen load lazily."
+    eager:
+      one: "{count} of {total} images below the first screen loads right away instead of when scrolled to."
+      other: "{count} of {total} images below the first screen load right away instead of when scrolled to."
+    image: "{url} on {page}: no loading=\"lazy\"."
+    more:
+      one: "and {count} more image"
+      other: "and {count} more images"
   sustainability/modern-formats:
     modern: "Own images and fonts use efficient formats."
     legacy:

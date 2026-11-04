@@ -61,7 +61,11 @@
 <tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before rechtzeitig (folder: input <code>repository</code>).</td></tr>
 <tr><td>A group of checks</td><td><code>modules</code> picks groups: legal, privacy, security, sustainability, accessibility, repo. Empty runs all.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-001">Cancellation button for subscriptions</a><br><small>LEG-DE-BTN-001</small></td><td>Opt-in: only with <code>subscriptions: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-BTN-003">Order button &quot;zahlungspflichtig bestellen&quot;</a><br><small>LEG-DE-BTN-003</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-PRICE-001">Prices with VAT, shipping, base price and 30-day price</a><br><small>LEG-DE-PRICE-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-AGB-001">Terms and conditions are linked and reachable</a><br><small>LEG-DE-AGB-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-WDR-001">Withdrawal instructions with the model form and a pointer to the withdrawal function</a><br><small>LEG-DE-WDR-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to ipinfo.io (opt-in)</a></td></tr>
 <tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
 <tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
@@ -80,7 +84,7 @@
   <div id="list">
 <!-- checks:start -->
 <section class="module" data-module="legal">
-<h3>Legal <small>10 rules</small></h3>
+<h3>Legal <small>14 rules</small></h3>
 <div class="rules">
 <details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a button labeled &quot;verträge hier kündigen&quot; on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and &quot;jetzt kündigen&quot; (`cancel_confirm`) on its target page; info when it cannot be followed. subscriptions">
 <summary>
@@ -173,6 +177,22 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-DE-BTN-003" data-module="legal" data-severity="high" data-search="leg-de-btn-003 legal/order-button order button &quot;zahlungspflichtig bestellen&quot; bestellbutton „zahlungspflichtig bestellen“ § 312j(3) and (4) bgb (german civil code) on every visited page that names a payment method and a total (`checkout_payment`, `checkout_total` in `lang/*.yml`), and in forms with an address field (`address_field` in `data/shop.yml`), reads the button texts: `order_button` passes, `order_wrong` fails on a checkout page and warns in a form, `order_generic` (&quot;weiter&quot;) warns; skipped when no such page is visited. sales">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-BTN-003</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Order button &quot;zahlungspflichtig bestellen&quot;</span>
+<span class="rule-law">§ 312j(3) and (4) BGB (German Civil Code)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>On every visited page that names a payment method and a total (<code>checkout_payment</code>, <code>checkout_total</code> in <code>lang/*.yml</code>), and in forms with an address field (<code>address_field</code> in <code>data/shop.yml</code>), reads the button texts: <code>order_button</code> passes, <code>order_wrong</code> fails on a checkout page and warns in a form, <code>order_generic</code> (&quot;Weiter&quot;) warns; skipped when no such page is visited.</dd></div>
+<div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Label the button that sends the order, clearly legible, with nothing but &quot;zahlungspflichtig bestellen&quot; or equally clear wording such as &quot;kaufen&quot;. Otherwise no contract is formed. The last step usually sits behind the cart: point the scan at the order summary to check it.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/order-button"><code>checks/legal/order-button</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312j.html">gesetze-im-internet.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-DE-REF-001" data-module="legal" data-severity="low" data-search="leg-de-ref-001 legal/outdated-references imprint and privacy policy name no repealed laws impressum und datenschutzerklärung nennen keine aufgehobenen gesetze ddg and tdddg (since 14 may 2024), mstv (since 7 nov 2020), cjeu c-311/18 on the privacy shield searches the imprint and the privacy policy for the old names in `data/outdated-laws.yml` (tmg, ttdsg, rstv, privacy shield) and ignores a page that also names what applies instead.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-REF-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
@@ -185,6 +205,22 @@
 <div><dt>How to fix</dt><dd>Replace TMG with DDG (imprint: § 5 DDG), TTDSG with TDDDG (§ 25 TDDDG), RStV with MStV (§ 18(2) MStV); base US transfers on the EU-US Data Privacy Framework or standard contractual clauses instead of the Privacy Shield.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/outdated-references"><code>checks/legal/outdated-references</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-bayern.de/Content/Document/MStV">gesetze-bayern.de</a>, <a href="https://curia.europa.eu/juris/liste.jsf?num=C-311/18">curia.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-PRICE-001" data-module="legal" data-severity="medium" data-search="leg-de-price-001 legal/price-details prices with vat, shipping, base price and 30-day price preisangaben mit mwst., versand, grundpreis und 30-tage-preis §§ 3, 4, 6 and 11 pangv (german price indication ordinance) on every visited own page, legal and shipping pages left out, that shows a price (`price` in `data/shop.yml`) and a cart or buy link (`shop` in `lang/*.yml`), warns without `vat_included` and `shipping_costs`, for a `quantity` without `unit_price` or `base_price`, and for a struck-through price without `lowest_price` unless `rrp` is named. sales">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-PRICE-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Prices with VAT, shipping, base price and 30-day price</span>
+<span class="rule-law">§§ 3, 4, 6 and 11 PAngV (German Price Indication Ordinance)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>On every visited own page, legal and shipping pages left out, that shows a price (<code>price</code> in <code>data/shop.yml</code>) and a cart or buy link (<code>shop</code> in <code>lang/*.yml</code>), warns without <code>vat_included</code> and <code>shipping_costs</code>, for a <code>quantity</code> without <code>unit_price</code> or <code>base_price</code>, and for a struck-through price without <code>lowest_price</code> unless <code>rrp</code> is named.</dd></div>
+<div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Next to prices, say that they include VAT and whether shipping costs apply (&quot;inkl. MwSt., zzgl. Versand&quot; with a link to the shipping costs). For goods sold by weight or volume, give the base price (for example &quot;17,98 €/kg&quot;). For every price reduction, give the lowest price of the last 30 days.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/price-details"><code>checks/legal/price-details</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/pangv_2022/__3.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/pangv_2022/__4.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/pangv_2022/__6.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/pangv_2022/__11.html">gesetze-im-internet.de</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
@@ -218,6 +254,22 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-DE-AGB-001" data-module="legal" data-severity="medium" data-search="leg-de-agb-001 legal/terms-link terms and conditions are linked and reachable agb sind verlinkt und erreichbar § 312i(1) sentence 1 no. 4 and § 305(2) bgb (german civil code) finds the t&amp;c link on the start page (`terms` in `lang/*.yml`), loads it and checks http status and that it has text; warns without a link, since t&amp;cs are optional. sales">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-AGB-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Terms and conditions are linked and reachable</span>
+<span class="rule-law">§ 312i(1) sentence 1 no. 4 and § 305(2) BGB (German Civil Code)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds the T&amp;C link on the start page (<code>terms</code> in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text; warns without a link, since T&amp;Cs are optional.</dd></div>
+<div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Link the terms from the start page and the checkout, for example in the footer, labeled &quot;AGB&quot;. Customers must be able to open and save them when they sign the contract.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/terms-link"><code>checks/legal/terms-link</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312i.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bgb/__305.html">gesetze-im-internet.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-DE-BTN-002" data-module="legal" data-severity="high" data-search="leg-de-btn-002 legal/withdrawal-button withdrawal button for online contracts widerrufsbutton für online-verträge § 356a bgb (german civil code, since 19 june 2026) finds a button labeled &quot;vertrag widerrufen&quot; on the start page (`withdraw` in `lang/*.yml`, else `withdraw_similar` on the visible text, which warns) and &quot;widerruf bestätigen&quot; (`withdraw_confirm`) on its target page; info when it cannot be followed. sales">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-BTN-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
@@ -234,11 +286,42 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-DE-WDR-001" data-module="legal" data-severity="high" data-search="leg-de-wdr-001 legal/withdrawal-instruction withdrawal instructions with the model form and a pointer to the withdrawal function widerrufsbelehrung mit muster-widerrufsformular und hinweis auf die widerrufsfunktion art. 246a § 1(2) sentence 1 no. 1 egbgb with annex 2, § 356a bgb (since 19 june 2026) opens the withdrawal instructions linked from the start page (`withdrawal_info` in `lang/*.yml`), else the t&amp;cs when they contain them (`withdrawal_instruction`), and warns without the model form in the text or a link (`model_form`) or without a note on where the withdrawal function is (`withdraw_function_hint`). sales">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-WDR-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">Withdrawal instructions with the model form and a pointer to the withdrawal function</span>
+<span class="rule-law">Art. 246a § 1(2) sentence 1 no. 1 EGBGB with Annex 2, § 356a BGB (since 19 June 2026)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Opens the withdrawal instructions linked from the start page (<code>withdrawal_info</code> in <code>lang/*.yml</code>), else the T&amp;Cs when they contain them (<code>withdrawal_instruction</code>), and warns without the model form in the text or a link (<code>model_form</code>) or without a note on where the withdrawal function is (<code>withdraw_function_hint</code>).</dd></div>
+<div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Link withdrawal instructions following the model in Annex 1 EGBGB, with the model withdrawal form from Annex 2 and a sentence on where the withdrawal function &quot;Vertrag widerrufen&quot; is (&quot;Sie können Ihr Widerrufsrecht auch online unter … ausüben&quot;).</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/withdrawal-instruction"><code>checks/legal/withdrawal-instruction</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgbeg/art_246a__1.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bgbeg/art_253anlage_1.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bgbeg/art_253anlage_2.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bgb/__356a.html">gesetze-im-internet.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 </div>
 </section>
 <section class="module" data-module="privacy">
-<h3>Privacy and consent <small>6 rules</small></h3>
+<h3>Privacy and consent <small>10 rules</small></h3>
 <div class="rules">
+<details class="rule" id="LEG-EU-CNS-007" data-module="privacy" data-severity="medium" data-search="leg-eu-cns-007 privacy/consent-equal-choice rejecting is as visible as accepting in the consent banner ablehnen ist im consent-banner so sichtbar wie zustimmen § 25 tdddg, art. 4(11) and art. 7 gdpr in the start page's banner with javascript, compares the largest accept button (`consent_accept`) with the largest reject button (`consent_reject`) and warns when reject has under half the area, under 80 % of the font size, or a wcag contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/thresholds.yml`), or when a banner button uses shaming words (`consent_shaming`).">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-007</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Rejecting is as visible as accepting in the consent banner</span>
+<span class="rule-law">§ 25 TDDDG, Art. 4(11) and Art. 7 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>In the start page's banner with JavaScript, compares the largest accept button (<code>consent_accept</code>) with the largest reject button (<code>consent_reject</code>) and warns when reject has under half the area, under 80 % of the font size, or a WCAG contrast below 3:1 while accept reaches 4.5:1 (thresholds in <code>data/thresholds.yml</code>), or when a banner button uses shaming words (<code>consent_shaming</code>).</dd></div>
+<div><dt>How to fix</dt><dd>Show &quot;Reject all&quot; in the same size, font and readability as &quot;Accept all&quot;, with a neutral label.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-equal-choice"><code>checks/privacy/consent-equal-choice</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.datenschutzkonferenz-online.de/media/oh/20221205_oh_Telemedien_2021_Version_1_1_Vorlage_104_DSK_final.pdf">datenschutzkonferenz-online.de</a>, <a href="https://www.edpb.europa.eu/system/files/2023-01/edpb_20230118_report_cookie_banner_taskforce_en.pdf">edpb.europa.eu</a>, <a href="https://www.edpb.europa.eu/system/files/documents/2023-02/edpb_03-2022_guidelines_on_deceptive_design_patterns_in_social_media_platform_interfaces_v2_en_0.pdf">edpb.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-EU-CNS-004" data-module="privacy" data-severity="high" data-search="leg-eu-cns-004 privacy/consent-preselected optional cookie categories are not preselected optionale cookie-kategorien nicht vorausgewählt § 25 tdddg, ecj c-673/17 (planet49) finds ticked, enabled checkboxes whose label is an optional category (`consent_optional`), also in shadow roots.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-004</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
@@ -269,6 +352,36 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-EU-CNS-005" data-module="privacy" data-severity="medium" data-search="leg-eu-cns-005 privacy/consent-withdraw-link consent can be changed or withdrawn later einwilligung lässt sich später ändern oder widerrufen art. 7(3) gdpr, § 25 tdddg when the start page has a consent banner (`consent_accept` in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (`consent_settings`, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-005</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Consent can be changed or withdrawn later</span>
+<span class="rule-law">Art. 7(3) GDPR, § 25 TDDDG</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>When the start page has a consent banner (<code>consent_accept</code> in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (<code>consent_settings</code>, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.</dd></div>
+<div><dt>How to fix</dt><dd>Offer an always visible link or icon on every page that opens the cookie settings directly, for example &quot;Cookie settings&quot; in the footer.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-withdraw-link"><code>checks/privacy/consent-withdraw-link</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://www.datenschutzkonferenz-online.de/media/oh/20221205_oh_Telemedien_2021_Version_1_1_Vorlage_104_DSK_final.pdf">datenschutzkonferenz-online.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-CNS-008" data-module="privacy" data-severity="low" data-search="leg-eu-cns-008 privacy/cookie-lifetime cookies that need consent live at most 13 months cookies, die eine einwilligung brauchen, leben höchstens 13 monate art. 5(1)(e) gdpr, § 25 tdddg warns when a known tracking cookie (`data/third-parties.yml`) or a cookie of another site set without clicks expires more than 397 days (13 months, `data/thresholds.yml`) after the scan; long-lived own cookies only give info.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-008</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Cookies that need consent live at most 13 months</span>
+<span class="rule-law">Art. 5(1)(e) GDPR, § 25 TDDDG</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Warns when a known tracking cookie (<code>data/third-parties.yml</code>) or a cookie of another site set without clicks expires more than 397 days (13 months, <code>data/thresholds.yml</code>) after the scan; long-lived own cookies only give info.</dd></div>
+<div><dt>How to fix</dt><dd>Limit the lifetime of analytics and advertising cookies to at most 13 months and do not extend it automatically on new visits.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/cookie-lifetime"><code>checks/privacy/cookie-lifetime</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://www.datenschutzkonferenz-online.de/media/oh/20221205_oh_Telemedien_2021_Version_1_1_Vorlage_104_DSK_final.pdf">datenschutzkonferenz-online.de</a>, <a href="https://www.cnil.fr/sites/default/files/2026-01/recommandation_cookies_consolidee.pdf">cnil.fr</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-EU-CNS-002" data-module="privacy" data-severity="high" data-search="leg-eu-cns-002 privacy/cookies-before-consent no cookies before consent keine cookies vor einwilligung § 25 tdddg (german telecommunications digital services data protection act), bgh i zr 7/16 (cookie-einwilligung ii) lists cookies and localstorage set while loading the site without clicks; matches names against `data/third-parties.yml`.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
@@ -281,6 +394,21 @@
 <div><dt>How to fix</dt><dd>Set only strictly necessary cookies right away, all others only after consent.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/cookies-before-consent"><code>checks/privacy/cookies-before-consent</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://www.bundesgerichtshof.de/SharedDocs/Pressemitteilungen/DE/2020/2020067.html">bundesgerichtshof.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-CNS-006" data-module="privacy" data-severity="medium" data-search="leg-eu-cns-006 privacy/google-consent-mode google tags report no consent before a choice google-tags melden vor der einwilligung keine zustimmung § 25 tdddg, art. 7 gdpr; google consent mode is no legal requirement but a technical signal reads the consent parameters of requests to google measurement and ads endpoints (`data/google-tags.yml`) made before any click: a `gcs` state with ad or analytics storage granted or a tcf string in `gdpr_consent` fails, no readable `gcs` warns, only denied passes; `gcd` is ignored, because google sends it with or without consent mode.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-006</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Google tags report no consent before a choice</span>
+<span class="rule-law">§ 25 TDDDG, Art. 7 GDPR; Google Consent Mode is no legal requirement but a technical signal</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the consent parameters of requests to Google measurement and ads endpoints (<code>data/google-tags.yml</code>) made before any click: a <code>gcs</code> state with ad or analytics storage granted or a TCF string in <code>gdpr_consent</code> fails, no readable <code>gcs</code> warns, only denied passes; <code>gcd</code> is ignored, because Google sends it with or without Consent Mode.</dd></div>
+<div><dt>How to fix</dt><dd>Set Consent Mode to &quot;denied&quot; with <code>gtag('consent', 'default', …)</code> before any Google tag and update it only after the choice in the banner; pass a TCF string only after the choice. Or load Google tags only after consent.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/google-consent-mode"><code>checks/privacy/google-consent-mode</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://developers.google.com/tag-platform/security/concepts/consent-mode">developers.google.com</a>, <a href="https://developers.google.com/tag-platform/security/guides/consent">developers.google.com</a>, <a href="https://developers.google.com/tag-platform/devguides/gtag-integration">developers.google.com</a>, <a href="https://support.google.com/google-ads/answer/10021549">support.google.com</a>, <a href="https://support.google.com/admanager/answer/9999955">support.google.com</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
@@ -334,7 +462,7 @@
 </div>
 </section>
 <section class="module" data-module="security">
-<h3>Security <small>10 rules</small></h3>
+<h3>Security <small>13 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-HDR-002" data-module="security" data-severity="medium" data-search="sec-hdr-002 security/cookie-flags cookies use secure flags cookies nutzen sichere flags art. 32 gdpr checks secure on every cookie set without login (https sites, and always with `samesite=none`) and httponly on cookies whose name looks like a session (`data/cookies.yml`); cookies of other sites only give info.">
 <summary>
@@ -349,6 +477,21 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/cookie-flags"><code>checks/security/cookie-flags</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-HDR-005" data-module="security" data-severity="medium" data-search="sec-hdr-005 security/cors cors does not share answers with credentials to any site cors gibt antworten mit anmeldedaten nicht an beliebige websites frei art. 32 gdpr reads the response headers of the site's own pages and fails when access-control-allow-credentials: true comes with access-control-allow-origin * or null; it sends no foreign origin, so a server that mirrors any origin is not detected.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-HDR-005</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">CORS does not share answers with credentials to any site</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the response headers of the site's own pages and fails when Access-Control-Allow-Credentials: true comes with Access-Control-Allow-Origin * or null; it sends no foreign Origin, so a server that mirrors any Origin is not detected.</dd></div>
+<div><dt>How to fix</dt><dd>Send Access-Control-Allow-Credentials only with a fixed list of trusted origins, never with * or null, and do not copy the Origin from the request unchecked. If the pages need no CORS, leave out both headers.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/cors"><code>checks/security/cors</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://fetch.spec.whatwg.org/#cors-protocol-and-credentials">fetch.spec.whatwg.org</a>, <a href="https://fetch.spec.whatwg.org/#cors-check">fetch.spec.whatwg.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-DNS-001" data-module="security" data-severity="medium" data-search="sec-dns-001 security/email-dns domain is protected against email spoofing domain ist gegen e-mail-spoofing geschützt art. 32 gdpr reads the spf txt record of the registrable domain and the dmarc record at `_dmarc.`; flags missing ones, spf that allows every server (`+all`, `?all`) and dmarc `p=none`.">
@@ -441,6 +584,21 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-HDR-004" data-module="security" data-severity="low" data-search="sec-hdr-004 security/isolation-headers permissions-policy and cross-origin-opener-policy are set permissions-policy und cross-origin-opener-policy sind gesetzt art. 32 gdpr reads the response headers of the start page for permissions-policy and a cross-origin-opener-policy other than unsafe-none, and names both when they appear only in &lt;meta&gt;, where browsers ignore them, or coop only as report-only.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-HDR-004</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Permissions-Policy and Cross-Origin-Opener-Policy are set</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the response headers of the start page for Permissions-Policy and a Cross-Origin-Opener-Policy other than unsafe-none, and names both when they appear only in &lt;meta&gt;, where browsers ignore them, or COOP only as report-only.</dd></div>
+<div><dt>How to fix</dt><dd>Set Permissions-Policy in the web server and turn off features the site does not use (for example camera=(), microphone=(), geolocation=()), plus Cross-Origin-Opener-Policy: same-origin, or same-origin-allow-popups when the site opens login or payment windows.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/isolation-headers"><code>checks/security/isolation-headers</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/permissions-policy/#permissions-policy-http-header-field">w3.org</a>, <a href="https://html.spec.whatwg.org/multipage/browsers.html#the-coop-headers">html.spec.whatwg.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-TLS-003" data-module="security" data-severity="medium" data-search="sec-tls-003 security/mixed-content no unencrypted resources on https pages keine unverschlüsselten ressourcen auf https-seiten art. 32 gdpr lists `http://` requests made by pages of an https site.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-TLS-003</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
@@ -471,7 +629,22 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-TLS-002" data-module="security" data-severity="high" data-search="sec-tls-002 security/tls tls certificate is valid and current tls-zertifikat ist gültig und aktuell art. 32 gdpr opens a tls connection to the host and reads protocol, trust and expiry date of the certificate.">
+<details class="rule" id="SEC-HDR-003" data-module="security" data-severity="low" data-search="sec-hdr-003 security/subresource-integrity scripts and stylesheets from other sites carry an integrity hash skripte und stylesheets anderer websites haben einen integritäts-hash art. 32 gdpr lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the html of the site's own pages (load without javascript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same url (`data/subresource-integrity.yml`).">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-HDR-003</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Scripts and stylesheets from other sites carry an integrity hash</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same URL (<code>data/subresource-integrity.yml</code>).</dd></div>
+<div><dt>How to fix</dt><dd>Load fixed versions of other sites' files with integrity=&quot;sha384-…&quot; and crossorigin=&quot;anonymous&quot; (most CDNs show the hash), or host the file yourself.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/subresource-integrity"><code>checks/security/subresource-integrity</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/SRI/#resource-integrity">w3.org</a>, <a href="https://www.w3.org/TR/SRI/#the-integrity-attribute">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-TLS-002" data-module="security" data-severity="high" data-search="sec-tls-002 security/tls tls certificate is valid and current tls-zertifikat ist gültig und aktuell art. 32 gdpr opens a tls connection to the host and reads protocol, trust and expiry date of the certificate, warning 14 days before expiry (`data/thresholds.yml`).">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-TLS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">TLS certificate is valid and current</span>
@@ -479,7 +652,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Opens a TLS connection to the host and reads protocol, trust and expiry date of the certificate.</dd></div>
+<div><dt>How it is checked</dt><dd>Opens a TLS connection to the host and reads protocol, trust and expiry date of the certificate, warning 14 days before expiry (<code>data/thresholds.yml</code>).</dd></div>
 <div><dt>How to fix</dt><dd>Renew the certificate automatically (for example Let's Encrypt) and allow only TLS 1.2 and 1.3.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/tls"><code>checks/security/tls</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
@@ -489,7 +662,7 @@
 </div>
 </section>
 <section class="module" data-module="sustainability">
-<h3>Sustainability <small>5 rules</small></h3>
+<h3>Sustainability <small>7 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SUS-CACHE-001" data-module="sustainability" data-severity="low" data-search="sus-cache-001 sustainability/cache-headers own static files may stay in the browser cache eigene statische dateien dürfen im browser-cache bleiben  loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (`static` in `data/file-formats.yml`) whose answer has no positive `max-age`, no `immutable` and no future `expires`, or says `no-store` or `no-cache`.">
 <summary>
@@ -506,7 +679,22 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SUS-JS-002" data-module="sustainability" data-severity="low" data-search="sus-js-002 sustainability/content-without-js start page shows content without javascript startseite zeigt inhalt ohne javascript  compares the visible text of the start page with javascript off and on and warns when less than 20 % of it is shown without javascript.">
+<details class="rule" id="SUS-ZIP-001" data-module="sustainability" data-severity="low" data-search="sus-zip-001 sustainability/compression own text files are sent compressed eigene textdateien kommen komprimiert  lists the site's own answers with http 200 and a text content-type (`compress` in `data/file-formats.yml`: html, css, javascript, json, svg, xml) that have no content-encoding, leaving out answers whose content-length is below 1 kb (`data/thresholds.yml`).">
+<summary>
+<span class="rule-head"><span class="rule-id">SUS-ZIP-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Own text files are sent compressed</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists the site's own answers with HTTP 200 and a text Content-Type (<code>compress</code> in <code>data/file-formats.yml</code>: HTML, CSS, JavaScript, JSON, SVG, XML) that have no Content-Encoding, leaving out answers whose Content-Length is below 1 KB (<code>data/thresholds.yml</code>).</dd></div>
+<div><dt>How to fix</dt><dd>Turn on Brotli or gzip for text formats in the web server or CDN (in nginx, for example, gzip on; gzip_types text/css application/javascript image/svg+xml;).</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/compression"><code>checks/sustainability/compression</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#server-side-compression">w3.org</a>, <a href="https://www.rfc-editor.org/rfc/rfc9110#section-8.4">rfc-editor.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SUS-JS-002" data-module="sustainability" data-severity="low" data-search="sus-js-002 sustainability/content-without-js start page shows content without javascript startseite zeigt inhalt ohne javascript  compares the visible text of the start page with javascript off and on and warns when less than 20 % of it is shown without javascript (`data/thresholds.yml`).">
 <summary>
 <span class="rule-head"><span class="rule-id">SUS-JS-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
 <span class="rule-title">Start page shows content without JavaScript</span>
@@ -514,7 +702,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Compares the visible text of the start page with JavaScript off and on and warns when less than 20 % of it is shown without JavaScript.</dd></div>
+<div><dt>How it is checked</dt><dd>Compares the visible text of the start page with JavaScript off and on and warns when less than 20 % of it is shown without JavaScript (<code>data/thresholds.yml</code>).</dd></div>
 <div><dt>How to fix</dt><dd>Deliver content as HTML from the server or at build time.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/content-without-js"><code>checks/sustainability/content-without-js</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#progressive-enhancement">w3.org</a>, <a href="https://www.w3.org/TR/web-sustainability-guidelines/#static-over-dynamic">w3.org</a></dd></div>
@@ -535,6 +723,21 @@
 <div><dt>How to fix</dt><dd>Pick a host with proven renewable energy, or ask your host to submit its evidence to the Green Web Foundation.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/green-hosting"><code>checks/sustainability/green-hosting</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#use-sustainable-hosting">w3.org</a>, <a href="https://developers.thegreenwebfoundation.org/api/greencheck/v3/check-single-domain/">developers.thegreenwebfoundation.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SUS-LAZY-001" data-module="sustainability" data-severity="low" data-search="sus-lazy-001 sustainability/lazy-loading images below the fold load lazily bilder unterhalb des ersten bildschirms laden erst bei bedarf  lists images on all visited own pages, loaded with javascript, whose top edge lies below the first 1280x720 viewport and that have no `loading=&quot;lazy&quot;`, ignoring images under 50x50 pixels (`data/thresholds.yml`) and the data: placeholders that script-based lazy loading shows until scrolling.">
+<summary>
+<span class="rule-head"><span class="rule-id">SUS-LAZY-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Images below the fold load lazily</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists images on all visited own pages, loaded with JavaScript, whose top edge lies below the first 1280x720 viewport and that have no <code>loading=&quot;lazy&quot;</code>, ignoring images under 50x50 pixels (<code>data/thresholds.yml</code>) and the data: placeholders that script-based lazy loading shows until scrolling.</dd></div>
+<div><dt>How to fix</dt><dd>Give images below the first screen loading=&quot;lazy&quot;, with width and height so nothing jumps. Load images in the first screen without lazy.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/lazy-loading"><code>checks/sustainability/lazy-loading</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#lazy-loading">w3.org</a>, <a href="https://www.w3.org/TR/web-sustainability-guidelines/#defer-the-loading-of-non-critical-resources">w3.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
@@ -571,8 +774,23 @@
 </div>
 </section>
 <section class="module" data-module="accessibility">
-<h3>Accessibility <small>1 rule</small></h3>
+<h3>Accessibility <small>2 rules</small></h3>
 <div class="rules">
+<details class="rule" id="A11Y-MOTION-001" data-module="accessibility" data-severity="medium" data-search="a11y-motion-001 accessibility/autoplay-media videos that start automatically can be paused automatisch startende videos lassen sich anhalten bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.2.2.2 (wcag 2.1 success criterion 2.2.2) and, with sound, clause 9.1.4.2 (wcag 2.1 success criterion 1.4.2) lists `&lt;video autoplay&gt;` elements without the controls attribute on all visited own pages, loaded with javascript, and names those that are not muted as playing sound; it cannot see the video's length or custom play buttons, so it only warns.">
+<summary>
+<span class="rule-head"><span class="rule-id">A11Y-MOTION-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Videos that start automatically can be paused</span>
+<span class="rule-law">BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.2.2.2 (WCAG 2.1 success criterion 2.2.2) and, with sound, clause 9.1.4.2 (WCAG 2.1 success criterion 1.4.2)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists <code>&lt;video autoplay&gt;</code> elements without the controls attribute on all visited own pages, loaded with JavaScript, and names those that are not muted as playing sound; it cannot see the video's length or custom play buttons, so it only warns.</dd></div>
+<div><dt>How to fix</dt><dd>Do not start videos automatically, or offer the controls attribute or your own pause button. Never play sound automatically. Autoplay also loads data many visitors never watch; preload=&quot;none&quot; and a poster image save it.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/autoplay-media"><code>checks/accessibility/autoplay-media</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bfsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bfsgv/">gesetze-im-internet.de</a>, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">etsi.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">w3.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/audio-control.html">w3.org</a>, <a href="https://www.w3.org/TR/web-sustainability-guidelines/#user-controlled-media">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="A11Y-LANG-001" data-module="accessibility" data-severity="low" data-search="a11y-lang-001 accessibility/page-language page declares its language seite gibt ihre sprache an bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.3.1.1 (wcag 2.1 success criterion 3.1.1) reads `&lt;html lang&gt;` of the start page as the server sent it (javascript off) and compares it with the chosen language.">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-LANG-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>

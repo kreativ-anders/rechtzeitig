@@ -4,6 +4,7 @@ import { siteOf } from "./text.ts";
 import type { UiLanguage } from "./rules.ts";
 
 export { loadYaml } from "./data.ts";
+import { loadYaml } from "./data.ts";
 export { isWebUrl } from "./text.ts";
 export { MANIFESTS } from "./repo/lockfiles.ts";
 
@@ -136,10 +137,15 @@ export const LEGAL_PAGES = [
   { concept: "imprint", check: "legal/imprint" },
   { concept: "privacy", check: "legal/privacy-policy" },
 ] as const;
+/** Pages a shop links besides those, read only by checks that need `sales: true`. */
+export const SALES_PAGES = [
+  { concept: "terms", check: "legal/terms-link" },
+  { concept: "withdrawal_info", check: "legal/withdrawal-instruction" },
+] as const;
+export type LegalConcept = (typeof LEGAL_PAGES)[number]["concept"] | (typeof SALES_PAGES)[number]["concept"];
 /** The page's name as a message (`messages.common.page_<concept>`). */
 export const pageName = (concept: LegalConcept): Msg => msg(`page_${concept}`);
-export type LegalConcept = (typeof LEGAL_PAGES)[number]["concept"];
-const legal = (concept: LegalConcept) => LEGAL_PAGES.find((p) => p.concept === concept)!;
+const legal = (concept: LegalConcept) => [...LEGAL_PAGES, ...SALES_PAGES].find((p) => p.concept === concept)!;
 
 /** The page a legal link leads to, if it was visited and loaded. */
 function loadedPage(ctx: ScanContext, concept: string): Page | undefined {
@@ -259,6 +265,17 @@ export interface Link {
   label: string;
   area: Area;
   button: boolean;
+  /** Rendered size and colors, only for buttons and links in the banner area (consent banners). */
+  style?: Style;
+}
+
+/** Rendered box of an element: CSS pixels, computed colors as rgb()/rgba(), background taken from the first non-transparent ancestor. */
+export interface Style {
+  width: number;
+  height: number;
+  fontSize: number;
+  color: string;
+  background: string;
 }
 
 export interface Request {
@@ -271,6 +288,10 @@ export interface Request {
   contentType?: string;
   cacheControl?: string;
   expires?: string;
+  /** Content-Encoding header of the answer (gzip, br, zstd ...). */
+  contentEncoding?: string;
+  /** Content-Length header of the answer in bytes, when the server sent one. */
+  contentLength?: number;
 }
 
 export interface Cookie {
@@ -279,6 +300,35 @@ export interface Cookie {
   secure: boolean;
   httpOnly: boolean;
   sameSite: string;
+  /** Expiry in seconds since the epoch; -1 for a session cookie. */
+  expires: number;
+}
+
+/** A <script src> or <link rel=stylesheet> in the DOM. */
+export interface Subresource {
+  url: string;
+  type: "script" | "stylesheet";
+  /** true when the element has a non-empty integrity attribute. */
+  integrity: boolean;
+}
+
+/** An <img> in the DOM. belowFold: its top edge is below the first viewport (1280x720). */
+export interface Image {
+  url: string;
+  /** Value of the loading attribute, lowercase, "" when missing. */
+  loading: string;
+  belowFold: boolean;
+  width: number;
+  height: number;
+}
+
+/** A <video> in the DOM, with its attributes as the page sets them. */
+export interface Video {
+  url: string;
+  autoplay: boolean;
+  muted: boolean;
+  controls: boolean;
+  loop: boolean;
 }
 
 export interface Form {
@@ -317,11 +367,17 @@ export interface Snapshot {
   links: Link[];
   forms: Form[];
   checkboxes: Checkbox[];
+  /** Short texts with a digit that are struck through (<del>, <s>, CSS line-through), such as old prices. At most 100. */
+  struck: string[];
   requests: Request[];
   /** Cookies this load added. */
   cookies: Cookie[];
   /** localStorage keys (only filled with JavaScript on). */
   storage: string[];
+  /** Scripts and stylesheets referenced in the DOM, with their integrity attribute. */
+  subresources: Subresource[];
+  images: Image[];
+  videos: Video[];
 }
 
 export interface Page {
@@ -455,4 +511,12 @@ export interface RepoContext {
   vulnerabilities: Vulnerability[];
   /** "ok", "ok (details for N of M)" when OSV sent details for only some issues, "skipped" (no network, tests) or an error message. */
   osv: string;
+}
+
+const MAX_LISTED = loadYaml<{ common: { max_listed: number } }>("data/thresholds.yml").common.max_listed;
+
+/** The first `common.max_listed` details (data/thresholds.yml), then one `more` finding with the count of the rest. The check's messages need `more`. */
+export function capped(details: Finding[]): Finding[] {
+  if (details.length <= MAX_LISTED) return details;
+  return [...details.slice(0, MAX_LISTED), { key: "more", params: { count: details.length - MAX_LISTED } }];
 }

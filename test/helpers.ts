@@ -38,7 +38,8 @@ const TYPES: Record<string, string> = {
 /**
  * Serves a folder. "/about" finds about.html or about/index.html.
  * An optional _headers.json in the folder adds response headers to every document,
- * an optional _static-headers.json to every other file.
+ * an optional _static-headers.json to every other file. Files are sent as stored, with their Content-Length,
+ * so a fixture can hold gzipped files and set Content-Encoding in the JSON.
  */
 export async function serve(dir: string): Promise<{ url: string; close: () => void }> {
   const json = (name: string) => (existsSync(join(dir, name)) ? JSON.parse(readFileSync(join(dir, name), "utf8")) : {});
@@ -50,8 +51,9 @@ export async function serve(dir: string): Promise<{ url: string; close: () => vo
       const file = resolve(dir, `.${candidate}`);
       if (file.startsWith(resolve(dir)) && existsSync(file) && statSync(file).isFile()) {
         const type = TYPES[extname(file)] ?? "application/octet-stream";
-        res.writeHead(200, { "content-type": type, ...(type.startsWith("text/html") ? extra : staticExtra) });
-        res.end(readFileSync(file));
+        const body = readFileSync(file);
+        res.writeHead(200, { "content-type": type, "content-length": body.length, ...(type.startsWith("text/html") ? extra : staticExtra) });
+        res.end(body);
         return;
       }
     }

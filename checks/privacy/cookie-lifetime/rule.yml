@@ -1,0 +1,20 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-CNS-008
+severity: low
+title:
+  de: "Cookies, die eine Einwilligung brauchen, leben höchstens 13 Monate"
+  en: "Cookies that need consent live at most 13 months"
+legal_basis:
+  de: "Art. 5 Abs. 1 lit. e DSGVO, § 25 TDDDG"
+  en: "Art. 5(1)(e) GDPR, § 25 TDDDG"
+how: "Warns when a known tracking cookie (`data/third-parties.yml`) or a cookie of another site set without clicks expires more than 397 days (13 months, `data/thresholds.yml`) after the scan; long-lived own cookies only give info."
+fix_hint:
+  de: "Laufzeit von Analyse- und Werbe-Cookies auf höchstens 13 Monate begrenzen und bei neuen Besuchen nicht automatisch verlängern."
+  en: "Limit the lifetime of analytics and advertising cookies to at most 13 months and do not extend it automatically on new visits."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://www.gesetze-im-internet.de/ttdsg/__25.html
+  - https://www.datenschutzkonferenz-online.de/media/oh/20221205_oh_Telemedien_2021_Version_1_1_Vorlage_104_DSK_final.pdf
+  - https://www.cnil.fr/sites/default/files/2026-01/recommandation_cookies_consolidee.pdf

@@ -1,0 +1,23 @@
+# Patterns for the shop checks (sales: true). Regular expressions, case-insensitive, matched against
+# normalized page text (lowercase, single spaces). Words such as "inkl. MwSt." are in lang/*.yml.
+
+# legal/order-button: form fields ("type:name", see Form.fields) for a postal address. A form with one
+# is an order form, not a contact or newsletter form. Email address fields do not count.
+address_field:
+  - '^[^:]*:(?!\S*mail)\S*(street|strasse|address|adresse|zip|plz|postcode|postal|city)'
+
+# A price in euros with cents: "19,99 €", "1.299,00 EUR", "€ 19.99". Amounts without cents
+# ("ab 49 €", "Stammkapital 25.000 €") are left out on purpose, so fewer pages count as shop pages.
+price:
+  - '\d{1,3}(?:[. ]\d{3})*,\d{2} ?(?:€|eur\b)'
+  - '(?:€|eur) ?\d{1,3}(?:[., ]\d{3})*[.,]\d{2}\b'
+
+# A quantity by weight or volume in a product name: "500 g", "1,5 l", "250 ml".
+# Not "180 g/m²" (fabric weight) and not "2 x".
+quantity:
+  - '\b\d+(?:[.,]\d+)? ?(?:mg|g|kg|ml|cl|l|liter|gramm|kilogramm)\b(?! ?/)'
+
+# A base price (Grundpreis) next to it: "17,98 €/kg", "1,99 € * / 100 g", "1 kg = 17,98 €", "€ 3.99 per l".
+unit_price:
+  - '\d(?: ?(?:€|eur))?[ *]*(?:/|je|pro|per)[ *]*(?:\d+(?:[.,]\d+)? ?)?(?:mg|g|kg|ml|cl|l|liter|gramm|kilogramm)\b'
+  - '\b(?:1|10|100|1000) ?(?:g|kg|ml|l) ?= ?(?:€|eur)? ?\d'

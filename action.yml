@@ -16,7 +16,7 @@ inputs:
     description: true if visitors can sign up for subscriptions (checks the cancellation button, § 312k BGB).
     default: "false"
   sales:
-    description: true if consumers buy or sign contracts on the site (checks the withdrawal button, § 356a BGB).
+    description: true if consumers buy or sign contracts on the site (turns on the shop checks for withdrawal, order button, prices and T&Cs).
     default: "false"
   modules:
     description: Comma list of check groups to run (legal, privacy, security, sustainability, accessibility, repo). Empty = all.

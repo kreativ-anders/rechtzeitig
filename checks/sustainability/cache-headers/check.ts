@@ -1,7 +1,6 @@
-import { defineCheck, loadYaml, msg, pass, siteRequests, skip, unique, warn, type Finding, type Request } from "../../../src/sdk.ts";
+import { capped, defineCheck, loadYaml, msg, pass, siteRequests, skip, unique, warn, type Finding, type Request } from "../../../src/sdk.ts";
 
 const STATIC = new Set(loadYaml<{ static: string[] }>("data/file-formats.yml").static);
-const MAX = 20;
 
 /** The answer lets a browser reuse the file without asking again: a positive max-age, immutable, or a future Expires. */
 function cached(r: Request, now: number): boolean {
@@ -23,8 +22,7 @@ export default defineCheck({
     const now = Date.now();
     const uncached = files.filter((r) => !cached(r, now));
     if (!uncached.length) return pass(msg("cached", { count: files.length }));
-    const details: Finding[] = uncached.slice(0, MAX).map((r) => ({ text: ctx.short(r.url) }));
-    if (uncached.length > MAX) details.push({ key: "more", params: { count: uncached.length - MAX } });
+    const details: Finding[] = capped(uncached.map((r) => ({ text: ctx.short(r.url) })));
     return warn(msg("uncached", { count: uncached.length, total: files.length }), details);
   },
 });

@@ -1,7 +1,7 @@
 import type { BrowserContext, Request as PlaywrightRequest } from "playwright";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage, isWebUrl, normalize } from "./text.ts";
-import { cookieKey, type Area, type Checkbox, type Form, type Link, type Request, type Snapshot } from "./sdk.ts";
+import { cookieKey, type Area, type Checkbox, type Form, type Image, type Link, type Request, type Snapshot, type Style, type Subresource, type Video } from "./sdk.ts";
 
 interface RawLink {
   href: string | null;
@@ -9,6 +9,7 @@ interface RawLink {
   extra: string;
   area: Area;
   button: boolean;
+  style?: Style;
 }
 
 interface RawForm {
@@ -26,13 +27,17 @@ interface Dom {
   links: RawLink[];
   forms: RawForm[];
   checkboxes: Checkbox[];
+  subresources: Subresource[];
+  images: Image[];
+  videos: Video[];
+  struck: string[];
 }
 
 // Runs inside the page. Works with JavaScript off too, because Playwright evaluates in its own world.
 // Everything it needs must be defined inside this function.
 function readDom(): Dom {
   // Caps, so a hostile page cannot fill the runner's memory or the report.
-  const MAX = { text: 200_000, label: 300, links: 2000, forms: 50, checkboxes: 500 };
+  const MAX = { text: 200_000, label: 300, links: 2000, forms: 50, checkboxes: 500, resources: 500, url: 2000, struck: 100 };
   const PERSONAL = /mail|name|phone|tel|address|adresse|street|strasse|zip|plz|birth|geburt/i;
   // querySelectorAll that also looks into open shadow roots, where many consent banners live.
   const all = (root: Document | ShadowRoot, selector: string): Element[] => {
@@ -50,12 +55,39 @@ function readDom(): Dom {
     : el.closest("header,[role=banner]") ? "header"
     : el.closest("main,[role=main]") ? "main"
     : "other";
+  // Size and colors as rendered. The background is the first non-transparent one up the tree, through shadow hosts.
+  const transparent = (c: string) => c === "transparent" || /^rgba\(.*,\s*0\)$/.test(c);
+  const styleOf = (el: Element): Style => {
+    const box = el.getBoundingClientRect();
+    const css = getComputedStyle(el);
+    let background = "rgb(255, 255, 255)";
+    for (let node: Element | null = el; node; ) {
+      const c = getComputedStyle(node).backgroundColor;
+      if (!transparent(c)) {
+        background = c;
+        break;
+      }
+      const root = node.getRootNode();
+      node = node.parentElement ?? (root instanceof ShadowRoot ? root.host : null);
+    }
+    return { width: Math.round(box.width), height: Math.round(box.height), fontSize: parseFloat(css.fontSize) || 0, color: css.color, background };
+  };
+  const urlOf = (value: string | null): string => {
+    try {
+      return value ? new URL(value, document.baseURI).href.slice(0, MAX.url) : "";
+    } catch {
+      return "";
+    }
+  };
   const toRaw = (el: Element): RawLink => {
     const isLink = el instanceof HTMLAnchorElement;
     const text = ((el as HTMLElement).innerText || (el as HTMLInputElement).value || el.textContent || "").trim().slice(0, MAX.label);
     const alts = Array.from(el.querySelectorAll("img[alt]")).map((img) => img.getAttribute("alt"));
     const extra = [el.getAttribute("aria-label"), el.getAttribute("title"), ...alts].filter(Boolean).join(" ").slice(0, MAX.label);
-    return { href: isLink ? (el as HTMLAnchorElement).href : null, text, extra, area: areaOf(el), button: !isLink };
+    const area = areaOf(el);
+    const raw: RawLink = { href: isLink ? (el as HTMLAnchorElement).href : null, text, extra, area, button: !isLink };
+    if (area === "banner") raw.style = styleOf(el);
+    return raw;
   };
   const LINKS = "a[href], button, [role=button], input[type=submit], input[type=button]";
 
@@ -81,6 +113,19 @@ function readDom(): Dom {
     return { label: label.trim().slice(0, 200), checked: box.checked, disabled: box.disabled };
   });
 
+  // Struck-through short texts with a digit: old prices next to a reduced one. <del>, <s>, <strike> or CSS line-through.
+  const struck: string[] = [];
+  for (const el of all(document, "body *")) {
+    if (struck.length >= MAX.struck) break;
+    // Cheap tests first; innerText and computed style only for short texts with a digit.
+    const raw = el.textContent ?? "";
+    if (raw.length > 80 || !/\d/.test(raw) || el.childElementCount > 2) continue;
+    const tag = el.tagName.toLowerCase();
+    if (!["del", "s", "strike"].includes(tag) && !getComputedStyle(el).textDecorationLine.includes("line-through")) continue;
+    const text = ((el as HTMLElement).innerText ?? raw).trim();
+    if (text) struck.push(text.slice(0, 40));
+  }
+
   // Header equivalents in <meta>. name="referrer" is stored as referrer-policy, like the header.
   const meta: Record<string, string> = {};
   for (const el of all(document, "meta[http-equiv], meta[name=referrer i]")) {
@@ -95,6 +140,33 @@ function readDom(): Dom {
     links: all(document, LINKS).slice(0, MAX.links).map(toRaw),
     forms,
     checkboxes,
+    struck: [...new Set(struck)],
+    subresources: all(document, "script[src], link[rel~=stylesheet i][href]").slice(0, MAX.resources).map((el) => ({
+      url: urlOf(el.getAttribute(el.tagName === "SCRIPT" ? "src" : "href")),
+      type: el.tagName === "SCRIPT" ? "script" as const : "stylesheet" as const,
+      integrity: !!el.getAttribute("integrity")?.trim(),
+    })),
+    images: all(document, "img").slice(0, MAX.resources).map((el) => {
+      const img = el as HTMLImageElement;
+      const box = img.getBoundingClientRect();
+      return {
+        url: urlOf(img.currentSrc || img.getAttribute("src")),
+        loading: (img.getAttribute("loading") ?? "").toLowerCase(),
+        belowFold: box.top + window.scrollY >= window.innerHeight,
+        width: Math.round(box.width),
+        height: Math.round(box.height),
+      };
+    }),
+    videos: all(document, "video").slice(0, MAX.resources).map((el) => {
+      const video = el as HTMLVideoElement;
+      return {
+        url: urlOf(video.currentSrc || video.getAttribute("src") || video.querySelector("source")?.getAttribute("src") || null),
+        autoplay: video.hasAttribute("autoplay"),
+        muted: video.hasAttribute("muted") || video.muted,
+        controls: video.hasAttribute("controls"),
+        loop: video.hasAttribute("loop"),
+      };
+    }),
   };
 }
 
@@ -113,6 +185,7 @@ function toLink(raw: RawLink): Link {
     label: normalize(`${raw.text} ${raw.extra} ${path}`),
     area: raw.area,
     button: raw.button,
+    ...(raw.style && { style: raw.style }),
   };
 }
 
@@ -123,7 +196,7 @@ const MAX_REQUESTS = 5000;
 
 /** A load that got nothing: status 0, no content. */
 export const emptySnapshot = (finalUrl: string): Snapshot => ({
-  status: 0, finalUrl, headers: {}, meta: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], requests: [], cookies: [], storage: [],
+  status: 0, finalUrl, headers: {}, meta: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
 });
 
 /** Loads a URL once in the given browser context and records what a visitor gets without clicking anything. */
@@ -149,6 +222,9 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     if (h["content-type"]) entry.contentType = h["content-type"];
     if (h["cache-control"]) entry.cacheControl = h["cache-control"];
     if (h["expires"]) entry.expires = h["expires"];
+    if (h["content-encoding"]) entry.contentEncoding = h["content-encoding"].toLowerCase();
+    const length = Number(h["content-length"]);
+    if (h["content-length"] && Number.isFinite(length)) entry.contentLength = length;
   });
   const before = new Set((await context.cookies()).map(cookieKey));
   const load = async (): Promise<Snapshot> => {
@@ -167,7 +243,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     // Only cookies this load added; the context keeps cookies from earlier pages.
     const cookies = (await context.cookies())
       .filter((c) => !before.has(cookieKey(c)))
-      .map((c) => ({ name: c.name, domain: c.domain.replace(/^\./, ""), secure: c.secure, httpOnly: c.httpOnly, sameSite: c.sameSite }));
+      .map((c) => ({ name: c.name, domain: c.domain.replace(/^\./, ""), secure: c.secure, httpOnly: c.httpOnly, sameSite: c.sameSite, expires: c.expires }));
     return {
       status: response?.status() ?? 0,
       finalUrl: page.url(),
@@ -178,9 +254,13 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       links: dom.links.map(toLink),
       forms: dom.forms.map(toForm),
       checkboxes: dom.checkboxes,
+      struck: dom.struck,
       requests,
       cookies,
       storage,
+      subresources: dom.subresources,
+      images: dom.images,
+      videos: dom.videos,
     };
   };
   // page.evaluate has no timeout: a page that never yields (while (true) {}) would block the scan forever.

@@ -26,6 +26,7 @@ authorities:
   - digital-strategy.ec.europa.eu
   - datenschutzkonferenz-online.de
   - bfdi.bund.de
+  - cnil.fr
   - bsi.bund.de
   - bundesnetzagentur.de
   - bundesfachstelle-barrierefreiheit.de
@@ -33,6 +34,7 @@ authorities:
 # Standards and specifications.
 standards:
   - w3.org
+  - whatwg.org
   - etsi.org
   - rfc-editor.org
   - cyclonedx.org
@@ -43,6 +45,8 @@ vendors:
   - osv.dev
   - supabase.com
   - firebase.google.com
+  - developers.google.com
+  - support.google.com
   - docs.github.com
   - hstspreload.org
   - thegreenwebfoundation.org
