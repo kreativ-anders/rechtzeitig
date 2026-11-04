@@ -3,17 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q='; style-src 'self'; img-src 'self' data:; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q=' https://api.pirsch.io; style-src 'self'; img-src 'self' data:; connect-src https://api.pirsch.io; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>rechtzeitig: German legal and security checks for your website</title>
-<meta name="description" content="A GitHub Action that checks your website and repository for German and EU legal basics, consent and security headers, and writes an SBOM.">
+<title>rechtzeitig: GitHub Action for imprint and security checks</title>
+<meta name="description" content="Open source GitHub Action that checks your website and repository for a German imprint, GDPR cookie consent, security headers and licenses, with an SBOM.">
 <link rel="canonical" href="https://rechtzeitig.dev/">
+<link rel="alternate" hreflang="en" href="https://rechtzeitig.dev/">
+<link rel="alternate" hreflang="de" href="https://rechtzeitig.dev/de/">
+<link rel="alternate" hreflang="x-default" href="https://rechtzeitig.dev/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="rechtzeitig">
-<meta property="og:title" content="rechtzeitig: German legal and security checks for your website">
-<meta property="og:description" content="A GitHub Action that checks your website and repository for German and EU legal basics, consent and security headers, and writes an SBOM.">
+<meta property="og:title" content="rechtzeitig: GitHub Action for imprint and security checks">
+<meta property="og:description" content="Open source GitHub Action that checks your website and repository for a German imprint, GDPR cookie consent, security headers and licenses, with an SBOM.">
 <meta property="og:url" content="https://rechtzeitig.dev/">
 <meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="de_DE">
 <meta property="og:image" content="https://rechtzeitig.dev/og.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -27,41 +31,220 @@
 <link rel="stylesheet" href="style.css">
 <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="site.js" defer></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "rechtzeitig", "description": "A GitHub Action that checks your website and repository for German and EU legal basics, consent and security headers, and writes an SBOM.", "url": "https://rechtzeitig.dev/", "codeRepository": "https://github.com/kreativ-anders/rechtzeitig", "programmingLanguage": "TypeScript", "runtimePlatform": "GitHub Actions", "license": "https://www.apache.org/licenses/LICENSE-2.0", "author": {"@type": "Organization", "name": "kreativ-anders", "url": "https://kreativ-anders.de"}}</script>
+<script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="w5NWUb6qKUHLnm9YxdgaEAxd7PflSnf6"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://rechtzeitig.dev/#website",
+      "url": "https://rechtzeitig.dev/",
+      "name": "rechtzeitig",
+      "inLanguage": ["en", "de"],
+      "publisher": {"@id": "https://kreativ-anders.de/#organization"}
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://kreativ-anders.de/#organization",
+      "name": "kreativ-anders",
+      "url": "https://kreativ-anders.de",
+      "founder": {"@id": "https://rechtzeitig.dev/#maintainer"}
+    },
+    {
+      "@type": "Person",
+      "@id": "https://rechtzeitig.dev/#maintainer",
+      "name": "Manuel Steinberg",
+      "worksFor": {"@id": "https://kreativ-anders.de/#organization"}
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://rechtzeitig.dev/#app",
+      "name": "rechtzeitig",
+      "description": "GitHub Action that checks a website and its repository for German and EU legal basics (imprint, privacy policy, cookie consent), security headers, TLS, licenses and known vulnerabilities, and writes a CycloneDX SBOM.",
+      "url": "https://rechtzeitig.dev/",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "GitHub Actions",
+      "isAccessibleForFree": true,
+      "license": "https://www.apache.org/licenses/LICENSE-2.0",
+      "image": "https://rechtzeitig.dev/og.png",
+      "author": {"@id": "https://kreativ-anders.de/#organization"},
+      "publisher": {"@id": "https://kreativ-anders.de/#organization"}
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://rechtzeitig.dev/#source",
+      "name": "rechtzeitig",
+      "description": "Source code of the rechtzeitig GitHub Action.",
+      "url": "https://github.com/kreativ-anders/rechtzeitig",
+      "codeRepository": "https://github.com/kreativ-anders/rechtzeitig",
+      "programmingLanguage": "TypeScript",
+      "runtimePlatform": "Node.js",
+      "license": "https://www.apache.org/licenses/LICENSE-2.0",
+      "author": {"@id": "https://kreativ-anders.de/#organization"},
+      "maintainer": {"@id": "https://rechtzeitig.dev/#maintainer"},
+      "targetProduct": {"@id": "https://rechtzeitig.dev/#app"}
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://rechtzeitig.dev/#faq",
+      "mainEntity": [
+        {"@type": "Question", "name": "How do I get the latest version?", "acceptedAnswer": {"@type": "Answer", "text": "The workflow pins a release by its commit SHA. Add .github/dependabot.yml to your repository: version: 2 updates: - package-ecosystem: github-actions directory: / schedule: interval: weekly Dependabot then opens a pull request whenever a new rechtzeitig release is out. Merge it and you have the new version."}},
+        {"@type": "Question", "name": "Can it run on a schedule or on every push?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The example workflow starts by hand, but rechtzeitig works with any trigger except pull_request_target. A scheduled run has no form, so the URL goes into the workflow file: Run on a schedule."}},
+        {"@type": "Question", "name": "Is this legal advice?", "acceptedAnswer": {"@type": "Answer", "text": "No. A finding is a technical hint with the place and the law it relates to, so you know where to look first. A clean report means these checks found nothing, not that the site is compliant."}},
+        {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default the names and versions of your locked packages go to osv.dev (vulnerabilities: false turns it off) and your host name to the Green Web Foundation (green-hosting: false). The full list: Data that leaves the runner."}},
+        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository, only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. See The report."}},
+        {"@type": "Question", "name": "How are the checks kept current?", "acceptedAnswer": {"@type": "Answer", "text": "Every check cites primary sources: laws, courts, authorities or standards, never blogs. Each records when its sources were last reviewed, and a check not reviewed for a year fails the project's tests, so it cannot be released. The releases list what changed."}}
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="top"><div class="top-inner">
   <a class="brand" href="./" aria-current="page"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig</a>
   <nav class="nav" aria-label="Main"><ul><li><a href="workflow.html">Workflow</a></li><li><a href="checks.html">Checks</a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
+  <nav class="langs" aria-label="Language"><a href="./" hreflang="en" lang="en" aria-current="page"><span aria-hidden="true">EN</span><span class="visually-hidden">English</span></a><a href="de/" hreflang="de" lang="de"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch</span></a></nav>
   <fieldset class="theme" hidden><legend>Colour theme</legend><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Light"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Light</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dark</span></label></fieldset>
 </div></header>
 
 <main id="content">
   <div class="hero">
     <div>
-      <h1>rechtzeitig</h1>
-      <p class="lead">A GitHub Action that checks your website and repository for German and EU legal basics and security, and writes an SBOM. Each finding names the place and the law.</p>
+      <h1>Imprint, consent and security checks for your website, as a GitHub Action</h1>
+      <p class="lead">rechtzeitig checks your website and repository for German and EU legal basics, security headers, TLS and licenses, and writes a CycloneDX SBOM. You get a list of places to fix, each with the law it relates to.</p>
+      <div class="actions">
+        <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Copy the workflow</a>
+<!-- hero-checks:start -->
+<a class="button secondary" href="checks.html">See all 56 checks</a>
+<!-- hero-checks:end -->
+      </div>
+      <p class="hero-note">Free and open source. No account, no secret, your code stays on the runner.</p>
     </div>
-    <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<strong>§</strong>in time</span></div>
+    <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<span class="mark">§</span>in time</span></div>
   </div>
 
+  <h2 id="covers">What it checks</h2>
   <ul class="covers">
-    <li><strong>Imprint and privacy policy</strong><p>DDG, GDPR</p></li>
-    <li><strong>Consent</strong><p>Third-party requests and cookies before consent, the banner, TDDDG</p></li>
-    <li><strong>Shop and contract buttons</strong><p>Cancellation, withdrawal, order button, prices, BGB, PAngV</p></li>
-    <li><strong>Security basics</strong><p>HTTPS, TLS, headers, exposed files, error pages, email spoofing</p></li>
-    <li><strong>Repository</strong><p>SBOM, known vulnerabilities, license conflicts, committed secrets, workflow risks</p></li>
-    <li><strong>Sustainability and accessibility</strong><p>Compression, caching, image formats, green hosting, page language</p></li>
+    <li><h3><a href="checks.html#legal">Imprint and privacy policy</a></h3><p>The German imprint (<span lang="de">Impressum</span>) under § 5 DDG and the privacy policy under the GDPR: linked, reachable, complete</p></li>
+    <li><h3><a href="checks.html#privacy">Cookie consent</a></h3><p>Third-party requests and cookies before consent, the banner, transfers outside the EU, § 25 TDDDG</p></li>
+    <li><h3><a href="checks.html?q=BGB">Shop and contract buttons</a></h3><p>Cancellation, withdrawal and order buttons under the BGB, and <a href="checks.html#LEG-DE-PRICE-001">prices under the PAngV</a>. In German: <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton prüfen</a></p></li>
+    <li><h3><a href="security.html">Security headers and TLS</a></h3><p>HTTPS, certificates, headers, exposed <code>.env</code> and <code>.git</code> files, error pages, SPF and DMARC</p></li>
+    <li><h3><a href="checks.html#repo">Repository and SBOM</a></h3><p>CycloneDX SBOM, known vulnerabilities from osv.dev, license conflicts, committed secrets, workflow risks</p></li>
+    <li><h3><a href="checks.html#sustainability">Sustainability</a> and <a href="checks.html#accessibility">accessibility</a></h3><p>Compression, caching, image formats, green hosting, page language, autoplay</p></li>
   </ul>
 
-  <h2>Start in two minutes</h2>
+  <section id="example" aria-labelledby="example-title">
+    <h2 id="example-title">What a report looks like</h2>
+    <p>The report lands on the run's summary page. Each row names the check, its rule id, the law it relates to and what was found; a warning comes with how to fix it.</p>
+    <figure class="report">
+      <div class="report-head">
+        <p class="report-target">rechtzeitig: https://rechtzeitig.dev/ + repository rechtzeitig</p>
+        <p class="report-tally"><span class="report-label">Later run</span> <span class="status s-warn">1 warn</span> <span class="status s-pass">27 pass</span> <span class="status s-skip">7 skip</span></p>
+      </div>
+      <ol class="report-rows">
+        <li class="report-row">
+          <span class="status s-warn">warn</span>
+          <div class="report-check"><a href="checks.html#LEG-EU-CNS-001">No third-party servers before consent</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-001</span> · Art. 6(1) GDPR, § 25 TDDDG, LG München I 3 O 17493/20 (Google Fonts)</span><span class="report-tag">current site</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
+          <div class="report-result">
+            <p>Contacted before consent: Pirsch. Check the legal basis and name them in the privacy policy.</p>
+            <ul><li>Pirsch (api.pirsch.io) on /, /imprint.html, /privacy.html, /workflow.html, /checks.html, /checks.html?q=BGB.</li></ul>
+            <p class="report-fix"><span class="report-label">Fix</span> Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent.</p>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-warn">warn</span>
+          <div class="report-check"><a href="checks.html#SEC-DNS-001">Domain is protected against email spoofing</a><span class="report-law"><span class="rule-id">SEC-DNS-001</span> · Art. 32 GDPR</span><span class="report-tag">earlier run</span></div>
+          <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>medium</span></span>
+          <div class="report-result">
+            <p>Others can send email in the name of rechtzeitig.dev.</p>
+            <ul><li>No SPF record. The domain sends no mail, so publish "v=spf1 -all".</li><li>No DMARC record at _dmarc.rechtzeitig.dev. Start with "v=DMARC1; p=quarantine".</li></ul>
+            <p class="report-fix"><span class="report-label">Fix</span> Publish SPF and DMARC records; a domain without mail needs only "v=spf1 -all" and "v=DMARC1; p=reject".</p>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-warn">warn</span>
+          <div class="report-check"><a href="checks.html#SEC-HDR-001">Security headers are set</a><span class="report-law"><span class="rule-id">SEC-HDR-001</span> · Art. 32 GDPR</span></div>
+          <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>low</span></span>
+          <div class="report-result">
+            <p>2 security headers missing.</p>
+            <ul><li><code>X-Content-Type-Options: nosniff</code></li><li><code>X-Frame-Options</code> or CSP <code>frame-ancestors</code></li></ul>
+            <p class="report-fix"><span class="report-label">Fix</span> Set the missing headers in the web server or hosting. CSP and Referrer-Policy also work as &lt;meta&gt; tags; frame-ancestors and nosniff only work as headers.</p>
+            <p class="report-note">Our note: still open, because GitHub Pages, which hosts this site, cannot set response headers.</p>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="checks.html#SEC-TLS-002">TLS certificate is valid and current</a><span class="report-law"><span class="rule-id">SEC-TLS-002</span> · Art. 32 GDPR</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
+          <div class="report-result"><p>TLSv1.3, certificate valid until 2027-02-02.</p></div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="checks.html#LEG-DE-IMP-002">Imprint contains the required details</a><span class="report-law"><span class="rule-id">LEG-DE-IMP-002</span> · § 5(1) DDG</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
+          <div class="report-result">
+            <p>Address, email and a second way of contact found in the imprint.</p>
+            <ul><li>No VAT ID (<span lang="de">USt-IdNr.</span>) found. Required if you have one (Nr. 6).</li></ul>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="checks.html#LEG-EU-CNS-002">No cookies before consent</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-002</span> · § 25 TDDDG, BGH I ZR 7/16 (<span lang="de">Cookie-Einwilligung II</span>)</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
+          <div class="report-result"><p>No cookies or local storage before consent.</p></div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="checks.html#LEG-DE-LIC-001">Dependency licenses fit the project</a><span class="report-law"><span class="rule-id">LEG-DE-LIC-001</span> · §§ 31, 69c UrhG</span></div>
+          <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>medium</span></span>
+          <div class="report-result">
+            <p>No conflicts with Apache-2.0 in 26 licensed components.</p>
+            <p class="report-note">In the CycloneDX 1.6 SBOM of this run: 23 Apache-2.0, 2 MIT, 1 ISC.</p>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="checks.html#SUS-JS-002">Start page shows content without JavaScript</a><span class="report-law"><span class="rule-id">SUS-JS-002</span> · Technical, no single law</span></div>
+          <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>low</span></span>
+          <div class="report-result"><p>Without JavaScript the start page shows 2568 of 2568 characters.</p></div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><span class="report-law"><span class="rule-id">SUS-HOST-001</span> · Technical, no single law</span><span class="report-tag">current site</span></div>
+          <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>low</span></span>
+          <div class="report-result"><p>The Green Web Foundation lists rechtzeitig.dev as green hosting, hosted by Fastly.</p></div>
+        </li>
+        <li class="report-row">
+          <span class="status s-skip">skip</span>
+          <div class="report-check"><a href="checks.html#LEG-EU-CNS-003">Consent banner can be rejected on the first layer</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-003</span> · § 25 TDDDG, Art. 7(3) GDPR</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
+          <div class="report-result"><p>No consent banner found on the start page.</p></div>
+        </li>
+      </ol>
+      <p class="report-scan">Scan: 5 pages in a fresh browser, no clicks, no consent given, GitHub-hosted runner (US data center). Repository: 311 files, 26 components from 1 lockfile.</p>
+      <figcaption>Excerpt from real runs on rechtzeitig.dev on 4 November 2026, results as written by rechtzeitig. Counts, scan line and unmarked rows (7 of 35) are from the later run. The row marked "earlier run" is from a run that morning. Rows marked "current site" show the result for the site as published now, with Pirsch statistics. Notes marked "Our note" are added for this page.</figcaption>
+    </figure>
+  </section>
+
+  <h2 id="start">Start in two minutes</h2>
   <ol class="steps">
     <li><span>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository.</span></li>
-    <li><span>Open <b>Actions → rechtzeitig → Run workflow</b>, enter your URL and pick the language.</span></li>
+    <li><span>Open <span class="ui">Actions → rechtzeitig → Run workflow</span>, enter your URL and pick the language.</span></li>
     <li><span>Read the report on the run's summary page.</span></li>
   </ol>
-  <p>No account and no secret needed. Inputs, secrets and report files: <a href="workflow.html">The workflow</a>. Every check and its law: <a href="checks.html">All checks</a>.</p>
+  <p>You start the example by hand. To check every week or on every push, add a trigger: <a href="workflow.html#schedule">Run on a schedule</a>. Inputs, secrets and report files: <a href="workflow.html">The workflow</a>.</p>
+
+  <section id="about" aria-labelledby="about-title">
+    <h2 id="about-title">Who maintains it</h2>
+    <p>rechtzeitig is made and maintained by Manuel Steinberg (<a href="https://kreativ-anders.de">kreativ-anders</a>) in Germany, as open source under Apache-2.0. Each <a href="https://github.com/kreativ-anders/rechtzeitig/releases">release</a> lists what changed.</p>
+<!-- reviewed:start -->
+<p class="reviewed">All 56 checks were last reviewed against their sources between <time datetime="2026-11-03">3 November 2026</time> and <time datetime="2026-11-04">4 November 2026</time>. A check not reviewed for a year fails the project's tests.</p>
+<!-- reviewed:end -->
+  </section>
 
   <h2 id="faq">Questions</h2>
   <div class="faq">
@@ -76,17 +259,25 @@ updates:
       interval: weekly</code></pre>
       <p>Dependabot then opens a pull request whenever a new rechtzeitig release is out. Merge it and you have the new version.</p>
     </details>
-    <details>
-      <summary>Is this legal advice?</summary>
-      <p>No. A finding is a technical hint to check, no finding is no all-clear.</p>
+    <details id="schedule">
+      <summary>Can it run on a schedule or on every push?</summary>
+      <p>Yes. The example workflow starts by hand, but rechtzeitig works with any trigger except <code>pull_request_target</code>. A scheduled run has no form, so the URL goes into the workflow file: <a href="workflow.html#schedule">Run on a schedule</a>.</p>
     </details>
-    <details>
+    <details id="advice">
+      <summary>Is this legal advice?</summary>
+      <p>No. A finding is a technical hint with the place and the law it relates to, so you know where to look first. A clean report means these checks found nothing, not that the site is compliant.</p>
+    </details>
+    <details id="data">
       <summary>Does any data leave the runner?</summary>
       <p>Your source code does not. By default the names and versions of your locked packages go to <a href="https://osv.dev">osv.dev</a> (<code>vulnerabilities: false</code> turns it off) and your host name to the Green Web Foundation (<code>green-hosting: false</code>). The full list: <a href="workflow.html#data">Data that leaves the runner</a>.</p>
     </details>
-    <details>
+    <details id="visibility">
       <summary>Who can see the report?</summary>
       <p>On a public repository, only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. See <a href="workflow.html#report">The report</a>.</p>
+    </details>
+    <details id="current">
+      <summary>How are the checks kept current?</summary>
+      <p>Every check cites primary sources: laws, courts, authorities or standards, never blogs. Each records when its sources were last reviewed, and a check not reviewed for a year fails the project's tests, so it cannot be released. The <a href="https://github.com/kreativ-anders/rechtzeitig/releases">releases</a> list what changed.</p>
     </details>
   </div>
 </main>

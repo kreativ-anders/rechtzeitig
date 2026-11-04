@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, runChecks, selectModules } from "./runner.ts";
 import { LANGUAGES, SWITCHES, validateRule, type Rule, type Switch } from "./rules.ts";
-import { checksHtml, switchesHtml } from "./docs.ts";
+import { checksHtml, heroChecksHtml, reviewedHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, pass } from "./sdk.ts";
 import { render } from "./messages.ts";
@@ -48,11 +48,27 @@ test("modules select checks by folder", async () => {
   assert.ok(ids.length > 0 && ids.every((id) => id.startsWith("legal/")));
 });
 
-test("docs/checks.html and docs/workflow.html are up to date (npm run docs)", async () => {
+test("the generated parts of docs/ are up to date (npm run docs)", async () => {
   const checks = await loadChecks();
   const page = (name: string) => readFileSync(new URL(`../docs/${name}`, import.meta.url), "utf8");
   assert.ok(page("checks.html").includes(checksHtml(checks)), "run: npm run docs");
   for (const name of ["checks.html", "workflow.html"]) assert.ok(page(name).includes(switchesHtml(checks)), `run: npm run docs (${name})`);
+  for (const html of [heroChecksHtml(checks), reviewedHtml(checks)]) assert.ok(page("index.html").includes(html), "run: npm run docs (index.html)");
+  for (const html of [heroChecksHtml(checks, "de"), reviewedHtml(checks, "de")]) assert.ok(page("de/index.html").includes(html), "run: npm run docs (de/index.html)");
+  assert.ok(page("security.html").includes(topicRulesHtml(securityChecks(checks))), "run: npm run docs (security.html)");
+  assert.ok(page("de/kuendigungsbutton.html").includes(topicRulesHtml(shopChecks(checks), "de")), "run: npm run docs (de/kuendigungsbutton.html)");
+});
+
+for (const name of ["index.html", "de/index.html"]) test(`the FAQPage data in docs/${name} matches the visible questions`, () => {
+  const html = readFileSync(new URL(`../docs/${name}`, import.meta.url), "utf8");
+  const plain = (s: string) => s.replace(/<[^>]+>/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/\s+/g, " ").replace(/ ([.,:;)])/g, "$1").replace(/\( /g, "(").trim();
+  const faq = html.slice(html.indexOf('<div class="faq">'));
+  const visible = [...faq.matchAll(/<details[^>]*>\s*<summary>(.*?)<\/summary>(.*?)<\/details>/gs)].map((m) => [plain(m[1]), plain(m[2])]);
+  const ld = JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)![1]);
+  const page = ld["@graph"].find((n: { "@type": string }) => n["@type"] === "FAQPage");
+  const data = page.mainEntity.map((q: { name: string; acceptedAnswer: { text: string } }) => [q.name, plain(q.acceptedAnswer.text)]);
+  assert.ok(visible.length > 0);
+  assert.deepEqual(data, visible);
 });
 
 test("a broken check becomes an error and the others still run", async () => {

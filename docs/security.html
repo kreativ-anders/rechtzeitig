@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q=' https://api.pirsch.io; style-src 'self'; img-src 'self' data:; connect-src https://api.pirsch.io; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Security headers, TLS and exposed files in CI · rechtzeitig</title>
+<meta name="description" content="GitHub Action that checks security headers, TLS certificate expiry, SPF and DMARC and exposed .env and .git files on every run. No API key, open source.">
+<link rel="canonical" href="https://rechtzeitig.dev/security.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rechtzeitig">
+<meta property="og:title" content="Security headers, TLS and exposed files in CI · rechtzeitig">
+<meta property="og:description" content="GitHub Action that checks security headers, TLS certificate expiry, SPF and DMARC and exposed .env and .git files on every run. No API key, open source.">
+<meta property="og:url" content="https://rechtzeitig.dev/security.html">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://rechtzeitig.dev/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="rechtzeitig checks your repository, and optionally your website, for German and EU legal basics and security. The source code stays on your runner.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="site.js" defer></script>
+<script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="w5NWUb6qKUHLnm9YxdgaEAxd7PflSnf6"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/security.html#webpage", "url": "https://rechtzeitig.dev/security.html", "name": "Security headers, TLS and exposed files in CI", "description": "GitHub Action that checks security headers, TLS certificate expiry, SPF and DMARC and exposed .env and .git files on every run. No API key, open source.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/security.html#breadcrumb"}, "headline": "Security headers, TLS and exposed files in CI", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-04"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/security.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Security checks", "item": "https://rechtzeitig.dev/security.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top"><div class="top-inner">
+  <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig</a>
+  <nav class="nav" aria-label="Main"><ul><li><a href="workflow.html">Workflow</a></li><li><a href="checks.html">Checks</a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
+  <nav class="langs" aria-label="Language"><a href="security.html" hreflang="en" lang="en" aria-current="page"><span aria-hidden="true">EN</span><span class="visually-hidden">English</span></a><a href="de/" hreflang="de" lang="de"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch</span></a></nav>
+  <fieldset class="theme" hidden><legend>Colour theme</legend><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Light"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Light</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dark</span></label></fieldset>
+</div></header>
+
+<main id="content" class="narrow">
+  <h1>Security headers, TLS and exposed files, checked in CI</h1>
+  <p class="lead">rechtzeitig is a GitHub Action that checks your site's security headers, HTTPS and TLS certificate expiry, SPF and DMARC, and looks for exposed <code>.env</code> and <code>.git</code> files on every run. No API key and no account: the checks talk only to your site and its DNS.</p>
+
+  <h2 id="checked">What is checked</h2>
+  <p>These are the website checks of the <code>security</code> group. Each links to its card on the <a href="checks.html#security">checks page</a> with its sources. The list is generated from the rules, so it matches what runs. Committed secrets and open database rules are checked in the <a href="checks.html#repo">repository group</a>.</p>
+<!-- topic-rules:start -->
+<ul class="topic-rules">
+<li class="topic-rule" id="SEC-HDR-002">
+<h3><a href="checks.html#SEC-HDR-002">Cookies use secure flags</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-HDR-002</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Checks Secure on every cookie set without login (HTTPS sites, and always with <code>SameSite=None</code>) and HttpOnly on cookies whose name looks like a session (<code>data/cookies.yml</code>); cookies of other sites only give info.</p>
+<p><span class="report-label">Fix</span> Set cookies with Secure; session cookies also with HttpOnly and SameSite=Lax.</p>
+</li>
+<li class="topic-rule" id="SEC-HDR-005">
+<h3><a href="checks.html#SEC-HDR-005">CORS does not share answers with credentials to any site</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-HDR-005</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Reads the response headers of the site's own pages and fails when Access-Control-Allow-Credentials: true comes with Access-Control-Allow-Origin * or null; it sends no foreign Origin, so a server that mirrors any Origin is not detected.</p>
+<p><span class="report-label">Fix</span> Send Access-Control-Allow-Credentials only with a fixed list of trusted origins, never with * or null, and do not copy the Origin from the request unchecked. If the pages need no CORS, leave out both headers.</p>
+</li>
+<li class="topic-rule" id="SEC-DNS-001">
+<h3><a href="checks.html#SEC-DNS-001">Domain is protected against email spoofing</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-DNS-001</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Reads the SPF TXT record of the registrable domain and the DMARC record at <code>_dmarc.</code>; flags missing ones, SPF that allows every server (<code>+all</code>, <code>?all</code>) and DMARC <code>p=none</code>.</p>
+<p><span class="report-label">Fix</span> Publish SPF and DMARC records; a domain without mail needs only &quot;v=spf1 -all&quot; and &quot;v=DMARC1; p=reject&quot;.</p>
+</li>
+<li class="topic-rule" id="SEC-EXP-002">
+<h3><a href="checks.html#SEC-EXP-002">Error pages reveal no internals</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-EXP-002</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Requests the paths from <code>data/probes.yml</code>, searches the visible text of the error paths for the traces in <code>data/leaks.yml</code>, and the headers of the start page and every probed path for the version headers in <code>data/leaks.yml</code> (<code>server</code> only with a version number).</p>
+<p><span class="report-label">Fix</span> Turn off error output in production (for example display_errors=0, DEBUG=false) and remove version headers.</p>
+</li>
+<li class="topic-rule" id="SEC-EXP-001">
+<h3><a href="checks.html#SEC-EXP-001">No private files are public</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-EXP-001</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Requests the file paths from <code>data/probes.yml</code>; a 200 whose body matches <code>expect</code> fails.</p>
+<p><span class="report-label">Fix</span> Remove the files from the web server or block access to dot files and backups; change any credentials they contain.</p>
+</li>
+<li class="topic-rule" id="SEC-HDR-001">
+<h3><a href="checks.html#SEC-HDR-001">Security headers are set</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-HDR-001</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Reads the response headers of the start page (HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame protection), accepts CSP and Referrer-Policy from &lt;meta&gt; tags, which browsers apply too, and HSTS as given for top-level domains in <code>data/hsts-preload.yml</code>.</p>
+<p><span class="report-label">Fix</span> Set the missing headers in the web server or hosting. CSP and Referrer-Policy also work as &lt;meta&gt; tags; frame-ancestors and nosniff only work as headers.</p>
+</li>
+<li class="topic-rule" id="SEC-DNS-002">
+<h3><a href="checks.html#SEC-DNS-002">www and non-www addresses both work</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-DNS-002</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Requests the domain with <code>www.</code> added or removed and follows redirects.</p>
+<p><span class="report-label">Fix</span> Get a valid certificate for both addresses and redirect one to the other.</p>
+</li>
+<li class="topic-rule" id="SEC-TLS-001">
+<h3><a href="checks.html#SEC-TLS-001">Site uses HTTPS</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-TLS-001</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Checks that the start page is HTTPS and that plain <code>http://</code> redirects to HTTPS.</p>
+<p><span class="report-label">Fix</span> Enforce HTTPS and redirect http:// to https:// with a 301.</p>
+</li>
+<li class="topic-rule" id="SEC-HDR-004">
+<h3><a href="checks.html#SEC-HDR-004">Permissions-Policy and Cross-Origin-Opener-Policy are set</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-HDR-004</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Reads the response headers of the start page for Permissions-Policy and a Cross-Origin-Opener-Policy other than unsafe-none, and names both when they appear only in &lt;meta&gt;, where browsers ignore them, or COOP only as report-only.</p>
+<p><span class="report-label">Fix</span> Set Permissions-Policy in the web server and turn off features the site does not use (for example camera=(), microphone=(), geolocation=()), plus Cross-Origin-Opener-Policy: same-origin, or same-origin-allow-popups when the site opens login or payment windows.</p>
+</li>
+<li class="topic-rule" id="SEC-TLS-003">
+<h3><a href="checks.html#SEC-TLS-003">No unencrypted resources on HTTPS pages</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-TLS-003</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Lists <code>http://</code> requests made by pages of an HTTPS site.</p>
+<p><span class="report-label">Fix</span> Load every resource over https://.</p>
+</li>
+<li class="topic-rule" id="SEC-CVD-002">
+<h3><a href="checks.html#SEC-CVD-002">security.txt names a contact for vulnerabilities</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-CVD-002</span> · <span class="rule-law none">Technical, no single law</span></p>
+<p><span class="report-label">How it is checked</span> Requests <code>/.well-known/security.txt</code> (in <code>data/probes.yml</code>) and reads its <code>Contact</code> and <code>Expires</code> fields.</p>
+<p><span class="report-label">Fix</span> Publish /.well-known/security.txt with Contact: (email or URL) and Expires: (at most a year ahead), and renew it before it expires.</p>
+</li>
+<li class="topic-rule" id="SEC-HDR-003">
+<h3><a href="checks.html#SEC-HDR-003">Scripts and stylesheets from other sites carry an integrity hash</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-HDR-003</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same URL (<code>data/subresource-integrity.yml</code>).</p>
+<p><span class="report-label">Fix</span> Load fixed versions of other sites' files with integrity=&quot;sha384-…&quot; and crossorigin=&quot;anonymous&quot; (most CDNs show the hash), or host the file yourself.</p>
+</li>
+<li class="topic-rule" id="SEC-TLS-002">
+<h3><a href="checks.html#SEC-TLS-002">TLS certificate is valid and current</a></h3>
+<p class="rule-meta"><span class="rule-id">SEC-TLS-002</span> · <span class="rule-law">Art. 32 GDPR</span></p>
+<p><span class="report-label">How it is checked</span> Opens a TLS connection to the host and reads protocol, trust and expiry date of the certificate, warning 14 days before expiry (<code>data/thresholds.yml</code>).</p>
+<p><span class="report-label">Fix</span> Renew the certificate automatically (for example Let's Encrypt) and allow only TLS 1.2 and 1.3.</p>
+</li>
+</ul>
+<!-- topic-rules:end -->
+
+  <section id="example" aria-labelledby="example-title">
+    <h2 id="example-title">What a finding looks like</h2>
+    <p>Each finding names the rule, the law it relates to, what was found and how to fix it.</p>
+    <figure class="report">
+      <ol class="report-rows">
+        <li class="report-row">
+          <span class="status s-warn">warn</span>
+          <div class="report-check"><a href="checks.html#SEC-HDR-001">Security headers are set</a><span class="report-law"><span class="rule-id">SEC-HDR-001</span> · Art. 32 GDPR</span></div>
+          <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>low</span></span>
+          <div class="report-result">
+            <p>2 security headers missing.</p>
+            <ul><li><code>X-Content-Type-Options: nosniff</code></li><li><code>X-Frame-Options</code> or CSP <code>frame-ancestors</code></li></ul>
+            <p class="report-fix"><span class="report-label">Fix</span> Set the missing headers in the web server or hosting. CSP and Referrer-Policy also work as &lt;meta&gt; tags; frame-ancestors and nosniff only work as headers.</p>
+            <p class="report-note">Our note: still open, because GitHub Pages, which hosts this site, cannot set response headers.</p>
+          </div>
+        </li>
+      </ol>
+      <figcaption>One row from a real run on rechtzeitig.dev, 4 November 2026. The full example is on the <a href="./#example">start page</a>.</figcaption>
+    </figure>
+  </section>
+
+  <h2 id="setup">Run it in CI</h2>
+  <ol class="steps">
+    <li><span>Copy the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> to <code>.github/workflows/rechtzeitig.yml</code>. It pins a release by its commit SHA.</span></li>
+    <li><span>To run only these checks, set <code>modules</code> in the rechtzeitig step, and give <code>url</code> a fallback for runs without the form:</span></li>
+  </ol>
+  <pre><code>url: ${{ inputs.url || 'https://www.example.de/' }}
+modules: security
+fail-on: ${{ inputs.fail-on || 'fail' }} # red when a check fails</code></pre>
+  <p>Add a schedule next to <code>workflow_dispatch</code> to catch an expiring certificate or a header lost in a deploy:</p>
+  <pre><code>on:
+  workflow_dispatch:
+    # inputs as in the example
+  schedule:
+    - cron: "0 6 * * 1" # Mondays, 06:00 UTC</code></pre>
+  <p>All inputs, <code>fail-on</code> and the Security tab upload: <a href="workflow.html#inputs">The workflow</a>. Findings are technical hints with the law they relate to, not legal advice.</p>
+</main>
+
+<footer><div class="inner">
+  <p class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</p>
+  <nav aria-label="Legal and source"><ul>
+    <li><a href="imprint.html">Imprint <span lang="de">(Impressum)</span></a></li>
+    <li><a href="privacy.html">Privacy policy <span lang="de">(Datenschutz)</span></a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/LICENSE">Apache-2.0</a></li>
+  </ul></nav>
+</div></footer>
+</body>
+</html>

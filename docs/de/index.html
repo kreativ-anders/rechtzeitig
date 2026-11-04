@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q=' https://api.pirsch.io; style-src 'self'; img-src 'self' data:; connect-src https://api.pirsch.io; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>rechtzeitig: Impressum- und DSGVO-Check als GitHub Action</title>
+<meta name="description" content="Open-Source-GitHub-Action, die Website und Repository prüft: Impressum, Cookies vor Einwilligung nach § 25 TDDDG, Security-Header, Lizenzen und SBOM.">
+<link rel="canonical" href="https://rechtzeitig.dev/de/">
+<link rel="alternate" hreflang="en" href="https://rechtzeitig.dev/">
+<link rel="alternate" hreflang="de" href="https://rechtzeitig.dev/de/">
+<link rel="alternate" hreflang="x-default" href="https://rechtzeitig.dev/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rechtzeitig">
+<meta property="og:title" content="rechtzeitig: Impressum- und DSGVO-Check als GitHub Action">
+<meta property="og:description" content="Open-Source-GitHub-Action, die Website und Repository prüft: Impressum, Cookies vor Einwilligung nach § 25 TDDDG, Security-Header, Lizenzen und SBOM.">
+<meta property="og:url" content="https://rechtzeitig.dev/de/">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:image" content="https://rechtzeitig.dev/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="rechtzeitig prüft Ihr Repository und optional Ihre Website auf deutsche und EU-rechtliche Grundlagen und Sicherheit. Der Quellcode bleibt auf Ihrem Runner.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../style.css">
+<script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="../site.js" defer></script>
+<script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="w5NWUb6qKUHLnm9YxdgaEAxd7PflSnf6"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://rechtzeitig.dev/de/#webpage",
+      "url": "https://rechtzeitig.dev/de/",
+      "name": "rechtzeitig: Impressum- und DSGVO-Check als GitHub Action",
+      "description": "Open-Source-GitHub-Action, die Website und Repository prüft: Impressum, Cookies vor Einwilligung nach § 25 TDDDG, Security-Header, Lizenzen und SBOM.",
+      "inLanguage": "de",
+      "isPartOf": {
+        "@id": "https://rechtzeitig.dev/#website"
+      },
+      "about": {
+        "@id": "https://rechtzeitig.dev/#app"
+      },
+      "publisher": {
+        "@id": "https://kreativ-anders.de/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://rechtzeitig.dev/de/#faq",
+      "inLanguage": "de",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Wie bekomme ich die neueste Version?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Der Workflow pinnt ein Release über seinen Commit-SHA. Dafür.github/dependabot.yml ins Repository legen: version: 2 updates: - package-ecosystem: github-actions directory: / schedule: interval: weekly Dependabot öffnet dann bei jedem neuen rechtzeitig-Release einen Pull Request. Nach dem Merge läuft die neue Version."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Läuft es auch nach Zeitplan oder bei jedem Push?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja. Der Beispiel-Workflow startet von Hand, rechtzeitig funktioniert aber mit jedem Trigger außer pull_request_target. Ein geplanter Lauf hat kein Formular, deshalb steht die URL in der Workflow-Datei: Zeitplan einrichten."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Ist das Rechtsberatung?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nein. Ein Befund ist ein technischer Hinweis mit Fundstelle und dem Gesetz, auf das er sich bezieht, damit klar ist, wo zuerst hinzusehen ist. Ein Bericht ohne Befunde heißt, dass diese Prüfungen nichts gefunden haben, nicht, dass die Website rechtskonform ist."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Verlassen Daten den Runner?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Der Quellcode nicht. Standardmäßig gehen Namen und Versionen der Pakete aus den Lockfiles an osv.dev (vulnerabilities: false schaltet das ab) und der Hostname an die Green Web Foundation (green-hosting: false). Die vollständige Liste: Daten, die den Runner verlassen."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wer kann den Bericht sehen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In einem öffentlichen Repository standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten. Siehe Der Bericht."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie bleiben die Prüfungen aktuell?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Jede Prüfung nennt Primärquellen: Gesetze, Gerichte, Behörden oder Standards, keine Blogs. Jede hält fest, wann ihre Quellen zuletzt abgeglichen wurden. Eine Prüfung, die ein Jahr lang nicht abgeglichen wurde, lässt die Tests des Projekts scheitern und kann so nicht veröffentlicht werden. Die Releases nennen, was sich geändert hat."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#content">Zum Inhalt springen</a>
+<header class="top"><div class="top-inner">
+  <a class="brand" href="./" aria-current="page"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig</a>
+  <nav class="nav" aria-label="Hauptmenü"><ul><li><a href="../workflow.html" hreflang="en">Workflow<span class="nav-lang" aria-hidden="true">EN</span><span class="visually-hidden"> (Englisch)</span></a></li><li><a href="../checks.html" hreflang="en">Checks<span class="nav-lang" aria-hidden="true">EN</span><span class="visually-hidden"> (Englisch)</span></a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
+  <nav class="langs" aria-label="Sprache"><a href="../" hreflang="en" lang="en"><span aria-hidden="true">EN</span><span class="visually-hidden">English</span></a><a href="./" hreflang="de" lang="de" aria-current="page"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch</span></a></nav>
+  <fieldset class="theme" hidden><legend>Farbschema</legend><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Hell"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Hell</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dunkel"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dunkel</span></label></fieldset>
+</div></header>
+
+<main id="content">
+  <div class="hero">
+    <div>
+      <h1>Impressum, Cookie-Einwilligung und Sicherheit prüfen, als GitHub Action</h1>
+      <p class="lead">rechtzeitig ist ein DSGVO-Check als GitHub Action: Die Action prüft Website und Repository auf deutsche und EU-rechtliche Grundlagen, Security-Header, TLS und Lizenzen und schreibt eine CycloneDX-SBOM. Heraus kommt eine Liste von Stellen zum Beheben, jede mit dem Gesetz, auf das sie sich bezieht.</p>
+      <div class="actions">
+        <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Workflow kopieren</a>
+<!-- hero-checks:start -->
+<a class="button secondary" href="../checks.html" hreflang="en">Alle 56 Prüfungen ansehen</a>
+<!-- hero-checks:end -->
+      </div>
+      <p class="hero-note">Kostenlos und Open Source. Kein Konto, kein Secret, der Code bleibt auf dem Runner.</p>
+    </div>
+    <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>geprüft<span class="mark">§</span>rechtzeitig</span></div>
+  </div>
+
+  <h2 id="covers">Was geprüft wird</h2>
+  <p>Wie eine DSGVO-Checkliste für Webentwickler, nur arbeitet sie der Workflow ab: Jeder Punkt ist eine Prüfung mit fester ID, Fundstelle und Rechtsgrundlage. Der Impressum-Checker und alle anderen Prüfungen sind Open Source.</p>
+  <ul class="covers">
+    <li><h3><a href="../checks.html#legal" hreflang="en">Rechtstexte</a></h3><p>Das Impressum nach § 5 DDG und die Datenschutzerklärung nach DSGVO: verlinkt, erreichbar, vollständig</p></li>
+    <li><h3><a href="../checks.html#privacy" hreflang="en">Cookie-Einwilligung</a></h3><p>Tracking und Cookies vor der Einwilligung nach § 25 TDDDG, Google Fonts und andere fremde Server, das Banner, Übermittlungen außerhalb der EU</p></li>
+    <li><h3><a href="kuendigungsbutton.html">Shop- und Vertragsbuttons</a></h3><p>Kündigungsbutton nach § 312k BGB, Widerrufsbutton, „zahlungspflichtig bestellen“ und Preise mit Grundpreis nach PAngV</p></li>
+    <li><h3><a href="../security.html" hreflang="en">Security-Header und TLS</a></h3><p>Security-Header-Check automatisch bei jedem Lauf: HTTPS, Zertifikate, offene <code>.env</code>- und <code>.git</code>-Dateien, Fehlerseiten, SPF und DMARC</p></li>
+    <li><h3><a href="../checks.html#repo" hreflang="en">Repository und SBOM</a></h3><p>CycloneDX-SBOM, bekannte Schwachstellen aus osv.dev, Lizenzkonflikte, Geheimnisse im Code wie API-Keys unter öffentlichen Präfixen, die ins Frontend-Bundle gelangen, Supabase-Tabellen ohne Row Level Security, Workflow-Risiken</p></li>
+    <li><h3><a href="../checks.html#sustainability" hreflang="en">Nachhaltigkeit</a> und <a href="../checks.html#accessibility" hreflang="en">Barrierefreiheit</a></h3><p>Kompression, Caching, Bildformate, grünes Hosting, Seitensprache, Autoplay</p></li>
+  </ul>
+
+  <section id="example" aria-labelledby="example-title">
+    <h2 id="example-title">So sieht ein Bericht aus</h2>
+    <p>Der Bericht steht auf der Zusammenfassung des Laufs. Jede Zeile nennt die Prüfung, ihre Regel-ID, das Gesetz, auf das sie sich bezieht, und den Befund; eine Warnung kommt mit einem Hinweis zur Behebung.</p>
+    <figure class="report">
+      <div class="report-head">
+        <p class="report-target">rechtzeitig: https://rechtzeitig.dev/ + repository rechtzeitig</p>
+        <p class="report-tally"><span class="report-label">Späterer Lauf</span> <span class="status s-warn">1 warn</span> <span class="status s-pass">27 pass</span> <span class="status s-skip">7 skip</span></p>
+      </div>
+      <ol class="report-rows">
+        <li class="report-row">
+          <span class="status s-warn">warn</span>
+          <div class="report-check"><a href="../checks.html#LEG-EU-CNS-001" hreflang="en">Keine fremden Server vor Einwilligung</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-001</span> · Art. 6 Abs. 1 DSGVO, § 25 TDDDG, LG München I 3 O 17493/20 (Google Fonts)</span><span class="report-tag">aktuelle Website</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
+          <div class="report-result">
+            <p>Vor der Einwilligung kontaktiert: Pirsch. Rechtsgrundlage prüfen und in der Datenschutzerklärung nennen.</p>
+            <ul><li>Pirsch (api.pirsch.io) auf /, /imprint.html, /privacy.html, /workflow.html, /checks.html, /checks.html?q=BGB.</li></ul>
+            <p class="report-fix"><span class="report-label">Behebung</span> Schriften, Skripte und Bibliotheken selbst hosten; Einbettungen (Videos, Karten) erst nach Klick oder Einwilligung laden.</p>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-warn">warn</span>
+          <div class="report-check"><a href="../checks.html#SEC-DNS-001" hreflang="en">Domain ist gegen E-Mail-Spoofing geschützt</a><span class="report-law"><span class="rule-id">SEC-DNS-001</span> · Art. 32 DSGVO</span><span class="report-tag">früherer Lauf</span></div>
+          <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>mittel</span></span>
+          <div class="report-result">
+            <p>Andere können E-Mails im Namen von rechtzeitig.dev versenden.</p>
+            <ul><li>Kein SPF-Eintrag. Die Domain versendet keine Mails, also "v=spf1 -all" veröffentlichen.</li><li>Kein DMARC-Eintrag unter _dmarc.rechtzeitig.dev. Mit "v=DMARC1; p=quarantine" beginnen.</li></ul>
+            <p class="report-fix"><span class="report-label">Behebung</span> SPF- und DMARC-Eintrag im DNS anlegen; ohne Mailversand reichen "v=spf1 -all" und "v=DMARC1; p=reject".</p>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-warn">warn</span>
+          <div class="report-check"><a href="../checks.html#SEC-HDR-001" hreflang="en">Sicherheits-Header sind gesetzt</a><span class="report-law"><span class="rule-id">SEC-HDR-001</span> · Art. 32 DSGVO</span></div>
+          <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>niedrig</span></span>
+          <div class="report-result">
+            <p>2 Sicherheits-Header fehlen.</p>
+            <ul><li><code>X-Content-Type-Options: nosniff</code></li><li><code>X-Frame-Options</code> oder CSP <code>frame-ancestors</code></li></ul>
+            <p class="report-fix"><span class="report-label">Behebung</span> Fehlende Header im Webserver oder Hosting setzen. CSP und Referrer-Policy gehen notfalls auch als &lt;meta&gt;, frame-ancestors und nosniff nur als Header.</p>
+            <p class="report-note">Unsere Anmerkung: noch offen, weil GitHub Pages, das diese Website ausliefert, keine Response-Header setzen kann.</p>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="../checks.html#SEC-TLS-002" hreflang="en">TLS-Zertifikat ist gültig und aktuell</a><span class="report-law"><span class="rule-id">SEC-TLS-002</span> · Art. 32 DSGVO</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
+          <div class="report-result"><p>TLSv1.3, Zertifikat gültig bis 2027-02-02.</p></div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="../checks.html#LEG-DE-IMP-002" hreflang="en">Impressum enthält die Pflichtangaben</a><span class="report-law"><span class="rule-id">LEG-DE-IMP-002</span> · § 5 Abs. 1 DDG</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
+          <div class="report-result">
+            <p>Anschrift, E-Mail und ein zweiter Kontaktweg im Impressum gefunden.</p>
+            <ul><li>Keine USt-IdNr. gefunden. Pflicht, falls vorhanden (Nr. 6).</li></ul>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="../checks.html#LEG-EU-CNS-002" hreflang="en">Keine Cookies vor Einwilligung</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-002</span> · § 25 TDDDG, BGH I ZR 7/16 (Cookie-Einwilligung II)</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
+          <div class="report-result"><p>Keine Cookies und kein lokaler Speicher vor der Einwilligung.</p></div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="../checks.html#LEG-DE-LIC-001" hreflang="en">Lizenzen der Abhängigkeiten passen zum Projekt</a><span class="report-law"><span class="rule-id">LEG-DE-LIC-001</span> · §§ 31, 69c UrhG</span></div>
+          <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>mittel</span></span>
+          <div class="report-result">
+            <p>Keine Konflikte mit Apache-2.0 in 26 lizenzierten Komponenten.</p>
+            <p class="report-note">In der CycloneDX-1.6-SBOM dieses Laufs: 23 Apache-2.0, 2 MIT, 1 ISC.</p>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="../checks.html#SUS-JS-002" hreflang="en">Startseite zeigt Inhalt ohne JavaScript</a><span class="report-law"><span class="rule-id">SUS-JS-002</span> · Technisch, kein einzelnes Gesetz</span></div>
+          <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>niedrig</span></span>
+          <div class="report-result"><p>Ohne JavaScript zeigt die Startseite 2568 von 2568 Zeichen.</p></div>
+        </li>
+        <li class="report-row">
+          <span class="status s-pass">pass</span>
+          <div class="report-check"><a href="../checks.html#SUS-HOST-001" hreflang="en">Website läuft bei einem grünen Hoster</a><span class="report-law"><span class="rule-id">SUS-HOST-001</span> · Technisch, kein einzelnes Gesetz</span><span class="report-tag">aktuelle Website</span></div>
+          <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>niedrig</span></span>
+          <div class="report-result"><p>Die Green Web Foundation führt rechtzeitig.dev als grünes Hosting, gehostet bei Fastly.</p></div>
+        </li>
+        <li class="report-row">
+          <span class="status s-skip">skip</span>
+          <div class="report-check"><a href="../checks.html#LEG-EU-CNS-003" hreflang="en">Consent-Banner lässt sich auf der ersten Ebene ablehnen</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-003</span> · § 25 TDDDG, Art. 7 Abs. 3 DSGVO</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
+          <div class="report-result"><p>Kein Consent-Banner auf der Startseite gefunden.</p></div>
+        </li>
+      </ol>
+      <p class="report-scan">Scan: 5 Seiten. Besucher: frischer Browser, keine Klicks, keine Einwilligung, GitHub-Runner (Rechenzentrum in den USA). Repository: 311 Dateien, 26 Komponenten aus 1 Lockfile(s).</p>
+      <figcaption>Auszug aus echten Läufen auf rechtzeitig.dev am 4. November 2026, Ergebnisse so, wie rechtzeitig sie mit <code>report-language: de</code> schreibt. Zahlen, Scan-Zeile und die unmarkierten Zeilen (7 von 35) stammen aus dem späteren Lauf. Die Zeile „früherer Lauf“ stammt aus einem Lauf am Morgen desselben Tages. Zeilen mit „aktuelle Website“ zeigen das Ergebnis für die Website, wie sie jetzt veröffentlicht ist, mit der Besucherstatistik von Pirsch. Mit „Unsere Anmerkung“ markierte Hinweise sind für diese Seite ergänzt.</figcaption>
+    </figure>
+  </section>
+
+  <h2 id="start">In zwei Minuten starten</h2>
+  <ol class="steps">
+    <li><span><a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> nach <code>.github/workflows/rechtzeitig.yml</code> im eigenen Repository kopieren.</span></li>
+    <li><span><span class="ui">Actions → rechtzeitig → Run workflow</span> öffnen, URL eintragen und die Sprache wählen.</span></li>
+    <li><span>Den Bericht auf der Zusammenfassung des Laufs lesen.</span></li>
+  </ol>
+  <p>Das Beispiel startet von Hand. Für einen Lauf jede Woche oder bei jedem Push einen Trigger ergänzen: <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>. Inputs, Secrets und Berichtsdateien: <a href="../workflow.html" hreflang="en">Der Workflow</a> (Englisch).</p>
+
+  <section id="about" aria-labelledby="about-title">
+    <h2 id="about-title">Wer dahintersteht</h2>
+    <p>rechtzeitig wird von Manuel Steinberg (<a href="https://kreativ-anders.de">kreativ-anders</a>) in Deutschland entwickelt und gepflegt, als Open Source unter Apache-2.0. Jedes <a href="https://github.com/kreativ-anders/rechtzeitig/releases">Release</a> nennt, was sich geändert hat.</p>
+<!-- reviewed:start -->
+<p class="reviewed">Alle 56 Prüfungen wurden zuletzt zwischen dem <time datetime="2026-11-03">3. November 2026</time> und dem <time datetime="2026-11-04">4. November 2026</time> mit ihren Quellen abgeglichen. Eine Prüfung, die ein Jahr lang nicht abgeglichen wurde, lässt die Tests des Projekts scheitern.</p>
+<!-- reviewed:end -->
+  </section>
+
+  <h2 id="faq">Fragen</h2>
+  <div class="faq">
+    <details id="updates">
+      <summary>Wie bekomme ich die neueste Version?</summary>
+      <p>Der Workflow pinnt ein Release über seinen Commit-SHA. Dafür <code>.github/dependabot.yml</code> ins Repository legen:</p>
+      <pre><code>version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly</code></pre>
+      <p>Dependabot öffnet dann bei jedem neuen rechtzeitig-Release einen Pull Request. Nach dem Merge läuft die neue Version.</p>
+    </details>
+    <details id="schedule">
+      <summary>Läuft es auch nach Zeitplan oder bei jedem Push?</summary>
+      <p>Ja. Der Beispiel-Workflow startet von Hand, rechtzeitig funktioniert aber mit jedem Trigger außer <code>pull_request_target</code>. Ein geplanter Lauf hat kein Formular, deshalb steht die URL in der Workflow-Datei: <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>.</p>
+    </details>
+    <details id="advice">
+      <summary>Ist das Rechtsberatung?</summary>
+      <p>Nein. Ein Befund ist ein technischer Hinweis mit Fundstelle und dem Gesetz, auf das er sich bezieht, damit klar ist, wo zuerst hinzusehen ist. Ein Bericht ohne Befunde heißt, dass diese Prüfungen nichts gefunden haben, nicht, dass die Website rechtskonform ist.</p>
+    </details>
+    <details id="data">
+      <summary>Verlassen Daten den Runner?</summary>
+      <p>Der Quellcode nicht. Standardmäßig gehen Namen und Versionen der Pakete aus den Lockfiles an <a href="https://osv.dev">osv.dev</a> (<code>vulnerabilities: false</code> schaltet das ab) und der Hostname an die Green Web Foundation (<code>green-hosting: false</code>). Die vollständige Liste: <a href="../workflow.html#data" hreflang="en">Daten, die den Runner verlassen</a>.</p>
+    </details>
+    <details id="visibility">
+      <summary>Wer kann den Bericht sehen?</summary>
+      <p>In einem öffentlichen Repository standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten. Siehe <a href="../workflow.html#report" hreflang="en">Der Bericht</a>.</p>
+    </details>
+    <details id="current">
+      <summary>Wie bleiben die Prüfungen aktuell?</summary>
+      <p>Jede Prüfung nennt Primärquellen: Gesetze, Gerichte, Behörden oder Standards, keine Blogs. Jede hält fest, wann ihre Quellen zuletzt abgeglichen wurden. Eine Prüfung, die ein Jahr lang nicht abgeglichen wurde, lässt die Tests des Projekts scheitern und kann so nicht veröffentlicht werden. Die <a href="https://github.com/kreativ-anders/rechtzeitig/releases">Releases</a> nennen, was sich geändert hat.</p>
+    </details>
+  </div>
+</main>
+
+<footer><div class="inner">
+  <p class="disclaimer">Befunde sind technische Risikohinweise mit Fundstelle und Rechtsgrundlage, keine Rechtsberatung.</p>
+  <nav aria-label="Rechtliches und Quellcode"><ul>
+    <li><a href="impressum.html">Impressum</a></li>
+    <li><a href="datenschutz.html">Datenschutzerklärung</a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig">Quellcode</a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/LICENSE">Apache-2.0</a></li>
+  </ul></nav>
+</div></footer>
+</body>
+</html>

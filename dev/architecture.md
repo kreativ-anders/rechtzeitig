@@ -55,7 +55,7 @@ Checks return message keys with parameters, not sentences. `src/messages.ts` ren
 | `src/`, `src/repo/` | Crawler, probes, repository scan, runner, report and findings format, CLI |
 | `src/net.ts`, `src/text.ts` | Public-address checks for every request; `oneLine()` for untrusted text in outputs |
 | `checks/<module>/<name>/` | One check: `rule.yml`, `check.ts`, `test.ts`, `fixtures/` |
-| `src/rules.ts`, `src/docs.ts` | Rule schema and validator; generator for `docs/checks.html` |
+| `src/rules.ts`, `src/docs.ts` | Rule schema and validator; generator for the rule cards and switch tables in `docs/checks.html` and `docs/workflow.html`, and the rule count and review dates in `docs/index.html` |
 | `lang/*.yml` | Words per language, as regular expressions |
 | `data/third-parties.yml` | Known services: hosts, country, consent, cookies |
 | `data/probes.yml` | Paths to request without a browser |
@@ -66,7 +66,7 @@ Checks return message keys with parameters, not sentences. `src/messages.ts` ren
 | `data/source-domains.yml` | Domains allowed in `meta.sources` of a rule, checked by `src/rules.ts` |
 | `data/thresholds.yml` | Every number a check decides by, one section per check; `common.max_listed` caps the items in one finding (`capped()` in `src/sdk.ts`) |
 | `test/helpers.ts` | Serves a fixture on localhost, builds repositories and contexts for tests |
-| `docs/` | User documentation: plain HTML and one `style.css`, published with GitHub Pages, no build. `npm run docs` writes the rule cards in `checks.html`. Header and footer are copied into every page, so change them in all of them. `privacy.html` must stay true when the site starts loading anything new. `imprint.html` holds the provider details under § 5 DDG; update it when they change |
+| `docs/` | User documentation: plain HTML and one `style.css`, published with GitHub Pages, no build. `npm run docs` fills what stands between `<!-- name:start -->` and `<!-- name:end -->` markers: the rule cards in `checks.html` (with the German title, and one `id` per group for links like `checks.html#privacy`), the "What runs when" tables, and on `index.html` the rule count (`hero-checks`) and the oldest and newest `meta.last_reviewed` (`reviewed`). The FAQ in `index.html` is repeated as `FAQPage` JSON-LD in its `<head>`; change both together. Header and footer are copied into every page, so change them in all of them. `privacy.html` must stay true when the site starts loading anything new. `imprint.html` holds the provider details under § 5 DDG; update it when they change |
 | `action.yml` | Composite action: Node 24, Playwright, AppArmor profile for the Chrome sandbox on GitHub-hosted Ubuntu, scan, upload report |
 | `.github/workflows/release.yml` | Release by hand (Actions → release → Run workflow, patch, minor or major): runs `test.yml`, bumps the latest tag, commits `package.json` on top of the tested commit, pushes only the tag, publishes the release (a pre-release before v1.0.0), then opens a pull request to `main` with the version and `examples/workflows/rechtzeitig.yml` pinned to the release SHA and starts `test.yml` on it. Nothing pushes to `main`, which takes changes only through pull requests |
 

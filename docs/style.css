@@ -159,9 +159,31 @@ pre code { background: none; padding: 0; }
 .theme input:checked + label svg { animation: spin 0.45s cubic-bezier(.3,1.6,.5,1); }
 @keyframes spin { from { transform: rotate(-90deg) scale(0.6); } }
 
+/* Language switch: two links in the same pill as the theme switch. Plain links, so it works without JavaScript. */
+.langs { display: flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--sheet); margin-right: -0.75rem; }
+.langs a {
+  display: grid;
+  place-items: center;
+  min-width: 2rem;
+  height: 1.75rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  color: var(--muted);
+  font: 600 0.75rem/1 var(--sans);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.langs a:hover { color: var(--ink); }
+.langs a[aria-current] { background: var(--seal); color: var(--on-seal); }
+/* Marks a link in the German header that leads to an English page */
+.nav-lang { margin-left: 0.3rem; font: 600 0.62rem/1 var(--sans); letter-spacing: 0.05em; padding: 0.12rem 0.3rem; border: 1px solid var(--line); border-radius: 4px; vertical-align: 0.12em; }
+
 @media (max-width: 34rem) {
   .nav { margin-left: 0; order: 3; width: 100%; }
   .theme { margin-left: auto; }
+  .langs { margin-left: auto; margin-right: -0.75rem; }
+  .langs + .theme { margin-left: 0; }
 }
 
 /* Layout */
@@ -210,7 +232,7 @@ footer a:hover { color: var(--ink); }
   transform: rotate(-12deg);
   transition: transform 0.5s cubic-bezier(.3,1.6,.5,1);
 }
-.stamp strong { display: block; font-size: 2.4rem; letter-spacing: 0; line-height: 1; margin: 0.15rem 0; }
+.stamp .mark { display: block; font-size: 2.4rem; letter-spacing: 0; line-height: 1; margin: 0.15rem 0; }
 .stamp:hover { transform: rotate(4deg) scale(1.05); }
 /* The seal's rim carries the maker's name, like the legend around an official seal */
 .stamp { position: relative; }
@@ -227,9 +249,99 @@ footer a:hover { color: var(--ink); }
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
   gap: 0.75rem;
 }
-.covers li { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; }
-.covers strong { display: block; font: 600 1.05rem var(--serif); margin-bottom: 0.2rem; }
+.covers li { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; transition: border-color 0.15s; }
+.covers li:hover { border-color: color-mix(in srgb, var(--seal) 45%, var(--line)); }
+.covers h3 { font-size: 1.05rem; margin: 0 0 0.2rem; }
+.covers h3 a { color: var(--ink); text-decoration-color: var(--line); }
+.covers h3 a:hover { color: var(--seal); text-decoration-color: currentColor; }
 .covers p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+/* Call to action in the hero: one filled button, one outlined */
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.5rem 0 0.75rem; }
+.button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.6rem 1.3rem;
+  border: 1.5px solid var(--seal);
+  border-radius: 999px;
+  background: var(--seal);
+  color: var(--on-seal);
+  font: 600 1rem/1.2 var(--sans);
+  text-decoration: none;
+  transition: transform 0.12s, box-shadow 0.15s, background 0.15s;
+}
+.button:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -10px var(--shadow); }
+.button:active { transform: scale(0.97); }
+.button.secondary { background: var(--sheet); color: var(--seal); }
+.button.secondary:hover { background: var(--seal-soft); }
+.hero-note { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+/* A place in GitHub's interface, e.g. Actions → Run workflow */
+.ui { font-weight: 600; }
+
+/* Example report on the start page: a run's summary rebuilt as a card */
+.report { margin: 1.25rem 0 0; background: var(--sheet); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.report-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--code-bg) 50%, transparent);
+}
+.report-head p { margin: 0; }
+.report-target { font: 600 0.88rem var(--mono); overflow-wrap: anywhere; }
+.report-tally { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.report-rows { list-style: none; margin: 0; padding: 0; }
+.report-row {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1.1fr) 7.5rem minmax(0, 1.4fr);
+  gap: 0.4rem 1rem;
+  align-items: start;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+}
+.report-row > .status { justify-self: start; }
+.report-check { display: grid; gap: 0.15rem; }
+.report-check a { font: 600 1rem/1.3 var(--serif); color: var(--ink); text-decoration-color: var(--line); }
+.report-check a:hover { color: var(--seal); text-decoration-color: currentColor; }
+.report-law { font-size: 0.85rem; color: var(--seal); font-family: var(--serif); }
+.report-law .rule-id { font-size: 0.74rem; }
+.report-row .sev { padding-top: 0.3rem; }
+.report-result { font-size: 0.93rem; }
+.report-result > :first-child { margin-top: 0; }
+.report-result p, .report-result ul { margin: 0.35rem 0 0; }
+.report-result ul { padding-left: 1.1rem; }
+.report-fix { padding: 0.5rem 0.7rem; background: var(--seal-soft); border-radius: 6px; }
+.report-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--seal); font-weight: 600; margin-right: 0.3rem; }
+.report-note { color: var(--muted); font-style: italic; font-size: 0.88rem; }
+/* Where a row comes from when it is not the run the counts are from */
+.report-tag { justify-self: start; font: 600 0.7rem/1 var(--sans); letter-spacing: 0.04em; color: var(--muted); border: 1px dashed var(--line); border-radius: 999px; padding: 0.2rem 0.5rem; margin-top: 0.2rem; }
+.report-tally .report-label { color: var(--muted); align-self: center; }
+.report > .report-rows:first-child { border-top: 0; }
+.report-scan, .report figcaption { margin: 0; padding: 0.75rem 1.1rem; font-size: 0.85rem; color: var(--muted); }
+.report figcaption { border-top: 1px dashed var(--line); font-family: var(--serif); font-style: italic; }
+@media (max-width: 48rem) {
+  .report-row { grid-template-columns: auto minmax(0, 1fr); }
+  .report-row > .status { grid-row: span 2; }
+  .report-row .sev { padding-top: 0; }
+  .report-result { grid-column: 1 / -1; }
+}
+
+.reviewed { color: var(--muted); }
+
+/* Rule lists on topic pages, generated from rule.yml */
+.topic-rules { list-style: none; padding: 0; margin: 1rem 0 2rem; display: grid; gap: 0.75rem; }
+.topic-rule { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; font-size: 0.93rem; }
+.topic-rule:target { border-color: var(--seal); box-shadow: 0 0 0 3px var(--seal-soft); }
+.topic-rule h3 { margin: 0 0 0.2rem; font-size: 1.05rem; }
+.topic-rule h3 a { color: var(--ink); text-decoration-color: var(--line); }
+.topic-rule h3 a:hover { color: var(--seal); text-decoration-color: currentColor; }
+.topic-rule p { margin: 0.35rem 0 0; }
+.topic-rule .rule-meta { margin: 0; }
 
 /* Numbered steps: the number is a sans digit centred in its circle, aligned to the first line */
 .steps { list-style: none; padding: 0; margin: 1rem 0; }
@@ -268,8 +380,8 @@ footer a:hover { color: var(--ink); }
   transition: transform 0.15s, border-color 0.15s;
 }
 .card-link:hover { transform: translateY(-2px); border-color: var(--seal); }
-.card-link strong { font: 600 1.2rem var(--serif); display: block; margin-bottom: 0.25rem; }
-.card-link span { color: var(--muted); font-size: 0.95rem; }
+.card-link .card-title { font: 600 1.2rem var(--serif); display: block; margin-bottom: 0.25rem; }
+.card-link .card-text { color: var(--muted); font-size: 0.95rem; }
 
 /* Technical and legal pages: table of contents + content */
 
@@ -279,7 +391,7 @@ footer a:hover { color: var(--ink); }
 .toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line); }
 .toc a { display: block; padding: 0.25rem 0 0.25rem 0.9rem; color: var(--muted); text-decoration: none; margin-left: -1px; border-left: 2px solid transparent; }
 .toc a:hover { color: var(--ink); border-left-color: var(--seal); }
-@media (max-width: 52rem) { .doc { grid-template-columns: 1fr; gap: 1rem; } .toc { position: static; } }
+@media (max-width: 52rem) { .doc { grid-template-columns: minmax(0, 1fr); gap: 1rem; } .toc { position: static; } }
 
 .doc section > h2 { display: flex; gap: 0.6rem; align-items: baseline; padding-top: 0.5rem; border-top: 1px solid var(--line); }
 .doc section:first-of-type > h2 { margin-top: 0; }
@@ -441,6 +553,7 @@ a.sends:hover { border-style: solid; }
 .rule-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
 .rule-id { font: 600 0.78rem var(--mono); letter-spacing: 0.03em; color: var(--muted); }
 .rule-title { font: 600 1.06rem/1.3 var(--serif); }
+.rule-title-de { font: italic 0.88rem/1.3 var(--serif); color: var(--muted); margin-top: -0.3rem; }
 .rule-law { font-size: 0.88rem; color: var(--seal); font-family: var(--serif); }
 .rule-law.none { color: var(--muted); font-style: italic; }
 .rule-more { font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; gap: 0.4rem; }
@@ -473,7 +586,7 @@ a.sends:hover { border-style: solid; }
 .sev[data-level="3"] i:nth-child(-n+3) { background: var(--warn); }
 .sev[data-level="4"] i:nth-child(-n+4),
 .sev[data-level="5"] i:nth-child(-n+5) { background: var(--fail); }
-.sev b { font: 600 0.72rem var(--mono); color: var(--muted); margin-left: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.sev .sev-name { font: 600 0.72rem var(--mono); color: var(--muted); margin-left: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .rule:hover .sev i { animation: bead 0.5s ease; }
 .rule:hover .sev i:nth-child(2) { animation-delay: 0.04s; }
 .rule:hover .sev i:nth-child(3) { animation-delay: 0.08s; }
@@ -498,3 +611,23 @@ a.sends:hover { border-style: solid; }
 .faq summary { cursor: pointer; padding: 0.85rem 0; font: 600 1.05rem/1.35 var(--serif); }
 .faq details > :last-child { margin-bottom: 1rem; }
 .faq pre { margin: 0.75rem 0; }
+
+/* Copy button on code blocks, added by site.js */
+.codebox { position: relative; }
+.codebox pre { padding-right: 5rem; }
+.copy {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  font: 600 0.75rem/1 var(--sans);
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--sheet);
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform 0.12s, background 0.15s, border-color 0.15s, color 0.15s;
+}
+.copy:hover { color: var(--ink); border-color: var(--seal); }
+.copy:active { transform: scale(0.94); }
+.copy[data-copied] { background: var(--seal); border-color: var(--seal); color: var(--on-seal); }
