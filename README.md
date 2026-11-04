@@ -39,7 +39,7 @@ Every check names its legal basis and links a primary source. Your code stays on
 2. Open **Actions → rechtzeitig → Run workflow** and enter your URL.
 3. Read the report on the run's summary page.
 
-No secret needed. Optional switches (`sales`, `subscriptions`, `sarif-upload`, `IPINFO_TOKEN`) are listed in [What runs when](https://rechtzeitig.dev/workflow.html#scope). To get new releases, let Dependabot update the pin: [Updates](https://rechtzeitig.dev/workflow.html#updates).
+No secret needed. Optional switches (`sales`, `subscriptions`, `sarif-upload`, `IPINFO_TOKEN`) are listed in [What runs when](https://rechtzeitig.dev/workflow.html#scope). To get new releases, let Dependabot update the pin: [How do I get the latest version?](https://rechtzeitig.dev/#updates).
 
 ## Develop
 
