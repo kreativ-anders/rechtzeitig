@@ -46,6 +46,7 @@ export const SWITCHES = {
   subscriptions: { default: false },
   sales: { default: false },
   vulnerabilities: { default: true, service: "api.osv.dev" },
+  "green-hosting": { default: true, service: "api.thegreenwebfoundation.org" },
 } as const satisfies Record<string, { secret: string; service: string } | { default: boolean; service?: string }>;
 export type Switch = keyof typeof SWITCHES;
 /** One switch with every field optional, so callers need no cast. */

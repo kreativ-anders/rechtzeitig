@@ -74,6 +74,7 @@
             <tr><td><code>repository</code></td><td>workspace</td><td>Folder to read lockfiles, licenses and secrets from. Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
             <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from <a href="https://ipinfo.io">ipinfo.io</a>, passed from the secret <code>IPINFO_TOKEN</code>. Turns on the <a href="checks.html#LEG-EU-DSE-005">third-country check</a>. Empty skips it, see <a href="#secrets">Secrets</a>.</td></tr>
             <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> sends nothing there and the vulnerability check is skipped.</td></tr>
+            <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the site's host runs on green energy. Sends only the host name. <code>false</code> sends nothing there and the <a href="checks.html#SUS-HOST-001">green hosting check</a> is skipped.</td></tr>
             <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>Stops the scan when Chrome cannot start with its sandbox. <code>false</code> scans without it, see <a href="#safe">Safe use</a>.</td></tr>
             <tr><td><code>retention-days</code></td><td><code>7</code></td><td>Days GitHub keeps the report artifact, see <a href="#report">The report</a>.</td></tr>
           </tbody>
@@ -95,6 +96,7 @@
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to ipinfo.io (opt-in)</a></td></tr>
 <tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
+<tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
 </tbody></table></div>
 <!-- switches:end -->
       </section>
@@ -149,12 +151,13 @@
 
       <section id="data">
         <h2><span class="par">§ 7</span>Data that leaves the runner</h2>
-        <p>Besides visiting your website, rechtzeitig sends data to two services. Nothing else leaves the runner.</p>
+        <p>Besides visiting your website, rechtzeitig sends data to three services. Nothing else leaves the runner.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>
             <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Package URLs (name and version) of all locked components, for example <code>pkg:npm/lodash@4.17.21</code></td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
             <tr><td><a class="sends" href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of third-party servers that rechtzeitig does not know</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
+            <tr><td><a class="sends" href="https://www.thegreenwebfoundation.org">api.thegreenwebfoundation.org</a></td><td>Host name of the start page, for example <code>www.example.de</code></td><td>By default, when a website is scanned. Turn it off with <code>green-hosting: false</code></td></tr>
           </tbody>
         </table></div>
       </section>

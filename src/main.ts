@@ -31,6 +31,7 @@ const { values, positionals } = parseArgs({
     "fail-on": { type: "string", default: "never" },
     "max-pages": { type: "string", default: "10" },
     vulnerabilities: { type: "string", default: "true" },
+    "green-hosting": { type: "string", default: "true" },
     "require-sandbox": { type: "string", default: "true" },
     out: { type: "string", default: "rechtzeitig-report" },
   },
@@ -69,6 +70,8 @@ const web = url && checks.some((c) => !c.check.repo)
       sales: enabled.includes("sales"),
       maxPages: Number(values["max-pages"]) || 10,
       ipinfoToken: process.env.IPINFO_TOKEN || undefined,
+      // green-hosting=false sends nothing to the Green Web Foundation; the rule then skips.
+      greenHosting: enabled.includes("green-hosting"),
       unsandboxed: values["require-sandbox"] === "false",
       onWarning: (w) => warnings.push(w),
     }).catch(failed)

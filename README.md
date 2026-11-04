@@ -6,7 +6,7 @@ A GitHub Action that checks a website and its repository for German legal basics
 
 Copy [examples/workflows/rechtzeitig.yml](examples/workflows/rechtzeitig.yml) to `.github/workflows/rechtzeitig.yml`, then open **Actions → rechtzeitig → Run workflow**.
 
-Most checks need no setting. A few run only when you turn them on: the cancellation button with `subscriptions: true`, the withdrawal button with `sales: true`, the third-country check with the secret `IPINFO_TOKEN`. The vulnerability lookup at api.osv.dev is on unless `vulnerabilities: false`. Full list: [What runs when](docs/workflow.html#scope).
+Most checks need no setting. A few run only when you turn them on: the cancellation button with `subscriptions: true`, the withdrawal button with `sales: true`, the third-country check with the secret `IPINFO_TOKEN`. The vulnerability lookup at api.osv.dev is on unless `vulnerabilities: false`, the green hosting lookup at api.thegreenwebfoundation.org unless `green-hosting: false`. Full list: [What runs when](docs/workflow.html#scope).
 
 Documentation: [rechtzeitig.dev](https://rechtzeitig.dev/) ([source](docs/)).
 

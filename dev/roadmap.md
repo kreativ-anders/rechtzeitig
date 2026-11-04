@@ -69,12 +69,6 @@ Start page and legal pages only. No full-site crawl.
 27. Subdomain takeover: dangling DNS records of own subdomains via certificate transparency logs and a fingerprint list. Sends subdomain names to external log services, so off by default with an input.
 28. Open ports and exposed services on the scanned host only, a port scan from the runner.
 
-## Next: sustainability
-
-A few sustainability checks. Page weight, compression and CO2 are out of scope. No legal basis; W3C Web Sustainability Guidelines as sources only.
-
-1. Green hosting of the site, checked with the Green Web Foundation, on by default with an input to turn it off. This sends the host name to them, so `docs/privacy.html` names it.
-
 ## Later
 
 - More report languages.

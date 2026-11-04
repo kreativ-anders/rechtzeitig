@@ -100,6 +100,7 @@ messages:
     switch_subscriptions: "Only needed when visitors can sign up for subscriptions. Start the scan with subscriptions: true to check it."
     switch_sales: "Only needed when consumers buy or sign contracts on the site. Start the scan with sales: true to check it."
     switch_vulnerabilities: "Vulnerability lookup is turned off (input vulnerabilities: false). Nothing was sent to OSV."
+    switch_green-hosting: "Green hosting lookup is turned off (input green-hosting: false). Nothing was sent to the Green Web Foundation."
     no_page: "No {page} to read (see {check})."
     found: "Found the {page} at {where}."
   report:
@@ -376,6 +377,13 @@ messages:
     no_links: "No imprint or privacy policy link found (see legal/*)."
     needs_js: "Mandatory information needs JavaScript. Visitors without it, and many crawlers, cannot find it."
     readable: "Both are linked and readable without JavaScript."
+  sustainability/green-hosting:
+    none: "No green hosting lookup for this host (local address or IP)."
+    failed: "The Green Web Foundation could not be asked about {host}: {error}."
+    green: "The Green Web Foundation lists {host} as green hosting."
+    green_by: "The Green Web Foundation lists {host} as green hosting, hosted by {provider}."
+    not_green: "The Green Web Foundation has no evidence that {host} runs on green energy."
+    choose_green: "Check whether your host publishes proof of renewable energy. If it does, it can submit it to the Green Web Foundation; if not, consider a host that does."
 
   # ---------- repo
   sustainability/modern-formats:

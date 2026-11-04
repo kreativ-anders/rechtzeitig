@@ -119,6 +119,7 @@ messages:
     switch_subscriptions: "Nur nötig, wenn Besucher Abos abschließen können. Zum Prüfen den Scan mit subscriptions: true starten."
     switch_sales: "Nur nötig, wenn Verbraucher auf der Website kaufen oder Verträge schließen. Zum Prüfen den Scan mit sales: true starten."
     switch_vulnerabilities: "Schwachstellenabfrage ist ausgeschaltet (Input vulnerabilities: false). Nichts wurde an OSV gesendet."
+    switch_green-hosting: "Abfrage zu grünem Hosting ist ausgeschaltet (Input green-hosting: false). Nichts wurde an die Green Web Foundation gesendet."
     no_page: "{page}: keine Seite zum Lesen (siehe {check})."
     found: "{page} gefunden: {where}."
   report:
@@ -395,6 +396,13 @@ messages:
     no_links: "Kein Link zu Impressum oder Datenschutzerklärung gefunden (siehe legal/*)."
     needs_js: "Pflichtangaben brauchen JavaScript. Besucher ohne JavaScript und viele Crawler finden sie nicht."
     readable: "Beide sind verlinkt und ohne JavaScript lesbar."
+  sustainability/green-hosting:
+    none: "Keine Abfrage zu grünem Hosting für diesen Host (lokale Adresse oder IP)."
+    failed: "Die Green Web Foundation konnte zu {host} nicht befragt werden: {error}."
+    green: "Die Green Web Foundation führt {host} als grünes Hosting."
+    green_by: "Die Green Web Foundation führt {host} als grünes Hosting, gehostet bei {provider}."
+    not_green: "Die Green Web Foundation hat keinen Nachweis, dass {host} mit Ökostrom läuft."
+    choose_green: "Prüfen, ob der Hoster Nachweise für Ökostrom veröffentlicht. Wenn ja, kann er sie bei der Green Web Foundation einreichen; wenn nicht, einen Hoster mit Nachweisen erwägen."
 
   # ---------- repo
   sustainability/modern-formats:
