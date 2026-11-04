@@ -83,3 +83,8 @@ test("the step summary's own wording follows the report language", () => {
   assert.match(de, /_Technische Risikohinweise .* Keine Rechtsberatung\._/);
   assert.match(toMarkdown(report("m", [])), /\| \| Check \| Severity \| Result \|/);
 });
+
+test("severities are shown in the report language", () => {
+  assert.match(toMarkdown({ ...report("m", []), language: "de" }), /\| hoch \|/);
+  assert.match(toMarkdown(report("m", [])), /\| high \|/);
+});

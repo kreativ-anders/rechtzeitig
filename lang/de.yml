@@ -134,6 +134,11 @@ messages:
     runner: "GitHub-Runner (Rechenzentrum in den USA)"
     repository: "Repository: {files} Dateien, {components} Komponenten aus {lockfiles} Lockfile(s), OSV: {osv}"
     disclaimer: "Technische Risikohinweise mit Fundstelle und Bezug zur Rechtsgrundlage. Keine Rechtsberatung."
+    severity_info: "info"
+    severity_low: "niedrig"
+    severity_medium: "mittel"
+    severity_high: "hoch"
+    severity_critical: "kritisch"
   # ---------- legal
   legal/cancellation-button:
     not_needed: "Nur nötig, wenn Besucher Abos abschließen können. Zum Prüfen den Scan mit subscriptions: true starten."

@@ -120,7 +120,7 @@ export function toMarkdown(r: Report): string {
     "|---|---|---|---|",
     ...list.map((o) => {
       const law = o.rule.legal_basis?.[lang];
-      return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${o.rule.severity} | ${md(say(o, lang))} |`;
+      return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${t(`severity_${o.rule.severity}`)} | ${md(say(o, lang))} |`;
     }),
     "",
   ];
