@@ -7,7 +7,7 @@ import { checksHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, pass } from "./sdk.ts";
 
-const rule = { id: "SEC-TEST-001", severity: "low", title: { de: "t", en: "t" }, how: "Reads something and compares it.", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: [] } } as Rule;
+const rule = { id: "SEC-TEST-001", severity: "low", title: { de: "t", en: "t" }, how: "Reads something and compares it.", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: ["https://www.w3.org/TR/WCAG22/"] } } as Rule;
 
 test("every check has a folder id and a valid rule.yml with a unique id", async () => {
   const checks = await loadChecks();
@@ -21,10 +21,20 @@ test("the rule validator rejects broken rules", () => {
   assert.match(validateRule({ ...rule, id: "imprint" }).join(), /does not match/);
   assert.match(validateRule({ ...rule, title: { de: "t" } as Rule["title"] }).join(), /title\.en is missing/);
   assert.match(validateRule(rule, new Date("2028-01-01")).join(), /older than 365 days/);
+  assert.match(validateRule({ ...rule, meta: { ...rule.meta, sources: [] } }).join(), /needs at least one source/);
   const cited = (url: string) => validateRule({ ...rule, meta: { ...rule.meta, sources: [url] } }, new Date("2026-11-03"));
   assert.deepEqual(cited("https://www.gesetze-im-internet.de/bgb/__312k.html"), []);
   assert.match(cited("https://some-law-blog.example/cookies").join(), /not from a domain in data\/source-domains\.yml/);
   assert.match(cited("https://eur-lex.europa.eu.evil.example/").join(), /not from a domain/);
+});
+
+test("rule.yml how names every data file its check.ts loads", async () => {
+  const missing = (await loadChecks()).flatMap((c) => {
+    const code = readFileSync(new URL(`../checks/${c.id}/check.ts`, import.meta.url), "utf8");
+    const files = [...new Set(code.match(/data\/[a-z0-9-]+\.yml/g) ?? [])];
+    return files.filter((f) => !c.rule.how.includes(f)).map((f) => `${c.id}: ${f}`);
+  });
+  assert.deepEqual(missing, []);
 });
 
 test("repository checks live in checks/repo/ and website checks elsewhere", async () => {

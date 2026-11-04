@@ -5,13 +5,14 @@ title:
   de: "Impressum und Datenschutz funktionieren ohne JavaScript"
   en: "Imprint and privacy policy work without JavaScript"
 legal_basis:
-  de: "§ 5 DDG (leicht erkennbar, unmittelbar erreichbar)"
-  en: "§ 5 DDG (easily recognizable, directly accessible)"
-how: "Checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with JavaScript off and that the linked page that loaded shows text without it."
+  de: "§ 5 DDG (leicht erkennbar, unmittelbar erreichbar), Art. 12 Abs. 1 DSGVO (leicht zugängliche Form)"
+  en: "§ 5 DDG (easily recognizable, directly accessible), Art. 12(1) GDPR (easily accessible form)"
+how: "Checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with JavaScript off and that the linked page that loaded shows at least 100 characters of text without it."
 fix_hint:
   de: "Links und Texte der Rechtsseiten als statisches HTML ausliefern."
   en: "Deliver the links and texts of the legal pages as static HTML."
 meta:
-  last_reviewed: "2026-11-03"
+  last_reviewed: "2026-11-04"
   sources:
   - https://www.gesetze-im-internet.de/ddg/__5.html
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

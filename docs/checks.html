@@ -435,7 +435,7 @@
 <section class="module" data-module="sustainability">
 <h3>Sustainability <small>2 rules</small></h3>
 <div class="rules">
-<details class="rule" id="SUS-JS-002" data-module="sustainability" data-severity="low" data-search="sus-js-002 sustainability/content-without-js start page shows content without javascript startseite zeigt inhalt ohne javascript  compares the visible text of the start page with javascript off and on.">
+<details class="rule" id="SUS-JS-002" data-module="sustainability" data-severity="low" data-search="sus-js-002 sustainability/content-without-js start page shows content without javascript startseite zeigt inhalt ohne javascript  compares the visible text of the start page with javascript off and on and warns when less than 20 % of it is shown without javascript.">
 <summary>
 <span class="rule-head"><span class="rule-id">SUS-JS-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
 <span class="rule-title">Start page shows content without JavaScript</span>
@@ -443,25 +443,26 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Compares the visible text of the start page with JavaScript off and on.</dd></div>
+<div><dt>How it is checked</dt><dd>Compares the visible text of the start page with JavaScript off and on and warns when less than 20 % of it is shown without JavaScript.</dd></div>
 <div><dt>How to fix</dt><dd>Deliver content as HTML from the server or at build time.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/content-without-js"><code>checks/sustainability/content-without-js</code></a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#progressive-enhancement">w3.org</a>, <a href="https://www.w3.org/TR/web-sustainability-guidelines/#static-over-dynamic">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SUS-JS-001" data-module="sustainability" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible) checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with javascript off and that the linked page that loaded shows text without it.">
+<details class="rule" id="SUS-JS-001" data-module="sustainability" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible), art. 12(1) gdpr (easily accessible form) checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with javascript off and that the linked page that loaded shows at least 100 characters of text without it.">
 <summary>
 <span class="rule-head"><span class="rule-id">SUS-JS-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Imprint and privacy policy work without JavaScript</span>
-<span class="rule-law">§ 5 DDG (easily recognizable, directly accessible)</span>
+<span class="rule-law">§ 5 DDG (easily recognizable, directly accessible), Art. 12(1) GDPR (easily accessible form)</span>
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Checks that imprint and privacy links (<code>imprint</code>, <code>privacy</code> in <code>lang/*.yml</code>) exist with JavaScript off and that the linked page that loaded shows text without it.</dd></div>
+<div><dt>How it is checked</dt><dd>Checks that imprint and privacy links (<code>imprint</code>, <code>privacy</code> in <code>lang/*.yml</code>) exist with JavaScript off and that the linked page that loaded shows at least 100 characters of text without it.</dd></div>
 <div><dt>How to fix</dt><dd>Deliver the links and texts of the legal pages as static HTML.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/legal-pages-without-js"><code>checks/sustainability/legal-pages-without-js</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
 </div>

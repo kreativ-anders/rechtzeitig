@@ -17,6 +17,7 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | Lockfile parsers | `src/repo/lockfiles.ts` |
 | Allowed source domains for `meta.sources` | `data/source-domains.yml` |
 | Periodic review of rule sources | `.claude/skills/review-sources/` |
+| Check that rule docs and sources match the code | `.claude/skills/check-rule-docs/` |
 | Inputs of the action | `action.yml`, documented in `docs/workflow.md` |
 
 ## Keep the documentation true
@@ -30,7 +31,7 @@ Every change that affects what a rule does updates its documentation in the same
 - Input added or changed → `action.yml`, `examples/workflows/rechtzeitig.yml`, `docs/workflow.md`.
 - Architecture changed → `dev/architecture.md`.
 
-Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/checks.html` is stale, a rule is invalid or older than a year.
+Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/checks.html` is stale, a rule is invalid, has no source, is older than a year, or its `how` misses a data file its `check.ts` loads. For what tests cannot judge, use the `check-rule-docs` skill.
 
 ## Boundaries
 

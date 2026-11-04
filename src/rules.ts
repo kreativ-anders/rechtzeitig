@@ -65,7 +65,8 @@ export function validateRule(rule: Rule, today = new Date()): string[] {
   if (Number.isNaN(reviewed.getTime())) p.push("meta.last_reviewed must be a date (YYYY-MM-DD)");
   else if ((today.getTime() - reviewed.getTime()) / DAY > REVIEW_DAYS) p.push(`meta.last_reviewed is older than ${REVIEW_DAYS} days`);
   if (!Array.isArray(rule?.meta?.sources)) p.push("meta.sources must be a list");
-  if (rule?.legal_basis && !rule.meta?.sources?.length) p.push("a rule with a legal basis needs at least one source");
+  // Every rule needs evidence: a law for a legal basis, a standard or guideline for a technical rule.
+  if (Array.isArray(rule?.meta?.sources) && !rule.meta.sources.length) p.push("meta.sources needs at least one source");
   for (const url of rule?.meta?.sources ?? []) {
     if (!officialSource(url)) p.push(`source ${url} is not from a domain in data/source-domains.yml`);
   }
