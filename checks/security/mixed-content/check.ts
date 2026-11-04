@@ -1,10 +1,14 @@
-import { defineCheck, fail, pass, siteRequests, skip } from "../../../src/sdk.ts";
+import { defineCheck, fail, msg, pass, siteRequests, skip, type Finding } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
-    if (!ctx.https) return skip("The site does not use HTTPS (see security/https).");
-    const insecure = [...new Set(siteRequests(ctx).filter((r) => r.url.startsWith("http:")).map((r) => `${r.url} on ${r.page}`))];
-    if (insecure.length) return fail(`${insecure.length} resource(s) load over plain HTTP.`, insecure);
-    return pass("All resources load over HTTPS.");
+    if (!ctx.https) return skip(msg("no_https"));
+    const seen = new Set<string>();
+    const insecure: Finding[] = siteRequests(ctx)
+      .filter((r) => r.url.startsWith("http:"))
+      .filter((r) => !seen.has(`${r.url}\n${r.page}`) && !!seen.add(`${r.url}\n${r.page}`))
+      .map((r) => ({ key: "on_page", params: { url: r.url, page: r.page } }));
+    if (insecure.length) return fail(msg("insecure", { count: insecure.length }), insecure);
+    return pass(msg("all_https"));
   },
 });
