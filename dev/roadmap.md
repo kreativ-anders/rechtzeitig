@@ -1,6 +1,6 @@
 # Roadmap
 
-rechtzeitig is a CI tool for technical decision makers. The repository scan is the core; the website scan is an add-on that reads the start page and the legal pages, not the whole site. German comes first, but every word of a report comes from `lang/*.yml`, so a new language is one new file.
+rechtzeitig is a CI tool for technical decision makers. The repository scan is the core; the website scan is an add-on that reads the start page, the legal pages and a small sample of other pages (`max-pages`), not the whole site. German comes first, but every word of a report comes from `lang/*.yml`, so a new language is one new file.
 
 Items are listed in order of priority.
 
@@ -8,10 +8,10 @@ Items are listed in order of priority.
 
 Open points from the audit of 2026-11-03, after the fixes.
 
-1. `step-security/harden-runner` with an egress allowlist in `test.yml`.
-2. Dependabot for `examples/workflows/`, if the `github-actions` ecosystem reads workflow files outside `.github/`; until then `src/pinning.test.ts` catches drift.
-3. Require signed commits on `main`. Pull requests and the `test` and `drift` checks are required already; the release workflow no longer pushes to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
-4. Timing tests (`capture.test.ts`, the backtracking tests) measure CPU time instead of wall time, so they no longer fail when the machine sleeps during the run.
+1. `step-security/harden-runner` with an egress allowlist in `test.yml`. No workflow uses it yet.
+2. Pins in `examples/workflows/` moved automatically. Dependabot's `github-actions` ecosystem reads only `.github/workflows/` and `action.yml`; the release workflow moves the rechtzeitig pin there, and `src/pinning.test.ts` fails when another pin drifts from `action.yml` and `.github/workflows/`.
+3. Require signed commits on `main`. The ruleset on `main` already requires pull requests and the `test` and `drift` checks and blocks force pushes; the release workflow does not push to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
+4. The backtracking tests (`src/patterns.test.ts`, `repo/actions-pinning`, `repo/database-rules`) measure CPU time instead of wall time (`Date.now()` today), so they no longer fail when the machine sleeps during the run. The deadline tests in `capture.test.ts` and `probe.test.ts` measure a wall-clock timeout and keep wall time.
 
 ## Next: repository
 
@@ -20,11 +20,11 @@ Open points from the audit of 2026-11-03, after the fixes.
 3. Package names that do not exist or look like typos of popular ones.
 4. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
 5. SBOM fields as BSI TR-03183-2 asks (CRA Annex I Part II).
-6. `cors` with `origin: *` and credentials, admin routes without an auth check.
+6. In code: `cors` with `origin: *` and credentials, admin routes without an auth check. `security/cors` checks only the headers the site sends.
 7. License headers of other projects inside your own files.
 8. Google Tag Manager container exports in the repo: tags, triggers, Consent Mode wiring.
 9. Repository health beyond the audit list: LICENSE file present, recent maintenance, CI tests configured.
-10. CRA for repositories that are products (library, CLI, firmware): support period or supported versions in `SECURITY.md` (Art. 13 Abs. 8, Annex II CRA), a coordinated disclosure policy, signed releases with provenance. Reporting duties apply since 11.09.2026.
+10. CRA for repositories that are products (library, CLI, firmware): support period or supported versions in `SECURITY.md` (Art. 13 Abs. 8, Annex II CRA), a coordinated disclosure policy, signed releases with provenance. `repo/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
 11. Dockerfile and infrastructure code: containers running as root, base images on `latest`, security groups open to the internet.
 12. AI model files and references (weights, Hugging Face model IDs) with their licenses (Llama, OpenRAIL) in the license check.
 
@@ -41,12 +41,12 @@ Findings that only a scan of both can give. Today a check gets either the websit
 
 ## Next: website
 
-Start page and legal pages only. No full-site crawl.
+Start page, legal pages and a small sample of other pages. No full-site crawl.
 
 1. After a click on "reject": check that no tracker loads. The only check that would need a click.
 2. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
 3. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
-4. A few unambiguous accessibility checks (selected axe-core rules: alt text, form labels, contrast) and the accessibility information for shops (BFSG, § 14 and Anlage 3) or the accessibility statement with feedback contact for public bodies (BITV 2.0 § 7), not a full axe-core run.
+4. More unambiguous accessibility checks besides `accessibility/page-language` and `accessibility/autoplay-media` (selected axe-core rules: alt text, form labels, contrast) and the accessibility information for shops (BFSG, § 14 and Anlage 3) or the accessibility statement with feedback contact for public bodies (BITV 2.0 § 7), not a full axe-core run.
 5. Forms that send to another site: receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO).
 6. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
 7. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.
@@ -57,7 +57,7 @@ Start page and legal pages only. No full-site crawl.
 12. Global Privacy Control (GPC) signal honored by the consent tool, as a warning.
 13. The served HTML and client JS of normal pages: suspicious comments, personal data, exposed API keys.
 14. Client-side JS libraries in the served bundle with known CVEs; the repo vulnerability check covers dependencies, not the bundle.
-15. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs.
+15. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs. `security/error-disclosure` names version headers today, without a CVE lookup.
 16. DNSSEC and CAA records of the domain, the depth of SPF includes, MTA-STS and TLS-RPT; `email-dns` today covers only SPF, DMARC and MX.
 17. Permissive `crossdomain.xml` / `clientaccesspolicy.xml` and directory listings beyond the probe list.
 18. Subdomain takeover: dangling DNS records of own subdomains via certificate transparency logs and a fingerprint list. Sends subdomain names to external log services, so off by default with an input.
@@ -66,7 +66,7 @@ Start page and legal pages only. No full-site crawl.
 21. Sites with user content (comments, uploads, marketplace): DSA contact points (Art. 11, 12), a notice-and-action route (Art. 16) and the content rules in the terms (Art. 14); ad labeling on platforms (Art. 26). As a warning, since the scan cannot tell whether the site is a hosting service.
 22. Machine-readable reservation against text and data mining (robots.txt rules for AI crawlers, TDMRep header or `/.well-known/tdmrep.json`), as info only, since it is the owner's choice (§ 44b Abs. 3 UrhG, Art. 53 Abs. 1 lit. c AI Act).
 23. With `sales: true`: WEEE registration number and take-back notices for electrical devices and batteries (§ 18 ElektroG, BattDG), textile fiber labeling (Reg. (EU) 1007/2011).
-24. The contact page as one more visited page, since most forms with personal data live there.
+24. The contact page always visited, like the legal pages, since most forms with personal data live there. Today only the sample of other pages may pick it.
 25. Screenshots of findings and a HAR file of the run as workflow artifacts, as evidence for the report.
 26. With `sales: true`: price reductions shown other than as a struck-through price, such as "-20 %" labels, checked for the 30-day lowest price (§ 11 PAngV).
 27. Visit the T&Cs and withdrawal pages only with `sales: true`, so they do not use up `max-pages` on sites without a shop.
