@@ -23,6 +23,18 @@ Before the repository goes public:
 - Code scanning: CodeQL runs once the repository is public (`.github/workflows/codeql.yml` skips while it is private); add the OpenSSF Scorecard action.
 - `CODEOWNERS`.
 
+## Next: hardening
+
+Open points from the audit of 2026-11-03, after the fixes.
+
+1. DNS rebinding: the public-address check and the connection resolve the host separately. Connect to the checked IP instead.
+2. In the browser, only `localhost` and private IP literals are blocked. A redirect to a DNS name that resolves to a private address still loads.
+3. The fallback that starts Chrome without its sandbox is untested; test it on a runner where the sandbox fails.
+4. SARIF output for code scanning. Untrusted text is already sanitized in `toFindings`, so a writer can build on it.
+5. `step-security/harden-runner` with an egress allowlist in `test.yml`.
+6. Dependabot for `examples/workflows/`, if the `github-actions` ecosystem reads workflow files outside `.github/`; until then `src/pinning.test.ts` catches drift.
+7. Timing tests (`capture.test.ts`, the backtracking tests) fail when the machine sleeps during the run. Run local test runs with `caffeinate` on macOS, or measure CPU time.
+
 ## Next: repository
 
 1. PR annotations for repository findings with file and line.
