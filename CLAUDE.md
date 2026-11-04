@@ -19,6 +19,7 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | Periodic review of rule sources | `.claude/skills/review-sources/` |
 | Check that rule docs and sources match the code | `.claude/skills/check-rule-docs/` |
 | Inputs of the action | `action.yml`, documented in `docs/workflow.html` |
+| Releases | `.github/workflows/release.yml`, started by hand with patch, minor or major |
 
 ## Keep the documentation true
 

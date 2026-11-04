@@ -1,0 +1,122 @@
+name: release
+
+# Actions → release → Run workflow, with bump = patch, minor or major.
+#
+# 1. Runs the tests (test.yml).
+# 2. Takes the latest tag vX.Y.Z, bumps it, writes the version to package.json and commits it,
+#    if package.json does not have it yet.
+# 3. Tags that commit and publishes a GitHub release. Before v1.0.0 it is a pre-release.
+# 4. Pins examples/workflows/rechtzeitig.yml to the commit SHA of the release and commits that.
+#
+# Everything runs in this one run: pushes with GITHUB_TOKEN start no other workflows.
+# If main moves while the run is going, the push fails and nothing is tagged.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  test:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/test.yml
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      # Credentials stay in this checkout, because this job pushes. It runs no third-party code.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Compute version
+        id: version
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: |
+          last=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n 1)
+          IFS=. read -r major minor patch <<< "${last#v}"
+          case "$BUMP" in
+            major) next="$((major + 1)).0.0" ;;
+            minor) next="$major.$((minor + 1)).0" ;;
+            patch) next="$major.$minor.$((patch + 1))" ;;
+            *) echo "::error::Unknown bump: $BUMP"; exit 1 ;;
+          esac
+          if git rev-parse -q --verify "refs/tags/v$next" > /dev/null; then
+            echo "::error::Tag v$next exists already."; exit 1
+          fi
+          echo "last=$last" >> "$GITHUB_OUTPUT"
+          echo "next=$next" >> "$GITHUB_OUTPUT"
+          echo "Releasing v$next (last: $last)"
+
+      - name: Commit version, tag and push
+        id: tag
+        env:
+          NEXT: ${{ steps.version.outputs.next }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npm version "$NEXT" --no-git-tag-version --allow-same-version --ignore-scripts > /dev/null
+          if ! git diff --quiet; then
+            git commit -q -am "🔖 Release v$NEXT"
+          fi
+          git tag "v$NEXT"
+          git push --atomic origin HEAD:main "v$NEXT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEXT: ${{ steps.version.outputs.next }}
+          LAST: ${{ steps.version.outputs.last }}
+          SHA: ${{ steps.tag.outputs.sha }}
+        run: |
+          notes="$RUNNER_TEMP/notes.md"
+          {
+            echo "Pin the action to the commit SHA of this release, not to the tag:"
+            echo
+            echo '```yaml'
+            echo "- uses: $GITHUB_REPOSITORY@$SHA # v$NEXT"
+            echo '```'
+            echo
+            echo "Example workflow: \`examples/workflows/rechtzeitig.yml\`. Inputs: https://rechtzeitig.dev/workflow.html"
+            echo
+            echo "## Changes since $LAST"
+            echo
+            git log "$LAST..v$NEXT" --no-merges --pretty=format:'- %s (%h)'
+            echo
+          } > "$notes"
+          prerelease=()
+          if [ "${NEXT%%.*}" = 0 ]; then prerelease=(--prerelease); fi
+          gh release create "v$NEXT" --verify-tag --title "v$NEXT" --notes-file "$notes" "${prerelease[@]}"
+
+      - name: Pin the example workflow to the release
+        env:
+          NEXT: ${{ steps.version.outputs.next }}
+          SHA: ${{ steps.tag.outputs.sha }}
+        run: |
+          sed -i -E "s|(uses: $GITHUB_REPOSITORY)@[0-9a-f]{40} # v[0-9.]+|\1@$SHA # v$NEXT|" examples/workflows/rechtzeitig.yml
+          git diff --quiet && { echo "::error::No pin to $GITHUB_REPOSITORY found in examples/workflows/rechtzeitig.yml"; exit 1; }
+          git commit -q -am "📌 Pin the example workflow to v$NEXT"
+          git push origin HEAD:main
