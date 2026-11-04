@@ -366,7 +366,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-EXP-002" data-module="security" data-severity="medium" data-search="sec-exp-002 security/error-disclosure error pages reveal no internals fehlerseiten verraten keine interna art. 32 gdpr requests the error paths from `data/probes.yml`, searches their visible text for the traces in `data/leaks.yml` and the headers of the start page and error pages for version headers.">
+<details class="rule" id="SEC-EXP-002" data-module="security" data-severity="medium" data-search="sec-exp-002 security/error-disclosure error pages reveal no internals fehlerseiten verraten keine interna art. 32 gdpr requests the paths from `data/probes.yml`, searches the visible text of the error paths for the traces in `data/leaks.yml`, and the headers of the start page and every probed path for the version headers in `data/leaks.yml` (`server` only with a version number).">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-EXP-002</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Error pages reveal no internals</span>
@@ -374,11 +374,11 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Requests the error paths from <code>data/probes.yml</code>, searches their visible text for the traces in <code>data/leaks.yml</code> and the headers of the start page and error pages for version headers.</dd></div>
+<div><dt>How it is checked</dt><dd>Requests the paths from <code>data/probes.yml</code>, searches the visible text of the error paths for the traces in <code>data/leaks.yml</code>, and the headers of the start page and every probed path for the version headers in <code>data/leaks.yml</code> (<code>server</code> only with a version number).</dd></div>
 <div><dt>How to fix</dt><dd>Turn off error output in production (for example display_errors=0, DEBUG=false) and remove version headers.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/error-disclosure"><code>checks/security/error-disclosure</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Grundschutz/IT-GS-Kompendium_Einzel_PDFs_2023/06_APP_Anwendungen/APP_3_2_Webserver_Edition_2023.pdf?__blob=publicationFile&amp;v=3">bsi.bund.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-EXP-001" data-module="security" data-severity="critical" data-search="sec-exp-001 security/exposed-files no private files are public keine privaten dateien öffentlich art. 32 gdpr requests the file paths from `data/probes.yml`; a 200 whose body matches `expect` fails.">
@@ -491,7 +491,7 @@
 <section class="module" data-module="sustainability">
 <h3>Sustainability <small>5 rules</small></h3>
 <div class="rules">
-<details class="rule" id="SUS-CACHE-001" data-module="sustainability" data-severity="low" data-search="sus-cache-001 sustainability/cache-headers own static files may stay in the browser cache eigene statische dateien dürfen im browser-cache bleiben  loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (`static` in `data/file-formats.yml`) whose answer has no positive `max-age`, no `immutable` and no future `expires`.">
+<details class="rule" id="SUS-CACHE-001" data-module="sustainability" data-severity="low" data-search="sus-cache-001 sustainability/cache-headers own static files may stay in the browser cache eigene statische dateien dürfen im browser-cache bleiben  loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (`static` in `data/file-formats.yml`) whose answer has no positive `max-age`, no `immutable` and no future `expires`, or says `no-store` or `no-cache`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SUS-CACHE-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
 <span class="rule-title">Own static files may stay in the browser cache</span>
@@ -499,10 +499,10 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (<code>static</code> in <code>data/file-formats.yml</code>) whose answer has no positive <code>max-age</code>, no <code>immutable</code> and no future <code>Expires</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (<code>static</code> in <code>data/file-formats.yml</code>) whose answer has no positive <code>max-age</code>, no <code>immutable</code> and no future <code>Expires</code>, or says <code>no-store</code> or <code>no-cache</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Send Cache-Control: public, max-age=31536000, immutable for files with a version or hash in their name, and a shorter max-age for other static files.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/cache-headers"><code>checks/sustainability/cache-headers</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#client-side-caching">w3.org</a>, <a href="https://www.rfc-editor.org/rfc/rfc9111">rfc-editor.org</a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#client-side-caching">w3.org</a>, <a href="https://www.rfc-editor.org/rfc/rfc9111#section-4.2.2">rfc-editor.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>

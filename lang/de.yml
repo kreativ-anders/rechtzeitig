@@ -378,8 +378,8 @@ messages:
       one: "{count} eigene statische Datei darf im Cache bleiben."
       other: "Alle {count} eigenen statischen Dateien dürfen im Cache bleiben."
     uncached:
-      one: "{count} von {total} eigenen statischen Dateien hat keine Cache-Dauer und wird bei jedem Besuch neu geladen."
-      other: "{count} von {total} eigenen statischen Dateien haben keine Cache-Dauer und werden bei jedem Besuch neu geladen."
+      one: "{count} von {total} eigenen statischen Dateien hat keine ausdrückliche Cache-Dauer, der Browser fragt sie womöglich bei jedem Besuch neu an oder lädt sie neu."
+      other: "{count} von {total} eigenen statischen Dateien haben keine ausdrückliche Cache-Dauer, der Browser fragt sie womöglich bei jedem Besuch neu an oder lädt sie neu."
     more:
       one: "und {count} weitere Datei"
       other: "und {count} weitere Dateien"
@@ -411,10 +411,10 @@ messages:
   sustainability/modern-formats:
     modern: "Eigene Bilder und Schriften nutzen sparsame Formate."
     legacy:
-      one: "{count} eigenes Bild oder eigene Schrift in einem älteren, größeren Format."
-      other: "{count} eigene Bilder oder Schriften in älteren, größeren Formaten."
-    image: "{url}: Bild in einem älteren Format, {better} ist kleiner."
-    font: "{url}: Schrift in einem älteren Format, {better} ist kleiner."
+      one: "{count} eigenes Bild oder eigene Schrift in einem älteren Format."
+      other: "{count} eigene Bilder oder Schriften in älteren Formaten."
+    image: "{url}: Bild in einem älteren Format, {better} ist meist kleiner."
+    font: "{url}: Schrift in einem älteren Format, {better} ist meist kleiner."
     more:
       one: "und {count} weitere Datei"
       other: "und {count} weitere Dateien"

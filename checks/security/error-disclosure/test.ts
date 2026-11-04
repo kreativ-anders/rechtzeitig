@@ -30,3 +30,10 @@ test("leaves no tag in the finding text, even from nested tags", async () => {
   assert.ok(result.details?.length);
   assert.ok(result.details.every((d) => !/[<>]/.test(d)));
 });
+
+test("flags a server header only with a version number", async () => {
+  assert.equal((await runCheck(here, "server-name")).status, "pass");
+  const result = await runCheck(here, "server-version");
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["server: nginx/1.25.3"]);
+});

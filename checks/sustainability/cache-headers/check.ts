@@ -7,7 +7,7 @@ const MAX = 20;
 function cached(r: Request, now: number): boolean {
   const cc = (r.cacheControl ?? "").toLowerCase();
   if (/\b(no-store|no-cache)\b/.test(cc)) return false;
-  const maxAge = /\b(?:s-)?max-age\s*=\s*"?(\d+)/.exec(cc);
+  const maxAge = /\bmax-age\s*=\s*"?(\d+)/.exec(cc);
   if (maxAge) return Number(maxAge[1]) > 0;
   if (/\bimmutable\b/.test(cc)) return true;
   const expires = r.expires ? Date.parse(r.expires) : NaN;
