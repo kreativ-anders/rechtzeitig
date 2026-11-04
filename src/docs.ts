@@ -24,6 +24,16 @@ const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 const text = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const host = (url: string) => new URL(url).hostname.replace(/^www\./, "");
 
+/** Badge for an input that sends data to an outside service; empty when it sends nothing. Links to § 7 of the workflow page. */
+export function sendsBadge(input: Switch, link = true): string {
+  const s: { secret?: string; default?: boolean; service?: string } = SWITCHES[input];
+  if (!s.service) return "";
+  const label = `Sends data to ${esc(s.service)}${s.secret ? " (opt-in)" : ""}`;
+  return link
+    ? `<a class="sends" href="workflow.html#data">${label}</a>`
+    : `<span class="sends" title="Data leaves the runner, see workflow.html#data">${label}</span>`;
+}
+
 /** When a rule with this input runs, in one sentence for the docs. */
 export function runsWhen(input: Switch): string {
   const s: { secret?: string; default?: boolean; service?: string } = SWITCHES[input];
@@ -35,7 +45,7 @@ export function runsWhen(input: Switch): string {
 /** Table of everything that turns checks on or off: the URL, the checkout, and every rule with `requires`. */
 export function switchesHtml(checks: LoadedCheck[]): string {
   const rows = checks.flatMap((c) =>
-    (c.rule.requires ?? []).map((input) => `<tr><td><a href="checks.html#${c.rule.id}">${text(c.rule.title.en)}</a><br><small>${c.rule.id}</small></td><td>${runsWhen(input)}</td></tr>`),
+    (c.rule.requires ?? []).map((input) => `<tr><td><a href="checks.html#${c.rule.id}">${text(c.rule.title.en)}</a><br><small>${c.rule.id}</small></td><td>${runsWhen(input)}${sendsBadge(input) && `<br>${sendsBadge(input)}`}</td></tr>`),
   );
   return [
     `<div class="table-wrap"><table>`,
@@ -61,6 +71,7 @@ function card(c: LoadedCheck, module: string): string {
     `<summary>`,
     `<span class="rule-head"><span class="rule-id">${r.id}</span><span class="sev" data-level="${level}" title="Severity: ${r.severity}">${"<i></i>".repeat(5)}<b>${r.severity}</b></span></span>`,
     `<span class="rule-title">${text(r.title.en)}</span>`,
+    ...(r.requires ?? []).map((input) => sendsBadge(input, false)).filter(Boolean),
     law ? `<span class="rule-law">${text(law)}</span>` : `<span class="rule-law none">Technical, no single law</span>`,
     `<span class="rule-more">How it is checked</span>`,
     `</summary>`,

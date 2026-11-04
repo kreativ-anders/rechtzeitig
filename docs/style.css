@@ -333,6 +333,35 @@ address { font-style: normal; }
 .s-info { color: var(--info); --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='3.2' r='1.5'/%3E%3Crect x='6.8' y='6' width='2.4' height='8' rx='1.2'/%3E%3C/svg%3E"); }
 .s-skip { color: var(--skip); --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='3' y='6.8' width='10' height='2.4' rx='1.2'/%3E%3C/svg%3E"); }
 
+/* Data that leaves the runner: same pill shape, dashed rim and an arrow out of a box */
+.sends {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font: 600 0.78rem/1 var(--sans);
+  padding: 0.3rem 0.6rem 0.3rem 0.5rem;
+  border-radius: 999px;
+  border: 1.5px dashed currentColor;
+  color: var(--seal);
+  background: var(--seal-soft);
+  white-space: nowrap;
+  vertical-align: 0.05em;
+  text-decoration: none;
+  justify-self: start;
+  width: fit-content;
+}
+.sends::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: var(--icon-sends) center / contain no-repeat;
+  mask: var(--icon-sends) center / contain no-repeat;
+}
+a.sends:hover { border-style: solid; }
+:root { --icon-sends: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 2.5h4.5V7M13.5 2.5 7.5 8.5M11.5 9.5v3a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h3'/%3E%3C/svg%3E"); }
+
 .legend { list-style: none; padding: 0; display: grid; gap: 0.6rem; margin: 1rem 0 2rem; }
 .legend li { display: grid; grid-template-columns: 5.5rem 1fr; gap: 0.75rem; align-items: center; }
 .legend .status { justify-self: start; transition: transform 0.25s cubic-bezier(.3,1.8,.5,1); }
@@ -458,6 +487,6 @@ address { font-style: normal; }
 }
 
 @media (forced-colors: active) {
-  .status::before { background: CanvasText; }
+  .status::before, .sends::before { background: CanvasText; }
   .sev i { border: 1px solid CanvasText; }
 }

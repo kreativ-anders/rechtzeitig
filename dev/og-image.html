@@ -1,0 +1,62 @@
+<!doctype html>
+<!-- Source of docs/og.png (1200×630), the social preview of the docs site.
+     Render after a change:
+     node -e 'import("playwright").then(async({chromium})=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1200,height:630}});await p.goto("file://"+process.cwd()+"/dev/og-image.html");await p.screenshot({path:"docs/og.png"});await b.close()})' -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --paper: #faf8f3; --sheet: #ffffff; --ink: #1f1c18; --muted: #5f594f; --line: #e3ddd0;
+    --seal: #8a1c2b; --pass: #2a7347; --warn: #8a5300; --fail: #b3261e;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+  body::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 14px; background: var(--seal); }
+  .wrap { position: absolute; inset: 14px 0 0 0; padding: 0 80px; display: grid; align-items: center; grid-template-columns: 1fr 300px; gap: 40px; }
+  .brand { display: flex; align-items: center; gap: 22px; }
+  .brand svg { width: 84px; height: 84px; flex: none; }
+  h1 { margin: 0; font: 700 100px/1 var(--serif); letter-spacing: -0.01em; }
+  .lead { margin: 34px 0 0; font: 400 40px/1.3 var(--sans); color: var(--ink); max-width: 720px; text-wrap: balance; }
+  .note { margin: 26px 0 0; font: 400 26px/1.3 var(--sans); color: var(--muted); }
+  .lead b { color: var(--seal); font-weight: 600; }
+  .stamp {
+    width: 280px; height: 280px;
+    border: 7px double var(--seal); border-radius: 50%;
+    display: grid; place-items: center; text-align: center;
+    color: var(--seal);
+    font: 600 22px/1.3 var(--serif); letter-spacing: 0.12em; text-transform: uppercase;
+    transform: rotate(-12deg);
+    position: relative;
+  }
+  .stamp strong { display: block; font-size: 84px; letter-spacing: 0; line-height: 1; margin: 6px 0; }
+  .stamp .rim { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .stamp .rim text { fill: currentColor; font: 600 6.2px var(--serif); letter-spacing: 0.08em; opacity: 0.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="#8a1c2b"/><text x="16" y="16" dy="0.36em" text-anchor="middle" fill="#fff" font-family="Iowan Old Style, Palatino, Georgia, serif" font-size="20" font-weight="700">§</text></svg>
+      <h1>rechtzeitig</h1>
+    </div>
+    <p class="lead">Checks your <b>repository</b>, and optionally your website, for German and EU legal basics and security.</p>
+    <p class="note">The source code stays on your runner.</p>
+  </div>
+  <div>
+    <div class="stamp"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<strong>§</strong>in time</span></div>
+  </div>
+</div>
+</body>
+</html>

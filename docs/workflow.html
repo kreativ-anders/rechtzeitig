@@ -14,7 +14,12 @@
 <meta property="og:description" content="Inputs, secrets, fail-on and report files of the rechtzeitig GitHub Action.">
 <meta property="og:url" content="https://kreativ-anders.github.io/rechtzeitig/workflow.html">
 <meta property="og:locale" content="en_GB">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://kreativ-anders.github.io/rechtzeitig/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="rechtzeitig checks your repository, and optionally your website, for German and EU legal basics and security. The source code stays on your runner.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
@@ -85,8 +90,8 @@
 <tr><td>A group of checks</td><td><code>modules</code> picks groups: legal, privacy, security, sustainability, accessibility, repo. Empty runs all.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-001">Cancellation button for subscriptions</a><br><small>LEG-DE-BTN-001</small></td><td>Opt-in: only with <code>subscriptions: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
-<tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.</td></tr>
-<tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to ipinfo.io (opt-in)</a></td></tr>
+<tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
 </tbody></table></div>
 <!-- switches:end -->
       </section>
@@ -145,8 +150,8 @@
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>
-            <tr><td><a href="https://osv.dev">api.osv.dev</a></td><td>Package URLs (name and version) of all locked components, for example <code>pkg:npm/lodash@4.17.21</code></td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
-            <tr><td><a href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of third-party servers that rechtzeitig does not know</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
+            <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Package URLs (name and version) of all locked components, for example <code>pkg:npm/lodash@4.17.21</code></td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
+            <tr><td><a class="sends" href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of third-party servers that rechtzeitig does not know</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
           </tbody>
         </table></div>
       </section>

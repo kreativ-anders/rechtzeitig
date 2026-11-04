@@ -14,7 +14,12 @@
 <meta property="og:description" content="Every rule rechtzeitig checks: how it is detected, how to fix it and which law it is about.">
 <meta property="og:url" content="https://kreativ-anders.github.io/rechtzeitig/checks.html">
 <meta property="og:locale" content="en_GB">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://kreativ-anders.github.io/rechtzeitig/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="rechtzeitig checks your repository, and optionally your website, for German and EU legal basics and security. The source code stays on your runner.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
@@ -47,7 +52,7 @@
   <p>Sources are primary sources only: laws, courts, authorities, standards bodies, and vendor documentation for technical facts. Blogs and law firm articles are never cited. Each card shows when its sources were last reviewed; a rule not reviewed for a year fails the project's tests.</p>
 
   <h2 id="runs-when">What runs when</h2>
-  <p>Checks that are off show as <span class="status s-skip">skip</span>, with the reason and the setting that turns them on.</p>
+  <p>Checks that are off show as <span class="status s-skip">skip</span>, with the reason and the setting that turns them on. A check marked <a class="sends" href="workflow.html#data">Sends data</a> asks an outside service; the badge links to what is sent.</p>
 <!-- switches:start -->
 <div class="table-wrap"><table>
 <thead><tr><th>Check</th><th>Runs when</th></tr></thead>
@@ -57,8 +62,8 @@
 <tr><td>A group of checks</td><td><code>modules</code> picks groups: legal, privacy, security, sustainability, accessibility, repo. Empty runs all.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-001">Cancellation button for subscriptions</a><br><small>LEG-DE-BTN-001</small></td><td>Opt-in: only with <code>subscriptions: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
-<tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.</td></tr>
-<tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to ipinfo.io (opt-in)</a></td></tr>
+<tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
 </tbody></table></div>
 <!-- switches:end -->
 
@@ -267,6 +272,7 @@
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-005</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Privacy policy names transfers outside the EU</span>
+<span class="sends" title="Data leaves the runner, see workflow.html#data">Sends data to ipinfo.io (opt-in)</span>
 <span class="rule-law">Art. 13(1)(f), Art. 44 ff. GDPR, ECJ C-311/18 (Schrems II)</span>
 <span class="rule-more">How it is checked</span>
 </summary>
@@ -618,6 +624,7 @@
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
 <span class="rule-title">No dependencies with known vulnerabilities</span>
+<span class="sends" title="Data leaves the runner, see workflow.html#data">Sends data to api.osv.dev</span>
 <span class="rule-law">Art. 32 GDPR, CRA Annex I Part I(2)(a) and Part II(2) (from 11 Dec 2027)</span>
 <span class="rule-more">How it is checked</span>
 </summary>
