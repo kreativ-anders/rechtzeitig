@@ -1,7 +1,7 @@
 import { loadYaml } from "./data.ts";
-import { normalize } from "./text.ts";
+import { hostIn, normalize } from "./text.ts";
 import type { Vendor } from "./sdk.ts";
-import { LANGUAGES } from "./rules.ts";
+import { missingLanguages } from "./rules.ts";
 
 export interface Registry {
   vendor(host: string): Vendor | undefined;
@@ -11,7 +11,7 @@ export interface Registry {
 export function loadRegistry(): Registry {
   const entries = loadYaml<Array<Vendor & { cookies?: string[] }>>("data/third-parties.yml");
   for (const e of entries) {
-    const missing = e.advice && LANGUAGES.filter((l) => typeof e.advice?.[l] !== "string" || !e.advice[l].trim());
+    const missing = e.advice && missingLanguages(e.advice);
     if (missing?.length) throw new Error(`data/third-parties.yml: advice of ${e.name} needs ${missing.join(", ")}`);
   }
   const vendors = entries.map((e) => ({
@@ -22,7 +22,7 @@ export function loadRegistry(): Registry {
   return {
     vendor: (host) => {
       const h = host.toLowerCase();
-      return vendors.find((v) => v.hosts.some((vh) => h === vh || h.endsWith(`.${vh}`)));
+      return vendors.find((v) => v.hosts.some((vh) => hostIn(h, vh)));
     },
     trackingCookie: (name) => vendors.find((v) => v.cookieRules.some((re) => re.test(name))),
   };

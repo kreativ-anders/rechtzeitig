@@ -6,25 +6,26 @@ const here = import.meta.dirname;
 
 const lock = (license: string, dev = false) => npmLock({ lib: { version: "1.0.0", license, dev } });
 
+// A MIT project with one dependency under `license`.
+const mit = (license: string) => runRepoCheck(here, { "package.json": '{"license":"MIT"}', "package-lock.json": lock(license) });
+
 test("passes for MIT dependencies in an MIT project", async () => {
-  assert.equal((await runRepoCheck(here, { "package.json": '{"license":"MIT"}', "package-lock.json": lock("MIT") })).status, "pass");
+  assert.equal((await mit("MIT")).status, "pass");
 });
 
 test("warns for a GPL dependency in an MIT project", async () => {
-  const result = await runRepoCheck(here, { "package.json": '{"license":"MIT"}', "package-lock.json": lock("GPL-3.0") });
+  const result = await mit("GPL-3.0");
   assert.equal(result.status, "warn");
   assert.match(result.details?.[0] ?? "", /^package-lock\.json: lib@1\.0\.0: GPL-3\.0\. If you ship it/);
 });
 
 test("warns for GPL-or-later, but not when another license can be chosen", async () => {
-  const mit = (license: string) => runRepoCheck(here, { "package.json": '{"license":"MIT"}', "package-lock.json": lock(license) });
   assert.equal((await mit("GPL-3.0-or-later")).status, "warn");
   assert.equal((await mit("(MIT OR GPL-3.0-or-later)")).status, "pass");
   assert.equal((await mit("GPL-2.0-only OR GPL-3.0-only")).status, "warn");
 });
 
 test("treats Boost BSL-1.0 as permissive and BUSL as restricted", async () => {
-  const mit = (license: string) => runRepoCheck(here, { "package.json": '{"license":"MIT"}', "package-lock.json": lock(license) });
   assert.equal((await mit("BSL-1.0")).status, "pass");
   const busl = await mit("BUSL-1.1");
   assert.equal(busl.status, "warn");

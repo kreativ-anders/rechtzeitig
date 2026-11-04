@@ -1,10 +1,10 @@
-import { defineCheck, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { defineCheck, isWebUrl, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
 
 // Login forms reuse data the person gave before; they need no new notice.
 // Host a form sends to; none for an empty or javascript: action.
 const hostOf = (action: string) => {
   try {
-    return /^https?:/i.test(action) ? new URL(action).hostname : undefined;
+    return isWebUrl(action) ? new URL(action).hostname : undefined;
   } catch {
     return undefined;
   }

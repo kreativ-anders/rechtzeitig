@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join, sep } from "node:path";
-import { loadRule, SWITCHES, type Rule, type Switch } from "./rules.ts";
+import { loadRule, switchSpec, type Rule, type Switch } from "./rules.ts";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage } from "./text.ts";
 import { STATUSES, type Check, type Finding, type Msg, type RepoCheck, type RepoContext, type Result, type ScanContext, type Status } from "./sdk.ts";
@@ -75,7 +75,7 @@ const isStatus = (s: unknown): s is Status => (STATUSES as readonly unknown[]).i
 function switchedOff(rule: Rule, enabled: readonly Switch[]): Msg | undefined {
   const input = rule.requires?.find((r) => !enabled.includes(r));
   if (!input) return undefined;
-  const s: { secret?: string; default?: boolean; service?: string } = SWITCHES[input];
+  const s = switchSpec(input);
   return { key: `switch_${input}`, params: { input, secret: s.secret ?? "", service: s.service ?? "" } };
 }
 

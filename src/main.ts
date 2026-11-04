@@ -8,7 +8,7 @@ import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
 import { loadChecks, OUTCOMES, runChecks, selectModules, type OutcomeStatus } from "./runner.ts";
-import { LANGUAGES, SWITCHES, type Switch, type UiLanguage } from "./rules.ts";
+import { LANGUAGES, SWITCHES, switchSpec, type Switch, type UiLanguage } from "./rules.ts";
 import { md, plain, repoName, toAnnotations, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
 
 const FAIL_ON: Record<string, OutcomeStatus[]> = {
@@ -46,7 +46,7 @@ const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 const startedAt = new Date().toISOString();
 // Inputs that are on (src/rules.ts SWITCHES): a secret is set, or a true/false input is not at its "off" value.
 const isOn = (input: Switch): boolean => {
-  const s: { secret?: string; default?: boolean } = SWITCHES[input];
+  const s = switchSpec(input);
   if (s.secret) return !!process.env[s.secret];
   const value = (values as Record<string, string | undefined>)[input];
   return s.default ? value !== "false" : value === "true";

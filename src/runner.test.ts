@@ -79,16 +79,6 @@ test("asking for an unknown concept is an error, not a silent pass", async () =>
   assert.match(String(outcome.message), /Unknown concept "imprnt"/);
 });
 
-test("a rule that requires a token input is skipped unless it is set", async () => {
-  const optIn = { ...rule, requires: ["ipinfo-token" as const] };
-  const checks = [{ id: "x/lookup", rule: optIn, check: defineCheck({ run: () => pass({ key: "ran" }) }) }];
-  const [without] = await runChecks(checks, { web: fakeContext({}) });
-  assert.equal(without.status, "skip");
-  assert.match(render(without.message, without.id, "en"), /IPINFO_TOKEN/);
-  const [withToken] = await runChecks(checks, { web: fakeContext({}) }, ["ipinfo-token"]);
-  assert.equal(withToken.status, "pass");
-});
-
 test("every switch skips its rules when off, with a message in every language", async () => {
   for (const input of Object.keys(SWITCHES) as Switch[]) {
     const checks = [{ id: "x/switch", rule: { ...rule, requires: [input] }, check: defineCheck({ run: () => pass({ key: "ran" }) }) }];

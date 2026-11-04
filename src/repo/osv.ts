@@ -1,6 +1,7 @@
 // Known vulnerabilities from https://osv.dev (free, no key). Covers npm, Packagist, Pub, crates.io, PyPI and Go.
 
 import type { Component, Vulnerability } from "../sdk.ts";
+import { errorMessage } from "../text.ts";
 
 const API = "https://api.osv.dev/v1";
 const BATCH = 1000;
@@ -41,7 +42,7 @@ export async function queryOsv(components: Component[]): Promise<{ vulnerabiliti
     const status = details.size < ids.length ? `ok (details for ${details.size} of ${ids.length})` : "ok";
     return { vulnerabilities, status };
   } catch (e) {
-    return { vulnerabilities: [], status: (e as Error).message };
+    return { vulnerabilities: [], status: errorMessage(e) };
   }
 }
 

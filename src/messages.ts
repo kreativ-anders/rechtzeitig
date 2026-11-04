@@ -28,14 +28,12 @@ function pack(lang: string) {
 export const messageKeys = (lang: string): string[] =>
   Object.entries(pack(lang).messages).flatMap(([group, keys]) => Object.keys(keys).map((k) => `${group}.${k}`));
 
-export class MissingMessageError extends Error {}
-
 /** A message in `lang`. `scope` is the check id; keys not found there come from `common`. */
 export function render(m: Msg | string, scope: string, lang: string): string {
   if (typeof m === "string") return m; // engine errors (src/runner.ts) are plain text
   const { locale, messages } = pack(lang);
   const template = messages[scope]?.[m.key] ?? messages.common?.[m.key];
-  if (template === undefined) throw new MissingMessageError(`lang/${lang}.yml: messages.${scope}.${m.key} is missing`);
+  if (template === undefined) throw new Error(`lang/${lang}.yml: messages.${scope}.${m.key} is missing`);
   const params = m.params ?? {};
   const text = typeof template === "string" ? template : pick(template, params.count, locale);
   return text.replace(/\{(\w+)\}/g, (all, name: string) => {
@@ -49,7 +47,7 @@ export function render(m: Msg | string, scope: string, lang: string): string {
 function pick(forms: Partial<Record<Intl.LDMLPluralRule, string>>, count: Params[string] | undefined, locale: string): string {
   const rule = typeof count === "number" ? new Intl.PluralRules(locale).select(count) : "other";
   const text = forms[rule] ?? forms.other;
-  if (text === undefined) throw new MissingMessageError(`plural form "${rule}" or "other" is missing`);
+  if (text === undefined) throw new Error(`plural form "${rule}" or "other" is missing`);
   return text;
 }
 
