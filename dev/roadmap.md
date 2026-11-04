@@ -18,7 +18,7 @@ It contains the security fixes, CI hardening, detection fixes and lean-code refa
 - A ruleset for `v*` tags: no update, no delete.
 - Code scanning: CodeQL runs once the repository is public (`.github/workflows/codeql.yml` skips while it is private); add the OpenSSF Scorecard action.
 - `CODEOWNERS`.
-- Run `rechtzeitig.yml` on this repository and its site once. Confirm that Chrome starts with its sandbox on `ubuntu-latest`: Ubuntu 24.04 restricts the user namespaces it needs, and without them the scan stops unless `require-sandbox: false`. If it stops, decide how the action enables the sandbox on GitHub-hosted runners.
+- Run `rechtzeitig.yml` on this repository and its site once more. The first run stopped: Ubuntu 24.04 blocks the user namespaces Chrome's sandbox needs. `action.yml` now allows them for the Chrome binary on GitHub-hosted runners; confirm the scan starts with the sandbox.
 
 ## Next: hardening
 

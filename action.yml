@@ -65,7 +65,19 @@ runs:
         URL: ${{ inputs.url }}
       run: |
         npm ci --omit=dev --ignore-scripts --no-audit --no-fund
-        if [ -n "$URL" ]; then npx playwright install --with-deps --only-shell chromium; fi
+        if [ -z "$URL" ]; then exit 0; fi
+        npx playwright install --with-deps --only-shell chromium
+        # Ubuntu 23.10 and later block the user namespaces that Chrome's sandbox needs. On GitHub-hosted
+        # runners, which are thrown away after the job, allow them for the Chrome binary only, so the
+        # sandbox stays on. Self-hosted runners are left as they are.
+        if [ "$RUNNER_ENVIRONMENT" = github-hosted ] && [ "$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns 2>/dev/null)" = 1 ]; then
+          CHROME=$(find "${PLAYWRIGHT_BROWSERS_PATH:-$HOME/.cache/ms-playwright}" -type f -name chrome-headless-shell -path '*chromium_headless_shell-*' | head -n 1)
+          if [ -n "$CHROME" ]; then
+            printf 'abi <abi/4.0>,\ninclude <tunables/global>\nprofile rechtzeitig-chrome "%s" flags=(unconfined) {\n  userns,\n}\n' "$CHROME" \
+              | sudo tee /etc/apparmor.d/rechtzeitig-chrome > /dev/null
+            sudo apparmor_parser -r /etc/apparmor.d/rechtzeitig-chrome || echo "::warning::rechtzeitig: could not allow Chrome's sandbox on this runner."
+          fi
+        fi
 
     - name: Scan
       id: scan
