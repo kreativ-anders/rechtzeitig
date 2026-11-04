@@ -1,20 +1,21 @@
-import { WORKFLOWS, defineRepoCheck, info, pass, skip } from "../../../src/sdk.ts";
+import { WORKFLOWS, defineRepoCheck, info, msg, pass, skip, type Finding } from "../../../src/sdk.ts";
 
 const USES = /^[ \t]*-?[ \t]*uses:[ \t]*["']?([^"'\s#]+)/gm;
+
+/** 1-based line of a position in a text. */
+const lineAt = (text: string, index: number) => text.slice(0, index).split("\n").length;
 
 export default defineRepoCheck({
   run(repo) {
     const workflows = repo.find(WORKFLOWS);
-    if (!workflows.length) return skip("No GitHub workflows.");
-    const unpinned = workflows.flatMap((f) =>
-      [...(repo.read(f) ?? "").matchAll(USES)]
-        .map((m) => m[1])
-        .filter((u) => !u.startsWith("./") && !u.startsWith("docker://") && !/@[0-9a-f]{40}$/.test(u))
-        .map((u) => `${f}: ${u}`),
-    );
-    if (unpinned.length) {
-      return info(`${unpinned.length} action(s) use a tag instead of a commit SHA. A moved tag can change the code that runs.`, [...new Set(unpinned)]);
-    }
-    return pass("All actions are pinned to a commit SHA.");
+    if (!workflows.length) return skip(msg("no_workflows"));
+    const unpinned: Finding[] = workflows.flatMap((file) => {
+      const text = repo.read(file) ?? "";
+      return [...text.matchAll(USES)]
+        .filter((m) => !m[1].startsWith("./") && !m[1].startsWith("docker://") && !/@[0-9a-f]{40}$/.test(m[1]))
+        .map((m) => ({ file, line: lineAt(text, m.index), text: m[1] }));
+    });
+    if (unpinned.length) return info(msg("unpinned", { count: unpinned.length }), unpinned);
+    return pass(msg("pinned"));
   },
 });

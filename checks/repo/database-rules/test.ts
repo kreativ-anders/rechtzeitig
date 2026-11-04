@@ -14,7 +14,13 @@ test("passes when every table has row level security", async () => {
 test("fails for a table without row level security", async () => {
   const result = await runRepoCheck(here, { "supabase/migrations/1_init.sql": migration() });
   assert.equal(result.status, "fail");
-  assert.deepEqual(result.details, ['Supabase table "profiles" has no row level security.']);
+  assert.deepEqual(result.details, ['supabase/migrations/1_init.sql:1: Supabase table "profiles" has no row level security.']);
+});
+
+test("points to the line of the create table statement", async () => {
+  const sql = "-- init\ncreate table public.a (id int);\nalter table a enable row level security;\n\n  create table public.b (\n  id int\n);";
+  const result = await runRepoCheck(here, { "supabase/migrations/1.sql": sql });
+  assert.deepEqual(result.raw.details, [{ file: "supabase/migrations/1.sql", line: 5, key: "no_rls", params: { table: "b" } }]);
 });
 
 test("ignores tables outside the public schema and reads alter table if exists", async () => {
@@ -30,7 +36,7 @@ test("names a public table without row level security when another schema has on
   const sql = "create table public.notes (id int);\ncreate table private.notes (id int);\nalter table private.notes enable row level security;";
   const result = await runRepoCheck(here, { "supabase/migrations/1.sql": sql });
   assert.equal(result.status, "fail");
-  assert.deepEqual(result.details, ['Supabase table "notes" has no row level security.']);
+  assert.deepEqual(result.details, ['supabase/migrations/1.sql:1: Supabase table "notes" has no row level security.']);
 });
 
 test("warns for an open policy, but not when using (true) belongs to the next statement", async () => {

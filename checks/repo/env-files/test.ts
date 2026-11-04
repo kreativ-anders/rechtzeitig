@@ -17,6 +17,7 @@ test("fails for an .env file with two suffixes, but not for a template of it", a
   const ok = await runRepoCheck(here, { ".gitignore": ".env\n", "web/.env.local.example": "KEY=", "web/.env.production.sample": "KEY=" });
   assert.equal(bad.status, "fail");
   assert.deepEqual(bad.details, ["web/.env.production.local"]);
+  assert.deepEqual(bad.raw.details, [{ file: "web/.env.production.local" }]);
   assert.equal(ok.status, "pass");
 });
 

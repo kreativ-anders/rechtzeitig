@@ -1,4 +1,4 @@
-import { WORKFLOWS, defineRepoCheck, info, loadYaml, pass, skip, warn, type Ecosystem } from "../../../src/sdk.ts";
+import { WORKFLOWS, defineRepoCheck, info, loadYaml, msg, pass, skip, warn, type Ecosystem } from "../../../src/sdk.ts";
 
 const TOOLS = loadYaml<{ dependabot: Record<Ecosystem, string[]>; renovate: string; scanners: string[] }>("data/update-tools.yml");
 const DEPENDABOT = TOOLS.dependabot;
@@ -8,7 +8,7 @@ const SCANNERS = TOOLS.scanners.map((s) => s.toLowerCase());
 export default defineRepoCheck({
   run(repo) {
     const used = [...new Set(repo.components.map((c) => c.ecosystem))];
-    if (!used.length) return skip("No locked dependencies.");
+    if (!used.length) return skip(msg("no_components"));
 
     const dependabotFile = repo.find(/^\.github\/dependabot\.ya?ml$/)[0];
     const updates = (dependabotFile && repo.yaml<{ updates?: Array<{ "package-ecosystem"?: string }> }>(dependabotFile)?.updates) || [];
@@ -22,13 +22,15 @@ export default defineRepoCheck({
       }),
     ];
 
-    if (renovate) return pass("Renovate keeps dependencies up to date.");
+    if (renovate) return pass(msg("renovate"));
     const missing = used.filter((e) => !DEPENDABOT[e].some((name) => covered.has(name)));
-    if (dependabotFile && !missing.length) return pass(`Dependabot covers ${used.join(", ")}.`);
-    if (dependabotFile) return warn(`Dependabot does not cover ${missing.join(", ")}.`, missing.map((e) => `Add package-ecosystem "${DEPENDABOT[e][0]}" to ${dependabotFile}.`));
-    if (scanners.length) return info("Vulnerabilities are scanned, but no tool opens update pull requests.", scanners);
-    return warn("Nothing watches the dependencies for new vulnerabilities. Add Dependabot or Renovate.", [
-      `Add .github/dependabot.yml with one entry per ecosystem: ${used.map((e) => `package-ecosystem "${DEPENDABOT[e][0]}"`).join(", ")}.`,
-    ]);
+    if (dependabotFile && !missing.length) return pass(msg("dependabot", { ecosystems: used.join(", ") }));
+    if (dependabotFile) {
+      const details = missing.map((e) => ({ file: dependabotFile, key: "add_ecosystem", params: { name: DEPENDABOT[e][0] } }));
+      return warn(msg("dependabot_missing", { ecosystems: missing.join(", ") }), details);
+    }
+    if (scanners.length) return info(msg("scan_only"), scanners.map((file) => ({ file })));
+    const entries = used.map((e) => `package-ecosystem "${DEPENDABOT[e][0]}"`).join(", ");
+    return warn(msg("unwatched"), [{ key: "add_dependabot", params: { entries } }]);
   },
 });

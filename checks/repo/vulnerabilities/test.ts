@@ -16,7 +16,7 @@ test("passes without known vulnerabilities", async () => {
 test("fails for a high severity issue in production", async () => {
   const result = await runRepoCheck(here, files, { osv: "ok", vulnerabilities: [vuln("pkg:npm/lodash@4.17.20", "HIGH")] });
   assert.equal(result.status, "fail");
-  assert.equal(result.details?.[0], "lodash@4.17.20: GHSA-test HIGH. Prototype pollution Fixed in 4.17.21.");
+  assert.equal(result.details?.[0], "package-lock.json: lodash@4.17.20: GHSA-test HIGH. Prototype pollution Fixed in 4.17.21.");
 });
 
 test("only warns when the issue is in a dev dependency", async () => {
@@ -34,6 +34,6 @@ test("keeps issues without details and says that details are missing", async () 
   const bare = { id: "GHSA-bare", purl: "pkg:npm/lodash@4.17.20", summary: "", severity: "" };
   const result = await runRepoCheck(here, files, { osv: "ok (details for 0 of 1)", vulnerabilities: [bare] });
   assert.equal(result.status, "warn");
-  assert.match(result.message, /OSV sent details for 0 of 1 issues/);
-  assert.deepEqual(result.details, ["lodash@4.17.20: GHSA-bare."]);
+  assert.match(result.message, /OSV sent details for 0 of 1 issue;/);
+  assert.deepEqual(result.details, ["package-lock.json: lodash@4.17.20: GHSA-bare."]);
 });
