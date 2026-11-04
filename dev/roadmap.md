@@ -33,18 +33,18 @@ Open points from the audit of 2026-11-03, after the fixes.
 
 ## Next: repository
 
-1. PR annotations for repository findings with file and line.
-2. Reports fully in the chosen language: messages and details come from `lang/*.yml`, not only titles and fix hints. Check code returns keys and values, never sentences.
-3. Secrets in the git history, not only in the current files. The example workflow then needs `fetch-depth: 0`.
-4. Workflows with `pull_request_target` and a checkout of the PR head, `${{ github.event.* }}` in `run:`, missing or `write-all` permissions, `curl | sh`.
-5. Third-party services in the code: hosts and SDK packages from `data/third-parties.yml`, e.g. Google Fonts URLs (§ 25 TDDDG, Art. 13 DSGVO).
-6. Secret-looking names behind public env prefixes (`NEXT_PUBLIC_`, `VITE_`, `PUBLIC_`) that end up in the client bundle.
-7. Package names that do not exist or look like typos of popular ones.
-8. A vulnerability contact: `SECURITY.md` or `.well-known/security.txt` (CRA Annex I Part II).
-9. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
-10. SBOM fields as BSI TR-03183-2 asks (CRA Annex I Part II).
-11. `cors` with `origin: *` and credentials, admin routes without an auth check.
-12. License headers of other projects inside your own files.
+Done since v0.1.0: PR annotations for findings with file and line; reports fully in the chosen language (checks return message keys, the sentences and vendor advice are in `lang/*.yml` and `data/third-parties.yml` per language).
+
+1. Workflows with `pull_request_target` and a checkout of the PR head, `${{ github.event.* }}` in `run:`, missing or `write-all` permissions, `curl | sh`.
+2. Secrets in the git history. By default only the commits a pull request or push adds, so old, revoked keys do not flood every run; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
+3. Third-party services in the code: hosts and SDK packages from `data/third-parties.yml`, e.g. Google Fonts URLs (§ 25 TDDDG, Art. 13 DSGVO).
+4. Secret-looking names behind public env prefixes (`NEXT_PUBLIC_`, `VITE_`, `PUBLIC_`) that end up in the client bundle.
+5. Package names that do not exist or look like typos of popular ones.
+6. A vulnerability contact: `SECURITY.md` or `.well-known/security.txt` (CRA Annex I Part II).
+7. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
+8. SBOM fields as BSI TR-03183-2 asks (CRA Annex I Part II).
+9. `cors` with `origin: *` and credentials, admin routes without an auth check.
+10. License headers of other projects inside your own files.
 
 ## Next: repository and website together
 
