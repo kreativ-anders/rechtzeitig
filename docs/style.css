@@ -303,6 +303,7 @@ td:first-child code, th code { white-space: nowrap; }
 .red { color: var(--fail); font-weight: 600; }
 .green { color: var(--pass); font-weight: 600; }
 .updated { color: var(--muted); font-size: 0.9rem; }
+address { font-style: normal; }
 
 /* Status pills: icons are SVG masks, so they sit centred in any font */
 

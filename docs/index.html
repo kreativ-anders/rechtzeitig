@@ -6,12 +6,12 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q='; style-src 'self'; img-src 'self' data:; base-uri 'self' https://kreativ-anders.github.io; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>rechtzeitig: German legal and security checks for your website</title>
-<meta name="description" content="A GitHub Action that checks your website and repository for German and EU legal basics, security headers, consent and an SBOM.">
+<meta name="description" content="A GitHub Action that checks your website and repository for German and EU legal basics, consent and security headers, and writes an SBOM.">
 <link rel="canonical" href="https://kreativ-anders.github.io/rechtzeitig/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="rechtzeitig">
 <meta property="og:title" content="rechtzeitig: German legal and security checks for your website">
-<meta property="og:description" content="A GitHub Action that checks your website and repository for German and EU legal basics, security headers, consent and an SBOM.">
+<meta property="og:description" content="A GitHub Action that checks your website and repository for German and EU legal basics, consent and security headers, and writes an SBOM.">
 <meta property="og:url" content="https://kreativ-anders.github.io/rechtzeitig/">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary">
@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="style.css">
 <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="site.js" defer></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "rechtzeitig", "description": "A GitHub Action that checks your website and repository for German and EU legal basics, security headers, consent and an SBOM.", "url": "https://kreativ-anders.github.io/rechtzeitig/", "codeRepository": "https://github.com/kreativ-anders/rechtzeitig", "programmingLanguage": "TypeScript", "runtimePlatform": "GitHub Actions", "license": "https://www.apache.org/licenses/LICENSE-2.0", "author": {"@type": "Organization", "name": "kreativ-anders", "url": "https://kreativ-anders.de"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "rechtzeitig", "description": "A GitHub Action that checks your website and repository for German and EU legal basics, consent and security headers, and writes an SBOM.", "url": "https://kreativ-anders.github.io/rechtzeitig/", "codeRepository": "https://github.com/kreativ-anders/rechtzeitig", "programmingLanguage": "TypeScript", "runtimePlatform": "GitHub Actions", "license": "https://www.apache.org/licenses/LICENSE-2.0", "author": {"@type": "Organization", "name": "kreativ-anders", "url": "https://kreativ-anders.de"}}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
@@ -36,14 +36,14 @@
   <div class="hero">
     <div>
       <h1>rechtzeitig</h1>
-      <p class="lead">A GitHub Action you start by hand. It opens your website the way a first-time visitor from Germany would and reads your repository. It reports what German and EU law asks for and what is missing.</p>
+      <p class="lead">A GitHub Action you start by hand. It opens your website as a new visitor from Germany would, reads your repository and reports which German and EU requirements are met and which are missing.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<strong>§</strong>in time</span></div>
   </div>
 
   <ul class="covers">
     <li><strong>Imprint and privacy policy</strong><p>DDG, GDPR</p></li>
-    <li><strong>Consent</strong><p>Servers, cookies and banners before consent, TDDDG</p></li>
+    <li><strong>Consent</strong><p>Third-party requests and cookies before consent, the banner, TDDDG</p></li>
     <li><strong>Contract buttons</strong><p>Cancellation and withdrawal, BGB</p></li>
     <li><strong>Security basics</strong><p>HTTPS, TLS, headers, exposed files, error pages, email spoofing</p></li>
     <li><strong>Repository</strong><p>SBOM, known vulnerabilities, license conflicts, committed secrets</p></li>
@@ -58,7 +58,7 @@
     <li><span>Read the report on the run's summary page.</span></li>
   </ol>
 
-  <p>No secret is needed. Checks that use an API with a token are opt-in: they run only when you add the token as a repository secret, otherwise they are skipped and nothing is sent. See <a href="workflow.html#secrets">Secrets</a>.</p>
+  <p>You need no secret to start. Checks that call an API with a token run only after you add that token as a repository secret. Without it they are skipped and send nothing. See <a href="workflow.html#secrets">Secrets</a>.</p>
 
   <h2>Read on</h2>
   <div class="cards">
@@ -70,7 +70,7 @@
 <footer><div class="inner">
   <p class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</p>
   <nav aria-label="Legal and source"><ul>
-    <li><a href="https://kreativ-anders.de/impressum">Imprint <span lang="de">(Impressum)</span></a></li>
+    <li><a href="imprint.html">Imprint <span lang="de">(Impressum)</span></a></li>
     <li><a href="privacy.html">Privacy policy <span lang="de">(Datenschutz)</span></a></li>
     <li><a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></li>
     <li><a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/LICENSE">Apache-2.0</a></li>
