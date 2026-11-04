@@ -64,20 +64,20 @@
           <thead><tr><th scope="col">Input</th><th scope="col">Default</th><th scope="col">Meaning</th></tr></thead>
           <tbody>
             <tr><td><code>url</code></td><td>empty</td><td>Start page to check. Empty scans only the repository.</td></tr>
-            <tr><td><code>language</code></td><td><code>de</code></td><td>Language of the site: <code>de</code>, <code>en</code> or <code>all</code>. Decides which words count as "Impressum", "Datenschutz" and so on.</td></tr>
+            <tr><td><code>language</code></td><td><code>de</code></td><td>Language of the site: <code>de</code>, <code>en</code>, both as <code>de,en</code>, or <code>all</code>. Decides which words count as "Impressum", "Datenschutz" and so on.</td></tr>
             <tr><td><code>subscriptions</code></td><td><code>false</code></td><td><code>true</code> if visitors can sign up for subscriptions. Turns on the cancellation button check (§ 312k BGB).</td></tr>
-            <tr><td><code>sales</code></td><td><code>false</code></td><td><code>true</code> if consumers buy or sign contracts on the site. Turns on the shop checks: withdrawal button and withdrawal instructions (§ 356a BGB, Art. 246a EGBGB), order button (§ 312j BGB), price notices (PAngV) and the T&amp;C link. The order button and price checks read every visited page, so to check a product or checkout page, point <code>url</code> at it.</td></tr>
+            <tr><td><code>sales</code></td><td><code>false</code></td><td><code>true</code> if consumers buy or sign contracts on the site. Turns on the shop checks: withdrawal, order button, prices and T&amp;C link. To check a product or checkout page, point <code>url</code> at it.</td></tr>
             <tr><td><code>modules</code></td><td>all</td><td>Comma list of check groups: <code>legal</code>, <code>privacy</code>, <code>security</code>, <code>sustainability</code>, <code>accessibility</code>, <code>repo</code>.</td></tr>
-            <tr><td><code>report-language</code></td><td><code>language</code></td><td><code>de</code> or <code>en</code>. The whole report follows it: messages, details, titles and fix hints. Empty uses the site language; with <code>all</code> the report is in English.</td></tr>
+            <tr><td><code>report-language</code></td><td><code>language</code></td><td><code>de</code> or <code>en</code>. Empty uses <code>language</code>; with <code>all</code> the report is in English.</td></tr>
             <tr><td><code>fail-on</code></td><td><code>never</code></td><td>When the run turns red, see <a href="#fail-on">fail-on</a>.</td></tr>
             <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Pages to visit at most.</td></tr>
-            <tr><td><code>repository</code></td><td>workspace</td><td>Folder to read lockfiles, licenses and secrets from. Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
-            <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from <a href="https://ipinfo.io">ipinfo.io</a>, passed from the secret <code>IPINFO_TOKEN</code>. Turns on the <a href="checks.html#LEG-EU-DSE-005">third-country check</a>. Empty skips it, see <a href="#secrets">Secrets</a>.</td></tr>
-            <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> sends nothing there and the vulnerability check is skipped.</td></tr>
-            <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the site's host runs on green energy. Sends only the host name. <code>false</code> sends nothing there and the <a href="checks.html#SUS-HOST-001">green hosting check</a> is skipped.</td></tr>
+            <tr><td><code>repository</code></td><td>workspace</td><td>Folder with the checked-out repository (lockfiles, workflows, configs). Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
+            <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from the secret <code>IPINFO_TOKEN</code>. Turns on the <a href="checks.html#LEG-EU-DSE-005">third-country check</a>, see <a href="#secrets">Secrets</a>.</td></tr>
+            <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> skips the check and sends nothing.</td></tr>
+            <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the host runs on green energy (sends the host name). <code>false</code> skips the <a href="checks.html#SUS-HOST-001">check</a> and sends nothing.</td></tr>
             <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>Stops the scan when Chrome cannot start with its sandbox. <code>false</code> scans without it, see <a href="#safe">Safe use</a>.</td></tr>
-            <tr><td><code>report-visibility</code></td><td><code>auto</code></td><td>How much of the report the run shows: <code>auto</code>, <code>full</code>, <code>counts</code> or <code>none</code>, see <a href="#report">The report</a>.</td></tr>
-            <tr><td><code>sarif-upload</code></td><td><code>false</code></td><td>Opt-in. <code>true</code> also uploads the findings as SARIF to the repository's Security tab, see <a href="#security-tab">Findings in the Security tab</a>.</td></tr>
+            <tr><td><code>report-visibility</code></td><td><code>auto</code></td><td>How much the run shows: <code>auto</code>, <code>full</code>, <code>counts</code> or <code>none</code>, see <a href="#report">The report</a>.</td></tr>
+            <tr><td><code>sarif-upload</code></td><td><code>false</code></td><td>Opt-in. <code>true</code> also shows the findings in the Security tab, see <a href="#security-tab">Security tab</a>.</td></tr>
             <tr><td><code>retention-days</code></td><td><code>7</code></td><td>Days GitHub keeps the report artifact, see <a href="#report">The report</a>.</td></tr>
           </tbody>
         </table></div>
@@ -86,7 +86,7 @@
 
       <section id="scope">
         <h2><span class="par">§ 2</span>What runs when</h2>
-        <p>Most checks run whenever their target is there. The ones below need a setting. A check that is off shows as <span class="status s-skip">skip</span> in the report, with the reason and the setting that turns it on. The <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> scans the website and the repository.</p>
+        <p>Most checks always run. These need a setting; when off, they show as <span class="status s-skip">skip</span> with the setting that turns them on.</p>
 <!-- switches:start -->
 <div class="table-wrap"><table>
 <thead><tr><th>Check</th><th>Runs when</th></tr></thead>
@@ -109,7 +109,7 @@
 
       <section id="fail-on">
         <h2><span class="par">§ 3</span>fail-on</h2>
-        <p>Every check ends as <span class="status s-pass">pass</span> <span class="status s-warn">warn</span> <span class="status s-fail">fail</span> <span class="status s-info">info</span> or <span class="status s-skip">skip</span>. <code>fail-on</code> decides which of these make the run red. The report is the same either way.</p>
+        <p><code>fail-on</code> decides when the run turns red. The report is the same either way.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col"><code>fail-on</code></th><th scope="col">Run is red when</th><th scope="col">1 fail, 2 warn</th><th scope="col">0 fail, 2 warn</th></tr></thead>
           <tbody>
@@ -118,64 +118,61 @@
             <tr><td><code>warn</code></td><td>any check fails or warns</td><td class="red">red</td><td class="red">red</td></tr>
           </tbody>
         </table></div>
-        <p>The default never turns a run red, so adding rechtzeitig cannot break anything. Choose <code>fail</code> once the findings are fixed and you want to keep it that way, or <code>warn</code> before a launch.</p>
+        <p>Choose <code>fail</code> once the findings are fixed, to keep them fixed.</p>
       </section>
 
       <section id="secrets">
         <h2><span class="par">§ 4</span>Secrets</h2>
-        <p>Every check that needs an API token is opt-in. It runs only when you add the token as a repository secret. Without the secret it shows as <span class="status s-skip">skip</span> in the report, and nothing is sent to that service. All other checks need no secret.</p>
+        <p>Only one check needs a token. Without the secret it is skipped and nothing is sent.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Secret</th><th scope="col">Input</th><th scope="col">Turns on</th><th scope="col">Token from</th></tr></thead>
           <tbody>
             <tr><td><code>IPINFO_TOKEN</code></td><td><code>ipinfo-token</code></td><td><a href="checks.html#LEG-EU-DSE-005">Transfers outside the EU</a> (LEG-EU-DSE-005)</td><td><a href="https://ipinfo.io">ipinfo.io</a>, the free plan is enough</td></tr>
           </tbody>
         </table></div>
-        <p>To add a secret: repository <b>Settings → Secrets and variables → Actions → New repository secret</b>, with the name from the table. The <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> already passes it to the input.</p>
+        <p>Add it under <b>Settings → Secrets and variables → Actions → New repository secret</b>. The example workflow already passes it on.</p>
         <p class="note">rechtzeitig sends only the IP addresses of third-party servers to IPinfo, never data about your visitors.</p>
       </section>
 
       <section id="report">
         <h2><span class="par">§ 5</span>The report</h2>
-        <p>How much of the report a run shows depends on <code>report-visibility</code>:</p>
+        <p><code>report-visibility</code> decides how much the run shows:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Value</th><th scope="col">Shows</th></tr></thead>
           <tbody>
             <tr><td><code>auto</code></td><td><code>full</code> for private and internal repositories, <code>counts</code> for public ones. A run whose event does not say counts as public.</td></tr>
-            <tr><td><code>full</code></td><td>Everything below: summary with findings, log, annotations and the artifact.</td></tr>
-            <tr><td><code>counts</code></td><td>Only how many checks ended in each status, in the summary and the log. No rule ids, messages or places, no annotations, no artifact.</td></tr>
+            <tr><td><code>full</code></td><td>Summary with findings, log, annotations and the artifact.</td></tr>
+            <tr><td><code>counts</code></td><td>Only how many checks ended in each status. No details, annotations or artifact.</td></tr>
             <tr><td><code>none</code></td><td>Nothing but the output <code>result</code> and, with <code>fail-on</code>, the job status.</td></tr>
           </tbody>
         </table></div>
-        <p>With <code>full</code>, the summary page of the run shows the findings (fail, error, warn, info) with details, in the report language. Passed and skipped checks are only in the artifact. Findings in a file of the repository also appear as annotations: in a pull request at the line, otherwise on the run page. GitHub shows at most 10 errors and 10 warnings there; the summary always has all findings, the artifact all checks. The artifact <code>rechtzeitig-report</code> contains:</p>
+        <p>The summary shows all findings; passed and skipped checks are only in the artifact. Findings in a repository file also show as annotations (GitHub shows at most 10 errors and 10 warnings). The artifact <code>rechtzeitig-report</code> contains:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">File</th><th scope="col">Content</th></tr></thead>
           <tbody>
             <tr><td><code>rechtzeitig-report.md</code></td><td>The same report as Markdown</td></tr>
-            <tr><td><code>rechtzeitig-report.json</code></td><td>Findings: rule id, severity, status, message in the report language with its key and parameters, and locations. No page text or file contents</td></tr>
-            <tr><td><code>rechtzeitig-sbom.cdx.json</code></td><td>SBOM in CycloneDX 1.6 format, with vulnerabilities</td></tr>
+            <tr><td><code>rechtzeitig-report.json</code></td><td>Findings with rule id, severity, status, message and locations. No page text or file contents</td></tr>
+            <tr><td><code>rechtzeitig-sbom.cdx.json</code></td><td>SBOM in CycloneDX 1.6 format, with vulnerabilities. Keep it with each release</td></tr>
           </tbody>
         </table></div>
-        <p>Keep the SBOM with each release. It shows which versions you shipped and that you checked them.</p>
-        <p class="note">On a public repository the report is public too, so <code>auto</code> shows only counts there. With <code>report-visibility: full</code>, anyone who can see the repository can read the summary page, the log and the annotations, and anyone signed in to GitHub can download the artifact, including the list of your dependencies and where findings were found. Secret values are redacted, their file and line are not. GitHub deletes the artifact after <code>retention-days</code> (default 7) and the summary and log after the log retention set in the repository settings (default 90 days). To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout of your code.</p>
-        <h3 id="security-tab">Findings in the Security tab</h3>
-        <p>With <code>sarif-upload: true</code>, rechtzeitig writes its findings as a SARIF file and hands it to GitHub code scanning. They then show as alerts in the repository's <b>Security</b> tab, which only people with write access can see, even on a public repository. Together with <code>report-visibility: auto</code>, a public repository shows only counts on the run page and the details in the Security tab. GitHub keeps the alerts across runs, closes them when a finding is gone, and lets you dismiss one with a reason.</p>
-        <p>This only uses GitHub's code scanning to show the results. rechtzeitig does its own checks, it runs no other scanner. A finding in a file of the repository points to that file and line. A website finding has no file, so it points to the workflow file and names the page.</p>
-        <p>In the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> both are choices in the <b>Run workflow</b> dialog, and the job already has the permission it needs:</p>
+        <p class="note">On a public repository the run page is public, so <code>auto</code> shows only counts there. With <code>full</code>, anyone can read the findings and download the artifact (secret values are redacted, their file and line are not). GitHub deletes the artifact after <code>retention-days</code>, the log after 90 days by default. To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout.</p>
+        <h3 id="security-tab">Security tab</h3>
+        <p>With <code>sarif-upload: true</code>, findings show as code scanning alerts in the repository's <b>Security</b> tab, which only people with write access see, even on a public repository. Website findings point to the workflow file and name the page. The job needs:</p>
         <pre><code>permissions:
   contents: read
   security-events: write</code></pre>
-        <p>Code scanning is free on public repositories; private ones also need GitHub Code Security. In pull requests, GitHub shows alerts on changed lines to everyone who can read the pull request. A failed upload, for example without the permission or from a fork, shows on the step but does not fail the job.</p>
+        <p>Free on public repositories; private ones need GitHub Code Security. A failed upload does not fail the job.</p>
       </section>
 
       <section id="visit">
         <h2><span class="par">§ 6</span>How the website is visited</h2>
-        <p>Each page is loaded twice in a fresh Chromium, once with JavaScript off and once with it on. Nothing is clicked and no consent is given, so every request and cookie in the report happened before consent. rechtzeitig opens the start page, every legal page it finds, a sample of other pages, and a short list of paths that must not be public (<code>/.env</code>, <code>/.git/config</code>, backups).</p>
-        <p class="note">GitHub's runners are in US data centers. A site that shows its consent banner only to EU visitors will look different here, and that is a finding in itself. Pages behind a login are not checked.</p>
+        <p>Each page loads in a fresh Chromium, once without and once with JavaScript. Nothing is clicked and no consent is given, so every request and cookie in the report happened before consent. rechtzeitig opens the start page, the legal pages, a sample of other pages, and paths that must not be public (<code>/.env</code>, <code>/.git/config</code>, backups).</p>
+        <p class="note">GitHub's runners are in the US, so a banner shown only to EU visitors will be missing. Pages behind a login are not checked.</p>
       </section>
 
       <section id="data">
         <h2><span class="par">§ 7</span>Data that leaves the runner</h2>
-        <p>Besides visiting your website, rechtzeitig sends data to three services. With <code>sarif-upload: true</code>, the findings also go to GitHub code scanning of your own repository. Nothing else leaves the runner.</p>
+        <p>Besides visiting your website, rechtzeitig sends data only to these services, and with <code>sarif-upload: true</code> to your own repository's code scanning.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>
@@ -188,36 +185,22 @@
 
       <section id="safe">
         <h2><span class="par">§ 8</span>Safe use</h2>
-        <p class="note">Never run rechtzeitig in a workflow triggered by <code>pull_request_target</code>. That trigger runs with your secrets and a token that can write to the repository, while the scanned code comes from a fork. Use <code>workflow_dispatch</code>, <code>schedule</code>, <code>push</code> or <code>pull_request</code>.</p>
-        <p>Check out with <code>persist-credentials: false</code> as in the example workflow. rechtzeitig does not need the token, so it should not be left in the checkout.</p>
-        <p>The scanned site is untrusted. Chrome runs with its sandbox. On GitHub-hosted runners with Ubuntu 23.10 or later, the action installs an AppArmor profile that allows the user namespaces the sandbox needs, for the Chrome binary only; those runners are discarded after the job. On self-hosted runners it changes nothing. Where the runner has no sandbox, the scan stops. <code>require-sandbox: false</code> scans anyway; only do that for sites you trust. Neither the browser nor any other request reaches private addresses (<code>localhost</code>, <code>10.x</code>, cloud metadata), except the host of <code>url</code> itself.</p>
-        <p>rechtzeitig is a composite action and sets up Node 24 with <code>actions/setup-node</code>. That Node stays on the <code>PATH</code> for the steps after it in the same job. Set up your own Node version after rechtzeitig, or run it in a separate job.</p>
+        <p class="note">Never run rechtzeitig on <code>pull_request_target</code>: it gives code from a fork your secrets and a write token. Use <code>workflow_dispatch</code>, <code>schedule</code>, <code>push</code> or <code>pull_request</code>.</p>
+        <p>Check out with <code>persist-credentials: false</code>; rechtzeitig needs no token.</p>
+        <p>The scanned site is untrusted, so Chrome runs with its sandbox. On GitHub-hosted Ubuntu runners the action allows it with an AppArmor profile for the Chrome binary only; self-hosted runners are not changed. Without a sandbox the scan stops; <code>require-sandbox: false</code> scans anyway, only for sites you trust. No request reaches private addresses (<code>localhost</code>, <code>10.x</code>, cloud metadata) except the host of <code>url</code>.</p>
+        <p>The action sets up Node 24, which stays on the <code>PATH</code> for later steps. Set up your own Node after it, or use a separate job.</p>
       </section>
 
       <section id="updates">
         <h2><span class="par">§ 9</span>Updates</h2>
-        <p>The example workflow pins rechtzeitig to the commit SHA of a release, with the version as a comment. A pin never changes by itself, so new checks and fixes reach you only when you move it.</p>
-        <p>Let Dependabot do that. Add <code>.github/dependabot.yml</code> to your repository:</p>
-        <pre><code>version: 2
-updates:
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: weekly
-    # Waits a week after a release before proposing it.
-    cooldown:
-      default-days: 7</code></pre>
-        <p>Dependabot reads the <code>uses:</code> lines in <code>.github/workflows/</code>. When rechtzeitig publishes a new release, it opens a pull request that changes the SHA and the version comment together. The pull request links the release notes.</p>
-        <p>Without Dependabot, open the <a href="https://github.com/kreativ-anders/rechtzeitig/releases">latest release</a> and copy the <code>uses:</code> line from its notes into your workflow.</p>
-        <p class="note">Dependabot only moves the pin. It does not add new inputs to your workflow. Read the release notes and compare your file with the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a>. New checks that need no input run without changes; checks behind a switch stay off until you add it (see <a href="#scope">What runs when</a>).</p>
+        <p>The example workflow pins a release by its commit SHA. Dependabot moves the pin with a pull request for each new release, see <a href="./#updates">How do I get the latest version?</a> Without it, copy the <code>uses:</code> line from the <a href="https://github.com/kreativ-anders/rechtzeitig/releases">latest release</a>.</p>
+        <p class="note">An update does not add new inputs to your workflow. Checks behind a switch stay off until you add it, see the release notes.</p>
       </section>
 
       <section id="questions">
         <h2><span class="par">§ 10</span>Questions</h2>
         <h3 id="no-issues">Why does rechtzeitig not open issues?</h3>
-        <p>An issue would make findings more visible than they should be. On a public repository issues are public, like the report (see <a href="#report">The report</a>). But the report is deleted after a while and nobody is told about it. An issue stays until someone deletes it, sends notifications, and is found by search engines. A finding like "secret in <code>config.js</code>, line 12" or "known vulnerability in a dependency" would point every reader to a weakness of your site.</p>
-        <p>There are more reasons. Writing issues needs <code>issues: write</code>, while rechtzeitig needs no token at all (see <a href="#safe">Safe use</a>). A scheduled run finds the same things every day, so issues would need matching, closing and reopening, or they pile up. And messages carry text from the scanned site, which in an issue could mention users or link other issues.</p>
-        <p>If you want an issue anyway, for example on a private repository, add a step after rechtzeitig that reads the <code>result</code> output or <code>rechtzeitig-report.json</code> and opens one with <code>gh issue create</code>. Give that step, not rechtzeitig, the <code>issues: write</code> permission.</p>
+        <p>Issues stay, notify people and are found by search engines, so on a public repository they would point everyone to a weakness of your site. They would also need <code>issues: write</code>. If you want one anyway, add a step after rechtzeitig that reads <code>rechtzeitig-report.json</code> and runs <code>gh issue create</code>, and give that step the permission.</p>
         <p class="note">A secret found in a public repository is already public. Revoke it first, then remove it from the code.</p>
       </section>
     </div>

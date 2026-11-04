@@ -2,7 +2,7 @@
   "name": "rechtzeitig",
   "version": "0.3.0",
   "private": true,
-  "description": "Checks a website for German/EU legal basics (GDPR, DDG, TDDDG) from a manually started GitHub workflow.",
+  "description": "GitHub Action that checks a website and its repository for German legal basics (GDPR, DDG, TDDDG), security and an SBOM.",
   "type": "module",
   "engines": {
     "node": ">=24"

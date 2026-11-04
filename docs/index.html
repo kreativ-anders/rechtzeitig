@@ -41,8 +41,7 @@
   <div class="hero">
     <div>
       <h1>rechtzeitig</h1>
-      <p class="lead">A GitHub Action you start by hand. It opens your website as a new visitor from Germany would, reads your repository and points out technical signs that German and EU requirements may be missing, with the place it found them and the law they relate to.</p>
-      <p>rechtzeitig does not give legal advice and cannot tell you that your site is compliant. A finding is a hint to check, no finding is no all-clear.</p>
+      <p class="lead">A GitHub Action that checks your website and repository for German and EU legal basics and security, and writes an SBOM. Each finding names the place and the law.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<strong>§</strong>in time</span></div>
   </div>
@@ -50,17 +49,10 @@
   <ul class="covers">
     <li><strong>Imprint and privacy policy</strong><p>DDG, GDPR</p></li>
     <li><strong>Consent</strong><p>Third-party requests and cookies before consent, the banner, TDDDG</p></li>
-    <li><strong>Contract buttons</strong><p>Cancellation and withdrawal, BGB</p></li>
+    <li><strong>Shop and contract buttons</strong><p>Cancellation, withdrawal, order button, prices, BGB, PAngV</p></li>
     <li><strong>Security basics</strong><p>HTTPS, TLS, headers, exposed files, error pages, email spoofing</p></li>
-    <li><strong>Repository</strong><p>SBOM, known vulnerabilities, license conflicts, committed secrets</p></li>
-  </ul>
-
-  <h2>What it does differently</h2>
-  <ul class="covers">
-    <li><strong>Website and repository in one run</strong><p>It opens your live site and reads your repository in the same run, so one report covers what visitors receive and the code you ship.</p></li>
-    <li><strong>German law, with a source for each check</strong><p>Every check links the sources it is based on, such as the law on gesetze-im-internet.de or EUR-Lex. A check whose last review is more than a year old fails our own tests.</p></li>
-    <li><strong>Security and SBOM included</strong><p>Headers, TLS, exposed files and committed secrets are checked alongside the legal points. The same run writes a CycloneDX SBOM and looks for known vulnerabilities and license conflicts.</p></li>
-    <li><strong>Your code stays on the runner</strong><p>Everything runs on GitHub's runners, and your source code is not uploaded anywhere. You need no account, and there is no paid tier.</p></li>
+    <li><strong>Repository</strong><p>SBOM, known vulnerabilities, license conflicts, committed secrets, workflow risks</p></li>
+    <li><strong>Sustainability and accessibility</strong><p>Compression, caching, image formats, green hosting, page language</p></li>
   </ul>
 
   <h2>Start in two minutes</h2>
@@ -68,17 +60,34 @@
     <li><span>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository.</span></li>
     <li><span>Open <b>Actions → rechtzeitig → Run workflow</b>, enter your URL and pick the language.</span></li>
     <li><span>Read the report on the run's summary page.</span></li>
-    <li><span>Optional: let Dependabot keep the version current. See <a href="workflow.html#updates">Updates</a>.</span></li>
   </ol>
+  <p>No account and no secret needed. Inputs, secrets and report files: <a href="workflow.html">The workflow</a>. Every check and its law: <a href="checks.html">All checks</a>.</p>
 
-  <p>You need no secret to start. Checks that call an API with a token run only after you add that token as a repository secret. Without it they are skipped and send nothing. See <a href="workflow.html#secrets">Secrets</a>.</p>
-
-  <p><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a><br>One official API without a token is on by default: the vulnerability lookup sends the names and versions of your locked packages to <a href="https://osv.dev">osv.dev</a>. Turn it off with <code>vulnerabilities: false</code>. See <a href="workflow.html#scope">What runs when</a>.</p>
-
-  <h2>Read on</h2>
-  <div class="cards">
-    <a class="card-link" href="workflow.html"><strong>The workflow</strong><span>Inputs, secrets, <code>fail-on</code>, the report files</span></a>
-    <a class="card-link" href="checks.html"><strong>All checks</strong><span>What each one looks for and which law it is about</span></a>
+  <h2 id="faq">Questions</h2>
+  <div class="faq">
+    <details id="updates">
+      <summary>How do I get the latest version?</summary>
+      <p>The workflow pins a release by its commit SHA. Add <code>.github/dependabot.yml</code> to your repository:</p>
+      <pre><code>version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly</code></pre>
+      <p>Dependabot then opens a pull request whenever a new rechtzeitig release is out. Merge it and you have the new version.</p>
+    </details>
+    <details>
+      <summary>Is this legal advice?</summary>
+      <p>No. A finding is a technical hint to check, no finding is no all-clear.</p>
+    </details>
+    <details>
+      <summary>Does any data leave the runner?</summary>
+      <p>Your source code does not. By default the names and versions of your locked packages go to <a href="https://osv.dev">osv.dev</a> (<code>vulnerabilities: false</code> turns it off) and your host name to the Green Web Foundation (<code>green-hosting: false</code>). The full list: <a href="workflow.html#data">Data that leaves the runner</a>.</p>
+    </details>
+    <details>
+      <summary>Who can see the report?</summary>
+      <p>On a public repository, only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. See <a href="workflow.html#report">The report</a>.</p>
+    </details>
   </div>
 </main>
 

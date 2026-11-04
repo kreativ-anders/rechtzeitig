@@ -53,7 +53,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # Pinned to a release. Dependabot can move the pin: https://rechtzeitig.dev/workflow.html#updates
+      # Pinned to a release. Dependabot can move the pin: https://rechtzeitig.dev/#updates
       - uses: kreativ-anders/rechtzeitig@3b54fb9f40f19eaf5be7e5f846c0bd6dc811cc6e # v0.3.0
         with:
           url: ${{ inputs.url }}
