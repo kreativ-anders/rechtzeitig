@@ -4,6 +4,7 @@
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
+import { CLI_OPTIONS } from "./options.ts";
 import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
@@ -24,23 +25,7 @@ const FAIL_ON: Record<string, OutcomeStatus[]> = {
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: {
-    url: { type: "string" },
-    repo: { type: "string" },
-    language: { type: "string", default: "de" },
-    "report-language": { type: "string", default: "" },
-    modules: { type: "string", default: "" },
-    subscriptions: { type: "string", default: "false" },
-    sales: { type: "string", default: "false" },
-    "fail-on": { type: "string", default: "never" },
-    "max-pages": { type: "string", default: "10" },
-    vulnerabilities: { type: "string", default: "true" },
-    "green-hosting": { type: "string", default: "true" },
-    "require-sandbox": { type: "string", default: "true" },
-    "report-visibility": { type: "string", default: "auto" },
-    sarif: { type: "string", default: "" },
-    out: { type: "string", default: "rechtzeitig-report" },
-  },
+  options: CLI_OPTIONS,
 });
 
 let url = (values.url || positionals[0] || "").trim();

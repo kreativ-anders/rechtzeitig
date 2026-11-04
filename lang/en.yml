@@ -359,8 +359,8 @@ messages:
       one: "{count} own static file may be cached."
       other: "All {count} own static files may be cached."
     uncached:
-      one: "{count} of {total} own static files has no cache lifetime, so every visit downloads it again."
-      other: "{count} of {total} own static files have no cache lifetime, so every visit downloads them again."
+      one: "{count} of {total} own static files has no explicit cache lifetime, so the browser may ask for it or load it again on every visit."
+      other: "{count} of {total} own static files have no explicit cache lifetime, so the browser may ask for them or load them again on every visit."
     more:
       one: "and {count} more file"
       other: "and {count} more files"
@@ -392,10 +392,10 @@ messages:
   sustainability/modern-formats:
     modern: "Own images and fonts use efficient formats."
     legacy:
-      one: "{count} own image or font in an older, larger format."
-      other: "{count} own images or fonts in older, larger formats."
-    image: "{url}: image in an older format, {better} is smaller."
-    font: "{url}: font in an older format, {better} is smaller."
+      one: "{count} own image or font in an older format."
+      other: "{count} own images or fonts in older formats."
+    image: "{url}: image in an older format, {better} is usually smaller."
+    font: "{url}: font in an older format, {better} is usually smaller."
     more:
       one: "and {count} more file"
       other: "and {count} more files"

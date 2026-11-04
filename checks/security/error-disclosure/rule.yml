@@ -7,11 +7,12 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Requests the error paths from `data/probes.yml`, searches their visible text for the traces in `data/leaks.yml` and the headers of the start page and error pages for version headers."
+how: "Requests the paths from `data/probes.yml`, searches the visible text of the error paths for the traces in `data/leaks.yml`, and the headers of the start page and every probed path for the version headers in `data/leaks.yml` (`server` only with a version number)."
 fix_hint:
   de: "Fehlerausgabe in Produktion abschalten (z. B. display_errors=0, DEBUG=false) und Versions-Header entfernen."
   en: "Turn off error output in production (for example display_errors=0, DEBUG=false) and remove version headers."
 meta:
-  last_reviewed: "2026-11-03"
+  last_reviewed: "2026-11-04"
   sources:
   - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Grundschutz/IT-GS-Kompendium_Einzel_PDFs_2023/06_APP_Anwendungen/APP_3_2_Webserver_Edition_2023.pdf?__blob=publicationFile&v=3

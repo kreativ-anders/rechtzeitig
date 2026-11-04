@@ -11,7 +11,8 @@
     "scan": "node src/main.ts",
     "test": "node --test \"checks/**/test.ts\" \"src/**/*.test.ts\"",
     "typecheck": "tsc",
-    "docs": "node src/docs.ts"
+    "docs": "node src/docs.ts",
+    "drift": "node src/drift.ts"
   },
   "dependencies": {
     "playwright": "1.64.1",

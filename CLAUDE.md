@@ -18,7 +18,7 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | Allowed source domains for `meta.sources` | `data/source-domains.yml` |
 | Periodic review of rule sources | `.claude/skills/review-sources/` |
 | Check that rule docs and sources match the code | `.claude/skills/check-rule-docs/` |
-| Inputs of the action | `action.yml`, documented in `docs/workflow.html` |
+| Inputs of the action | `action.yml`, documented in `docs/workflow.html`; command line options in `src/options.ts`; dialog or file-only in `FILE_ONLY` of `src/inputs.test.ts` |
 | Releases | `.github/workflows/release.yml`, started by hand with patch, minor or major |
 
 ## Keep the documentation true
@@ -29,8 +29,10 @@ Every change that affects what a rule does updates its documentation in the same
 - Legal basis, wording or threshold changed → update `legal_basis`, `fix_hint`, `meta.sources`, and set `meta.last_reviewed` to today.
 - Rule added, removed or renamed → `rule.yml` with a new unique id, then `npm run docs`.
 - Data file changed in a way that changes results (new vendor, pattern, probe) → mention it in the commit message.
-- Input added or changed → `action.yml`, `examples/workflows/rechtzeitig.yml`, `docs/workflow.html`.
+- Input added or changed → `action.yml`, `src/options.ts`, `examples/workflows/rechtzeitig.yml` and `.github/workflows/rechtzeitig.yml` (Run workflow dialog, or `FILE_ONLY` in `src/inputs.test.ts`), `docs/workflow.html`.
 - Architecture changed → `dev/architecture.md`.
+
+If a commit changes `check.ts`, a rule's messages in `lang/` or a data file and nothing in the docs needs to change, say why in a line `Docs-unchanged: <reason>`. `npm run drift` (also in CI) fails otherwise; a changed data file can instead be named in the message.
 
 Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/checks.html` is stale, a rule is invalid, has no source, is older than a year, or its `how` misses a data file its `check.ts` loads. For what tests cannot judge, use the `check-rule-docs` skill.
 

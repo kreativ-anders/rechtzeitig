@@ -4,7 +4,7 @@ severity: low
 title:
   de: "Eigene statische Dateien dürfen im Browser-Cache bleiben"
   en: "Own static files may stay in the browser cache"
-how: "Loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (`static` in `data/file-formats.yml`) whose answer has no positive `max-age`, no `immutable` and no future `Expires`."
+how: "Loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (`static` in `data/file-formats.yml`) whose answer has no positive `max-age`, no `immutable` and no future `Expires`, or says `no-store` or `no-cache`."
 fix_hint:
   de: "Für Dateien mit Versionsnummer oder Hash im Namen Cache-Control: public, max-age=31536000, immutable senden, für andere statische Dateien eine kürzere max-age."
   en: "Send Cache-Control: public, max-age=31536000, immutable for files with a version or hash in their name, and a shorter max-age for other static files."
@@ -12,4 +12,4 @@ meta:
   last_reviewed: "2026-11-04"
   sources:
   - https://www.w3.org/TR/web-sustainability-guidelines/#client-side-caching
-  - https://www.rfc-editor.org/rfc/rfc9111
+  - https://www.rfc-editor.org/rfc/rfc9111#section-4.2.2
