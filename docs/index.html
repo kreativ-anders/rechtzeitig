@@ -55,7 +55,13 @@
     <li><strong>Repository</strong><p>SBOM, known vulnerabilities, license conflicts, committed secrets</p></li>
   </ul>
 
-  <p>It is free and runs on GitHub's runners.</p>
+  <h2>What it does differently</h2>
+  <ul class="covers">
+    <li><strong>Website and repository in one run</strong><p>It opens your live site and reads your repository in the same run, so one report covers what visitors receive and the code you ship.</p></li>
+    <li><strong>German law, with a source for each check</strong><p>Every check links the sources it is based on, such as the law on gesetze-im-internet.de or EUR-Lex. A check whose last review is more than a year old fails our own tests.</p></li>
+    <li><strong>Security and SBOM included</strong><p>Headers, TLS, exposed files and committed secrets are checked alongside the legal points. The same run writes a CycloneDX SBOM and looks for known vulnerabilities and license conflicts.</p></li>
+    <li><strong>Your code stays on the runner</strong><p>Everything runs on GitHub's runners, and your source code is not uploaded anywhere. You need no account, and there is no paid tier.</p></li>
+  </ul>
 
   <h2>Start in two minutes</h2>
   <ol class="steps">
