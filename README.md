@@ -1,14 +1,45 @@
-# rechtzeitig
+<p align="center">
+  <a href="https://rechtzeitig.dev/"><img src="docs/favicon.svg" width="72" alt=""></a>
+</p>
 
-A GitHub Action that checks a website and its repository for German legal basics (DDG, GDPR, TDDDG), security, and writes an SBOM. You start it by hand; it runs on GitHub's free runners.
+<h1 align="center">rechtzeitig</h1>
 
-## Use it
+<p align="center">
+  <b>German legal basics, security and an SBOM for your website and repository. One GitHub Action, one report.</b>
+</p>
 
-Copy [examples/workflows/rechtzeitig.yml](examples/workflows/rechtzeitig.yml) to `.github/workflows/rechtzeitig.yml`, then open **Actions → rechtzeitig → Run workflow**.
+<p align="center">
+  <a href="https://github.com/kreativ-anders/rechtzeitig/releases"><img alt="Release" src="https://img.shields.io/github/v/release/kreativ-anders/rechtzeitig"></a>
+  <a href="https://github.com/kreativ-anders/rechtzeitig/actions/workflows/test.yml"><img alt="Tests" src="https://github.com/kreativ-anders/rechtzeitig/actions/workflows/test.yml/badge.svg"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/kreativ-anders/rechtzeitig"><img alt="OpenSSF Scorecard" src="https://api.scorecard.dev/projects/github.com/kreativ-anders/rechtzeitig/badge"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/kreativ-anders/rechtzeitig"></a>
+</p>
 
-Most checks need no setting. A few run only when you turn them on: the cancellation button with `subscriptions: true`, the shop checks (withdrawal, order button, prices, T&Cs) with `sales: true`, the third-country check with the secret `IPINFO_TOKEN`. The vulnerability lookup at api.osv.dev is on unless `vulnerabilities: false`, the green hosting lookup at api.thegreenwebfoundation.org unless `green-hosting: false`. Full list: [What runs when](docs/workflow.html#scope).
+<p align="center">
+  <a href="https://rechtzeitig.dev/">Website</a> ·
+  <a href="https://rechtzeitig.dev/checks.html">All checks</a> ·
+  <a href="https://rechtzeitig.dev/workflow.html">Workflow reference</a>
+</p>
 
-Documentation: [rechtzeitig.dev](https://rechtzeitig.dev/) ([source](docs/)).
+## What it checks
+
+| | |
+|---|---|
+| ⚖️ **Legal** | Imprint, privacy policy, withdrawal, order and cancellation buttons (DDG, BGB) |
+| 🍪 **Privacy** | Cookies and trackers before consent, consent banner, third countries (GDPR, TDDDG) |
+| 🔒 **Security** | Headers, TLS, exposed files, mixed content, `security.txt` |
+| 📦 **Repository** | CycloneDX SBOM, known vulnerabilities, license conflicts, committed secrets, workflow risks |
+| 🌱 **Sustainability and accessibility** | Compression, caching, image formats, page language, autoplay |
+
+Every check names its legal basis and links a primary source. Your code stays on the runner, there is no account and no paid tier.
+
+## Quick start
+
+1. Copy [`examples/workflows/rechtzeitig.yml`](examples/workflows/rechtzeitig.yml) to `.github/workflows/rechtzeitig.yml`.
+2. Open **Actions → rechtzeitig → Run workflow** and enter your URL.
+3. Read the report on the run's summary page.
+
+No secret needed. Optional switches (`sales`, `subscriptions`, `sarif-upload`, `IPINFO_TOKEN`) are listed in [What runs when](https://rechtzeitig.dev/workflow.html#scope). To get new releases, let Dependabot update the pin: [Updates](https://rechtzeitig.dev/workflow.html#updates).
 
 ## Develop
 
@@ -19,12 +50,8 @@ node src/main.ts --url https://example.de --repo . --language de
 npm run typecheck && npm test
 ```
 
-How it works and how to add a check: [dev/](dev/). What a pull request needs: [CONTRIBUTING.md](CONTRIBUTING.md).
+Architecture and how to add a check: [dev/](dev/). Pull requests: [CONTRIBUTING.md](CONTRIBUTING.md). Security issues: [SECURITY.md](SECURITY.md).
 
-The results are automated hints, not legal advice.
+---
 
-Found a security issue? See [SECURITY.md](SECURITY.md).
-
-## License
-
-[Apache-2.0](LICENSE). The name rechtzeitig is not covered by the license.
+Findings are technical risk hints, not legal advice. Licensed under [Apache-2.0](LICENSE); the name rechtzeitig is not covered by the license.
