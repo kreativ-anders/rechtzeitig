@@ -6,12 +6,11 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 
 const USES = /^\s*-?\s*uses:\s*["']?([^"'\s#]+)(?:\s*#\s*(\S+))?/gm;
-const OWN = "kreativ-anders/rechtzeitig@"; // no release yet, see dev/roadmap.md
 const dir = (d: string) => readdirSync(d).filter((f) => /\.ya?ml$/.test(f)).map((f) => `${d}/${f}`);
 const files = ["action.yml", ...dir(".github/workflows"), ...dir("examples/workflows")];
 const uses = files.flatMap((file) =>
   [...readFileSync(file, "utf8").matchAll(USES)]
-    .filter((m) => !m[1].startsWith("./") && !m[1].startsWith(OWN))
+    .filter((m) => !m[1].startsWith("./"))
     .map((m) => ({ file, action: m[1].split("@")[0], ref: m[1].split("@")[1], version: m[2] })),
 );
 

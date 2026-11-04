@@ -4,15 +4,14 @@ rechtzeitig is a CI tool for technical decision makers. The repository scan is t
 
 Items are listed in order of priority.
 
-## Now: v0.1.0
+## Released: v0.1.0 (2026-11-04)
 
-The first pre-release. Not yet alpha or beta.
+The first pre-release, not yet alpha or beta. An immutable GitHub pre-release; `examples/workflows/rechtzeitig.yml` is pinned to its commit SHA. No moving major tag before `v1.0.0`.
 
-Done: security fixes, CI hardening, detection fixes and lean-code refactors from the audit of 2026-11-03; `tier` removed; legal references reviewed on 2026-11-04 (CRA articles and dates, BFSG via EN 301 549 V3.2.1, § 36 VSBG, rulings as sources); repository settings: read-only workflow token, GitHub-owned actions only, SHA pinning required, immutable releases, head branches deleted after merge, Dependabot alerts.
+It contains the security fixes, CI hardening, detection fixes and lean-code refactors from the audit of 2026-11-03; `tier` removed; legal references reviewed on 2026-11-04 (CRA articles and dates, BFSG via EN 301 549 V3.2.1, § 36 VSBG, rulings as sources); primary sources only (`data/source-domains.yml`) and the `review-sources` skill. Repository settings: read-only workflow token, GitHub-owned actions only, SHA pinning required, immutable releases, head branches deleted after merge, Dependabot alerts.
 
-1. Release: tag `v0.1.0` as a GitHub pre-release, pin `examples/workflows/rechtzeitig.yml` to its commit SHA and drop the exception in `src/pinning.test.ts`. No moving major tag before `v1.0.0`.
+## Before the repository goes public
 
-Before the repository goes public:
 
 - Turn on private vulnerability reporting (only possible for public repositories), which `SECURITY.md` points to. Confirm the answer time stated there.
 - A ruleset for `main`: pull requests only, status check `test` required, no force push, signed commits.

@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: kreativ-anders/rechtzeitig@v1
+      - uses: kreativ-anders/rechtzeitig@4b4b01cd3565c6e4a8e207398f9bc7994253c76c # v0.1.0
         with:
           url: ${{ inputs.url }}
           language: ${{ inputs.language }}
