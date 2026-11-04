@@ -370,6 +370,25 @@ messages:
     missing: "Die Startseite hat kein Attribut <html lang>. Screenreader müssen die Sprache dann raten."
     mismatch: 'Die Seite gibt lang="{lang}" an, der Scan nutzte aber {languages}. Beim Start des Scans die passende Sprache wählen.'
     declared: 'Die Seite gibt lang="{lang}" an.'
+  accessibility/autoplay-media:
+    no_videos: "Keine Videos auf den besuchten Seiten."
+    no_autoplay:
+      one: "{count} Video, es startet nicht von selbst."
+      other: "{count} Videos, keines startet von selbst."
+    controls:
+      one: "{count} Video startet von selbst und hat Bedienelemente zum Anhalten."
+      other: "{count} Videos starten von selbst und haben Bedienelemente zum Anhalten."
+    uncontrolled:
+      one: "{count} Video startet von selbst ohne Bedienelemente. Läuft es länger als 5 Sekunden und hat keinen eigenen Pause-Knopf, können Besucher es nicht anhalten. Ob das BFSG für diese Website gilt, kann der Scan nicht erkennen."
+      other: "{count} Videos starten von selbst ohne Bedienelemente. Laufen sie länger als 5 Sekunden und haben keinen eigenen Pause-Knopf, können Besucher sie nicht anhalten. Ob das BFSG für diese Website gilt, kann der Scan nicht erkennen."
+    uncontrolled_sound:
+      one: "{count} Video startet von selbst ohne Bedienelemente und nicht stumm. Ton, der länger als 3 Sekunden läuft, muss sich abschalten lassen. Ob das BFSG für diese Website gilt, kann der Scan nicht erkennen."
+      other: "{count} Videos starten von selbst ohne Bedienelemente, manche nicht stumm. Ton, der länger als 3 Sekunden läuft, muss sich abschalten lassen. Ob das BFSG für diese Website gilt, kann der Scan nicht erkennen."
+    sound: "{url} auf {page}: startet mit Ton und hat keine Bedienelemente."
+    motion: "{url} auf {page}: startet stumm und hat keine Bedienelemente."
+    more:
+      one: "und {count} weiteres Video"
+      other: "und {count} weitere Videos"
 
   # ---------- sustainability
   sustainability/cache-headers:
@@ -408,6 +427,18 @@ messages:
     choose_green: "Prüfen, ob der Hoster Nachweise für Ökostrom veröffentlicht. Wenn ja, kann er sie bei der Green Web Foundation einreichen; wenn nicht, einen Hoster mit Nachweisen erwägen."
 
   # ---------- repo
+  sustainability/lazy-loading:
+    none: "Keine Bilder unterhalb des ersten Bildschirms auf den besuchten Seiten."
+    lazy:
+      one: "{count} Bild unterhalb des ersten Bildschirms lädt erst bei Bedarf."
+      other: "Alle {count} Bilder unterhalb des ersten Bildschirms laden erst bei Bedarf."
+    eager:
+      one: "{count} von {total} Bildern unterhalb des ersten Bildschirms lädt sofort statt erst beim Scrollen."
+      other: "{count} von {total} Bildern unterhalb des ersten Bildschirms laden sofort statt erst beim Scrollen."
+    image: "{url} auf {page}: kein loading=\"lazy\"."
+    more:
+      one: "und {count} weiteres Bild"
+      other: "und {count} weitere Bilder"
   sustainability/modern-formats:
     modern: "Eigene Bilder und Schriften nutzen sparsame Formate."
     legacy:

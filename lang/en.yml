@@ -351,6 +351,25 @@ messages:
     missing: "The start page has no <html lang> attribute. Screen readers then have to guess the language."
     mismatch: 'The page declares lang="{lang}", but the scan used {languages}. Pick the matching language when you start the scan.'
     declared: 'The page declares lang="{lang}".'
+  accessibility/autoplay-media:
+    no_videos: "No videos on the visited pages."
+    no_autoplay:
+      one: "{count} video, it does not start by itself."
+      other: "{count} videos, none starts by itself."
+    controls:
+      one: "{count} video starts by itself and has controls to pause it."
+      other: "{count} videos start by themselves and have controls to pause them."
+    uncontrolled:
+      one: "{count} video starts by itself without controls. If it runs longer than 5 seconds and has no pause button of its own, visitors cannot stop it. The scan cannot tell whether the BFSG applies to this site."
+      other: "{count} videos start by themselves without controls. If they run longer than 5 seconds and have no pause button of their own, visitors cannot stop them. The scan cannot tell whether the BFSG applies to this site."
+    uncontrolled_sound:
+      one: "{count} video starts by itself without controls, and not muted. Sound that plays for more than 3 seconds needs a way to stop it. The scan cannot tell whether the BFSG applies to this site."
+      other: "{count} videos start by themselves without controls, some not muted. Sound that plays for more than 3 seconds needs a way to stop it. The scan cannot tell whether the BFSG applies to this site."
+    sound: "{url} on {page}: starts with sound and has no controls."
+    motion: "{url} on {page}: starts muted and has no controls."
+    more:
+      one: "and {count} more video"
+      other: "and {count} more videos"
 
   # ---------- sustainability
   sustainability/cache-headers:
@@ -389,6 +408,18 @@ messages:
     choose_green: "Check whether your host publishes proof of renewable energy. If it does, it can submit it to the Green Web Foundation; if not, consider a host that does."
 
   # ---------- repo
+  sustainability/lazy-loading:
+    none: "No images below the first screen on the visited pages."
+    lazy:
+      one: "{count} image below the first screen loads lazily."
+      other: "All {count} images below the first screen load lazily."
+    eager:
+      one: "{count} of {total} images below the first screen loads right away instead of when scrolled to."
+      other: "{count} of {total} images below the first screen load right away instead of when scrolled to."
+    image: "{url} on {page}: no loading=\"lazy\"."
+    more:
+      one: "and {count} more image"
+      other: "and {count} more images"
   sustainability/modern-formats:
     modern: "Own images and fonts use efficient formats."
     legacy:
