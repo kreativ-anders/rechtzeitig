@@ -8,11 +8,34 @@ export { MANIFESTS } from "./repo/lockfiles.ts";
 export const STATUSES = ["pass", "warn", "fail", "info", "skip"] as const;
 export type Status = (typeof STATUSES)[number];
 
+/** Parameters of a message. A Msg as value is rendered in the same language (for example a page name). */
+export type Params = Record<string, string | number | Msg>;
+
+/** A sentence by key; the words are in lang/<code>.yml `messages.<check id>` or `messages.common`. */
+export interface Msg {
+  key: string;
+  params?: Params;
+}
+
+/** One place a result was found. With `file` (and `line`), GitHub shows it as an annotation in pull requests. */
+export interface Finding {
+  file?: string;
+  line?: number;
+  /** Message key for this finding, rendered like a Msg. */
+  key?: string;
+  params?: Params;
+  /** A value shown as it is: a URL, a host, a cookie name. */
+  text?: string;
+}
+
 export interface Result {
   status: Status;
-  message: string;
-  details?: string[];
+  /** A Msg; plain English text only in checks not yet moved to message keys. */
+  message: Msg | string;
+  details?: Array<Finding | string>;
 }
+
+export const msg = (key: string, params?: Params): Msg => ({ key, params });
 
 /** Checks a website. Lives in checks/<category>/<name>/check.ts, metadata in rule.yml next to it. */
 export interface Check {
@@ -29,11 +52,12 @@ export interface RepoCheck {
 export const defineCheck = (check: Omit<Check, "repo">): Check => ({ ...check, repo: false });
 export const defineRepoCheck = (check: Omit<RepoCheck, "repo">): RepoCheck => ({ ...check, repo: true });
 
-export const pass = (message: string, details?: string[]): Result => ({ status: "pass", message, details });
-export const warn = (message: string, details?: string[]): Result => ({ status: "warn", message, details });
-export const fail = (message: string, details?: string[]): Result => ({ status: "fail", message, details });
-export const info = (message: string, details?: string[]): Result => ({ status: "info", message, details });
-export const skip = (message: string, details?: string[]): Result => ({ status: "skip", message, details });
+type Details = Result["details"];
+export const pass = (message: Msg | string, details?: Details): Result => ({ status: "pass", message, details });
+export const warn = (message: Msg | string, details?: Details): Result => ({ status: "warn", message, details });
+export const fail = (message: Msg | string, details?: Details): Result => ({ status: "fail", message, details });
+export const info = (message: Msg | string, details?: Details): Result => ({ status: "info", message, details });
+export const skip = (message: Msg | string, details?: Details): Result => ({ status: "skip", message, details });
 
 /** GitHub Actions workflow files, for `repo.find(WORKFLOWS)`. */
 export const WORKFLOWS = /^\.github\/workflows\/.*\.ya?ml$/;
@@ -81,6 +105,8 @@ export const LEGAL_PAGES = [
   { concept: "imprint", name: "imprint", law: "Impressum", check: "legal/imprint" },
   { concept: "privacy", name: "privacy policy", law: "Datenschutzerklärung", check: "legal/privacy-policy" },
 ] as const;
+/** The page's name as a message (`messages.common.page_<concept>`). */
+const pageName = (concept: LegalConcept): Msg => msg(`page_${concept}`);
 export type LegalConcept = (typeof LEGAL_PAGES)[number]["concept"];
 const legal = (concept: LegalConcept) => LEGAL_PAGES.find((p) => p.concept === concept)!;
 
@@ -95,22 +121,20 @@ export function loadedPage(ctx: ScanContext, concept: string): Page | undefined 
  * `const page = needLegalPage(ctx, "privacy"); if ("status" in page) return page;`
  */
 export function needLegalPage(ctx: ScanContext, concept: LegalConcept): Page | Result {
-  const { name, check } = legal(concept);
-  return loadedPage(ctx, concept) ?? skip(`No ${name} to read (see ${check}).`);
+  return loadedPage(ctx, concept) ?? skip(msg("no_page", { page: pageName(concept), check: legal(concept).check }));
 }
 
 /** fail unless the start page links to a page for `concept` that loads and has text. */
 export function linkedPageResult(ctx: ScanContext, concept: LegalConcept): Result {
-  const { name: short, law } = legal(concept);
-  const name = `${short} (${law})`;
+  const page = pageName(concept);
   const found = ctx.legalPage(concept);
-  if (!found) return fail(`No link to the ${name} on the start page.`);
+  if (!found) return fail(msg("no_link", { page }));
   const where = ctx.short(found.link.href ?? "");
-  const page = found.page?.js;
-  if (!page || page.status === 0) return fail(`The ${name} link ${where} could not be loaded.`, page?.error ? [page.error] : undefined);
-  if (page.status >= 400) return fail(`The ${name} at ${where} returns HTTP ${page.status}.`);
-  if (page.text.trim().length < MIN_TEXT) return fail(`The ${name} at ${where} is almost empty.`);
-  return pass(`${name[0].toUpperCase()}${name.slice(1)} found at ${where}.`);
+  const snap = found.page?.js;
+  if (!snap || snap.status === 0) return fail(msg("not_loaded", { page, where }), snap?.error ? [{ text: snap.error }] : undefined);
+  if (snap.status >= 400) return fail(msg("http_error", { page, where, status: snap.status }));
+  if (snap.text.trim().length < MIN_TEXT) return fail(msg("empty", { page, where }));
+  return pass(msg("found", { page, where }));
 }
 
 /** A button the law asks for on the start page (cancellation, withdrawal) and its confirmation page. */

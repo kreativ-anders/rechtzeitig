@@ -3,11 +3,12 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
 import { availableLanguages, loadLanguages, resolveLanguages } from "./lang.ts";
+import { messageKeys } from "./messages.ts";
 import { normalize } from "./text.ts";
 
 const keys = (code: string) => {
   const pack = parse(readFileSync(new URL(`../lang/${code}.yml`, import.meta.url), "utf8"));
-  return { links: Object.keys(pack.links).sort(), text: Object.keys(pack.text).sort() };
+  return { links: Object.keys(pack.links).sort(), text: Object.keys(pack.text).sort(), messages: messageKeys(code).sort() };
 };
 
 test("every language defines the same concepts", () => {

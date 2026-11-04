@@ -5,7 +5,8 @@ import { after } from "node:test";
 import { createServer } from "node:http";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, extname, join, resolve } from "node:path";
+import { dirname, extname, join, relative, resolve, sep } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { Browser } from "playwright";
 import { launchBrowser, scan, type ScanOptions } from "../src/scan.ts";
 import { emptySnapshot } from "../src/capture.ts";
@@ -15,7 +16,11 @@ import { loadLanguages } from "../src/lang.ts";
 import { loadRegistry } from "../src/registry.ts";
 import { scanRepo } from "../src/repo/scan.ts";
 import { importCheck } from "../src/runner.ts";
+import { render, renderFinding } from "../src/messages.ts";
+import { LANGUAGES } from "../src/rules.ts";
 import type { Check, Page, RepoCheck, RepoContext, Result, ScanContext, Snapshot } from "../src/sdk.ts";
+
+const CHECKS = fileURLToPath(new URL("../checks/", import.meta.url));
 
 const TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -63,17 +68,39 @@ export async function scanFixture(dir: string, opts: ScanOptions = {}): Promise<
   }
 }
 
+/** A result as the English report shows it, plus the raw result. */
+export interface Rendered {
+  status: Result["status"];
+  message: string;
+  details: string[];
+  raw: Result;
+}
+
+/**
+ * Renders a result in every report language, so a missing message key fails the test, and returns the English one.
+ * `checkDir` is the folder of the check; its path below checks/ is the message group.
+ */
+export function rendered(checkDir: string, raw: Result): Rendered {
+  const scope = relative(CHECKS, checkDir).split(sep).join("/");
+  const inLang = (lang: string) => ({
+    message: render(raw.message, scope, lang),
+    details: (raw.details ?? []).map((d) => renderFinding(d, scope, lang)),
+  });
+  for (const lang of LANGUAGES) inLang(lang);
+  return { status: raw.status, ...inLang("en"), raw };
+}
+
 /** Runs checks/<…>/check.ts in `checkDir` against checkDir/fixtures/<fixture>. */
-export async function runCheck(checkDir: string, fixture: string, opts: ScanOptions = {}): Promise<Result> {
+export async function runCheck(checkDir: string, fixture: string, opts: ScanOptions = {}): Promise<Rendered> {
   const check = await importCheck<Check>(join(checkDir, "check.ts"));
   const ctx = await scanFixture(join(checkDir, "fixtures", fixture), opts);
-  return check.run(ctx);
+  return rendered(checkDir, await check.run(ctx));
 }
 
 /** Runs checks/<…>/check.ts in `checkDir` against fakeContext(start, extra). */
-export async function runFake(checkDir: string, start: Partial<Snapshot> = {}, extra: Partial<CrawlData> = {}): Promise<Result> {
+export async function runFake(checkDir: string, start: Partial<Snapshot> = {}, extra: Partial<CrawlData> = {}): Promise<Rendered> {
   const check = await importCheck<Check>(join(checkDir, "check.ts"));
-  return check.run(fakeContext(start, extra));
+  return rendered(checkDir, await check.run(fakeContext(start, extra)));
 }
 
 /** Builds a context by hand, for cases a local fixture cannot show (https, redirects). */
@@ -101,9 +128,9 @@ export async function repoFromFiles(files: Record<string, string>): Promise<Repo
 }
 
 /** Runs checks/repo/<name>/check.ts in `checkDir` against a repository made of `files`. */
-export async function runRepoCheck(checkDir: string, files: Record<string, string>, extra: Partial<RepoContext> = {}): Promise<Result> {
+export async function runRepoCheck(checkDir: string, files: Record<string, string>, extra: Partial<RepoContext> = {}): Promise<Rendered> {
   const check = await importCheck<RepoCheck>(join(checkDir, "check.ts"));
-  return check.run({ ...(await repoFromFiles(files)), ...extra });
+  return rendered(checkDir, await check.run({ ...(await repoFromFiles(files)), ...extra }));
 }
 
 /** package-lock.json text: package name → version, or → { version, license, dev }. */

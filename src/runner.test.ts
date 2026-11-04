@@ -73,5 +73,5 @@ test("asking for an unknown concept is an error, not a silent pass", async () =>
   const checks = [{ id: "x/typo", rule, check: defineCheck({ run: (ctx) => pass(String(ctx.says("imprnt", "x"))) }) }];
   const [outcome] = await runChecks(checks, { web: fakeContext({}) });
   assert.equal(outcome.status, "error");
-  assert.match(outcome.message, /Unknown concept "imprnt"/);
+  assert.match(String(outcome.message), /Unknown concept "imprnt"/);
 });

@@ -2,8 +2,9 @@ import { randomUUID } from "node:crypto";
 import { basename } from "node:path";
 import { OUTCOMES, type Outcome, type OutcomeStatus } from "./runner.ts";
 import { SEVERITIES, type UiLanguage } from "./rules.ts";
-import type { RepoContext, ScanContext } from "./sdk.ts";
+import type { Params, RepoContext, ScanContext } from "./sdk.ts";
 import { oneLine } from "./text.ts";
+import { render, renderFinding } from "./messages.ts";
 
 const ICONS: Record<OutcomeStatus, string> = {
   fail: "❌",
@@ -28,13 +29,26 @@ export interface Findings {
     check: string;
     severity: string;
     status: OutcomeStatus;
+    /** In the report language. */
     message: string;
+    /** Message key and parameters (lang/<code>.yml `messages`), the same in every language. */
+    key?: string;
+    params?: Params;
     /** Pages, files with line numbers, hosts. Secrets are already redacted by the checks. */
     locations: string[];
   }>;
 }
 
-export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">): Findings {
+/** The outcome's message in `lang`. */
+export const say = (o: Outcome, lang: UiLanguage) => render(o.message, o.id, lang);
+/** The outcome's details in `lang`, one line each. */
+export const where = (o: Outcome, lang: UiLanguage) => o.details.map((d) => renderFinding(d, o.id, lang));
+
+/** Parameters can hold text from the scanned site; one line each, like every other output. */
+const cleanParams = (params?: Params): Params | undefined =>
+  params && Object.fromEntries(Object.entries(params).map(([k, v]) => [k, typeof v === "string" ? oneLine(v) : typeof v === "number" ? v : { key: v.key, params: cleanParams(v.params) }]));
+
+export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">, lang: UiLanguage = "en"): Findings {
   return {
     ...meta,
     results: outcomes.map((o) => ({
@@ -42,8 +56,9 @@ export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">)
       check: o.id,
       severity: o.rule.severity,
       status: o.status,
-      message: oneLine(o.message),
-      locations: o.details.map((d) => oneLine(d)),
+      message: oneLine(say(o, lang)),
+      ...(typeof o.message === "string" ? {} : { key: o.message.key, params: cleanParams(o.message.params) }),
+      locations: where(o, lang).map((d) => oneLine(d)),
     })),
   };
 }
@@ -116,7 +131,7 @@ export function toMarkdown(r: Report): string {
     "|---|---|---|---|",
     ...list.map((o) => {
       const law = o.rule.legal_basis?.[lang];
-      return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${o.rule.severity} | ${md(o.message)} |`;
+      return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${o.rule.severity} | ${md(say(o, lang))} |`;
     }),
     "",
   ];
@@ -125,7 +140,7 @@ export function toMarkdown(r: Report): string {
     lines.push(`### ${t.details}`, "");
     for (const o of withDetails) {
       const fix = open(o) ? [`**${t.fix}:** ${o.rule.fix_hint[lang]}`, ""] : [];
-      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...fix, ...o.details.map((d) => `- ${md(d)}`), "", "</details>", "");
+      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...fix, ...where(o, lang).map((d) => `- ${md(d)}`), "", "</details>", "");
     }
   }
   lines.push(`### ${t.scan}`, "");
@@ -146,11 +161,35 @@ export function toMarkdown(r: Report): string {
 export function toText(r: Report): string {
   const lines = [`rechtzeitig: ${plain(title(r))}`, ""];
   for (const o of r.outcomes) {
-    lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${plain(o.message)}`);
-    for (const d of o.details) lines.push(`      - ${plain(d)}`);
+    lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${plain(say(o, r.language))}`);
+    for (const d of where(o, r.language)) lines.push(`      - ${plain(d)}`);
   }
   lines.push("", ...(r.warnings ?? []).map((w) => `Warning: ${plain(w)}`), summaryLine(r, false));
   return lines.join("\n");
+}
+
+const LEVEL: Partial<Record<OutcomeStatus, string>> = { fail: "error", error: "error", warn: "warning", info: "notice" };
+// Escaping of the GitHub Actions toolkit: data may not hold line breaks or %, properties also no , and :.
+const escData = (s: string) => oneLine(s).replace(/%/g, "%25");
+const escProp = (s: string) => escData(s).replace(/:/g, "%3A").replace(/,/g, "%2C");
+
+/**
+ * One workflow command per finding with a file, so GitHub shows it at that line in pull requests.
+ * Printed outside the stop-commands block; every value is escaped, so a file name cannot add a command.
+ * `base` is the scanned repository's folder relative to the workspace ("" when it is the workspace).
+ */
+export function toAnnotations(r: Report, base = ""): string[] {
+  return sorted(r.outcomes).flatMap((o) => {
+    const level = LEVEL[o.status];
+    if (!level) return [];
+    const title = escProp(`${o.rule.title[r.language]} (${o.rule.id})`);
+    return o.details.flatMap((d) => {
+      if (typeof d === "string" || !d.file) return [];
+      const line = d.line ? `,line=${d.line}` : "";
+      const text = d.key ? render({ key: d.key, params: d.params }, o.id, r.language) : (d.text ?? say(o, r.language));
+      return [`::${level} file=${escProp(base ? `${base}/${d.file}` : d.file)}${line},title=${title}::${escData(text)}`];
+    });
+  });
 }
 
 /**

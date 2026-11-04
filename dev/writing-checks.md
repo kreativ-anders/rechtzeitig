@@ -28,16 +28,18 @@
 3. Add `check.ts` with the detection:
 
    ```ts
-   import { defineCheck, fail, pass } from "../../../src/sdk.ts";
+   import { defineCheck, fail, msg, pass } from "../../../src/sdk.ts";
 
    export default defineCheck({
      run(ctx) {
        const found = ctx.legalPage("imprint");
-       if (!found) return fail("No link to the imprint on the start page.");
-       return pass(`Imprint found at ${ctx.short(found.link.href ?? "")}.`);
+       if (!found) return fail(msg("no_link"));
+       return pass(msg("found", { where: ctx.short(found.link.href ?? "") }));
      },
    });
    ```
+
+   A check returns message keys, never sentences. The sentences go into every `lang/<code>.yml` under `messages.<check id>` (here `messages.legal/imprint`), with `{name}` for parameters and `one`/`other` when a `count` parameter decides the plural. Keys that several checks share live in `messages.common`. A parameter can itself be a `msg(...)`, for words that need translating. Details are findings: `{ file, line, key, params }` for places in the repository (GitHub shows them as annotations in pull requests), `{ text }` for values shown as they are (URLs, hosts, cookie names). The test helpers render every result in every language, so a missing key fails the test.
 
    A repository check uses `defineRepoCheck` and gets `repo` instead of `ctx`: `repo.files`, `repo.find(pattern)` (for example `repo.find(WORKFLOWS)`), `repo.read(path)`, `repo.yaml(path)` for YAML or JSON, and the locked `repo.components`.
 

@@ -39,7 +39,9 @@ Each check folder has `rule.yml` (metadata: id, severity, titles, legal basis, f
 
 Messages and details carry text from the scanned site and repository. Every output passes them through `oneLine()` in `src/text.ts` (no control characters, at most 300 characters). The step summary escapes Markdown and HTML; the log is wrapped in `::stop-commands::` with a random token, so no line becomes a workflow command.
 
-`toFindings` in `src/report.ts` builds `rechtzeitig-report.json`: rule id, severity, status, message and locations, never page text or file contents. Findings stay in the workflow artifact; nothing is sent anywhere.
+Checks return message keys with parameters, not sentences. `src/messages.ts` renders them in the report language from `lang/<code>.yml` `messages`, with plural forms from `Intl.PluralRules`. Findings with a file and line also become GitHub annotations (`toAnnotations` in `src/report.ts`); they are printed after the stop-commands block, so every value is escaped the way the Actions toolkit does it. GitHub shows at most 10 annotations per level and step; the summary and the artifact always have all findings.
+
+`toFindings` in `src/report.ts` builds `rechtzeitig-report.json`: rule id, severity, status, message in the report language with its key and parameters, and locations, never page text or file contents. Findings stay in the workflow artifact; nothing is sent anywhere.
 
 The engine has no paid features and no paid code paths.
 

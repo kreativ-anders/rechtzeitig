@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
+import { toAnnotations, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
 import { oneLine } from "./text.ts";
 import type { Rule } from "./rules.ts";
 
@@ -44,4 +44,35 @@ test("findings are single, capped lines", () => {
   assert.equal(results[0].message, "d ::error title=x::y");
   assert.equal(results[0].locations[0].length, 300);
   assert.equal(oneLine("a\u202eb\u0000c"), "a b c");
+});
+
+test("annotations escape file names, titles and text, so nothing becomes a second command", () => {
+  const r: Report = {
+    outcomes: [{ id: "repo/secrets", rule, status: "fail", message: { key: "secrets", params: { count: 1 } }, details: [
+      { file: "a,b:c\n::error::x%", line: 3, key: "secret", params: { name: "Token\n::warning::y", start: "ghp_", length: 40 } },
+      "no file, no annotation",
+    ] }],
+    version: "0", startedAt: "now", onGitHub: true, language: "en",
+  };
+  const lines = toAnnotations(r, "sub/dir");
+  assert.equal(lines.length, 1);
+  assert.equal(lines[0], "::error file=sub/dir/a%2Cb%3Ac %3A%3Aerror%3A%3Ax%25,line=3,title=t (SEC-TEST-001)::Token ::warning::y (ghp_… (40 chars))");
+});
+
+test("messages are rendered in the report language, with plural forms", () => {
+  const outcome = (count: number) => ({ id: "repo/secrets", rule, status: "fail" as const, message: { key: "secrets", params: { count } }, details: [] });
+  const de = (count: number) => toText({ outcomes: [outcome(count)], version: "0", startedAt: "now", onGitHub: false, language: "de" });
+  assert.match(de(1), /1 Secret gefunden\./);
+  assert.match(de(3), /3 Secrets gefunden\./);
+});
+
+test("findings carry the message key and clean parameters for tools", () => {
+  const r: Report = {
+    outcomes: [{ id: "legal/imprint", rule, status: "fail", message: { key: "no_link", params: { page: { key: "page_imprint" }, where: "a\n::x" } }, details: [] }],
+    version: "0", startedAt: "now", onGitHub: false, language: "de",
+  };
+  const [f] = toFindings(r.outcomes, { version: "0", startedAt: "now", target: {} }, "de").results;
+  assert.equal(f.message, "Impressum: kein Link auf der Startseite.");
+  assert.equal(f.key, "no_link");
+  assert.deepEqual(f.params, { page: { key: "page_imprint", params: undefined }, where: "a ::x" });
 });

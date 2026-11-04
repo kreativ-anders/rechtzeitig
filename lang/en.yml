@@ -84,3 +84,69 @@ text:
     - '\badvertis'
     - '\bpersonali[sz]ation\b'
     - '\bexternal media\b'
+
+# Report sentences. Checks return a key and parameters; {name} is replaced by a parameter.
+# A value with one/other is picked by the parameter count. Groups are check ids; `common` is shared.
+# Every language file must define the same keys (test: src/lang.test.ts).
+messages:
+  common:
+    page_imprint: "imprint (Impressum)"
+    page_privacy: "privacy policy (Datenschutzerklärung)"
+    no_link: "No link to the {page} on the start page."
+    not_loaded: "The {page} link {where} could not be loaded."
+    http_error: "The {page} at {where} returns HTTP {status}."
+    empty: "The {page} at {where} is almost empty."
+    no_page: "No {page} to read (see {check})."
+    found: "Found the {page} at {where}."
+  # ---------- legal
+  legal/cancellation-button: {}
+  legal/form-privacy-notice: {}
+  legal/imprint-details: {}
+  legal/links-on-all-pages: {}
+  legal/odr-link: {}
+  legal/privacy-policy-details: {}
+  legal/withdrawal-button: {}
+
+  # ---------- privacy
+  privacy/consent-preselected: {}
+  privacy/consent-reject: {}
+  privacy/cookies-before-consent: {}
+  privacy/third-country: {}
+  privacy/third-parties-before-consent: {}
+  privacy/vendors-in-privacy-policy: {}
+
+  # ---------- security
+  security/cookie-flags: {}
+  security/email-dns: {}
+  security/error-disclosure: {}
+  security/exposed-files: {}
+  security/headers: {}
+  security/host-variants: {}
+  security/https: {}
+  security/mixed-content: {}
+  security/tls: {}
+
+  # ---------- accessibility
+  accessibility/page-language: {}
+
+  # ---------- sustainability
+  sustainability/content-without-js: {}
+  sustainability/legal-pages-without-js: {}
+
+  # ---------- repo
+  repo/actions-pinning: {}
+  repo/database-rules: {}
+  repo/dependency-updates: {}
+  repo/env-files: {}
+  repo/licenses: {}
+  repo/sbom: {}
+  repo/secrets:
+    secret: "{name} ({start}… ({length} chars))"
+    secrets:
+      one: "{count} secret found. Revoke it, then remove it from the code and the git history."
+      other: "{count} secrets found. Revoke them, then remove them from the code and the git history."
+    public_keys:
+      one: "{count} key found that may be public by design. Check that it is restricted."
+      other: "{count} keys found that may be public by design. Check that each is restricted."
+    none: "No secrets found in tracked files."
+  repo/vulnerabilities: {}

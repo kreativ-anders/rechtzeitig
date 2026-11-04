@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fakeContext, runCheck } from "../../../test/helpers.ts";
+import { fakeContext, rendered, runCheck } from "../../../test/helpers.ts";
 import { emptySnapshot } from "../../../src/capture.ts";
-import type { Request } from "../../../src/sdk.ts";
+import type { Request, Result } from "../../../src/sdk.ts";
 import check from "./check.ts";
 
 const here = import.meta.dirname;
@@ -23,7 +23,7 @@ function site(requests: Request[], countries: Record<string, string> = {}) {
   const link = { href: policy.finalUrl, text: "Datenschutz", label: "datenschutz", area: "footer" as const, button: false };
   const home = { ...emptySnapshot("https://example.de/"), status: 200, links: [link], requests };
   const start = { url: home.finalUrl, noJs: home, js: home };
-  return check.run(fakeContext(home, { start, pages: [start, { url: policy.finalUrl, noJs: policy, js: policy }], countries }));
+  return rendered(here, check.run(fakeContext(home, { start, pages: [start, { url: policy.finalUrl, noJs: policy, js: policy }], countries })) as Result);
 }
 
 test("the vendor's country wins over the IP country of an edge server", async () => {

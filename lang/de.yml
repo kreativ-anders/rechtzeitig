@@ -103,3 +103,69 @@ text:
     - '\bpersonalisierung\b'
     - '\bexterne medien\b'
     - '\bkomfort\b'
+
+# Report sentences. Checks return a key and parameters; {name} is replaced by a parameter.
+# A value with one/other is picked by the parameter count. Groups are check ids; `common` is shared.
+# Every language file must define the same keys (test: src/lang.test.ts).
+messages:
+  common:
+    page_imprint: "Impressum"
+    page_privacy: "Datenschutzerklärung"
+    no_link: "{page}: kein Link auf der Startseite."
+    not_loaded: "{page}: der Link {where} ließ sich nicht laden."
+    http_error: "{page}: {where} antwortet mit HTTP {status}."
+    empty: "{page}: {where} ist fast leer."
+    no_page: "{page}: keine Seite zum Lesen (siehe {check})."
+    found: "{page} gefunden: {where}."
+  # ---------- legal
+  legal/cancellation-button: {}
+  legal/form-privacy-notice: {}
+  legal/imprint-details: {}
+  legal/links-on-all-pages: {}
+  legal/odr-link: {}
+  legal/privacy-policy-details: {}
+  legal/withdrawal-button: {}
+
+  # ---------- privacy
+  privacy/consent-preselected: {}
+  privacy/consent-reject: {}
+  privacy/cookies-before-consent: {}
+  privacy/third-country: {}
+  privacy/third-parties-before-consent: {}
+  privacy/vendors-in-privacy-policy: {}
+
+  # ---------- security
+  security/cookie-flags: {}
+  security/email-dns: {}
+  security/error-disclosure: {}
+  security/exposed-files: {}
+  security/headers: {}
+  security/host-variants: {}
+  security/https: {}
+  security/mixed-content: {}
+  security/tls: {}
+
+  # ---------- accessibility
+  accessibility/page-language: {}
+
+  # ---------- sustainability
+  sustainability/content-without-js: {}
+  sustainability/legal-pages-without-js: {}
+
+  # ---------- repo
+  repo/actions-pinning: {}
+  repo/database-rules: {}
+  repo/dependency-updates: {}
+  repo/env-files: {}
+  repo/licenses: {}
+  repo/sbom: {}
+  repo/secrets:
+    secret: "{name} ({start}… ({length} Zeichen))"
+    secrets:
+      one: "{count} Secret gefunden. Sperren, dann aus Code und Git-Historie entfernen."
+      other: "{count} Secrets gefunden. Sperren, dann aus Code und Git-Historie entfernen."
+    public_keys:
+      one: "{count} Schlüssel gefunden, der absichtlich öffentlich sein kann. Prüfen, ob er eingeschränkt ist."
+      other: "{count} Schlüssel gefunden, die absichtlich öffentlich sein können. Prüfen, ob jeder eingeschränkt ist."
+    none: "Keine Secrets in den versionierten Dateien gefunden."
+  repo/vulnerabilities: {}

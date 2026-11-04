@@ -4,7 +4,7 @@ import { dirname, join, sep } from "node:path";
 import { loadRule, type Rule } from "./rules.ts";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage } from "./text.ts";
-import { STATUSES, type Check, type RepoCheck, type RepoContext, type Result, type ScanContext, type Status } from "./sdk.ts";
+import { STATUSES, type Check, type Finding, type Msg, type RepoCheck, type RepoContext, type Result, type ScanContext, type Status } from "./sdk.ts";
 
 const CHECKS_DIR = fileURLToPath(new URL("../checks/", import.meta.url));
 const TIMEOUT = 15_000;
@@ -24,8 +24,9 @@ export interface Outcome {
   id: string;
   rule: Rule;
   status: OutcomeStatus;
-  message: string;
-  details: string[];
+  /** Rendered in the report language by src/messages.ts. */
+  message: Msg | string;
+  details: Array<Finding | string>;
 }
 
 /** Module of a check id: "legal/imprint" → "legal". */
