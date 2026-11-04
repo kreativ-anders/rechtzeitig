@@ -63,5 +63,8 @@ jobs:
           # green-hosting: "true"
           # Optional: false scans without Chrome's sandbox where the runner has none. Only for sites you trust.
           # require-sandbox: "true"
+          # Optional: how much of the report the run shows (auto, full, counts, none).
+          # auto = full for private repositories, only counts for public ones, since anyone can read their runs.
+          # report-visibility: auto
           # Optional: days to keep the report artifact. On public repositories anyone signed in can download it.
           # retention-days: "7"

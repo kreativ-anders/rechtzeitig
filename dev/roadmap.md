@@ -99,4 +99,25 @@ No legal basis; W3C Web Sustainability Guidelines as sources only.
 
 ## Commercialization
 
-None for now. rechtzeitig stays a pure CI tool: no paid features, no paid code paths, no hooks for them in the engine.
+The line: what runs in the user's runner and concerns one run is free. What needs our infrastructure and remembers across runs can be paid.
+
+Free, in this repository:
+
+- Every check, the SBOM, the report as Markdown and JSON, `fail-on`, annotations, step summary.
+- Keeping findings private (`report-visibility`). Nobody pays for their weaknesses not being published.
+- A stable, versioned report JSON. It is the interface to the hosted service.
+
+Paid, a hosted service in its own repository:
+
+- Dashboard with the history of runs: trends, what is new, what was fixed.
+- One view over many sites and repositories, for agencies with client projects.
+- Notifications (mail, Slack, Teams) on new findings only, which needs stored state.
+- Accepting a finding with a reason, and a record of who did it and when.
+- Reports for clients (PDF), team access and roles.
+- Scheduled scans without an own workflow, also for sites without GitHub.
+
+Rules:
+
+- The engine has no paid code paths, hooks or feature flags. The action only writes the JSON.
+- A separate upload step, in another repository, sends the JSON with a token. Without a token nothing is sent.
+- The service receives sensitive findings: hosting in the EU and a data processing agreement are part of the offer.

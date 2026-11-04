@@ -43,6 +43,8 @@ Checks return message keys with parameters, not sentences. `src/messages.ts` ren
 
 `toFindings` in `src/report.ts` builds `rechtzeitig-report.json`: rule id, severity, status, message in the report language with its key and parameters, and locations, never page text or file contents. Findings stay in the workflow artifact; nothing is sent anywhere.
 
+`report-visibility` decides what of this the run shows. `auto` reads `repository.private` and `repository.visibility` from the event payload (`GITHUB_EVENT_PATH`): private or internal gives `full`, anything else, a missing field included, gives `counts`. Outside GitHub it is `full`. `counts` prints `toCounts` to the log and the summary and writes no files, so the action uploads no artifact; `none` prints one line. The report JSON is the interface for anything built on top of rechtzeitig.
+
 ## Layout
 
 | Path | Content |

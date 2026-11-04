@@ -76,6 +76,7 @@
             <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> sends nothing there and the vulnerability check is skipped.</td></tr>
             <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the site's host runs on green energy. Sends only the host name. <code>false</code> sends nothing there and the <a href="checks.html#SUS-HOST-001">green hosting check</a> is skipped.</td></tr>
             <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>Stops the scan when Chrome cannot start with its sandbox. <code>false</code> scans without it, see <a href="#safe">Safe use</a>.</td></tr>
+            <tr><td><code>report-visibility</code></td><td><code>auto</code></td><td>How much of the report the run shows: <code>auto</code>, <code>full</code>, <code>counts</code> or <code>none</code>, see <a href="#report">The report</a>.</td></tr>
             <tr><td><code>retention-days</code></td><td><code>7</code></td><td>Days GitHub keeps the report artifact, see <a href="#report">The report</a>.</td></tr>
           </tbody>
         </table></div>
@@ -130,7 +131,17 @@
 
       <section id="report">
         <h2><span class="par">§ 5</span>The report</h2>
-        <p>The summary page of the run shows the findings (fail, error, warn, info) with details, in the report language. Passed and skipped checks are only in the artifact. Findings in a file of the repository also appear as annotations: in a pull request at the line, otherwise on the run page. GitHub shows at most 10 errors and 10 warnings there; the summary always has all findings, the artifact all checks. The artifact <code>rechtzeitig-report</code> contains:</p>
+        <p>How much of the report a run shows depends on <code>report-visibility</code>:</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Value</th><th scope="col">Shows</th></tr></thead>
+          <tbody>
+            <tr><td><code>auto</code></td><td><code>full</code> for private and internal repositories, <code>counts</code> for public ones. A run whose event does not say counts as public.</td></tr>
+            <tr><td><code>full</code></td><td>Everything below: summary with findings, log, annotations and the artifact.</td></tr>
+            <tr><td><code>counts</code></td><td>Only how many checks ended in each status, in the summary and the log. No rule ids, messages or places, no annotations, no artifact.</td></tr>
+            <tr><td><code>none</code></td><td>Nothing but the output <code>result</code> and, with <code>fail-on</code>, the job status.</td></tr>
+          </tbody>
+        </table></div>
+        <p>With <code>full</code>, the summary page of the run shows the findings (fail, error, warn, info) with details, in the report language. Passed and skipped checks are only in the artifact. Findings in a file of the repository also appear as annotations: in a pull request at the line, otherwise on the run page. GitHub shows at most 10 errors and 10 warnings there; the summary always has all findings, the artifact all checks. The artifact <code>rechtzeitig-report</code> contains:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">File</th><th scope="col">Content</th></tr></thead>
           <tbody>
@@ -140,7 +151,7 @@
           </tbody>
         </table></div>
         <p>Keep the SBOM with each release. It shows which versions you shipped and that you checked them.</p>
-        <p class="note">On a public repository the report is public too. Anyone who can see the repository can read the summary page, the log and the annotations, and anyone signed in to GitHub can download the artifact, including the list of your dependencies and where findings were found. Secret values are redacted, their file and line are not. GitHub deletes the artifact after <code>retention-days</code> (default 7) and the summary and log after the log retention set in the repository settings (default 90 days). To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout of your code.</p>
+        <p class="note">On a public repository the report is public too, so <code>auto</code> shows only counts there. With <code>report-visibility: full</code>, anyone who can see the repository can read the summary page, the log and the annotations, and anyone signed in to GitHub can download the artifact, including the list of your dependencies and where findings were found. Secret values are redacted, their file and line are not. GitHub deletes the artifact after <code>retention-days</code> (default 7) and the summary and log after the log retention set in the repository settings (default 90 days). To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout of your code.</p>
       </section>
 
       <section id="visit">
