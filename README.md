@@ -19,7 +19,7 @@ node src/main.ts --url https://example.de --repo . --language de
 npm run typecheck && npm test
 ```
 
-How it works and how to add a check: [dev/](dev/).
+How it works and how to add a check: [dev/](dev/). What a pull request needs: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 The results are automated hints, not legal advice.
 
