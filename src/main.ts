@@ -1,7 +1,7 @@
 // Command line entry. Used by action.yml and for local runs:
 //   node src/main.ts --url https://example.de --repo . --language de
 
-import { appendFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
 import { scan, VERSION } from "./scan.ts";
@@ -10,7 +10,10 @@ import { toCycloneDx } from "./repo/sbom.ts";
 import { loadChecks, OUTCOMES, runChecks, selectModules, type OutcomeStatus } from "./runner.ts";
 import { LANGUAGES, SWITCHES, switchSpec, type Switch, type UiLanguage } from "./rules.ts";
 import { errorMessage } from "./text.ts";
-import { md, plain, repoName, toAnnotations, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
+import {
+  md, noneNote, plain, repoName, toAnnotations, toCounts, toFindings, toMarkdown, toText, VISIBILITIES, withoutCommands,
+  type HiddenBecause, type Report, type Visibility,
+} from "./report.ts";
 
 const FAIL_ON: Record<string, OutcomeStatus[]> = {
   never: [],
@@ -33,6 +36,7 @@ const { values, positionals } = parseArgs({
     vulnerabilities: { type: "string", default: "true" },
     "green-hosting": { type: "string", default: "true" },
     "require-sandbox": { type: "string", default: "true" },
+    "report-visibility": { type: "string", default: "auto" },
     out: { type: "string", default: "rechtzeitig-report" },
   },
 });
@@ -44,6 +48,13 @@ if (!FAIL_ON[failOn]) exit(`fail-on must be one of: ${Object.keys(FAIL_ON).join(
 // The report follows the site language unless set; "all" and unknown languages fall back to English.
 const wanted = values["report-language"] || values.language!.split(",")[0];
 const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ? (wanted as UiLanguage) : "en";
+const wantedVisibility = values["report-visibility"] || "auto";
+if (!(VISIBILITIES as readonly string[]).includes(wantedVisibility)) exit(`report-visibility must be one of: ${VISIBILITIES.join(", ")}`);
+const onGitHub = !!process.env.GITHUB_ACTIONS;
+// auto: full outside GitHub and for private or internal repositories; counts when the repository is public
+// or the event does not say, so a missing field never makes findings public.
+const visibility: Visibility = wantedVisibility === "auto" ? (!onGitHub || repositoryIsPrivate() ? "full" : "counts") : (wantedVisibility as Visibility);
+const hiddenBecause: HiddenBecause = wantedVisibility === "auto" ? "public" : "input";
 const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 
 const startedAt = new Date().toISOString();
@@ -82,25 +93,34 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
 }
 
 const outcomes = await runChecks(checks, { web, repo }, enabled);
-const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS, language, warnings };
-const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) } }, language);
-const markdown = toMarkdown(report);
-writeFileSync(`${values.out}.md`, markdown);
-writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
-if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));
-const text = toText(report);
-console.log(report.onGitHub ? withoutCommands(text) : text);
-// Annotations for findings in files, outside the stop-commands block above; src/report.ts escapes every value.
-if (report.onGitHub && repo) {
-  const base = relative(process.env.GITHUB_WORKSPACE ?? process.cwd(), resolve(repo.root)).split(sep).join("/");
-  for (const line of toAnnotations(report, base)) console.log(line);
+const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub, language, warnings };
+const log = (text: string) => console.log(onGitHub ? withoutCommands(text) : text);
+let summary: string | undefined;
+if (visibility === "full") {
+  const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) } }, language);
+  writeFileSync(`${values.out}.md`, toMarkdown(report));
+  writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
+  if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));
+  log(toText(report));
+  // Annotations for findings in files, outside the stop-commands block above; src/report.ts escapes every value.
+  if (onGitHub && repo) {
+    const base = relative(process.env.GITHUB_WORKSPACE ?? process.cwd(), resolve(repo.root)).split(sep).join("/");
+    for (const line of toAnnotations(report, base)) console.log(line);
+  }
+  summary = toMarkdown(report, { findingsOnly: true });
+} else if (visibility === "counts") {
+  // No files, so no artifact: the SBOM lists vulnerabilities, the findings their places.
+  log(toCounts(report, hiddenBecause, "text"));
+  summary = toCounts(report, hiddenBecause, "md");
+} else {
+  log(noneNote(language));
 }
 
 const failing = outcomes.some((o) => FAIL_ON[failOn].includes(o.status));
 // The most urgent outcome decides: fail (also for errors), warn, otherwise pass.
 const worst = OUTCOMES.find((s) => outcomes.some((o) => o.status === s));
 const result = worst === "fail" || worst === "error" ? "fail" : worst === "warn" ? "warn" : "pass";
-if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, toMarkdown(report, { findingsOnly: true }));
+if (summary && process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
 if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `result=${result}\n`);
 process.exit(failing ? 1 : 0);
 
@@ -108,4 +128,15 @@ function exit(message: string): never {
   console.error(`rechtzeitig: ${plain(message)}`);
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## rechtzeitig\n\n💥 ${md(message)}\n`);
   process.exit(2);
+}
+
+/** Whether the event payload names the repository private or internal. Unknown counts as public. */
+function repositoryIsPrivate(): boolean {
+  try {
+    const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8"));
+    const r = event?.repository;
+    return r?.private === true || r?.visibility === "private" || r?.visibility === "internal";
+  } catch {
+    return false;
+  }
 }

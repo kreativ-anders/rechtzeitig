@@ -45,6 +45,9 @@ inputs:
   require-sandbox:
     description: true = stop when Chrome cannot start with its sandbox. false = then scan without it, only for sites you trust.
     default: "true"
+  report-visibility:
+    description: How much of the report the run shows. auto = full for private repositories, counts for public ones. full = findings with places in summary, log, annotations and artifact. counts = only how many checks pass, warn or fail, no artifact. none = only the output result.
+    default: auto
   retention-days:
     description: Days to keep the report artifact. Artifacts of public repositories can be downloaded by anyone signed in to GitHub.
     default: "7"
@@ -99,12 +102,13 @@ runs:
         VULNERABILITIES: ${{ inputs.vulnerabilities }}
         GREEN_HOSTING: ${{ inputs.green-hosting }}
         REQUIRE_SANDBOX: ${{ inputs.require-sandbox }}
+        REPORT_VISIBILITY: ${{ inputs.report-visibility }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
         --sales "$SALES" --modules "$MODULES" --report-language "$REPORT_LANGUAGE"
         --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES"
-        --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --out "$RUNNER_TEMP/rechtzeitig-report"
+        --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --report-visibility "$REPORT_VISIBILITY" --out "$RUNNER_TEMP/rechtzeitig-report"
 
     - name: Upload report
       if: always()
