@@ -27,6 +27,9 @@ links:
     - '\b(only )?(necessary|essential|required)( cookies)? only\b'
     - '\bonly (necessary|essential|required)\b'
     - '\bcontinue without (accepting|consent)\b'
+  consent_settings:
+    - '\b(cookie|privacy|consent|tracking)[- ]?(settings|preferences|options|choices|manager|center|centre)\b'
+    - '\b(manage|change|update|edit|withdraw|revoke) (\w+ ){0,2}(cookies|consent|cookie settings|privacy settings)\b'
 
 text:
   cancel_confirm:
@@ -226,6 +229,12 @@ messages:
     no_banner: "No consent banner found on the start page."
     no_reject: "The banner offers \"{accept}\" but no way to reject on the same layer. Rejecting must be as easy as accepting."
     both: "The banner offers \"{accept}\" and \"{reject}\"."
+  privacy/consent-withdraw-link:
+    no_banner: "No consent banner found on the start page."
+    found: "The start page offers \"{text}\" outside the banner to change consent later."
+    privacy_only: "\"{text}\" found only in the privacy policy ({where}). That is enough only if the link leads straight to the settings without searching; a link on every page is better."
+    banner_only: "\"{text}\" found only inside the banner. Check that a link or icon that opens the settings again stays visible after a choice."
+    missing: "No link or icon found to change or withdraw consent later. The scan does not click; an icon that appears only after a choice is not seen."
   privacy/cookies-before-consent:
     tracking_cookie: "{name} ({domain}, set on {page}): tracking cookie of {vendor}"
     third_party_cookie: "{name} ({domain}, set on {page}): third-party cookie"
@@ -241,6 +250,21 @@ messages:
       one: "{count} cookie or storage entry set before consent. Without consent, only strictly necessary ones are allowed."
       other: "{count} cookies or storage entries set before consent. Without consent, only strictly necessary ones are allowed."
     none: "No cookies or local storage before consent."
+  privacy/google-consent-mode:
+    no_requests: "No Google measurement or ads tag sent a request before consent."
+    request: "{request} on {page}, gcs={gcs}"
+    granted:
+      one: "{count} Google tag request reports ad or analytics storage as granted (gcs) before anyone chose. The Consent Mode default should be \"denied\"."
+      other: "{count} Google tag requests report ad or analytics storage as granted (gcs) before anyone chose. The Consent Mode default should be \"denied\"."
+    tcf:
+      one: "{count} Google tag request carries a TCF consent string (gdpr_consent) before anyone chose."
+      other: "{count} Google tag requests carry a TCF consent string (gdpr_consent) before anyone chose."
+    no_signal:
+      one: "{count} Google tag request without a Consent Mode state (gcs). Consent Mode is not set up or reports no state, so it is unclear whether the tag uses cookies before consent."
+      other: "{count} Google tag requests without a Consent Mode state (gcs). Consent Mode is not set up or reports no state, so it is unclear whether the tags use cookies before consent."
+    denied:
+      one: "{count} Google tag request reports storage as denied. It still reaches Google before consent; see \"No third-party servers before consent\"."
+      other: "{count} Google tag requests report storage as denied. They still reach Google before consent; see \"No third-party servers before consent\"."
   privacy/third-country:
     country_unknown: "Country unknown for {names}."
     no_services: "No third-party service contacted."
