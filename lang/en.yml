@@ -445,3 +445,16 @@ messages:
     partial:
       one: " OSV sent details for {got} of {count} issue; the others have no severity here."
       other: " OSV sent details for {got} of {count} issues; the others have no severity here."
+  repo/workflow-risks:
+    no_workflows: "No GitHub workflows."
+    risky:
+      one: "{count} risky spot in the GitHub workflows."
+      other: "{count} risky spots in the GitHub workflows."
+    checkout_head: "{trigger} checks out the pull request's code. That code runs with the repository's secrets and a write token."
+    injection: "{expr} is set by whoever opens the issue or pull request and runs here as code. Pass it in via env:."
+    pipe_to_shell: "A download is piped straight into a shell. Whoever controls the server controls this run."
+    write_all: "permissions: write-all gives the token every write right."
+    no_permissions: "No permissions: the token gets the repository's default rights, which may include write."
+    none:
+      one: "{count} workflow checked, no risky pattern."
+      other: "{count} workflows checked, no risky pattern."

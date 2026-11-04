@@ -513,7 +513,7 @@
 </div>
 </section>
 <section class="module" data-module="repo">
-<h3>Repository <small>8 rules</small></h3>
+<h3>Repository <small>9 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-DEPS-005" data-module="repo" data-severity="low" data-search="sec-deps-005 repo/actions-pinning github actions are pinned to a commit github actions sind auf einen commit gepinnt cra art. 13(5), due diligence for third-party components (from 11 dec 2027) reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit sha.">
 <summary>
@@ -634,6 +634,21 @@
 <div><dt>How to fix</dt><dd>Update the affected packages to at least the fixed version shown.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/vulnerabilities"><code>checks/repo/vulnerabilities</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://osv.dev">osv.dev</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-CI-001" data-module="repo" data-severity="high" data-search="sec-ci-001 repo/workflow-risks github workflows do not run outside code with privileges github-workflows lassen keinen fremden code mit rechten laufen cra art. 13(1) with annex i part i, protection against unauthorised access (from 11 dec 2027) reads `.github/workflows/*.yml` and flags, with the patterns in `data/workflow-risks.yml`, a checkout of the pull request head under `pull_request_target` or `workflow_run`, outside-controlled `${{ }}` expressions in `run:` or `script:`, downloads piped into a shell, `write-all`, and workflows without `permissions`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-CI-001</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><b>high</b></span></span>
+<span class="rule-title">GitHub workflows do not run outside code with privileges</span>
+<span class="rule-law">CRA Art. 13(1) with Annex I Part I, protection against unauthorised access (from 11 Dec 2027)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads <code>.github/workflows/*.yml</code> and flags, with the patterns in <code>data/workflow-risks.yml</code>, a checkout of the pull request head under <code>pull_request_target</code> or <code>workflow_run</code>, outside-controlled <code>${{ }}</code> expressions in <code>run:</code> or <code>script:</code>, downloads piped into a shell, <code>write-all</code>, and workflows without <code>permissions</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Pass values like github.event.issue.title to the script via env:; do not check out PR code under pull_request_target; set permissions: contents: read at the top of the workflow; download scripts, verify a checksum, then run them.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/workflow-risks"><code>checks/repo/workflow-risks</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions">docs.github.com</a>, <a href="https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#permissions">docs.github.com</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>

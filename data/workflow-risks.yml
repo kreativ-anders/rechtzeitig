@@ -1,0 +1,32 @@
+# Risky patterns in GitHub Actions workflows. Used by repo/workflow-risks.
+# Regular expressions, case-sensitive.
+
+# Expressions whose value an outside contributor controls. Inside run: or a github-script script:
+# they become shell or JavaScript code (script injection). Source: GitHub Docs, "Script injections".
+untrusted:
+  - 'github\.event\.issue\.(title|body)'
+  - 'github\.event\.pull_request\.(title|body)'
+  - 'github\.event\.pull_request\.head\.(ref|label)'
+  - 'github\.event\.pull_request\.head\.repo\.default_branch'
+  - 'github\.event\.comment\.body'
+  - 'github\.event\.review\.body'
+  - 'github\.event\.review_comment\.body'
+  - 'github\.event\.discussion\.(title|body)'
+  - 'github\.event\.pages\.[^ }]*\.page_name'
+  - 'github\.event\.commits\.[^ }]*\.(message|author\.(email|name))'
+  - 'github\.event\.head_commit\.(message|author\.(email|name)|committer\.(email|name))'
+  - 'github\.event\.workflow_run\.(head_branch|display_title|head_commit\.(message|author\.(email|name)))'
+  - 'github\.head_ref'
+
+# Triggers that run with secrets and a write token although a fork can start them.
+privileged_triggers: [pull_request_target, workflow_run]
+
+# Checkout refs that bring the fork's code into such a workflow.
+pr_head:
+  - 'github\.event\.pull_request\.head\.(sha|ref)'
+  - 'github\.event\.workflow_run\.head_(sha|branch)'
+  - 'github\.head_ref'
+  - 'refs/pull/'
+
+# A download piped straight into a shell.
+pipe_to_shell: '\b(curl|wget)\b[^|\n]*\|\s*(sudo\s+)?(ba|z|da)?sh\b'

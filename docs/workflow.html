@@ -53,6 +53,7 @@
         <li><a href="#data">Data that leaves the runner</a></li>
         <li><a href="#safe">Safe use</a></li>
         <li><a href="#updates">Updates</a></li>
+        <li><a href="#questions">Questions</a></li>
       </ol>
     </nav>
 
@@ -137,7 +138,7 @@
           </tbody>
         </table></div>
         <p>Keep the SBOM with each release. It shows which versions you shipped and that you checked them.</p>
-        <p class="note">GitHub deletes the artifact after <code>retention-days</code> (default 7). On a public repository anyone signed in to GitHub can download it, including the list of your dependencies and where findings were found.</p>
+        <p class="note">On a public repository the report is public too. Anyone who can see the repository can read the summary page, the log and the annotations, and anyone signed in to GitHub can download the artifact, including the list of your dependencies and where findings were found. Secret values are redacted, their file and line are not. GitHub deletes the artifact after <code>retention-days</code> (default 7) and the summary and log after the log retention set in the repository settings (default 90 days). To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout of your code.</p>
       </section>
 
       <section id="visit">
@@ -182,6 +183,15 @@ updates:
         <p>Dependabot reads the <code>uses:</code> lines in <code>.github/workflows/</code>. When rechtzeitig publishes a new release, it opens a pull request that changes the SHA and the version comment together. The pull request links the release notes.</p>
         <p>Without Dependabot, open the <a href="https://github.com/kreativ-anders/rechtzeitig/releases">latest release</a> and copy the <code>uses:</code> line from its notes into your workflow.</p>
         <p class="note">Dependabot only moves the pin. It does not add new inputs to your workflow. Read the release notes and compare your file with the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a>. New checks that need no input run without changes; checks behind a switch stay off until you add it (see <a href="#scope">What runs when</a>).</p>
+      </section>
+
+      <section id="questions">
+        <h2><span class="par">§ 10</span>Questions</h2>
+        <h3 id="no-issues">Why does rechtzeitig not open issues?</h3>
+        <p>An issue would make findings more visible than they should be. On a public repository issues are public, like the report (see <a href="#report">The report</a>). But the report is deleted after a while and nobody is told about it. An issue stays until someone deletes it, sends notifications, and is found by search engines. A finding like "secret in <code>config.js</code>, line 12" or "known vulnerability in a dependency" would point every reader to a weakness of your site.</p>
+        <p>There are more reasons. Writing issues needs <code>issues: write</code>, while rechtzeitig needs no token at all (see <a href="#safe">Safe use</a>). A scheduled run finds the same things every day, so issues would need matching, closing and reopening, or they pile up. And messages carry text from the scanned site, which in an issue could mention users or link other issues.</p>
+        <p>If you want an issue anyway, for example on a private repository, add a step after rechtzeitig that reads the <code>result</code> output or <code>rechtzeitig-report.json</code> and opens one with <code>gh issue create</code>. Give that step, not rechtzeitig, the <code>issues: write</code> permission.</p>
+        <p class="note">A secret found in a public repository is already public. Revoke it first, then remove it from the code.</p>
       </section>
     </div>
   </div>

@@ -464,3 +464,16 @@ messages:
     partial:
       one: " OSV lieferte Details zu {got} von {count} Schwachstelle; die übrigen haben hier keinen Schweregrad."
       other: " OSV lieferte Details zu {got} von {count} Schwachstellen; die übrigen haben hier keinen Schweregrad."
+  repo/workflow-risks:
+    no_workflows: "Keine GitHub-Workflows."
+    risky:
+      one: "{count} riskante Stelle in den GitHub-Workflows."
+      other: "{count} riskante Stellen in den GitHub-Workflows."
+    checkout_head: "{trigger} checkt den Code des Pull Requests aus. Dieser Code läuft mit den Secrets des Repositorys und einem Token mit Schreibrechten."
+    injection: "{expr} setzt, wer das Issue oder den Pull Request anlegt, und läuft hier als Code. Über env: übergeben."
+    pipe_to_shell: "Ein Download wird direkt in eine Shell geleitet. Wer den Server kontrolliert, kontrolliert diesen Lauf."
+    write_all: "permissions: write-all gibt dem Token alle Schreibrechte."
+    no_permissions: "Keine permissions: Das Token bekommt die Standardrechte des Repositorys, eventuell mit Schreibrechten."
+    none:
+      one: "{count} Workflow geprüft, kein riskantes Muster."
+      other: "{count} Workflows geprüft, kein riskantes Muster."
