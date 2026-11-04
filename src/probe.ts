@@ -98,6 +98,7 @@ export async function tlsInfo(url: string, timeout: number, trusted?: string): P
     return { protocol: "", validTo: "", daysLeft: 0, authorized: false, error: errorMessage(e) };
   }
   return new Promise((resolve) => {
+    // Reads the certificate even when it is invalid, which is the finding (socket.authorized). Nothing is sent over this socket.
     const socket = connect({ host: u.hostname, port: Number(u.port) || 443, servername: u.hostname, rejectUnauthorized: false, lookup: pinned(addresses) });
     const done = (value: ScanContext["tls"]) => {
       socket.destroy();

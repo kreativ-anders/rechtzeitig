@@ -97,7 +97,8 @@ function counts(outcomes: Outcome[]): Record<OutcomeStatus, number> {
 export const md = (s: string) => oneLine(s).replace(/[<>&[\]()*_`!|\\#~]/g, (c) => `&#${c.charCodeAt(0)};`);
 /** Untrusted text for the log: one line that can never start a workflow command. */
 export const plain = (s: string) => oneLine(s).replace(/^::/, ": :");
-const cell = (s: string) => s.replace(/\|/g, "\\|").replace(/\n/g, " ");
+// Trusted text from rule.yml in a table cell: backslashes first, so "\\|" cannot end the cell.
+const cell = (s: string) => s.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\n/g, " ");
 const title = (r: Report) => [r.web?.url, r.repo && `repository ${repoName(r.repo.root)}`].filter(Boolean).join(" + ");
 const summaryLine = (r: Report, icons: boolean) => {
   const c = counts(r.outcomes);
