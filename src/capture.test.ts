@@ -3,11 +3,10 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { launchBrowser } from "./scan.ts";
 import { capture } from "./capture.ts";
-import { serve } from "../test/helpers.ts";
+import { serve, testBrowser } from "../test/helpers.ts";
 
-const browser = launchBrowser();
+const browser = testBrowser();
 after(async () => (await browser).close());
 
 const site = (html: string) => {

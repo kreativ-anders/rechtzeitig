@@ -6,8 +6,8 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { BlockedHostError, fetchPublic, isIpOrLocal, isPublicAddress, pinned, publicAddresses } from "./net.ts";
-import { launchBrowser, scan } from "./scan.ts";
-import { scanFixture } from "../test/helpers.ts";
+import { scan } from "./scan.ts";
+import { scanFixture, testBrowser } from "../test/helpers.ts";
 
 test("private, loopback, link-local and mapped addresses are not public", () => {
   for (const ip of ["127.0.0.1", "10.1.2.3", "172.16.0.1", "192.168.1.1", "169.254.169.254", "100.64.0.1", "0.0.0.0",
@@ -84,7 +84,7 @@ test("the browser reaches private addresses only on the trusted host, also throu
   });
   await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
   const { port } = server.address() as { port: number };
-  const browser = await launchBrowser();
+  const browser = await testBrowser();
   try {
     // Not offline: nothing aborts requests in the browser, only the proxy decides.
     await scan(`http://127.0.0.1:${port}/`, { browser, maxPages: 1, timeout: 10_000 });

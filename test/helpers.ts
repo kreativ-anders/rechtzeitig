@@ -54,12 +54,18 @@ export async function serve(dir: string): Promise<{ url: string; close: () => vo
   return { url: `http://127.0.0.1:${port}/`, close: () => server.close() };
 }
 
+/**
+ * Chrome for tests: with its sandbox where the machine has one, otherwise without. The tests check detection;
+ * whether a runner has a sandbox is checked by the self-scan (dev/roadmap.md), and the action itself stays strict.
+ */
+export const testBrowser = () => launchBrowser(undefined, true);
+
 let browser: Promise<Browser> | undefined;
 after(async () => (await browser)?.close());
 
 /** Scans a fixture folder. Requests to other hosts are recorded, then blocked. */
 export async function scanFixture(dir: string, opts: ScanOptions = {}): Promise<ScanContext> {
-  browser ??= launchBrowser();
+  browser ??= testBrowser();
   const site = await serve(dir);
   try {
     return await scan(site.url, { offline: true, browser: await browser, timeout: 10_000, ...opts });
