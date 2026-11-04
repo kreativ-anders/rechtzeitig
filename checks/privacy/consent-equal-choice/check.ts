@@ -1,6 +1,6 @@
 import { defineCheck, loadYaml, msg, pass, skip, warn, type Finding, type Link, type Style } from "../../../src/sdk.ts";
 
-const LIMITS = loadYaml<{ min_area_ratio: number; min_font_ratio: number; contrast: { readable: number; low: number } }>("data/consent-design.yml");
+const LIMITS = loadYaml<Record<string, { min_area_ratio: number; min_font_ratio: number; contrast: { readable: number; low: number } }>>("data/thresholds.yml")["privacy/consent-equal-choice"];
 
 type Rgba = [number, number, number, number];
 

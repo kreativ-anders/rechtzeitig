@@ -1,6 +1,4 @@
-import { defineCheck, msg, pass, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
-
-const MAX = 20;
+import { capped, defineCheck, msg, pass, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
@@ -19,8 +17,6 @@ export default defineCheck({
       key: v.muted ? "motion" : "sound",
       params: { url: v.url ? ctx.short(v.url) : "<video>", page: v.page },
     }));
-    const details = findings.slice(0, MAX);
-    if (findings.length > MAX) details.push({ key: "more", params: { count: findings.length - MAX } });
-    return warn(msg(sound.length ? "uncontrolled_sound" : "uncontrolled", { count: uncontrolled.length }), details);
+    return warn(msg(sound.length ? "uncontrolled_sound" : "uncontrolled", { count: uncontrolled.length }), capped(findings));
   },
 });

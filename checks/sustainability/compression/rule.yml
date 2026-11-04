@@ -4,7 +4,7 @@ severity: low
 title:
   de: "Eigene Textdateien kommen komprimiert"
   en: "Own text files are sent compressed"
-how: "Lists the site's own answers with HTTP 200 and a text Content-Type (`compress` in `data/file-formats.yml`: HTML, CSS, JavaScript, JSON, SVG, XML) that have no Content-Encoding, leaving out answers whose Content-Length is below `min_bytes`."
+how: "Lists the site's own answers with HTTP 200 and a text Content-Type (`compress` in `data/file-formats.yml`: HTML, CSS, JavaScript, JSON, SVG, XML) that have no Content-Encoding, leaving out answers whose Content-Length is below 1 KB (`data/thresholds.yml`)."
 fix_hint:
   de: "Im Webserver oder CDN Brotli oder gzip für Textformate einschalten (bei nginx zum Beispiel gzip on; gzip_types text/css application/javascript image/svg+xml;)."
   en: "Turn on Brotli or gzip for text formats in the web server or CDN (in nginx, for example, gzip on; gzip_types text/css application/javascript image/svg+xml;)."

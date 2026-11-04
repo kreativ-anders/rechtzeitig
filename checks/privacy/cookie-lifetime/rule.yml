@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 5 Abs. 1 lit. e DSGVO, § 25 TDDDG"
   en: "Art. 5(1)(e) GDPR, § 25 TDDDG"
-how: "Warns when a known tracking cookie (`data/third-parties.yml`) or a cookie of another site set without clicks expires more than 397 days (13 months, `data/cookie-lifetime.yml`) after the scan; long-lived own cookies only give info."
+how: "Warns when a known tracking cookie (`data/third-parties.yml`) or a cookie of another site set without clicks expires more than 397 days (13 months, `data/thresholds.yml`) after the scan; long-lived own cookies only give info."
 fix_hint:
   de: "Laufzeit von Analyse- und Werbe-Cookies auf höchstens 13 Monate begrenzen und bei neuen Besuchen nicht automatisch verlängern."
   en: "Limit the lifetime of analytics and advertising cookies to at most 13 months and do not extend it automatically on new visits."

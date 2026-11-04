@@ -1,6 +1,6 @@
-import { defineCheck, msg, pass, warn } from "../../../src/sdk.ts";
+import { defineCheck, loadYaml, msg, pass, warn } from "../../../src/sdk.ts";
 
-const MIN_SHARE = 0.2;
+const { min_share: MIN_SHARE } = loadYaml<Record<string, { min_share: number }>>("data/thresholds.yml")["sustainability/content-without-js"];
 
 export default defineCheck({
   run(ctx) {

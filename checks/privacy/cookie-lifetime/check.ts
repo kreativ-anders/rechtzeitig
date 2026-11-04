@@ -1,6 +1,6 @@
 import { defineCheck, info, loadYaml, msg, pass, siteCookies, skip, warn, type Finding } from "../../../src/sdk.ts";
 
-const MAX_DAYS = loadYaml<{ max_days: number }>("data/cookie-lifetime.yml").max_days;
+const MAX_DAYS = loadYaml<Record<string, { max_days: number }>>("data/thresholds.yml")["privacy/cookie-lifetime"].max_days;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export default defineCheck({

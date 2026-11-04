@@ -14,6 +14,7 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | Secret patterns | `data/secrets.yml` |
 | License groups, update tools | `data/licenses.yml`, `data/update-tools.yml` |
 | Lists for single checks (countries, cookie names, error traces, closed services) | `data/*.yml` |
+| Thresholds and list caps of all checks | `data/thresholds.yml` |
 | Lockfile parsers | `src/repo/lockfiles.ts` |
 | Allowed source domains for `meta.sources` | `data/source-domains.yml` |
 | Periodic review of rule sources | `.claude/skills/review-sources/` |
@@ -38,7 +39,7 @@ Then run `npm run docs && npm run typecheck && npm test`. Tests fail when `docs/
 
 ## Boundaries
 
-- Words belong in `lang/*.yml`, services and patterns in `data/`, never in check code.
+- Words belong in `lang/*.yml`, services and patterns in `data/`, numbers a check decides by in `data/thresholds.yml`, never in check code.
 - No paid features or paid code paths in this repository.
 - Findings are technical risk hints with location and legal basis, never legal advice.
 - A check that asks an outside service only uses that service's official API. With a token, the check is opt-in: it runs only when the user sets the secret. An official API without a token may be on by default, but needs an input to turn it off, documented in `docs/workflow.html` ("What runs when", "Data that leaves the runner"). Both kinds are listed in `SWITCHES` in `src/rules.ts` and named in the rule's `requires`. No unofficial endpoints, no scraping, no fallback that sends data without a token.

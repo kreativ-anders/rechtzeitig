@@ -20,8 +20,6 @@ ignore: ['favicon', 'apple-touch-icon', 'android-chrome', 'mstile']
 static: [script, stylesheet, image, font]
 
 # Text answers of the site's own server that should come compressed (gzip, br, zstd), by Content-Type.
-# Used by sustainability/compression. Answers with a Content-Length below min_bytes are left out:
-# compression barely saves anything there.
+# Used by sustainability/compression; its size limit is in data/thresholds.yml.
 compress:
   types: [text/html, text/css, text/javascript, application/javascript, application/x-javascript, application/json, application/ld+json, application/manifest+json, image/svg+xml, application/xml, text/xml, application/rss+xml, application/atom+xml, text/plain, text/csv]
-  min_bytes: 1024

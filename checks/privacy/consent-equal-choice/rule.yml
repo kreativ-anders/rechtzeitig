@@ -1,4 +1,6 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+# UWG § 3 is not cited on purpose: no primary source applies it to consent banners. The DSK
+# (OH Telemedien v1.1 Rn. 125-134) grounds equal choice on Art. 4 Nr. 11 and Art. 7 DSGVO.
 id: LEG-EU-CNS-007
 severity: medium
 title:
@@ -7,7 +9,7 @@ title:
 legal_basis:
   de: "§ 25 TDDDG, Art. 4 Nr. 11 und Art. 7 DSGVO"
   en: "§ 25 TDDDG, Art. 4(11) and Art. 7 GDPR"
-how: "In the start page's banner with JavaScript, compares the largest accept button (`consent_accept`) with the largest reject button (`consent_reject`) and warns when reject has under half the area, under 80 % of the font size, or a WCAG contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/consent-design.yml`), or when a banner button uses shaming words (`consent_shaming`)."
+how: "In the start page's banner with JavaScript, compares the largest accept button (`consent_accept`) with the largest reject button (`consent_reject`) and warns when reject has under half the area, under 80 % of the font size, or a WCAG contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/thresholds.yml`), or when a banner button uses shaming words (`consent_shaming`)."
 fix_hint:
   de: "\"Alle ablehnen\" in gleicher Größe, Schrift und Lesbarkeit wie \"Alle akzeptieren\" anbieten und neutral beschriften."
   en: "Show \"Reject all\" in the same size, font and readability as \"Accept all\", with a neutral label."

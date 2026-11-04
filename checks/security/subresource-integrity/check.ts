@@ -1,7 +1,6 @@
-import { defineCheck, isWebUrl, loadYaml, msg, pass, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
+import { capped, defineCheck, isWebUrl, loadYaml, msg, pass, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
 
 const MOVING = loadYaml<{ moving: string[] }>("data/subresource-integrity.yml").moving;
-const MAX = 20;
 
 /** The host belongs to a service whose files change under the same URL. */
 const moving = (host: string) => MOVING.some((d) => host === d || host.endsWith(`.${d}`));
@@ -24,8 +23,7 @@ export default defineCheck({
       params: { host: new URL(s.url).hostname },
     }));
     if (!missing.length) return pass(msg("signed", { count: files.length - excluded.length }), note);
-    const details: Finding[] = missing.slice(0, MAX).map((s) => ({ key: s.type, params: { url: s.url } }));
-    if (missing.length > MAX) details.push({ key: "more", params: { count: missing.length - MAX } });
+    const details: Finding[] = capped(missing.map((s) => ({ key: s.type, params: { url: s.url } })));
     return warn(msg("unsigned", { count: missing.length, total: files.length }), [...details, ...note]);
   },
 });

@@ -4,7 +4,7 @@ severity: low
 title:
   de: "Startseite zeigt Inhalt ohne JavaScript"
   en: "Start page shows content without JavaScript"
-how: "Compares the visible text of the start page with JavaScript off and on and warns when less than 20 % of it is shown without JavaScript."
+how: "Compares the visible text of the start page with JavaScript off and on and warns when less than 20 % of it is shown without JavaScript (`data/thresholds.yml`)."
 fix_hint:
   de: "Inhalte auf dem Server oder beim Build als HTML ausliefern."
   en: "Deliver content as HTML from the server or at build time."

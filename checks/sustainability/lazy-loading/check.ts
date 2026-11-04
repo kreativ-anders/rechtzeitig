@@ -1,8 +1,7 @@
-import { defineCheck, isWebUrl, msg, pass, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
+import { capped, defineCheck, isWebUrl, loadYaml, msg, pass, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
 
 /** Smaller images (tracking pixels, icons) are not worth deferring. CSS pixels. */
-const MIN_SIZE = 50;
-const MAX = 20;
+const { min_size: MIN_SIZE } = loadYaml<Record<string, { min_size: number }>>("data/thresholds.yml")["sustainability/lazy-loading"];
 
 export default defineCheck({
   run(ctx) {
@@ -14,8 +13,7 @@ export default defineCheck({
     if (!images.length) return skip(msg("none"));
     const eager = images.filter((i) => i.loading !== "lazy");
     if (!eager.length) return pass(msg("lazy", { count: images.length }));
-    const details: Finding[] = eager.slice(0, MAX).map((i) => ({ key: "image", params: { url: ctx.short(i.url), page: i.page } }));
-    if (eager.length > MAX) details.push({ key: "more", params: { count: eager.length - MAX } });
+    const details: Finding[] = capped(eager.map((i) => ({ key: "image", params: { url: ctx.short(i.url), page: i.page } })));
     return warn(msg("eager", { count: eager.length, total: images.length }), details);
   },
 });

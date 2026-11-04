@@ -4,7 +4,7 @@ severity: low
 title:
   de: "Bilder unterhalb des ersten Bildschirms laden erst bei Bedarf"
   en: "Images below the fold load lazily"
-how: "Lists images on all visited own pages, loaded with JavaScript, whose top edge lies below the first 1280x720 viewport and that have no `loading=\"lazy\"`, ignoring images under 50x50 pixels and the data: placeholders that script-based lazy loading shows until scrolling."
+how: "Lists images on all visited own pages, loaded with JavaScript, whose top edge lies below the first 1280x720 viewport and that have no `loading=\"lazy\"`, ignoring images under 50x50 pixels (`data/thresholds.yml`) and the data: placeholders that script-based lazy loading shows until scrolling."
 fix_hint:
   de: "Bildern unterhalb des ersten Bildschirms loading=\"lazy\" geben, mit width und height, damit nichts springt. Bilder im ersten Bildschirm ohne lazy laden."
   en: "Give images below the first screen loading=\"lazy\", with width and height so nothing jumps. Load images in the first screen without lazy."

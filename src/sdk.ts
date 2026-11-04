@@ -4,6 +4,7 @@ import { siteOf } from "./text.ts";
 import type { UiLanguage } from "./rules.ts";
 
 export { loadYaml } from "./data.ts";
+import { loadYaml } from "./data.ts";
 export { isWebUrl } from "./text.ts";
 export { MANIFESTS } from "./repo/lockfiles.ts";
 
@@ -503,4 +504,12 @@ export interface RepoContext {
   vulnerabilities: Vulnerability[];
   /** "ok", "ok (details for N of M)" when OSV sent details for only some issues, "skipped" (no network, tests) or an error message. */
   osv: string;
+}
+
+const MAX_LISTED = loadYaml<{ common: { max_listed: number } }>("data/thresholds.yml").common.max_listed;
+
+/** The first `common.max_listed` details (data/thresholds.yml), then one `more` finding with the count of the rest. The check's messages need `more`. */
+export function capped(details: Finding[]): Finding[] {
+  if (details.length <= MAX_LISTED) return details;
+  return [...details.slice(0, MAX_LISTED), { key: "more", params: { count: details.length - MAX_LISTED } }];
 }

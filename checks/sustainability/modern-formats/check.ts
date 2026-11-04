@@ -1,11 +1,10 @@
-import { defineCheck, loadYaml, msg, pass, siteRequests, unique, warn, type Finding } from "../../../src/sdk.ts";
+import { capped, defineCheck, loadYaml, msg, pass, siteRequests, unique, warn, type Finding } from "../../../src/sdk.ts";
 
 type Kind = "image" | "font";
 const DATA = loadYaml<{ legacy: Record<Kind, { types: string[]; extensions: string[]; better: string }>; ignore: string[] }>(
   "data/file-formats.yml",
 );
 const IGNORE = new RegExp(DATA.ignore.join("|"), "i");
-const MAX = 20;
 
 /** The legacy kind of a file, from its Content-Type or, without one, its extension. */
 function legacyKind(url: string, contentType?: string): Kind | undefined {
@@ -26,10 +25,9 @@ export default defineCheck({
       return kind ? [{ kind, url: r.url }] : [];
     });
     if (!found.length) return pass(msg("modern"));
-    const details: Finding[] = found
-      .slice(0, MAX)
-      .map(({ kind, url }) => ({ key: kind, params: { url: ctx.short(url), better: DATA.legacy[kind].better } }));
-    if (found.length > MAX) details.push({ key: "more", params: { count: found.length - MAX } });
+    const details: Finding[] = capped(
+      found.map(({ kind, url }) => ({ key: kind, params: { url: ctx.short(url), better: DATA.legacy[kind].better } })),
+    );
     return warn(msg("legacy", { count: found.length }), details);
   },
 });
