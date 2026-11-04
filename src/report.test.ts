@@ -28,9 +28,14 @@ test("log output is wrapped in a random stop-commands block", () => {
 
 test("the step summary escapes Markdown and HTML in messages and details", () => {
   const md = toMarkdown(report(`Link ${evilLink}`, [evilLink, evilFile]));
-  assert.doesNotMatch(md, /<img|\]\(http|\[a\]/);
+  assert.doesNotMatch(md, /<img|\]\(http:\/\/evil|\[a\]/);
   assert.match(md, /&#60;img src=x&#62; &#91;a&#93;&#40;http:\/\/evil&#41;/);
   assert.match(md, /- d ::error title=x::y\n/);
+});
+
+test("the step summary names the tool and its maker in the report language", () => {
+  assert.match(toMarkdown(report("m", [])), /- \[rechtzeitig\]\(https:\/\/github\.com\/kreativ-anders\/rechtzeitig\) 0 · by \[kreativ-anders\]\(https:\/\/kreativ-anders\.de\) · now$/m);
+  assert.match(toMarkdown({ ...report("m", []), language: "de" }), /· von \[kreativ-anders\]/);
 });
 
 test("warnings such as a missing sandbox show in the summary and the log", () => {

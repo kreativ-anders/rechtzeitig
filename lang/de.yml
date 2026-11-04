@@ -138,6 +138,7 @@ messages:
     runner: "GitHub-Runner (Rechenzentrum in den USA)"
     repository: "Repository: {files} Dateien, {components} Komponenten aus {lockfiles} Lockfile(s), OSV: {osv}"
     disclaimer: "Technische Risikohinweise mit Fundstelle und Bezug zur Rechtsgrundlage. Keine Rechtsberatung."
+    made_by: "von {maker}"
     severity_info: "info"
     severity_low: "niedrig"
     severity_medium: "mittel"

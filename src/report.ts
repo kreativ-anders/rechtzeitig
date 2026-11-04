@@ -69,6 +69,9 @@ export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">,
   };
 }
 
+const HOMEPAGE = "https://github.com/kreativ-anders/rechtzeitig";
+const MAKER = "https://kreativ-anders.de";
+
 // Report wording comes from lang/<code>.yml `messages.report`; rule titles, legal bases and fix hints from each rule.yml.
 const ui = (lang: UiLanguage) => (key: string, params?: Params) => render({ key, params }, "report", lang);
 
@@ -143,7 +146,7 @@ export function toMarkdown(r: Report): string {
   }
   if (r.repo) lines.push(`- ${t("repository", { files: r.repo.files.length, components: r.repo.components.length, lockfiles: r.repo.lockfiles.length, osv: md(r.repo.osv) })}`);
   for (const w of r.warnings ?? []) lines.push(`- ⚠️ ${md(w)}`);
-  lines.push(`- rechtzeitig ${r.version} · ${r.startedAt}`, "", `_${t("disclaimer")}_`, "");
+  lines.push(`- [rechtzeitig](${HOMEPAGE}) ${r.version} · ${t("made_by", { maker: `[kreativ-anders](${MAKER})` })} · ${r.startedAt}`, "", `_${t("disclaimer")}_`, "");
   return lines.join("\n");
 }
 

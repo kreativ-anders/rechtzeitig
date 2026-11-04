@@ -119,6 +119,7 @@ messages:
     runner: "GitHub-hosted runner (US data center)"
     repository: "Repository: {files} files, {components} components from {lockfiles} lockfile(s), OSV: {osv}"
     disclaimer: "Technical risk hints with the place they were found and the legal basis they relate to. Not legal advice."
+    made_by: "by {maker}"
     severity_info: "info"
     severity_low: "low"
     severity_medium: "medium"
