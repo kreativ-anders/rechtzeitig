@@ -116,13 +116,81 @@ messages:
     repository: "Repository: {files} files, {components} components from {lockfiles} lockfile(s), OSV: {osv}"
     disclaimer: "Technical risk hints with the place they were found and the legal basis they relate to. Not legal advice."
   # ---------- legal
-  legal/cancellation-button: {}
-  legal/form-privacy-notice: {}
-  legal/imprint-details: {}
-  legal/links-on-all-pages: {}
-  legal/odr-link: {}
-  legal/privacy-policy-details: {}
-  legal/withdrawal-button: {}
+  legal/cancellation-button:
+    not_needed: "Only needed when visitors can sign up for subscriptions. Start the scan with subscriptions: true to check it."
+    missing: 'No cancellation button on the start page. The law asks for "Verträge hier kündigen".'
+    not_followed: 'Could not follow "{text}" to the cancellation page {where}; the confirmation button "jetzt kündigen" was not checked.'
+    not_followed_button: 'Could not follow "{text}" to the cancellation page (a button without a link); the confirmation button "jetzt kündigen" was not checked.'
+    no_confirm: '{where} has no confirmation button "jetzt kündigen" (§ 312k Abs. 2 Satz 2 BGB).'
+    similar: 'Found "{text}", but the law asks for "Verträge hier kündigen" or equally clear wording.'
+    unconfirmed: 'Found "{text}", but could not follow it to the confirmation page.'
+    incomplete: 'Found "{text}", but the cancellation page looks incomplete.'
+    found: 'Found "{text}".'
+  legal/form-privacy-notice:
+    no_forms: "No form that asks for personal data."
+    form: "{page}: form with {fields}"
+    form_to: "{page}: form with {fields}, sends to {host}"
+    missing:
+      one: "{missing} of {count} form asks for personal data without a privacy notice next to it."
+      other: "{missing} of {count} forms ask for personal data without a privacy notice next to them."
+    all:
+      one: "The form points to the privacy policy."
+      other: "All {count} forms point to the privacy policy."
+  legal/imprint-details:
+    no_address: "No postal address with a German postcode found (Nr. 1)."
+    no_second_contact: "No phone number or contact form found. Besides email, a second fast way of contact is required (Nr. 2)."
+    vat_id: "VAT ID (USt-IdNr.) found."
+    no_vat_id: "No VAT ID (USt-IdNr.) found. Required if you have one (Nr. 6)."
+    register: "Register entry found."
+    no_register: "No register entry (HRB, VR, ...) found. Required if registered (Nr. 4)."
+    no_email: "The imprint has no email address (Nr. 2)."
+    incomplete:
+      one: "The imprint may be incomplete: {count} item not found."
+      other: "The imprint may be incomplete: {count} items not found."
+    complete: "Address, email and a second way of contact found in the imprint."
+  legal/links-on-all-pages:
+    start_only: "Only the start page could be checked."
+    page_imprint: "imprint"
+    page_privacy: "privacy policy"
+    or: "{a} or {b}"
+    gap: "{where}: no link to the {pages}"
+    gaps:
+      one: "{gaps} of {count} page lacks a legal link. Both must be reachable from every page."
+      other: "{gaps} of {count} pages lack a legal link. Both must be reachable from every page."
+    all:
+      one: "Both links found on the page checked."
+      other: "Both links found on all {count} pages checked."
+  legal/odr-link:
+    found: "The EU online dispute resolution platform closed on 20 July 2025. Remove the link and the notice about it."
+    none: "No outdated link to the EU dispute platform."
+  legal/privacy-policy-details:
+    topic_controller: "Controller and contact details (Art. 13(1)(a))"
+    topic_legal_basis: "Legal basis of each processing (Art. 13(1)(c))"
+    topic_storage_period: "Storage period (Art. 13(2)(a))"
+    topic_right_access: "Right of access (Art. 15)"
+    topic_right_rectification: "Right to rectification (Art. 16)"
+    topic_right_erasure: "Right to erasure (Art. 17)"
+    topic_right_restriction: "Right to restriction of processing (Art. 18)"
+    topic_right_portability: "Right to data portability (Art. 20)"
+    topic_right_objection: "Right to object (Art. 21)"
+    topic_withdraw_consent: "Right to withdraw consent (Art. 7(3)), needed if you ask for consent"
+    topic_right_complaint: "Right to lodge a complaint with a supervisory authority (Art. 77)"
+    missing:
+      one: "{missing} of {count} required topic not found."
+      other: "{missing} of {count} required topics not found."
+    complete:
+      one: "{count} required topic found."
+      other: "All {count} required topics found."
+  legal/withdrawal-button:
+    not_needed: "Only needed when consumers buy or sign contracts on the site. Start the scan with sales: true to check it."
+    missing: 'No withdrawal function on the start page. Since 19 June 2026 the law asks for "Vertrag widerrufen".'
+    not_followed: 'Could not follow "{text}" to the withdrawal page {where}; the confirmation button "Widerruf bestätigen" was not checked.'
+    not_followed_button: 'Could not follow "{text}" to the withdrawal page (a button without a link); the confirmation button "Widerruf bestätigen" was not checked.'
+    no_confirm: '{where} has no confirmation button "Widerruf bestätigen" (§ 356a Abs. 3 BGB).'
+    similar: 'Found "{text}", but the law asks for "Vertrag widerrufen" or equally clear wording.'
+    unconfirmed: 'Found "{text}", but could not follow it to the confirmation page.'
+    incomplete: 'Found "{text}", but the withdrawal page looks incomplete.'
+    found: 'Found "{text}".'
 
   # ---------- privacy
   privacy/consent-preselected:

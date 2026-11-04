@@ -135,13 +135,81 @@ messages:
     repository: "Repository: {files} Dateien, {components} Komponenten aus {lockfiles} Lockfile(s), OSV: {osv}"
     disclaimer: "Technische Risikohinweise mit Fundstelle und Bezug zur Rechtsgrundlage. Keine Rechtsberatung."
   # ---------- legal
-  legal/cancellation-button: {}
-  legal/form-privacy-notice: {}
-  legal/imprint-details: {}
-  legal/links-on-all-pages: {}
-  legal/odr-link: {}
-  legal/privacy-policy-details: {}
-  legal/withdrawal-button: {}
+  legal/cancellation-button:
+    not_needed: "Nur nötig, wenn Besucher Abos abschließen können. Zum Prüfen den Scan mit subscriptions: true starten."
+    missing: "Kein Kündigungsbutton auf der Startseite. Das Gesetz verlangt „Verträge hier kündigen“."
+    not_followed: "„{text}“ ließ sich nicht bis zur Kündigungsseite {where} verfolgen; der Bestätigungsbutton „jetzt kündigen“ wurde nicht geprüft."
+    not_followed_button: "„{text}“ ließ sich nicht bis zur Kündigungsseite verfolgen (Button ohne Link); der Bestätigungsbutton „jetzt kündigen“ wurde nicht geprüft."
+    no_confirm: "{where}: kein Bestätigungsbutton „jetzt kündigen“ (§ 312k Abs. 2 Satz 2 BGB)."
+    similar: "„{text}“ gefunden, das Gesetz verlangt aber „Verträge hier kündigen“ oder eine ebenso eindeutige Formulierung."
+    unconfirmed: "„{text}“ gefunden, die Bestätigungsseite ließ sich aber nicht erreichen."
+    incomplete: "„{text}“ gefunden, die Kündigungsseite wirkt aber unvollständig."
+    found: "„{text}“ gefunden."
+  legal/form-privacy-notice:
+    no_forms: "Kein Formular, das personenbezogene Daten abfragt."
+    form: "{page}: Formular mit {fields}"
+    form_to: "{page}: Formular mit {fields}, sendet an {host}"
+    missing:
+      one: "{missing} von {count} Formular fragt personenbezogene Daten ohne Datenschutzhinweis daneben ab."
+      other: "{missing} von {count} Formularen fragen personenbezogene Daten ohne Datenschutzhinweis daneben ab."
+    all:
+      one: "Das Formular verweist auf die Datenschutzerklärung."
+      other: "Alle {count} Formulare verweisen auf die Datenschutzerklärung."
+  legal/imprint-details:
+    no_address: "Keine Postanschrift mit deutscher Postleitzahl gefunden (Nr. 1)."
+    no_second_contact: "Keine Telefonnummer und kein Kontaktformular gefunden. Neben der E-Mail ist ein zweiter schneller Kontaktweg nötig (Nr. 2)."
+    vat_id: "USt-IdNr. gefunden."
+    no_vat_id: "Keine USt-IdNr. gefunden. Pflicht, falls vorhanden (Nr. 6)."
+    register: "Registereintrag gefunden."
+    no_register: "Kein Registereintrag (HRB, VR, ...) gefunden. Pflicht bei Eintragung (Nr. 4)."
+    no_email: "Das Impressum enthält keine E-Mail-Adresse (Nr. 2)."
+    incomplete:
+      one: "Das Impressum ist womöglich unvollständig: {count} Angabe nicht gefunden."
+      other: "Das Impressum ist womöglich unvollständig: {count} Angaben nicht gefunden."
+    complete: "Anschrift, E-Mail und ein zweiter Kontaktweg im Impressum gefunden."
+  legal/links-on-all-pages:
+    start_only: "Nur die Startseite ließ sich prüfen."
+    page_imprint: "Impressum"
+    page_privacy: "Datenschutzerklärung"
+    or: "{a} oder {b}"
+    gap: "{where}: kein Link zu {pages}"
+    gaps:
+      one: "Auf {gaps} von {count} Seite fehlt ein Pflichtlink. Impressum und Datenschutzerklärung müssen von jeder Seite erreichbar sein."
+      other: "Auf {gaps} von {count} Seiten fehlt ein Pflichtlink. Impressum und Datenschutzerklärung müssen von jeder Seite erreichbar sein."
+    all:
+      one: "Beide Links auf der geprüften Seite gefunden."
+      other: "Beide Links auf allen {count} geprüften Seiten gefunden."
+  legal/odr-link:
+    found: "Die EU-Plattform zur Online-Streitbeilegung ist seit 20. Juli 2025 abgeschaltet. Link und Hinweis darauf entfernen."
+    none: "Kein veralteter Link zur EU-Streitbeilegungsplattform."
+  legal/privacy-policy-details:
+    topic_controller: "Verantwortlicher und Kontaktdaten (Art. 13 Abs. 1 lit. a)"
+    topic_legal_basis: "Rechtsgrundlage jeder Verarbeitung (Art. 13 Abs. 1 lit. c)"
+    topic_storage_period: "Speicherdauer (Art. 13 Abs. 2 lit. a)"
+    topic_right_access: "Auskunftsrecht (Art. 15)"
+    topic_right_rectification: "Recht auf Berichtigung (Art. 16)"
+    topic_right_erasure: "Recht auf Löschung (Art. 17)"
+    topic_right_restriction: "Recht auf Einschränkung der Verarbeitung (Art. 18)"
+    topic_right_portability: "Recht auf Datenübertragbarkeit (Art. 20)"
+    topic_right_objection: "Widerspruchsrecht (Art. 21)"
+    topic_withdraw_consent: "Recht auf Widerruf der Einwilligung (Art. 7 Abs. 3), nötig bei Einwilligungen"
+    topic_right_complaint: "Beschwerderecht bei einer Aufsichtsbehörde (Art. 77)"
+    missing:
+      one: "{missing} von {count} Pflichtthema nicht gefunden."
+      other: "{missing} von {count} Pflichtthemen nicht gefunden."
+    complete:
+      one: "{count} Pflichtthema gefunden."
+      other: "Alle {count} Pflichtthemen gefunden."
+  legal/withdrawal-button:
+    not_needed: "Nur nötig, wenn Verbraucher auf der Website kaufen oder Verträge schließen. Zum Prüfen den Scan mit sales: true starten."
+    missing: "Keine Widerrufsfunktion auf der Startseite. Seit 19. Juni 2026 verlangt das Gesetz „Vertrag widerrufen“."
+    not_followed: "„{text}“ ließ sich nicht bis zur Widerrufsseite {where} verfolgen; der Bestätigungsbutton „Widerruf bestätigen“ wurde nicht geprüft."
+    not_followed_button: "„{text}“ ließ sich nicht bis zur Widerrufsseite verfolgen (Button ohne Link); der Bestätigungsbutton „Widerruf bestätigen“ wurde nicht geprüft."
+    no_confirm: "{where}: kein Bestätigungsbutton „Widerruf bestätigen“ (§ 356a Abs. 3 BGB)."
+    similar: "„{text}“ gefunden, das Gesetz verlangt aber „Vertrag widerrufen“ oder eine ebenso eindeutige Formulierung."
+    unconfirmed: "„{text}“ gefunden, die Bestätigungsseite ließ sich aber nicht erreichen."
+    incomplete: "„{text}“ gefunden, die Widerrufsseite wirkt aber unvollständig."
+    found: "„{text}“ gefunden."
 
   # ---------- privacy
   privacy/consent-preselected:
