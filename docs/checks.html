@@ -237,7 +237,7 @@
 </div>
 </section>
 <section class="module" data-module="privacy">
-<h3>Privacy and consent <small>8 rules</small></h3>
+<h3>Privacy and consent <small>10 rules</small></h3>
 <div class="rules">
 <details class="rule" id="LEG-EU-CNS-007" data-module="privacy" data-severity="medium" data-search="leg-eu-cns-007 privacy/consent-equal-choice rejecting is as visible as accepting in the consent banner ablehnen ist im consent-banner so sichtbar wie zustimmen § 25 tdddg, art. 4(11) and art. 7 gdpr in the start page's banner with javascript, compares the largest accept button (`consent_accept`) with the largest reject button (`consent_reject`) and warns when reject has under half the area, under 80 % of the font size, or a wcag contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/consent-design.yml`), or when a banner button uses shaming words (`consent_shaming`).">
 <summary>
@@ -284,6 +284,21 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-EU-CNS-005" data-module="privacy" data-severity="medium" data-search="leg-eu-cns-005 privacy/consent-withdraw-link consent can be changed or withdrawn later einwilligung lässt sich später ändern oder widerrufen art. 7(3) gdpr, § 25 tdddg when the start page has a consent banner (`consent_accept` in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (`consent_settings`, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-005</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Consent can be changed or withdrawn later</span>
+<span class="rule-law">Art. 7(3) GDPR, § 25 TDDDG</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>When the start page has a consent banner (<code>consent_accept</code> in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (<code>consent_settings</code>, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.</dd></div>
+<div><dt>How to fix</dt><dd>Offer an always visible link or icon on every page that opens the cookie settings directly, for example &quot;Cookie settings&quot; in the footer.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-withdraw-link"><code>checks/privacy/consent-withdraw-link</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://www.datenschutzkonferenz-online.de/media/oh/20221205_oh_Telemedien_2021_Version_1_1_Vorlage_104_DSK_final.pdf">datenschutzkonferenz-online.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-EU-CNS-008" data-module="privacy" data-severity="low" data-search="leg-eu-cns-008 privacy/cookie-lifetime cookies that need consent live at most 13 months cookies, die eine einwilligung brauchen, leben höchstens 13 monate art. 5(1)(e) gdpr, § 25 tdddg warns when a known tracking cookie (`data/third-parties.yml`) or a cookie of another site set without clicks expires more than 397 days (13 months, `data/cookie-lifetime.yml`) after the scan; long-lived own cookies only give info.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-008</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
@@ -311,6 +326,21 @@
 <div><dt>How to fix</dt><dd>Set only strictly necessary cookies right away, all others only after consent.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/cookies-before-consent"><code>checks/privacy/cookies-before-consent</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://www.bundesgerichtshof.de/SharedDocs/Pressemitteilungen/DE/2020/2020067.html">bundesgerichtshof.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-CNS-006" data-module="privacy" data-severity="medium" data-search="leg-eu-cns-006 privacy/google-consent-mode google tags report no consent before a choice google-tags melden vor der einwilligung keine zustimmung § 25 tdddg, art. 7 gdpr; google consent mode is no legal requirement but a technical signal reads the consent parameters of requests to google measurement and ads endpoints (`data/google-tags.yml`) made before any click: a `gcs` state with ad or analytics storage granted or a tcf string in `gdpr_consent` fails, no readable `gcs` warns, only denied passes; `gcd` is ignored, because google sends it with or without consent mode.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-006</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Google tags report no consent before a choice</span>
+<span class="rule-law">§ 25 TDDDG, Art. 7 GDPR; Google Consent Mode is no legal requirement but a technical signal</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the consent parameters of requests to Google measurement and ads endpoints (<code>data/google-tags.yml</code>) made before any click: a <code>gcs</code> state with ad or analytics storage granted or a TCF string in <code>gdpr_consent</code> fails, no readable <code>gcs</code> warns, only denied passes; <code>gcd</code> is ignored, because Google sends it with or without Consent Mode.</dd></div>
+<div><dt>How to fix</dt><dd>Set Consent Mode to &quot;denied&quot; with <code>gtag('consent', 'default', …)</code> before any Google tag and update it only after the choice in the banner; pass a TCF string only after the choice. Or load Google tags only after consent.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/google-consent-mode"><code>checks/privacy/google-consent-mode</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://developers.google.com/tag-platform/security/concepts/consent-mode">developers.google.com</a>, <a href="https://developers.google.com/tag-platform/security/guides/consent">developers.google.com</a>, <a href="https://developers.google.com/tag-platform/devguides/gtag-integration">developers.google.com</a>, <a href="https://support.google.com/google-ads/answer/10021549">support.google.com</a>, <a href="https://support.google.com/admanager/answer/9999955">support.google.com</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>

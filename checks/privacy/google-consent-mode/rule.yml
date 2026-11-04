@@ -1,0 +1,23 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-CNS-006
+severity: medium
+title:
+  de: "Google-Tags melden vor der Einwilligung keine Zustimmung"
+  en: "Google tags report no consent before a choice"
+legal_basis:
+  de: "§ 25 TDDDG, Art. 7 DSGVO; der Google Consent Mode ist keine gesetzliche Pflicht, sondern ein technisches Signal"
+  en: "§ 25 TDDDG, Art. 7 GDPR; Google Consent Mode is no legal requirement but a technical signal"
+how: "Reads the consent parameters of requests to Google measurement and ads endpoints (`data/google-tags.yml`) made before any click: a `gcs` state with ad or analytics storage granted or a TCF string in `gdpr_consent` fails, no readable `gcs` warns, only denied passes; `gcd` is ignored, because Google sends it with or without Consent Mode."
+fix_hint:
+  de: "Vor jedem Google-Tag den Consent Mode mit `gtag('consent', 'default', …)` auf „denied“ setzen und erst nach der Auswahl im Banner aktualisieren; einen TCF-String erst nach der Auswahl übergeben. Oder Google-Tags erst nach der Einwilligung laden."
+  en: "Set Consent Mode to \"denied\" with `gtag('consent', 'default', …)` before any Google tag and update it only after the choice in the banner; pass a TCF string only after the choice. Or load Google tags only after consent."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.gesetze-im-internet.de/ttdsg/__25.html
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://developers.google.com/tag-platform/security/concepts/consent-mode
+  - https://developers.google.com/tag-platform/security/guides/consent
+  - https://developers.google.com/tag-platform/devguides/gtag-integration
+  - https://support.google.com/google-ads/answer/10021549
+  - https://support.google.com/admanager/answer/9999955

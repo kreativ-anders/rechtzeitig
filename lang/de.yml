@@ -39,6 +39,11 @@ links:
     - '\bnur (technisch )?(notwendige|erforderliche|essenzielle|essentielle)\b'
     - '\bweiter ohne (einwilligung|zustimmung)\b'
     - '\bverweigern\b'
+  # A link or button that opens the consent settings again, Art. 7 Abs. 3 DSGVO.
+  consent_settings:
+    - '\b(cookie|datenschutz|privatsphaere|einwilligungs|zustimmungs|consent)[- ]?(einstellungen|praeferenzen|optionen|verwaltung|manager)\b'
+    - '\b(cookies|einwilligung(en)?|zustimmung(en)?|cookie[- ]?auswahl) (\w+ ){0,2}(aendern|anpassen|verwalten|widerrufen|bearbeiten)\b'
+    - '\bwiderruf (der |ihrer |deiner )?(einwilligung|zustimmung)\b'
 
 # Wording inside page text.
 text:
@@ -275,6 +280,12 @@ messages:
     within:
       one: "{count} Cookie, es läuft nicht länger als {max} Tage."
       other: "{count} Cookies, keines läuft länger als {max} Tage."
+  privacy/consent-withdraw-link:
+    no_banner: "Kein Consent-Banner auf der Startseite gefunden."
+    found: "Die Startseite bietet außerhalb des Banners „{text}“, um die Einwilligung später zu ändern."
+    privacy_only: "„{text}“ nur in der Datenschutzerklärung ({where}) gefunden. Das genügt nur, wenn der Link ohne Suchen direkt zu den Einstellungen führt; besser ist ein Link auf jeder Seite."
+    banner_only: "„{text}“ nur im Banner gefunden. Prüfen, ob nach einer Auswahl ein Link oder Icon sichtbar bleibt, das die Einstellungen wieder öffnet."
+    missing: "Kein Link und kein Icon gefunden, mit dem sich die Einwilligung später ändern oder widerrufen lässt. Der Scan klickt nicht; ein Icon, das erst nach einer Auswahl erscheint, sieht er nicht."
   privacy/cookies-before-consent:
     tracking_cookie: "{name} ({domain}, gesetzt auf {page}): Tracking-Cookie von {vendor}"
     third_party_cookie: "{name} ({domain}, gesetzt auf {page}): Drittanbieter-Cookie"
@@ -290,6 +301,21 @@ messages:
       one: "{count} Cookie oder Speichereintrag vor der Einwilligung gesetzt. Ohne Einwilligung sind nur unbedingt erforderliche erlaubt."
       other: "{count} Cookies oder Speichereinträge vor der Einwilligung gesetzt. Ohne Einwilligung sind nur unbedingt erforderliche erlaubt."
     none: "Keine Cookies und kein lokaler Speicher vor der Einwilligung."
+  privacy/google-consent-mode:
+    no_requests: "Kein Google-Mess- oder Werbe-Tag hat vor der Einwilligung eine Anfrage gesendet."
+    request: "{request} auf {page}, gcs={gcs}"
+    granted:
+      one: "{count} Anfrage eines Google-Tags meldet Werbe- oder Analyse-Speicher als erlaubt (gcs), obwohl noch niemand gewählt hat. Die Standardeinstellung des Consent Mode sollte „denied“ sein."
+      other: "{count} Anfragen von Google-Tags melden Werbe- oder Analyse-Speicher als erlaubt (gcs), obwohl noch niemand gewählt hat. Die Standardeinstellung des Consent Mode sollte „denied“ sein."
+    tcf:
+      one: "{count} Anfrage eines Google-Tags trägt einen TCF-Consent-String (gdpr_consent), obwohl noch niemand gewählt hat."
+      other: "{count} Anfragen von Google-Tags tragen einen TCF-Consent-String (gdpr_consent), obwohl noch niemand gewählt hat."
+    no_signal:
+      one: "{count} Anfrage eines Google-Tags ohne Consent-Mode-Status (gcs). Der Consent Mode ist nicht eingerichtet oder meldet keinen Status; ob das Tag vor der Einwilligung Cookies nutzt, ist nicht erkennbar."
+      other: "{count} Anfragen von Google-Tags ohne Consent-Mode-Status (gcs). Der Consent Mode ist nicht eingerichtet oder meldet keinen Status; ob die Tags vor der Einwilligung Cookies nutzen, ist nicht erkennbar."
+    denied:
+      one: "{count} Anfrage eines Google-Tags meldet Speicher als abgelehnt. Sie erreicht Google trotzdem vor der Einwilligung; siehe „Keine fremden Server vor Einwilligung“."
+      other: "{count} Anfragen von Google-Tags melden Speicher als abgelehnt. Sie erreichen Google trotzdem vor der Einwilligung; siehe „Keine fremden Server vor Einwilligung“."
   privacy/third-country:
     country_unknown: "Land unbekannt für {names}."
     no_services: "Kein Drittanbieter-Dienst kontaktiert."

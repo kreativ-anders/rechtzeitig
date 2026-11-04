@@ -1,0 +1,21 @@
+# Requests of Google measurement and ads tags, and the parameters that carry their consent state.
+# Used by privacy/google-consent-mode.
+#
+# A request counts when its host is one of `hosts` or a subdomain of one, and its path starts with one of `paths`.
+# Loading the tag itself (googletagmanager.com/gtag/js) is no measurement request and carries no consent state.
+endpoints:
+  - hosts: [google-analytics.com, analytics.google.com]
+    paths: [/g/collect, /j/collect, /r/collect, /collect]
+  - hosts: [doubleclick.net]
+    paths: [/g/collect, /j/collect, /pagead/, /activity, /ddm/]
+  - hosts: [googleadservices.com]
+    paths: [/pagead/]
+  - hosts: [google.com]
+    paths: [/pagead/, /ccm/collect]
+
+# Consent mode: ad_storage and analytics_storage as set when the request was sent.
+# https://developers.google.com/tag-platform/security/concepts/consent-mode
+consent_state: gcs
+# IAB TCF: the TC string a CMP passes to Google tags.
+# https://support.google.com/google-ads/answer/10021549
+tcf_string: gdpr_consent

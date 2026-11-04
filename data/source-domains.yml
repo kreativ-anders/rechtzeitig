@@ -45,6 +45,8 @@ vendors:
   - osv.dev
   - supabase.com
   - firebase.google.com
+  - developers.google.com
+  - support.google.com
   - docs.github.com
   - hstspreload.org
   - thegreenwebfoundation.org
