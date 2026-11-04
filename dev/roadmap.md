@@ -10,7 +10,7 @@ Open points from the audit of 2026-11-03, after the fixes.
 
 1. `step-security/harden-runner` with an egress allowlist in `test.yml`.
 2. Dependabot for `examples/workflows/`, if the `github-actions` ecosystem reads workflow files outside `.github/`; until then `src/pinning.test.ts` catches drift.
-3. Require pull requests, the `test` check and signed commits on `main`. Needs a release workflow that does not push to `main` with `GITHUB_TOKEN`, which cannot bypass a ruleset; today the ruleset only blocks deletion and force pushes.
+3. Require signed commits on `main`. Pull requests and the `test` and `drift` checks are required already; the release workflow no longer pushes to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
 4. Timing tests (`capture.test.ts`, the backtracking tests) measure CPU time instead of wall time, so they no longer fail when the machine sleeps during the run.
 
 ## Next: repository

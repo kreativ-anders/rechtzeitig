@@ -6,6 +6,9 @@ on:
   pull_request:
   # The release workflow runs the same tests before it tags.
   workflow_call:
+  # The release workflow starts the checks on its pull request branch, which a push with
+  # GITHUB_TOKEN does not do.
+  workflow_dispatch:
 
 permissions:
   contents: read
