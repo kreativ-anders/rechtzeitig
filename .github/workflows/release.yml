@@ -3,13 +3,15 @@ name: release
 # Actions → release → Run workflow, with bump = patch, minor or major.
 #
 # 1. Runs the tests (test.yml).
-# 2. Takes the latest tag vX.Y.Z, bumps it, writes the version to package.json and commits it,
-#    if package.json does not have it yet.
-# 3. Tags that commit and publishes a GitHub release. Before v1.0.0 it is a pre-release.
-# 4. Pins examples/workflows/rechtzeitig.yml to the commit SHA of the release and commits that.
-#
-# Everything runs in this one run: pushes with GITHUB_TOKEN start no other workflows.
-# If main moves while the run is going, the push fails and nothing is tagged.
+# 2. Takes the latest tag vX.Y.Z and bumps it. On top of the tested commit it commits the
+#    version in package.json, tags that commit and pushes only the tag. The commit is not on
+#    main: the ruleset on main takes changes only through pull requests, and GITHUB_TOKEN
+#    cannot bypass it.
+# 3. Publishes a GitHub release. Before v1.0.0 it is a pre-release.
+# 4. Pushes a branch release/vX.Y.Z with the version and examples/workflows/rechtzeitig.yml
+#    pinned to the release commit, starts test.yml on it (pushes with GITHUB_TOKEN start no
+#    workflows, a dispatch does) and opens a pull request to main. If Actions may not open
+#    pull requests (Settings → Actions → General), the run summary links to open it by hand.
 
 on:
   workflow_dispatch:
@@ -38,6 +40,8 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: write
+      pull-requests: write
+      actions: write
     steps:
       # Credentials stay in this checkout, because this job pushes. It runs no third-party code.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -70,7 +74,7 @@ jobs:
           echo "next=$next" >> "$GITHUB_OUTPUT"
           echo "Releasing v$next (last: $last)"
 
-      - name: Commit version, tag and push
+      - name: Commit version, tag and push the tag
         id: tag
         env:
           NEXT: ${{ steps.version.outputs.next }}
@@ -82,7 +86,7 @@ jobs:
             git commit -q -am "🔖 Release v$NEXT"
           fi
           git tag "v$NEXT"
-          git push --atomic origin HEAD:main "v$NEXT"
+          git push origin "refs/tags/v$NEXT"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Publish release
@@ -111,12 +115,25 @@ jobs:
           if [ "${NEXT%%.*}" = 0 ]; then prerelease=(--prerelease); fi
           gh release create "v$NEXT" --verify-tag --title "v$NEXT" --notes-file "$notes" "${prerelease[@]}"
 
-      - name: Pin the example workflow to the release
+      # The tagged commit stays as it is. The branch carries the same version plus the pin.
+      - name: Open a pull request with the version and the pinned example workflow
         env:
+          GH_TOKEN: ${{ github.token }}
           NEXT: ${{ steps.version.outputs.next }}
           SHA: ${{ steps.tag.outputs.sha }}
         run: |
+          branch="release/v$NEXT"
           sed -i -E "s|(uses: $GITHUB_REPOSITORY)@[0-9a-f]{40} # v[0-9.]+|\1@$SHA # v$NEXT|" examples/workflows/rechtzeitig.yml
           git diff --quiet && { echo "::error::No pin to $GITHUB_REPOSITORY found in examples/workflows/rechtzeitig.yml"; exit 1; }
           git commit -q -am "📌 Pin the example workflow to v$NEXT"
-          git push origin HEAD:main
+          git push origin "HEAD:refs/heads/$branch"
+          gh workflow run test.yml --ref "$branch"
+          title="🔖 Release v$NEXT: version and pinned example workflow"
+          body="Sets package.json to v$NEXT and pins examples/workflows/rechtzeitig.yml to the release commit $SHA. The checks were started by the release run."
+          if url=$(gh pr create --base main --head "$branch" --title "$title" --body "$body"); then
+            echo "Pull request: $url" >> "$GITHUB_STEP_SUMMARY"
+          else
+            link="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/compare/main...$branch?expand=1"
+            echo "::warning::Could not open the pull request. Open it by hand: $link"
+            echo "Released v$NEXT. Open the pull request by hand: $link" >> "$GITHUB_STEP_SUMMARY"
+          fi
