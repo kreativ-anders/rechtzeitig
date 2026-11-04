@@ -355,6 +355,8 @@ export interface ScanContext {
   tls?: { protocol: string; validTo: string; daysLeft: number; authorized: boolean; error?: string };
   /** DNS records of the registrable domain `domain` (SPF, DMARC at _dmarc.domain, MX). Missing in tests. */
   dns?: { domain: string; spf?: string; dmarc?: string; mx: boolean };
+  /** Green Web Foundation answer for the start page's host. Missing with green-hosting: false, for IPs and local hosts, and in tests. */
+  green?: { host: string; green: boolean; hostedBy?: string } | { host: string; error: string };
   probes: Probe[];
   /** Host → ISO country, looked up by IP when an IPinfo token is set. */
   countries: Record<string, string>;

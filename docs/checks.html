@@ -64,6 +64,7 @@
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to ipinfo.io (opt-in)</a></td></tr>
 <tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
+<tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
 </tbody></table></div>
 <!-- switches:end -->
 
@@ -458,7 +459,7 @@
 </div>
 </section>
 <section class="module" data-module="sustainability">
-<h3>Sustainability <small>2 rules</small></h3>
+<h3>Sustainability <small>3 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SUS-JS-002" data-module="sustainability" data-severity="low" data-search="sus-js-002 sustainability/content-without-js start page shows content without javascript startseite zeigt inhalt ohne javascript  compares the visible text of the start page with javascript off and on and warns when less than 20 % of it is shown without javascript.">
 <summary>
@@ -472,6 +473,23 @@
 <div><dt>How to fix</dt><dd>Deliver content as HTML from the server or at build time.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/content-without-js"><code>checks/sustainability/content-without-js</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#progressive-enhancement">w3.org</a>, <a href="https://www.w3.org/TR/web-sustainability-guidelines/#static-over-dynamic">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SUS-HOST-001" data-module="sustainability" data-severity="low" data-search="sus-host-001 sustainability/green-hosting site runs on green hosting website läuft bei einem grünen hoster  sends the host name of the start page to the green web foundation api and warns when it has no evidence that the host runs on green energy. green-hosting">
+<summary>
+<span class="rule-head"><span class="rule-id">SUS-HOST-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Site runs on green hosting</span>
+<span class="sends" title="Data leaves the runner, see workflow.html#data">Sends data to api.thegreenwebfoundation.org</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Sends the host name of the start page to the Green Web Foundation API and warns when it has no evidence that the host runs on green energy.</dd></div>
+<div><dt>Runs when</dt><dd>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Pick a host with proven renewable energy, or ask your host to submit its evidence to the Green Web Foundation.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/green-hosting"><code>checks/sustainability/green-hosting</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#use-sustainable-hosting">w3.org</a>, <a href="https://developers.thegreenwebfoundation.org/api/greencheck/v3/check-single-domain/">developers.thegreenwebfoundation.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>

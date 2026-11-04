@@ -19,6 +19,8 @@ export interface ScanOptions {
   timeout?: number;
   offline?: boolean;
   ipinfoToken?: string;
+  /** Ask the Green Web Foundation whether the host runs on green energy. */
+  greenHosting?: boolean;
   /** Start Chrome without its sandbox where the runner has none. */
   unsandboxed?: boolean;
   /** Reuse a running browser (tests). */
@@ -62,6 +64,7 @@ export async function scan(url: string, opts: ScanOptions = {}): Promise<ScanCon
       timeout: opts.timeout ?? 20_000,
       offline: opts.offline,
       ipinfoToken: opts.ipinfoToken,
+      greenHosting: opts.greenHosting,
     });
     return createContext(data, lang, loadRegistry(), { languages, subscriptions: opts.subscriptions ?? false, sales: opts.sales ?? false });
   } finally {

@@ -1,7 +1,7 @@
 import type { Browser } from "playwright";
 import { capture } from "./capture.ts";
 import { matchLinks, type Language } from "./lang.ts";
-import { countries, emailDns, hostVariant, plainHttp, probe, tlsInfo } from "./probe.ts";
+import { countries, emailDns, greenHosting, hostVariant, plainHttp, probe, tlsInfo } from "./probe.ts";
 import { isPublicHost, publicProxy } from "./net.ts";
 import { isWebUrl, siteOf, withoutHash } from "./text.ts";
 import { pageLinks, type Area, type Page, type Probe, type ScanContext, type Snapshot } from "./sdk.ts";
@@ -14,6 +14,8 @@ export interface CrawlOptions {
   userAgent: string;
   /** Looks up the country of third-party hosts. */
   ipinfoToken?: string;
+  /** Asks the Green Web Foundation about the start page's host. */
+  greenHosting?: boolean;
   /** Tests only: requests to other hosts are recorded, then aborted; no DNS, TLS or HTTP lookups. */
   offline?: boolean;
 }
@@ -29,6 +31,7 @@ export interface CrawlData {
   variant?: ScanContext["variant"];
   tls?: ScanContext["tls"];
   dns?: ScanContext["dns"];
+  green?: ScanContext["green"];
 }
 
 const SKIP_FILES = /\.(pdf|zip|gz|dmg|pkg|exe|msi|apk|jpe?g|png|gif|svg|webp|avif|ico|mp3|mp4|webm|xml|json|txt|ics|rss|atom)$/i;
@@ -91,14 +94,15 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     const thirdParty = [...new Set(pages.flatMap((p) => [...p.noJs.requests, ...p.js.requests].map((r) => r.host)))]
       .filter((h) => siteOf(h) !== site)
       .slice(0, MAX_COUNTRY_LOOKUPS);
-    const [http, variant, tls, dns, found] = await Promise.all([
+    const [http, variant, tls, dns, found, green] = await Promise.all([
       plainHttp(finalUrl, opts.timeout, trusted),
       hostVariant(finalUrl, opts.timeout),
       tlsInfo(finalUrl, opts.timeout, trusted),
       emailDns(finalUrl),
       countries(thirdParty, opts.ipinfoToken, opts.timeout),
+      opts.greenHosting ? greenHosting(finalUrl, opts.timeout) : undefined,
     ]);
-    return { url, start, pages, probes, countries: found, http, variant, tls, dns };
+    return { url, start, pages, probes, countries: found, http, variant, tls, dns, green };
   } finally {
     await noJs.close();
     await js.close();

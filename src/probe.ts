@@ -1,4 +1,4 @@
-// Network lookups without a browser: probe paths, plain HTTP, the www variant, TLS, DNS and IP countries.
+// Network lookups without a browser: probe paths, plain HTTP, the www variant, TLS, DNS, IP countries and green hosting.
 
 import { connect } from "node:tls";
 import { lookup, resolveMx, resolveTxt } from "node:dns/promises";
@@ -15,6 +15,7 @@ const PROBES = loadYaml<Array<{
 }>>("data/probes.yml");
 const MAX_BODY = 50_000;
 const MAX_REDIRECTS = 10;
+const GREEN_WEB = "https://api.thegreenwebfoundation.org/api/v3/greencheck/";
 
 // `trusted` in the functions below is the host the user asked to scan; see src/net.ts.
 
@@ -159,4 +160,23 @@ export async function countries(hosts: string[], token: string | undefined, time
     }),
   );
   return result;
+}
+
+/** Asks the Green Web Foundation whether the host runs on green energy. Sends only the host name. */
+export async function greenHosting(url: string, timeout: number): Promise<ScanContext["green"]> {
+  const host = new URL(url).hostname;
+  if (isIpOrLocal(host) || !host.includes(".")) return undefined;
+  try {
+    const res = await fetch(GREEN_WEB + encodeURIComponent(host), { headers: { accept: "application/json" }, signal: AbortSignal.timeout(timeout) });
+    if (!res.ok) {
+      await res.body?.cancel();
+      return { host, error: `HTTP ${res.status}` };
+    }
+    const data = JSON.parse(await readCapped(res, MAX_BODY)) as { green?: unknown; hosted_by?: unknown };
+    if (typeof data.green !== "boolean") return { host, error: "unexpected answer" };
+    const hostedBy = typeof data.hosted_by === "string" && data.hosted_by.trim() ? data.hosted_by.trim() : undefined;
+    return { host, green: data.green, hostedBy };
+  } catch (e) {
+    return { host, error: errorMessage(e) };
+  }
 }

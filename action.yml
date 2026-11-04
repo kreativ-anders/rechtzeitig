@@ -39,6 +39,9 @@ inputs:
   vulnerabilities:
     description: true to look up known vulnerabilities of locked components at api.osv.dev. false = send nothing, skip the rule.
     default: "true"
+  green-hosting:
+    description: true to ask api.thegreenwebfoundation.org whether the site's host runs on green energy. Sends the host name only. false = send nothing, skip the rule.
+    default: "true"
   require-sandbox:
     description: true = stop when Chrome cannot start with its sandbox. false = then scan without it, only for sites you trust.
     default: "true"
@@ -94,13 +97,14 @@ runs:
         REPOSITORY: ${{ inputs.repository }}
         IPINFO_TOKEN: ${{ inputs.ipinfo-token }}
         VULNERABILITIES: ${{ inputs.vulnerabilities }}
+        GREEN_HOSTING: ${{ inputs.green-hosting }}
         REQUIRE_SANDBOX: ${{ inputs.require-sandbox }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
         --sales "$SALES" --modules "$MODULES" --report-language "$REPORT_LANGUAGE"
         --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES"
-        --require-sandbox "$REQUIRE_SANDBOX" --out "$RUNNER_TEMP/rechtzeitig-report"
+        --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --out "$RUNNER_TEMP/rechtzeitig-report"
 
     - name: Upload report
       if: always()
