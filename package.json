@@ -1,6 +1,6 @@
 {
   "name": "rechtzeitig",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Checks a website for German/EU legal basics (GDPR, DDG, TDDDG) from a manually started GitHub workflow.",
   "type": "module",
