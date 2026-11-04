@@ -39,6 +39,9 @@ inputs:
   vulnerabilities:
     description: true to look up known vulnerabilities of locked components at api.osv.dev. false = send nothing, skip the rule.
     default: "true"
+  require-sandbox:
+    description: true = stop when Chrome cannot start with its sandbox. false = then scan without it, only for sites you trust.
+    default: "true"
   retention-days:
     description: Days to keep the report artifact. Artifacts of public repositories can be downloaded by anyone signed in to GitHub.
     default: "7"
@@ -79,11 +82,13 @@ runs:
         REPOSITORY: ${{ inputs.repository }}
         IPINFO_TOKEN: ${{ inputs.ipinfo-token }}
         VULNERABILITIES: ${{ inputs.vulnerabilities }}
+        REQUIRE_SANDBOX: ${{ inputs.require-sandbox }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
         --sales "$SALES" --modules "$MODULES" --report-language "$REPORT_LANGUAGE"
-        --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES" --out "$RUNNER_TEMP/rechtzeitig-report"
+        --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES"
+        --require-sandbox "$REQUIRE_SANDBOX" --out "$RUNNER_TEMP/rechtzeitig-report"
 
     - name: Upload report
       if: always()

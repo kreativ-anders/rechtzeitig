@@ -58,5 +58,7 @@ jobs:
           # max-pages: "10"
           # Optional: false sends no component list to api.osv.dev and skips the vulnerability rule.
           # vulnerabilities: "true"
+          # Optional: false scans without Chrome's sandbox where the runner has none. Only for sites you trust.
+          # require-sandbox: "true"
           # Optional: days to keep the report artifact. On public repositories anyone signed in can download it.
           # retention-days: "7"

@@ -2,7 +2,7 @@ import type { Browser } from "playwright";
 import { capture } from "./capture.ts";
 import { matchLinks, type Language } from "./lang.ts";
 import { countries, emailDns, hostVariant, plainHttp, probe, tlsInfo } from "./probe.ts";
-import { blockedInBrowser, isPublicHost } from "./net.ts";
+import { isPublicHost, publicProxy } from "./net.ts";
 import { isWebUrl, siteOf, withoutHash } from "./text.ts";
 import { pageLinks, type Area, type Page, type Probe, type ScanContext, type Snapshot } from "./sdk.ts";
 
@@ -43,22 +43,22 @@ const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_
  * then a sample of same-site pages, up to maxPages. Each page is loaded twice: JavaScript off and on.
  */
 export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlData> {
+  // The host the user asked for is trusted, also when it is local (dev servers, test fixtures).
+  const input = new URL(startUrl);
+  const trusted = input.hostname;
+  // Every connection of the browser, loopback included, goes through the proxy, which allows only public addresses.
+  const proxy = await publicProxy(trusted);
   const settings = {
     locale: opts.lang.locale, timezoneId: "Europe/Berlin", userAgent: opts.userAgent,
-    // No downloads; no service workers, so every request passes the route below.
+    proxy: { server: proxy.server, bypass: "<-loopback>" },
+    // No downloads; no service workers, so every request passes the proxy and, in tests, the route below.
     acceptDownloads: false, serviceWorkers: "block" as const,
   };
   const noJs = await opts.browser.newContext({ ...settings, javaScriptEnabled: false });
   const js = await opts.browser.newContext(settings);
-  // The host the user asked for is trusted, also when it is local (dev servers, test fixtures).
-  const input = new URL(startUrl);
-  const trusted = input.hostname;
-  for (const c of [noJs, js]) {
-    await c.route("**", (route) => {
-      const u = new URL(route.request().url());
-      const allowed = u.host === input.host || (!opts.offline && !blockedInBrowser(u.hostname, trusted));
-      return allowed ? route.continue() : route.abort();
-    });
+  // Tests: only the fixture host is reached, requests to others are recorded, then aborted.
+  if (opts.offline) {
+    for (const c of [noJs, js]) await c.route("**", (route) => (new URL(route.request().url()).host === input.host ? route.continue() : route.abort()));
   }
 
   try {
@@ -102,6 +102,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   } finally {
     await noJs.close();
     await js.close();
+    proxy.close();
   }
 }
 

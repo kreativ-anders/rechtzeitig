@@ -15,10 +15,10 @@ flowchart LR
 ## Website
 
 1. `src/crawl.ts` visits the start page, every link a language file names as a legal page, then a sample of the site's own pages, up to `max-pages`.
-2. `src/capture.ts` loads each page twice in Chromium, JavaScript off and on. It records status, headers and their `<meta>` equivalents, text, links and buttons (also in shadow roots), forms, checkboxes, requests, cookies with flags, and localStorage. It never clicks. Chromium runs with its sandbox (without it only where the runner cannot, with a warning in the report), gets only `PATH`, `HOME` and locale variables, no tokens, and blocks downloads and service workers. Each load has an overall deadline, so a page that never yields becomes an error. Text (200 KB), links (2000), link labels (300 characters) and requests (5000) are capped.
+2. `src/capture.ts` loads each page twice in Chromium, JavaScript off and on. It records status, headers and their `<meta>` equivalents, text, links and buttons (also in shadow roots), forms, checkboxes, requests, cookies with flags, and localStorage. It never clicks. Chromium runs with its sandbox; where the runner has none, the scan stops unless `require-sandbox: false`, and the report warns. It gets only `PATH`, `HOME` and locale variables, no tokens, and blocks downloads and service workers. Each load has an overall deadline, so a page that never yields becomes an error. Text (200 KB), links (2000), link labels (300 characters) and requests (5000) are capped.
 3. `src/probe.ts` does the lookups that need no browser: paths from `data/probes.yml`, plain HTTP, the `www.` variant, TLS, SPF/DMARC, and IP countries when an IPinfo token is set.
    They run against the start page's final URL only if it is on the same site as the input URL, otherwise against the input URL.
-4. `src/net.ts` keeps the scan off private networks. Before each request without a browser, and before visiting any page, the host must resolve to public addresses only; redirects are followed by hand and checked per hop. In the browser, requests to `localhost` and private IP literals are aborted. The host of the input URL is always allowed, so local dev servers and test fixtures work.
+4. `src/net.ts` keeps the scan off private networks. `publicAddresses()` resolves a host once and allows it only if every address is public; the connection then uses exactly these addresses (`pinned()`), so a DNS answer that changes in between (rebinding) cannot reach the runner's network. Requests without a browser use it directly, with redirects followed by hand and checked per hop. The browser connects only through `publicProxy()`, a local SOCKS5 proxy that does the same for every page, redirect, subresource and WebSocket. The host of the input URL is always allowed, so local dev servers and test fixtures work.
 5. `src/context.ts` wraps everything in a read-only `ScanContext` with helpers.
 
 Both loads happen without interaction, so every request and cookie in the context happened before consent. Comparing the two loads shows what needs JavaScript.
@@ -42,8 +42,6 @@ Messages and details carry text from the scanned site and repository. Every outp
 Checks return message keys with parameters, not sentences. `src/messages.ts` renders them in the report language from `lang/<code>.yml` `messages`, with plural forms from `Intl.PluralRules`. Findings with a file and line also become GitHub annotations (`toAnnotations` in `src/report.ts`); they are printed after the stop-commands block, so every value is escaped the way the Actions toolkit does it. GitHub shows at most 10 annotations per level and step; the summary and the artifact always have all findings.
 
 `toFindings` in `src/report.ts` builds `rechtzeitig-report.json`: rule id, severity, status, message in the report language with its key and parameters, and locations, never page text or file contents. Findings stay in the workflow artifact; nothing is sent anywhere.
-
-The engine has no paid features and no paid code paths.
 
 ## Layout
 
@@ -69,5 +67,5 @@ The engine has no paid features and no paid code paths.
 
 - TypeScript without a build step. Node 24 runs `.ts` files directly; `tsc` only type-checks.
 - Two runtime dependencies: `playwright` and `yaml`.
-- Tests use `node:test` and real Chromium against local fixtures. Requests to other hosts are recorded, then blocked; DNS, TLS and OSV are skipped. Tests run offline.
+- Tests use `node:test` and real Chromium against local fixtures. Requests to other hosts are recorded, then aborted by a route (`offline`); DNS, TLS and OSV are skipped. Tests run offline.
 - The runner location is part of the result. GitHub-hosted runners are in the US; the report says so.

@@ -4,7 +4,7 @@ import { connect } from "node:tls";
 import { lookup, resolveMx, resolveTxt } from "node:dns/promises";
 import { loadYaml } from "./data.ts";
 import { DAY } from "./deadline.ts";
-import { assertPublicHost, BlockedHostError, fetchPublic, isIpOrLocal } from "./net.ts";
+import { BlockedHostError, fetchPublic, isIpOrLocal, pinned, publicAddresses } from "./net.ts";
 import { errorMessage, siteOf } from "./text.ts";
 import type { Probe, ScanContext } from "./sdk.ts";
 
@@ -91,13 +91,14 @@ export async function hostVariant(url: string, timeout: number): Promise<ScanCon
 export async function tlsInfo(url: string, timeout: number, trusted?: string): Promise<ScanContext["tls"]> {
   const u = new URL(url);
   if (u.protocol !== "https:") return undefined;
+  let addresses: string[];
   try {
-    await assertPublicHost(u.hostname, trusted);
+    addresses = await publicAddresses(u.hostname, trusted);
   } catch (e) {
     return { protocol: "", validTo: "", daysLeft: 0, authorized: false, error: errorMessage(e) };
   }
   return new Promise((resolve) => {
-    const socket = connect({ host: u.hostname, port: Number(u.port) || 443, servername: u.hostname, rejectUnauthorized: false });
+    const socket = connect({ host: u.hostname, port: Number(u.port) || 443, servername: u.hostname, rejectUnauthorized: false, lookup: pinned(addresses) });
     const done = (value: ScanContext["tls"]) => {
       socket.destroy();
       resolve(value);
