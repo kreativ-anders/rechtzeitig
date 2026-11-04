@@ -6,6 +6,7 @@ import { validateRule, type Rule } from "./rules.ts";
 import { checksHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, pass } from "./sdk.ts";
+import { render } from "./messages.ts";
 
 const rule = { id: "SEC-TEST-001", severity: "low", title: { de: "t", en: "t" }, how: "Reads something and compares it.", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: ["https://www.w3.org/TR/WCAG22/"] } } as Rule;
 
@@ -74,4 +75,14 @@ test("asking for an unknown concept is an error, not a silent pass", async () =>
   const [outcome] = await runChecks(checks, { web: fakeContext({}) });
   assert.equal(outcome.status, "error");
   assert.match(String(outcome.message), /Unknown concept "imprnt"/);
+});
+
+test("a rule that requires a token input is skipped unless it is set", async () => {
+  const optIn = { ...rule, requires: ["ipinfo-token" as const] };
+  const checks = [{ id: "x/lookup", rule: optIn, check: defineCheck({ run: () => pass({ key: "ran" }) }) }];
+  const [without] = await runChecks(checks, { web: fakeContext({}) });
+  assert.equal(without.status, "skip");
+  assert.match(render(without.message, without.id, "en"), /IPINFO_TOKEN/);
+  const [withToken] = await runChecks(checks, { web: fakeContext({}) }, ["ipinfo-token"]);
+  assert.equal(withToken.status, "pass");
 });

@@ -8,7 +8,7 @@ import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
 import { loadChecks, OUTCOMES, runChecks, selectModules, type OutcomeStatus } from "./runner.ts";
-import { LANGUAGES, type UiLanguage } from "./rules.ts";
+import { LANGUAGES, TOKEN_INPUTS, type TokenInput, type UiLanguage } from "./rules.ts";
 import { md, plain, repoName, toAnnotations, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
 
 const FAIL_ON: Record<string, OutcomeStatus[]> = {
@@ -44,6 +44,8 @@ const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ?
 const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 
 const startedAt = new Date().toISOString();
+// Checks that need an API token run only when its secret is set (opt-in); the others are skipped.
+const tokens = (Object.keys(TOKEN_INPUTS) as TokenInput[]).filter((input) => process.env[TOKEN_INPUTS[input].secret]);
 const warnings: string[] = [];
 const checks = selectModules(await loadChecks(), modules);
 const wantsRepo = checks.some((c) => c.check.repo);
@@ -65,7 +67,7 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
   exit(`Could not load ${url}: ${web.start.js.error ?? web.start.noJs.error ?? "unknown error"}`);
 }
 
-const outcomes = await runChecks(checks, { web, repo });
+const outcomes = await runChecks(checks, { web, repo }, tokens);
 const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS, language, warnings };
 const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) } }, language);
 const markdown = toMarkdown(report);

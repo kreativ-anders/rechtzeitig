@@ -65,7 +65,7 @@
             <tr><td><code>fail-on</code></td><td><code>never</code></td><td>When the run turns red, see <a href="#fail-on">fail-on</a>.</td></tr>
             <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Pages to visit at most.</td></tr>
             <tr><td><code>repository</code></td><td>workspace</td><td>Folder to read lockfiles, licenses and secrets from. Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
-            <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Optional token from <a href="https://ipinfo.io">ipinfo.io</a> to look up the country of servers rechtzeitig does not know.</td></tr>
+            <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from <a href="https://ipinfo.io">ipinfo.io</a>, passed from the secret <code>IPINFO_TOKEN</code>. Turns on the <a href="checks.html#LEG-EU-DSE-005">third-country check</a>. Empty skips it, see <a href="#secrets">Secrets</a>.</td></tr>
             <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> sends nothing there and the vulnerability check is skipped.</td></tr>
             <tr><td><code>retention-days</code></td><td><code>7</code></td><td>Days GitHub keeps the report artifact, see <a href="#report">The report</a>.</td></tr>
           </tbody>
@@ -94,8 +94,14 @@
 
       <section id="secrets">
         <h2><span class="par">§ 4</span>Secrets</h2>
-        <p><code>IPINFO_TOKEN</code> is the only secret rechtzeitig uses, and it is optional. Without it, rechtzeitig knows the country of about 40 common services from its own list. With it, it also looks up the rest.</p>
-        <p>To add it: repository <b>Settings → Secrets and variables → Actions → New repository secret</b>, name <code>IPINFO_TOKEN</code>. The free plan is enough.</p>
+        <p>Every check that needs an API token is opt-in. It runs only when you add the token as a repository secret. Without the secret it shows as <span class="status s-skip">skip</span> in the report, and nothing is sent to that service. All other checks need no secret.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Secret</th><th scope="col">Input</th><th scope="col">Turns on</th><th scope="col">Token from</th></tr></thead>
+          <tbody>
+            <tr><td><code>IPINFO_TOKEN</code></td><td><code>ipinfo-token</code></td><td><a href="checks.html#LEG-EU-DSE-005">Transfers outside the EU</a> (LEG-EU-DSE-005)</td><td><a href="https://ipinfo.io">ipinfo.io</a>, the free plan is enough</td></tr>
+          </tbody>
+        </table></div>
+        <p>To add a secret: repository <b>Settings → Secrets and variables → Actions → New repository secret</b>, with the name from the table. The <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> already passes it to the input.</p>
         <p class="note">rechtzeitig sends only the IP addresses of third-party servers to IPinfo, never data about your visitors.</p>
       </section>
 

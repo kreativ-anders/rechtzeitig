@@ -27,6 +27,15 @@ const officialSource = (url: string): boolean => {
 
 type Text = Record<UiLanguage, string>;
 
+/**
+ * Inputs that carry an API token. Every check that needs one is opt-in: a rule names the input in `requires`,
+ * and the runner skips it unless the workflow sets the secret. Nothing is sent to the service without it.
+ */
+export const TOKEN_INPUTS = {
+  "ipinfo-token": { secret: "IPINFO_TOKEN", service: "ipinfo.io" },
+} as const;
+export type TokenInput = keyof typeof TOKEN_INPUTS;
+
 export interface Rule {
   id: string;
   severity: Severity;
@@ -35,6 +44,8 @@ export interface Rule {
   /** One sentence: how check.ts detects it, naming the data files it uses. Shown in docs/checks.html. */
   how: string;
   fix_hint: Text;
+  /** Token inputs the rule needs. Without them it is skipped. */
+  requires?: TokenInput[];
   meta: { last_reviewed: string; sources: string[] };
 }
 
@@ -61,6 +72,9 @@ export function validateRule(rule: Rule, today = new Date()): string[] {
   text("legal_basis", rule?.legal_basis, false);
   text("fix_hint", rule?.fix_hint);
   if (typeof rule?.how !== "string" || rule.how.trim().length < 20) p.push("how must say in one sentence how the check works");
+  if (rule?.requires !== undefined && (!Array.isArray(rule.requires) || rule.requires.some((r) => !(r in TOKEN_INPUTS)))) {
+    p.push(`requires must be a list of token inputs: ${Object.keys(TOKEN_INPUTS).join(", ")}`);
+  }
   const reviewed = new Date(rule?.meta?.last_reviewed ?? "");
   if (Number.isNaN(reviewed.getTime())) p.push("meta.last_reviewed must be a date (YYYY-MM-DD)");
   else if ((today.getTime() - reviewed.getTime()) / DAY > REVIEW_DAYS) p.push(`meta.last_reviewed is older than ${REVIEW_DAYS} days`);

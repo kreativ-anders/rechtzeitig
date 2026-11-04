@@ -33,7 +33,7 @@ The repository is untrusted. Only regular files count: symlinks and devices are 
 
 Each check folder has `rule.yml` (metadata: id, severity, titles, legal basis, fix hint, review date, sources; schema in `src/rules.ts`) and `check.ts` (detection). Legal and wording updates are data changes in `rule.yml` and `lang/*.yml`, not engine changes.
 
-`src/runner.ts` loads every `checks/**/check.ts` with its `rule.yml`. Website checks get the `ScanContext`, repository checks (`checks/repo/`) get the `RepoContext`. Each runs on its own with a timeout; a broken check becomes `error` and the rest still run. `src/main.ts` sets the exit code from `fail-on`.
+`src/runner.ts` loads every `checks/**/check.ts` with its `rule.yml`. Website checks get the `ScanContext`, repository checks (`checks/repo/`) get the `RepoContext`. Each runs on its own with a timeout; a broken check becomes `error` and the rest still run. A rule that lists a token input in `requires` (`TOKEN_INPUTS` in `src/rules.ts`) is skipped unless `src/main.ts` finds its secret in the environment, so every API with a token is opt-in. `src/main.ts` sets the exit code from `fail-on`.
 
 ## Findings
 

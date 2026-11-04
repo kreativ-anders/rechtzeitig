@@ -90,6 +90,7 @@ text:
 # Every language file must define the same keys (test: src/lang.test.ts).
 messages:
   common:
+    needs_token: "Opt-in: runs only when the secret {secret} is set (input {input}). Without it, nothing is sent to {service}."
     page_imprint: "imprint (Impressum)"
     page_privacy: "privacy policy (Datenschutzerklärung)"
     no_link: "No link to the {page} on the start page."
@@ -226,7 +227,7 @@ messages:
       other: "{count} cookies or storage entries set before consent. Without consent, only strictly necessary ones are allowed."
     none: "No cookies or local storage before consent."
   privacy/third-country:
-    country_unknown: "Country unknown for {names}. Set the ipinfo-token input to look it up."
+    country_unknown: "Country unknown for {names}."
     no_services: "No third-party service contacted."
     all_unknown:
       one: "Country unknown for the only third-party service; transfers outside the EU/EEA could not be checked."

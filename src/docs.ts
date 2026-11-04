@@ -2,7 +2,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { SEVERITIES } from "./rules.ts";
+import { SEVERITIES, TOKEN_INPUTS } from "./rules.ts";
 import { loadChecks, moduleOf, type LoadedCheck } from "./runner.ts";
 
 const FILE = new URL("../docs/checks.html", import.meta.url);
@@ -27,7 +27,11 @@ function card(c: LoadedCheck, module: string): string {
   const r = c.rule;
   const level = SEVERITIES.indexOf(r.severity) + 1;
   const law = r.legal_basis?.en;
-  const search = [r.id, c.id, r.title.en, r.title.de, law ?? "", r.how].join(" ").toLowerCase();
+  const needs = (r.requires ?? []).map((input) => {
+    const { secret, service } = TOKEN_INPUTS[input];
+    return `Opt-in. Runs only when the secret <code>${secret}</code> is set (input <code>${input}</code>, token from ${esc(service)}). Skipped without it, and nothing is sent.`;
+  });
+  const search = [r.id, c.id, r.title.en, r.title.de, law ?? "", r.how, ...(r.requires ?? [])].join(" ").toLowerCase();
   const sources = r.meta.sources.map((s) => `<a href="${esc(s)}">${esc(host(s))}</a>`).join(", ");
   return [
     `<details class="rule" id="${r.id}" data-module="${module}" data-severity="${r.severity}" data-search="${esc(search)}">`,
@@ -39,6 +43,7 @@ function card(c: LoadedCheck, module: string): string {
     `</summary>`,
     `<div class="rule-body"><dl>`,
     `<div><dt>How it is checked</dt><dd>${text(r.how)}</dd></div>`,
+    needs.length ? `<div><dt>Needs</dt><dd>${needs.join("<br>")}</dd></div>` : "",
     `<div><dt>How to fix</dt><dd>${text(r.fix_hint.en)}</dd></div>`,
     `<div><dt>Code</dt><dd><a href="${SOURCE}/${c.id}"><code>checks/${c.id}</code></a></dd></div>`,
     sources ? `<div><dt>Sources</dt><dd>${sources}</dd></div>` : "",

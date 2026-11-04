@@ -245,7 +245,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr, ecj c-311/18 (schrems ii) gets the country of each third-party service (`country` in `data/third-parties.yml`, else ipinfo with a token) and, for countries outside the eea (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known.">
+<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr, ecj c-311/18 (schrems ii) opt-in, runs only with the `ipinfo-token` secret. gets the country of each third-party service (`country` in `data/third-parties.yml`, else ipinfo) and, for countries outside the eea (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known. ipinfo-token">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-005</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
 <span class="rule-title">Privacy policy names transfers outside the EU</span>
@@ -253,7 +253,8 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Gets the country of each third-party service (<code>country</code> in <code>data/third-parties.yml</code>, else IPinfo with a token) and, for countries outside the EEA (<code>data/countries.yml</code>), looks for <code>third_country</code> wording in the privacy policy; info when no country is known.</dd></div>
+<div><dt>How it is checked</dt><dd>Opt-in, runs only with the <code>ipinfo-token</code> secret. Gets the country of each third-party service (<code>country</code> in <code>data/third-parties.yml</code>, else IPinfo) and, for countries outside the EEA (<code>data/countries.yml</code>), looks for <code>third_country</code> wording in the privacy policy; info when no country is known.</dd></div>
+<div><dt>Needs</dt><dd>Opt-in. Runs only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Skipped without it, and nothing is sent.</dd></div>
 <div><dt>How to fix</dt><dd>Name the country and the safeguard for each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses).</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-country"><code>checks/privacy/third-country</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://curia.europa.eu/juris/liste.jsf?num=C-311/18">curia.europa.eu</a>, <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023D1795">eur-lex.europa.eu</a>, <a href="https://curia.europa.eu/juris/liste.jsf?num=T-553/23">curia.europa.eu</a></dd></div>

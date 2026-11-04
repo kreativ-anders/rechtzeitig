@@ -48,5 +48,6 @@ jobs:
           subscriptions: ${{ inputs.subscriptions }}
           sales: ${{ inputs.sales }}
           fail-on: ${{ inputs.fail-on }}
-          # Optional: add the secret IPINFO_TOKEN (free at ipinfo.io) to look up server countries.
+          # Opt-in: the third-country check runs only with the secret IPINFO_TOKEN (free at ipinfo.io).
+          # Without the secret it is skipped and nothing is sent to IPinfo.
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
