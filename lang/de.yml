@@ -193,6 +193,13 @@ messages:
   legal/odr-link:
     found: "Die EU-Plattform zur Online-Streitbeilegung ist seit 20. Juli 2025 abgeschaltet. Link und Hinweis darauf entfernen."
     none: "Kein veralteter Link zur EU-Streitbeilegungsplattform."
+  legal/outdated-references:
+    no_pages: "Weder Impressum noch Datenschutzerklärung geladen."
+    found:
+      one: "{count} Verweis auf ein Gesetz, das nicht mehr gilt."
+      other: "{count} Verweise auf Gesetze, die nicht mehr gelten."
+    outdated: "{page}: nennt {old}, das nicht mehr gilt. Heute: {now}."
+    none: "Impressum und Datenschutzerklärung nennen kein aufgehobenes Gesetz."
   legal/privacy-policy-details:
     topic_controller: "Verantwortlicher und Kontaktdaten (Art. 13 Abs. 1 lit. a)"
     topic_legal_basis: "Rechtsgrundlage jeder Verarbeitung (Art. 13 Abs. 1 lit. c)"

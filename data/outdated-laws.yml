@@ -1,0 +1,24 @@
+# Laws and frameworks that no longer apply, as imprints and privacy policies still name them.
+# Used by legal/outdated-references. `old` and `now` are regular expressions on the page text (case-sensitive);
+# a page that also names `now` is not flagged, so "TDDDG (formerly TTDSG)" passes. `name` is what applies instead.
+
+# Replaced by the Digitale-Dienste-Gesetz on 14 May 2024.
+- old: '\bTMG\b|Telemediengesetz'
+  now: '\bDDG\b|Digitale-Dienste-Gesetz'
+  label: TMG
+  name: DDG
+# Renamed to TDDDG on 14 May 2024.
+- old: '\bTTDSG\b|Telekommunikation-Telemedien-Datenschutz-Gesetz'
+  now: '\bTDDDG\b|Telekommunikation-Digitale-Dienste-Datenschutz-Gesetz'
+  label: TTDSG
+  name: TDDDG
+# Replaced by the Medienstaatsvertrag on 7 November 2020.
+- old: '\bRStV\b|Rundfunkstaatsvertrag'
+  now: '\bMStV\b|Medienstaatsvertrag'
+  label: RStV
+  name: MStV
+# Declared invalid by the CJEU on 16 July 2020 (C-311/18).
+- old: 'Privacy[ -]Shield'
+  now: 'Data Privacy Framework'
+  label: Privacy Shield
+  name: EU-US Data Privacy Framework

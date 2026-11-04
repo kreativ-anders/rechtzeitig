@@ -174,6 +174,13 @@ messages:
   legal/odr-link:
     found: "The EU online dispute resolution platform closed on 20 July 2025. Remove the link and the notice about it."
     none: "No outdated link to the EU dispute platform."
+  legal/outdated-references:
+    no_pages: "Neither imprint nor privacy policy loaded."
+    found:
+      one: "{count} reference to a law that no longer applies."
+      other: "{count} references to laws that no longer apply."
+    outdated: "{page}: names {old}, which no longer applies. Today: {now}."
+    none: "Imprint and privacy policy name no repealed law."
   legal/privacy-policy-details:
     topic_controller: "Controller and contact details (Art. 13(1)(a))"
     topic_legal_basis: "Legal basis of each processing (Art. 13(1)(c))"

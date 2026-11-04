@@ -79,7 +79,7 @@
   <div id="list">
 <!-- checks:start -->
 <section class="module" data-module="legal">
-<h3>Legal <small>9 rules</small></h3>
+<h3>Legal <small>10 rules</small></h3>
 <div class="rules">
 <details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a button labeled &quot;verträge hier kündigen&quot; on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and &quot;jetzt kündigen&quot; (`cancel_confirm`) on its target page; info when it cannot be followed. subscriptions">
 <summary>
@@ -169,6 +169,21 @@
 <div><dt>How to fix</dt><dd>Remove the link and the notice. The platform closed on 20 July 2025. The statement under § 36 VSBG on whether you take part in consumer dispute resolution stays required, unless you have 10 employees or fewer.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/odr-link"><code>checks/legal/odr-link</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/3228/oj">eur-lex.europa.eu</a>, <a href="https://www.gesetze-im-internet.de/vsbg/__36.html">gesetze-im-internet.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-REF-001" data-module="legal" data-severity="low" data-search="leg-de-ref-001 legal/outdated-references imprint and privacy policy name no repealed laws impressum und datenschutzerklärung nennen keine aufgehobenen gesetze ddg and tdddg (since 14 may 2024), mstv (since 7 nov 2020), cjeu c-311/18 on the privacy shield searches the imprint and the privacy policy for the old names in `data/outdated-laws.yml` (tmg, ttdsg, rstv, privacy shield) and ignores a page that also names what applies instead.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-REF-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Imprint and privacy policy name no repealed laws</span>
+<span class="rule-law">DDG and TDDDG (since 14 May 2024), MStV (since 7 Nov 2020), CJEU C-311/18 on the Privacy Shield</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Searches the imprint and the privacy policy for the old names in <code>data/outdated-laws.yml</code> (TMG, TTDSG, RStV, Privacy Shield) and ignores a page that also names what applies instead.</dd></div>
+<div><dt>How to fix</dt><dd>Replace TMG with DDG (imprint: § 5 DDG), TTDSG with TDDDG (§ 25 TDDDG), RStV with MStV (§ 18(2) MStV); base US transfers on the EU-US Data Privacy Framework or standard contractual clauses instead of the Privacy Shield.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/outdated-references"><code>checks/legal/outdated-references</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/ttdsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-bayern.de/Content/Document/MStV">gesetze-bayern.de</a>, <a href="https://curia.europa.eu/juris/liste.jsf?num=C-311/18">curia.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>

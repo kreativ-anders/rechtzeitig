@@ -42,34 +42,33 @@ Findings that only a scan of both can give. Today a check gets either the websit
 Start page and legal pages only. No full-site crawl.
 
 1. After a click on "reject": check that no tracker loads. The only check that would need a click.
-2. Outdated references in imprint and privacy policy: TMG, TTDSG, Privacy Shield (DDG, TDDDG, EuGH C-311/18).
-3. Order button labeled "zahlungspflichtig bestellen" for shops (§ 312j BGB).
-4. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
-5. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
-6. A few unambiguous accessibility checks and the accessibility information for shops (BFSG, § 14 and Anlage 3), not a full axe-core run.
-7. Total prices including VAT where prices appear (PAngV).
-8. Withdrawal notice says where the withdrawal function is, with `sales: true` (Art. 246a § 1 Abs. 2 EGBGB).
-9. A link to change consent on the start page once a banner was found (Art. 7 Abs. 3 DSGVO).
-10. Forms that send to another site: receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO).
-11. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
-12. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.
-13. A named natural person as editorially responsible when the site has journalistic content, blog, news or podcast (§ 18 Abs. 2 MStV).
-14. Newsletter signup: double opt-in wording and an unsubscribe link next to the form (UWG § 7).
-15. With `sales: true`: T&Cs linked and reachable, and the full withdrawal instruction with the model form (Art. 246a § 1 EGBGB), not only the pointer to the withdrawal function (item 9).
-16. With `sales: true`, PAngV beyond item 8: base price (Grundpreis), shipping cost notice, and the 30-day rule for strikethrough prices.
-17. With `sales: true`: product pages name manufacturer, importer or responsible person and safety information (Reg. (EU) 2023/988, since 13.12.2024); packaging registration number (VerpackG § 9, LUCID) in the imprint; PPWR packaging labeling from 12.08.2026.
-18. With `sales: true`: legal guarantee and commercial guarantee labels per Directive (EU) 2024/825 from 27.09.2026, besides the environmental claims in item 12.
-19. Dark patterns in the consent banner: reject as prominent as accept (size, contrast), no confirmation shaming (UWG § 3, Art. 7 Abs. 3 DSGVO).
-20. Global Privacy Control (GPC) signal honored by the consent tool, as a warning.
-21. Lifetimes of non-essential cookies beyond the ~13-month guideline, as a warning.
-22. The served HTML and client JS of normal pages: suspicious comments, personal data, exposed API keys.
-23. Client-side JS libraries in the served bundle with known CVEs; the repo vulnerability check covers dependencies, not the bundle.
-24. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs.
-25. Subresource integrity attributes on third-party scripts.
-26. DNSSEC and CAA records of the domain and the depth of SPF includes; `email-dns` today covers only SPF, DMARC and MX.
-27. Permissive `crossdomain.xml` / `clientaccesspolicy.xml` and directory listings beyond the probe list.
-28. Subdomain takeover: dangling DNS records of own subdomains via certificate transparency logs and a fingerprint list. Sends subdomain names to external log services, so off by default with an input.
-29. Open ports and exposed services on the scanned host only, a port scan from the runner.
+2. Order button labeled "zahlungspflichtig bestellen" for shops (§ 312j BGB).
+3. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
+4. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
+5. A few unambiguous accessibility checks and the accessibility information for shops (BFSG, § 14 and Anlage 3), not a full axe-core run.
+6. Total prices including VAT where prices appear (PAngV).
+7. Withdrawal notice says where the withdrawal function is, with `sales: true` (Art. 246a § 1 Abs. 2 EGBGB).
+8. A link to change consent on the start page once a banner was found (Art. 7 Abs. 3 DSGVO).
+9. Forms that send to another site: receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO).
+10. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
+11. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.
+12. A named natural person as editorially responsible when the site has journalistic content, blog, news or podcast (§ 18 Abs. 2 MStV).
+13. Newsletter signup: double opt-in wording and an unsubscribe link next to the form (UWG § 7).
+14. With `sales: true`: T&Cs linked and reachable, and the full withdrawal instruction with the model form (Art. 246a § 1 EGBGB), not only the pointer to the withdrawal function (item 9).
+15. With `sales: true`, PAngV beyond item 8: base price (Grundpreis), shipping cost notice, and the 30-day rule for strikethrough prices.
+16. With `sales: true`: product pages name manufacturer, importer or responsible person and safety information (Reg. (EU) 2023/988, since 13.12.2024); packaging registration number (VerpackG § 9, LUCID) in the imprint; PPWR packaging labeling from 12.08.2026.
+17. With `sales: true`: legal guarantee and commercial guarantee labels per Directive (EU) 2024/825 from 27.09.2026, besides the environmental claims in item 12.
+18. Dark patterns in the consent banner: reject as prominent as accept (size, contrast), no confirmation shaming (UWG § 3, Art. 7 Abs. 3 DSGVO).
+19. Global Privacy Control (GPC) signal honored by the consent tool, as a warning.
+20. Lifetimes of non-essential cookies beyond the ~13-month guideline, as a warning.
+21. The served HTML and client JS of normal pages: suspicious comments, personal data, exposed API keys.
+22. Client-side JS libraries in the served bundle with known CVEs; the repo vulnerability check covers dependencies, not the bundle.
+23. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs.
+24. Subresource integrity attributes on third-party scripts.
+25. DNSSEC and CAA records of the domain and the depth of SPF includes; `email-dns` today covers only SPF, DMARC and MX.
+26. Permissive `crossdomain.xml` / `clientaccesspolicy.xml` and directory listings beyond the probe list.
+27. Subdomain takeover: dangling DNS records of own subdomains via certificate transparency logs and a fingerprint list. Sends subdomain names to external log services, so off by default with an input.
+28. Open ports and exposed services on the scanned host only, a port scan from the runner.
 
 ## Next: sustainability
 
