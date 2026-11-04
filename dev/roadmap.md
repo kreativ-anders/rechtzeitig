@@ -4,25 +4,12 @@ rechtzeitig is a CI tool for technical decision makers. The repository scan is t
 
 Items are listed in order of priority.
 
-## Released: v0.2.0 (2026-11-04)
+## Next: repository settings
 
-An immutable GitHub pre-release; `examples/workflows/rechtzeitig.yml` is pinned to its commit SHA.
-
-It contains: Chrome's sandbox on GitHub-hosted Ubuntu runners (v0.1.0 stopped every URL scan on `ubuntu-latest`); PR annotations for findings with file and line; reports fully in the chosen language (checks return message keys, the sentences and vendor advice are in `lang/*.yml` and `data/third-parties.yml` per language); the third-country check opt-in via `IPINFO_TOKEN`; connections only to checked addresses, also from the browser; HSTS taken as given under preloaded top-level domains; DMARC `p=reject` and null MX for domains without mail. Self-scan of this repository and rechtzeitig.dev: 1 warn (headers GitHub Pages cannot set), 27 pass.
-
-## Released: v0.1.0 (2026-11-04)
-
-The first pre-release, not yet alpha or beta. An immutable GitHub pre-release; `examples/workflows/rechtzeitig.yml` is pinned to its commit SHA. No moving major tag before `v1.0.0`.
-
-It contains the security fixes, CI hardening, detection fixes and lean-code refactors from the audit of 2026-11-03; `tier` removed; legal references reviewed on 2026-11-04 (CRA articles and dates, BFSG via EN 301 549 V3.2.1, § 36 VSBG, rulings as sources); primary sources only (`data/source-domains.yml`) and the `review-sources` skill. Repository settings: read-only workflow token, GitHub-owned actions only, SHA pinning required, immutable releases, head branches deleted after merge, Dependabot alerts.
-
-## Before the repository goes public
-
-
-- Turn on private vulnerability reporting (only possible for public repositories), which `SECURITY.md` points to. Confirm the answer time stated there.
+- Turn on private vulnerability reporting, which `SECURITY.md` points to. Confirm the answer time stated there.
 - A ruleset for `main`: pull requests only, status check `test` required, no force push, signed commits.
 - A ruleset for `v*` tags: no update, no delete.
-- Code scanning: CodeQL runs once the repository is public (`.github/workflows/codeql.yml` skips while it is private); add the OpenSSF Scorecard action.
+- The OpenSSF Scorecard action.
 - `CODEOWNERS`.
 
 ## Next: hardening
@@ -32,7 +19,7 @@ Open points from the audit of 2026-11-03, after the fixes.
 1. SARIF output for code scanning. Untrusted text is already sanitized in `toFindings`, so a writer can build on it.
 2. `step-security/harden-runner` with an egress allowlist in `test.yml`.
 3. Dependabot for `examples/workflows/`, if the `github-actions` ecosystem reads workflow files outside `.github/`; until then `src/pinning.test.ts` catches drift.
-4. Timing tests (`capture.test.ts`, the backtracking tests) fail when the machine sleeps during the run. Run local test runs with `caffeinate` on macOS, or measure CPU time.
+4. Timing tests (`capture.test.ts`, the backtracking tests) measure CPU time instead of wall time, so they no longer fail when the machine sleeps during the run.
 
 ## Next: repository
 
