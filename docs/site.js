@@ -1,22 +1,31 @@
-// Theme switch: system, light or dark. The choice is kept in localStorage under "theme";
-// picking "system" removes it. An inline script in <head> applies it before the first paint.
+// Theme switch: light or dark. Without a saved choice the page follows the system setting,
+// and the switch shows whichever of the two that is. Picking the theme the system already
+// uses removes the saved choice, so the page follows the system again. The choice is kept
+// in localStorage under "theme"; an inline script in <head> applies it before the first paint.
 (() => {
   const root = document.documentElement;
   const box = document.querySelector(".theme");
   if (!box) return;
+  const media = matchMedia("(prefers-color-scheme: dark)");
+  const system = () => (media.matches ? "dark" : "light");
   let saved = null;
   try { saved = localStorage.getItem("theme"); } catch {}
-  const current = saved === "light" || saved === "dark" ? saved : "system";
-  const input = box.querySelector(`input[value="${current}"]`);
-  if (input) input.checked = true;
+  if (saved !== "light" && saved !== "dark") saved = null;
+  const show = () => {
+    const input = box.querySelector(`input[value="${saved ?? system()}"]`);
+    if (input) input.checked = true;
+  };
+  show();
   box.hidden = false;
+  media.addEventListener("change", () => { if (!saved) show(); });
   box.addEventListener("change", (e) => {
     const value = e.target.value;
+    saved = value === system() ? null : value;
     try {
-      if (value === "system") localStorage.removeItem("theme");
-      else localStorage.setItem("theme", value);
+      if (saved) localStorage.setItem("theme", saved);
+      else localStorage.removeItem("theme");
     } catch {}
-    if (value === "system") delete root.dataset.theme;
-    else root.dataset.theme = value;
+    if (saved) root.dataset.theme = saved;
+    else delete root.dataset.theme;
   });
 })();
