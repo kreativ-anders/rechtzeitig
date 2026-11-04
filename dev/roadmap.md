@@ -73,7 +73,7 @@ Start page and legal pages only. No full-site crawl.
 
 ## Next: sustainability
 
-A few checks taken from the Sustainable Web Analyzer. Page weight, compression and CO2 stay there. No legal basis; W3C Web Sustainability Guidelines as sources only.
+A few sustainability checks. Page weight, compression and CO2 are out of scope. No legal basis; W3C Web Sustainability Guidelines as sources only.
 
 1. Record content type and cache headers of every request, with the browser cache off.
 2. Images in JPEG, PNG or GIF instead of WebP or AVIF, fonts in TTF or OTF instead of WOFF2.
@@ -89,4 +89,4 @@ A few checks taken from the Sustainable Web Analyzer. Page weight, compression a
 
 ## Commercialization
 
-None for now. rechtzeitig stays a pure CI tool: no paid features, no paid code paths, no hooks for them in the engine. The repository stays private. Review this section before it goes public.
+None for now. rechtzeitig stays a pure CI tool: no paid features, no paid code paths, no hooks for them in the engine.
