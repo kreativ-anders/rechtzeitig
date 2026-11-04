@@ -24,12 +24,6 @@ test("only warns when the issue is in a dev dependency", async () => {
   assert.equal(result.status, "warn");
 });
 
-test("skips when the lookup is turned off", async () => {
-  const result = await runRepoCheck(here, files, { osv: "skipped" });
-  assert.equal(result.status, "skip");
-  assert.match(result.message, /turned off/);
-});
-
 test("keeps issues without details and says that details are missing", async () => {
   const bare = { id: "GHSA-bare", purl: "pkg:npm/lodash@4.17.20", summary: "", severity: "" };
   const result = await runRepoCheck(here, files, { osv: "ok (details for 0 of 1)", vulnerabilities: [bare] });

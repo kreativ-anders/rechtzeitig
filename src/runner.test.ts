@@ -2,8 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, runChecks, selectModules } from "./runner.ts";
-import { validateRule, type Rule } from "./rules.ts";
-import { checksHtml } from "./docs.ts";
+import { LANGUAGES, SWITCHES, validateRule, type Rule, type Switch } from "./rules.ts";
+import { checksHtml, switchesHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, pass } from "./sdk.ts";
 import { render } from "./messages.ts";
@@ -48,9 +48,11 @@ test("modules select checks by folder", async () => {
   assert.ok(ids.length > 0 && ids.every((id) => id.startsWith("legal/")));
 });
 
-test("docs/checks.html is up to date (npm run docs)", async () => {
-  const doc = readFileSync(new URL("../docs/checks.html", import.meta.url), "utf8");
-  assert.ok(doc.includes(checksHtml(await loadChecks())), "run: npm run docs");
+test("docs/checks.html and docs/workflow.html are up to date (npm run docs)", async () => {
+  const checks = await loadChecks();
+  const page = (name: string) => readFileSync(new URL(`../docs/${name}`, import.meta.url), "utf8");
+  assert.ok(page("checks.html").includes(checksHtml(checks)), "run: npm run docs");
+  for (const name of ["checks.html", "workflow.html"]) assert.ok(page(name).includes(switchesHtml(checks)), `run: npm run docs (${name})`);
 });
 
 test("a broken check becomes an error and the others still run", async () => {
@@ -85,4 +87,15 @@ test("a rule that requires a token input is skipped unless it is set", async () 
   assert.match(render(without.message, without.id, "en"), /IPINFO_TOKEN/);
   const [withToken] = await runChecks(checks, { web: fakeContext({}) }, ["ipinfo-token"]);
   assert.equal(withToken.status, "pass");
+});
+
+test("every switch skips its rules when off, with a message in every language", async () => {
+  for (const input of Object.keys(SWITCHES) as Switch[]) {
+    const checks = [{ id: "x/switch", rule: { ...rule, requires: [input] }, check: defineCheck({ run: () => pass({ key: "ran" }) }) }];
+    const [off] = await runChecks(checks, { web: fakeContext({}) });
+    assert.equal(off.status, "skip", input);
+    for (const lang of LANGUAGES) assert.match(render(off.message, off.id, lang), new RegExp(input.split("-")[0]), `${input} in ${lang}`);
+    const [on] = await runChecks(checks, { web: fakeContext({}) }, [input]);
+    assert.equal(on.status, "pass", input);
+  }
 });

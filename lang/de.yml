@@ -109,13 +109,16 @@ text:
 # Every language file must define the same keys (test: src/lang.test.ts).
 messages:
   common:
-    needs_token: "Opt-in: läuft nur mit gesetztem Secret {secret} (Input {input}). Ohne wird nichts an {service} gesendet."
     page_imprint: "Impressum"
     page_privacy: "Datenschutzerklärung"
     no_link: "{page}: kein Link auf der Startseite."
     not_loaded: "{page}: der Link {where} ließ sich nicht laden."
     http_error: "{page}: {where} antwortet mit HTTP {status}."
     empty: "{page}: {where} ist fast leer."
+    switch_ipinfo-token: "Opt-in: läuft nur mit gesetztem Secret {secret} (Input {input}). Ohne wird nichts an {service} gesendet."
+    switch_subscriptions: "Nur nötig, wenn Besucher Abos abschließen können. Zum Prüfen den Scan mit subscriptions: true starten."
+    switch_sales: "Nur nötig, wenn Verbraucher auf der Website kaufen oder Verträge schließen. Zum Prüfen den Scan mit sales: true starten."
+    switch_vulnerabilities: "Schwachstellenabfrage ist ausgeschaltet (Input vulnerabilities: false). Nichts wurde an OSV gesendet."
     no_page: "{page}: keine Seite zum Lesen (siehe {check})."
     found: "{page} gefunden: {where}."
   report:
@@ -142,7 +145,6 @@ messages:
     severity_critical: "kritisch"
   # ---------- legal
   legal/cancellation-button:
-    not_needed: "Nur nötig, wenn Besucher Abos abschließen können. Zum Prüfen den Scan mit subscriptions: true starten."
     missing: "Kein Kündigungsbutton auf der Startseite. Das Gesetz verlangt „Verträge hier kündigen“."
     not_followed: "„{text}“ ließ sich nicht bis zur Kündigungsseite {where} verfolgen; der Bestätigungsbutton „jetzt kündigen“ wurde nicht geprüft."
     not_followed_button: "„{text}“ ließ sich nicht bis zur Kündigungsseite verfolgen (Button ohne Link); der Bestätigungsbutton „jetzt kündigen“ wurde nicht geprüft."
@@ -207,7 +209,6 @@ messages:
       one: "{count} Pflichtthema gefunden."
       other: "Alle {count} Pflichtthemen gefunden."
   legal/withdrawal-button:
-    not_needed: "Nur nötig, wenn Verbraucher auf der Website kaufen oder Verträge schließen. Zum Prüfen den Scan mit sales: true starten."
     missing: "Keine Widerrufsfunktion auf der Startseite. Seit 19. Juni 2026 verlangt das Gesetz „Vertrag widerrufen“."
     not_followed: "„{text}“ ließ sich nicht bis zur Widerrufsseite {where} verfolgen; der Bestätigungsbutton „Widerruf bestätigen“ wurde nicht geprüft."
     not_followed_button: "„{text}“ ließ sich nicht bis zur Widerrufsseite verfolgen (Button ohne Link); der Bestätigungsbutton „Widerruf bestätigen“ wurde nicht geprüft."
@@ -445,7 +446,6 @@ messages:
     none: "Keine Secrets in den versionierten Dateien gefunden."
   repo/vulnerabilities:
     no_components: "Keine Abhängigkeiten mit Lockfile zu prüfen."
-    lookup_off: "Schwachstellenabfrage ist ausgeschaltet (Input vulnerabilities: false). Nichts wurde an OSV gesendet."
     osv_error: "OSV-Abfrage fehlgeschlagen: {error}"
     none:
       one: "Keine bekannten Schwachstellen in {count} Komponente."

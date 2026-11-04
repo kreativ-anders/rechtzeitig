@@ -50,6 +50,12 @@ jobs:
           # Opt-in: the third-country check runs only with the secret IPINFO_TOKEN (free at ipinfo.io).
           # Without the secret it is skipped and nothing is sent to IPinfo.
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
+          # Optional: only these check groups (legal, privacy, security, sustainability, accessibility, repo). Empty = all.
+          # modules: ""
+          # Optional: language of the report (de or en). Empty = language of the site.
+          # report-language: ""
+          # Optional: pages to visit at most.
+          # max-pages: "10"
           # Optional: false sends no component list to api.osv.dev and skips the vulnerability rule.
           # vulnerabilities: "true"
           # Optional: days to keep the report artifact. On public repositories anyone signed in can download it.

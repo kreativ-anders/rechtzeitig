@@ -40,7 +40,7 @@
       <h2 id="toc-title">On this page</h2>
       <ol>
         <li><a href="#inputs">Inputs</a></li>
-        <li><a href="#scope">Website, repository or both</a></li>
+        <li><a href="#scope">What runs when</a></li>
         <li><a href="#fail-on">fail-on</a></li>
         <li><a href="#secrets">Secrets</a></li>
         <li><a href="#report">The report</a></li>
@@ -61,7 +61,7 @@
             <tr><td><code>subscriptions</code></td><td><code>false</code></td><td><code>true</code> if visitors can sign up for subscriptions. Turns on the cancellation button check (§ 312k BGB).</td></tr>
             <tr><td><code>sales</code></td><td><code>false</code></td><td><code>true</code> if consumers buy or sign contracts on the site. Turns on the withdrawal button check (§ 356a BGB).</td></tr>
             <tr><td><code>modules</code></td><td>all</td><td>Comma list of check groups: <code>legal</code>, <code>privacy</code>, <code>security</code>, <code>sustainability</code>, <code>accessibility</code>, <code>repo</code>.</td></tr>
-            <tr><td><code>report-language</code></td><td><code>language</code></td><td><code>de</code> or <code>en</code>. Titles and fix hints follow it; check messages are English.</td></tr>
+            <tr><td><code>report-language</code></td><td><code>language</code></td><td><code>de</code> or <code>en</code>. The whole report follows it: messages, details, titles and fix hints. Empty uses the site language; with <code>all</code> the report is in English.</td></tr>
             <tr><td><code>fail-on</code></td><td><code>never</code></td><td>When the run turns red, see <a href="#fail-on">fail-on</a>.</td></tr>
             <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Pages to visit at most.</td></tr>
             <tr><td><code>repository</code></td><td>workspace</td><td>Folder to read lockfiles, licenses and secrets from. Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
@@ -74,8 +74,21 @@
       </section>
 
       <section id="scope">
-        <h2><span class="par">§ 2</span>Website, repository or both</h2>
-        <p>The <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> does both. Without <code>actions/checkout</code> there is nothing to read, so only the website is checked. Without a URL only the repository is checked.</p>
+        <h2><span class="par">§ 2</span>What runs when</h2>
+        <p>Most checks run whenever their target is there. The ones below need a setting. A check that is off shows as <span class="status s-skip">skip</span> in the report, with the reason and the setting that turns it on. The <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> scans the website and the repository.</p>
+<!-- switches:start -->
+<div class="table-wrap"><table>
+<thead><tr><th>Check</th><th>Runs when</th></tr></thead>
+<tbody>
+<tr><td>All website checks</td><td>Only with a <code>url</code>.</td></tr>
+<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before rechtzeitig (folder: input <code>repository</code>).</td></tr>
+<tr><td>A group of checks</td><td><code>modules</code> picks groups: legal, privacy, security, sustainability, accessibility, repo. Empty runs all.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-BTN-001">Cancellation button for subscriptions</a><br><small>LEG-DE-BTN-001</small></td><td>Opt-in: only with <code>subscriptions: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
+<tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.</td></tr>
+<tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.</td></tr>
+</tbody></table></div>
+<!-- switches:end -->
       </section>
 
       <section id="fail-on">
@@ -107,12 +120,12 @@
 
       <section id="report">
         <h2><span class="par">§ 5</span>The report</h2>
-        <p>The summary page of the run shows a table of all checks with details. The artifact <code>rechtzeitig-report</code> contains:</p>
+        <p>The summary page of the run shows a table of all checks with details, in the report language. Findings in a file of the repository also appear as annotations: in a pull request at the line, otherwise on the run page. GitHub shows at most 10 errors and 10 warnings there; the summary and the artifact always have all of them. The artifact <code>rechtzeitig-report</code> contains:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">File</th><th scope="col">Content</th></tr></thead>
           <tbody>
             <tr><td><code>rechtzeitig-report.md</code></td><td>The same report as Markdown</td></tr>
-            <tr><td><code>rechtzeitig-report.json</code></td><td>Findings: rule id, severity, status, message and locations. No page text or file contents</td></tr>
+            <tr><td><code>rechtzeitig-report.json</code></td><td>Findings: rule id, severity, status, message in the report language with its key and parameters, and locations. No page text or file contents</td></tr>
             <tr><td><code>rechtzeitig-sbom.cdx.json</code></td><td>SBOM in CycloneDX 1.6 format, with vulnerabilities</td></tr>
           </tbody>
         </table></div>

@@ -18,13 +18,13 @@
    fix_hint:
      de: "Impressum auf jeder Seite verlinken."
      en: "Link the imprint from every page."
-   requires: [ipinfo-token]  # optional: token inputs the rule needs; skipped without them
+   requires: [subscriptions]  # optional: inputs the rule needs (SWITCHES in src/rules.ts); skipped without them
    meta:
      last_reviewed: "2026-11-03"
      sources: ["https://www.gesetze-im-internet.de/ddg/__5.html"]
    ```
 
-   A test validates every rule. It fails when `last_reviewed` is older than a year, so legal texts get looked at again, when `sources` is empty, when a source is not on a domain in `data/source-domains.yml` (primary sources only: laws, courts, authorities, standards, vendor docs), and when `how` does not name a `data/*.yml` file that `check.ts` loads. A check that needs data from an API with a token is opt-in: list the input in `requires` (known inputs: `TOKEN_INPUTS` in `src/rules.ts`, each with its secret and an `action.yml` input). Without the secret the runner skips the rule and the crawler sends nothing to that service. A rule without `legal_basis` still cites a standard or official guideline for its claim. To review sources and look for changes, use the Claude Code skill `.claude/skills/review-sources/` (`/review-sources`). To check that `rule.yml` and its sources match what `check.ts` does, use `.claude/skills/check-rule-docs/` (`/check-rule-docs`). Both take an optional rule id or module.
+   A test validates every rule. It fails when `last_reviewed` is older than a year, so legal texts get looked at again, when `sources` is empty, when a source is not on a domain in `data/source-domains.yml` (primary sources only: laws, courts, authorities, standards, vendor docs), and when `how` does not name a `data/*.yml` file that `check.ts` loads. A check that needs data from an API with a token is opt-in: list the input in `requires` (known inputs: `SWITCHES` in `src/rules.ts`, each an `action.yml` input with a `messages.common.switch_<input>` text; a new one also needs a row in `docs/workflow.html` and a line in the example workflow, which `src/inputs.test.ts` checks). Without the secret the runner skips the rule and the crawler sends nothing to that service. A rule without `legal_basis` still cites a standard or official guideline for its claim. To review sources and look for changes, use the Claude Code skill `.claude/skills/review-sources/` (`/review-sources`). To check that `rule.yml` and its sources match what `check.ts` does, use `.claude/skills/check-rule-docs/` (`/check-rule-docs`). Both take an optional rule id or module.
 
 3. Add `check.ts` with the detection:
 

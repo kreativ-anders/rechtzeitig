@@ -8,7 +8,7 @@ import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
 import { loadChecks, OUTCOMES, runChecks, selectModules, type OutcomeStatus } from "./runner.ts";
-import { LANGUAGES, TOKEN_INPUTS, type TokenInput, type UiLanguage } from "./rules.ts";
+import { LANGUAGES, SWITCHES, type Switch, type UiLanguage } from "./rules.ts";
 import { md, plain, repoName, toAnnotations, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
 
 const FAIL_ON: Record<string, OutcomeStatus[]> = {
@@ -44,19 +44,25 @@ const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ?
 const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 
 const startedAt = new Date().toISOString();
-// Checks that need an API token run only when its secret is set (opt-in); the others are skipped.
-const tokens = (Object.keys(TOKEN_INPUTS) as TokenInput[]).filter((input) => process.env[TOKEN_INPUTS[input].secret]);
+// Inputs that are on (src/rules.ts SWITCHES): a secret is set, or a true/false input is not at its "off" value.
+const isOn = (input: Switch): boolean => {
+  const s: { secret?: string; default?: boolean } = SWITCHES[input];
+  if (s.secret) return !!process.env[s.secret];
+  const value = (values as Record<string, string | undefined>)[input];
+  return s.default ? value !== "false" : value === "true";
+};
+const enabled = (Object.keys(SWITCHES) as Switch[]).filter(isOn);
 const warnings: string[] = [];
 const checks = selectModules(await loadChecks(), modules);
 const wantsRepo = checks.some((c) => c.check.repo);
 // vulnerabilities=false sends nothing to api.osv.dev; the vulnerabilities rule then skips.
-const osv = values.vulnerabilities !== "false";
+const osv = enabled.includes("vulnerabilities");
 const repo = values.repo?.trim() && wantsRepo ? await scanRepo(values.repo, { osv }) : undefined;
 const web = url && checks.some((c) => !c.check.repo)
   ? await scan(url, {
       language: values.language,
-      subscriptions: values.subscriptions === "true",
-      sales: values.sales === "true",
+      subscriptions: enabled.includes("subscriptions"),
+      sales: enabled.includes("sales"),
       maxPages: Number(values["max-pages"]) || 10,
       ipinfoToken: process.env.IPINFO_TOKEN || undefined,
       onWarning: (w) => warnings.push(w),
@@ -67,7 +73,7 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
   exit(`Could not load ${url}: ${web.start.js.error ?? web.start.noJs.error ?? "unknown error"}`);
 }
 
-const outcomes = await runChecks(checks, { web, repo }, tokens);
+const outcomes = await runChecks(checks, { web, repo }, enabled);
 const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub: !!process.env.GITHUB_ACTIONS, language, warnings };
 const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) } }, language);
 const markdown = toMarkdown(report);

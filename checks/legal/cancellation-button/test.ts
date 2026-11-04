@@ -30,6 +30,3 @@ test("fails without a button", async () => {
   assert.equal((await runCheck(here, "missing", { subscriptions })).status, "fail");
 });
 
-test("skips for sites without subscriptions", async () => {
-  assert.equal((await runCheck(here, "missing")).status, "skip");
-});

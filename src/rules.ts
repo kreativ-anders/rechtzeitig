@@ -28,13 +28,19 @@ const officialSource = (url: string): boolean => {
 type Text = Record<UiLanguage, string>;
 
 /**
- * Inputs that carry an API token. Every check that needs one is opt-in: a rule names the input in `requires`,
- * and the runner skips it unless the workflow sets the secret. Nothing is sent to the service without it.
+ * Inputs that turn a rule on or off. A rule names them in `requires`; the runner skips it unless each is on.
+ * - `secret`: on when the workflow sets that secret (opt-in, nothing is sent to `service` without it).
+ * - `default: false`: on when the input is `true` (opt-in for sites it applies to).
+ * - `default: true`: on unless the input is `false` (opt-out; `service` is where data goes).
+ * docs/checks.html and the skip messages are generated from this list.
  */
-export const TOKEN_INPUTS = {
+export const SWITCHES = {
   "ipinfo-token": { secret: "IPINFO_TOKEN", service: "ipinfo.io" },
-} as const;
-export type TokenInput = keyof typeof TOKEN_INPUTS;
+  subscriptions: { default: false },
+  sales: { default: false },
+  vulnerabilities: { default: true, service: "api.osv.dev" },
+} as const satisfies Record<string, { secret: string; service: string } | { default: boolean; service?: string }>;
+export type Switch = keyof typeof SWITCHES;
 
 export interface Rule {
   id: string;
@@ -44,8 +50,8 @@ export interface Rule {
   /** One sentence: how check.ts detects it, naming the data files it uses. Shown in docs/checks.html. */
   how: string;
   fix_hint: Text;
-  /** Token inputs the rule needs. Without them it is skipped. */
-  requires?: TokenInput[];
+  /** Inputs the rule needs (SWITCHES). Without them it is skipped. */
+  requires?: Switch[];
   meta: { last_reviewed: string; sources: string[] };
 }
 
@@ -72,8 +78,8 @@ export function validateRule(rule: Rule, today = new Date()): string[] {
   text("legal_basis", rule?.legal_basis, false);
   text("fix_hint", rule?.fix_hint);
   if (typeof rule?.how !== "string" || rule.how.trim().length < 20) p.push("how must say in one sentence how the check works");
-  if (rule?.requires !== undefined && (!Array.isArray(rule.requires) || rule.requires.some((r) => !(r in TOKEN_INPUTS)))) {
-    p.push(`requires must be a list of token inputs: ${Object.keys(TOKEN_INPUTS).join(", ")}`);
+  if (rule?.requires !== undefined && (!Array.isArray(rule.requires) || rule.requires.some((r) => !(r in SWITCHES)))) {
+    p.push(`requires must be a list of inputs: ${Object.keys(SWITCHES).join(", ")}`);
   }
   const reviewed = new Date(rule?.meta?.last_reviewed ?? "");
   if (Number.isNaN(reviewed.getTime())) p.push("meta.last_reviewed must be a date (YYYY-MM-DD)");

@@ -22,6 +22,3 @@ test("matches similar wording on the link text, not the URL", async () => {
   assert.equal((await runCheck(here, "path-only", { sales })).status, "fail");
 });
 
-test("skips when nothing is sold", async () => {
-  assert.equal((await runCheck(here, "exact")).status, "skip");
-});

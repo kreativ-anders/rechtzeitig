@@ -90,13 +90,16 @@ text:
 # Every language file must define the same keys (test: src/lang.test.ts).
 messages:
   common:
-    needs_token: "Opt-in: runs only when the secret {secret} is set (input {input}). Without it, nothing is sent to {service}."
     page_imprint: "imprint (Impressum)"
     page_privacy: "privacy policy (Datenschutzerklärung)"
     no_link: "No link to the {page} on the start page."
     not_loaded: "The {page} link {where} could not be loaded."
     http_error: "The {page} at {where} returns HTTP {status}."
     empty: "The {page} at {where} is almost empty."
+    switch_ipinfo-token: "Opt-in: runs only when the secret {secret} is set (input {input}). Without it, nothing is sent to {service}."
+    switch_subscriptions: "Only needed when visitors can sign up for subscriptions. Start the scan with subscriptions: true to check it."
+    switch_sales: "Only needed when consumers buy or sign contracts on the site. Start the scan with sales: true to check it."
+    switch_vulnerabilities: "Vulnerability lookup is turned off (input vulnerabilities: false). Nothing was sent to OSV."
     no_page: "No {page} to read (see {check})."
     found: "Found the {page} at {where}."
   report:
@@ -123,7 +126,6 @@ messages:
     severity_critical: "critical"
   # ---------- legal
   legal/cancellation-button:
-    not_needed: "Only needed when visitors can sign up for subscriptions. Start the scan with subscriptions: true to check it."
     missing: 'No cancellation button on the start page. The law asks for "Verträge hier kündigen".'
     not_followed: 'Could not follow "{text}" to the cancellation page {where}; the confirmation button "jetzt kündigen" was not checked.'
     not_followed_button: 'Could not follow "{text}" to the cancellation page (a button without a link); the confirmation button "jetzt kündigen" was not checked.'
@@ -188,7 +190,6 @@ messages:
       one: "{count} required topic found."
       other: "All {count} required topics found."
   legal/withdrawal-button:
-    not_needed: "Only needed when consumers buy or sign contracts on the site. Start the scan with sales: true to check it."
     missing: 'No withdrawal function on the start page. Since 19 June 2026 the law asks for "Vertrag widerrufen".'
     not_followed: 'Could not follow "{text}" to the withdrawal page {where}; the confirmation button "Widerruf bestätigen" was not checked.'
     not_followed_button: 'Could not follow "{text}" to the withdrawal page (a button without a link); the confirmation button "Widerruf bestätigen" was not checked.'
@@ -426,7 +427,6 @@ messages:
     none: "No secrets found in tracked files."
   repo/vulnerabilities:
     no_components: "No locked dependencies to check."
-    lookup_off: "Vulnerability lookup is turned off (input vulnerabilities: false). Nothing was sent to OSV."
     osv_error: "Could not query OSV: {error}"
     none:
       one: "No known vulnerabilities in {count} component."

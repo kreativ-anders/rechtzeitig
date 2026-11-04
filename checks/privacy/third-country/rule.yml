@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 13 Abs. 1 lit. f, Art. 44 ff. DSGVO, EuGH C-311/18 (Schrems II)"
   en: "Art. 13(1)(f), Art. 44 ff. GDPR, ECJ C-311/18 (Schrems II)"
-how: "Opt-in, runs only with the `ipinfo-token` secret. Gets the country of each third-party service (`country` in `data/third-parties.yml`, else IPinfo) and, for countries outside the EEA (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known."
+how: "Gets the country of each third-party service (`country` in `data/third-parties.yml`, else IPinfo) and, for countries outside the EEA (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known."
 requires: [ipinfo-token]
 fix_hint:
   de: "Für jeden Dienst außerhalb von EU/EWR Land und Garantie nennen (z. B. Data Privacy Framework, Standardvertragsklauseln)."

@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join, sep } from "node:path";
-import { loadRule, TOKEN_INPUTS, type Rule, type TokenInput } from "./rules.ts";
+import { loadRule, SWITCHES, type Rule, type Switch } from "./rules.ts";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage } from "./text.ts";
 import { STATUSES, type Check, type Finding, type Msg, type RepoCheck, type RepoContext, type Result, type ScanContext, type Status } from "./sdk.ts";
@@ -71,31 +71,26 @@ function bind(check: Check | RepoCheck, targets: { web?: ScanContext; repo?: Rep
 
 const isStatus = (s: unknown): s is Status => (STATUSES as readonly unknown[]).includes(s);
 
-/** The skip result for a rule whose token input is not set, or undefined when all are set. */
-function missingToken(rule: Rule, tokens: readonly TokenInput[]): Result | undefined {
-  const input = rule.requires?.find((r) => !tokens.includes(r));
+/** The skip message for a rule whose required input is off (`messages.common.switch_<input>`), or undefined. */
+function switchedOff(rule: Rule, enabled: readonly Switch[]): Msg | undefined {
+  const input = rule.requires?.find((r) => !enabled.includes(r));
   if (!input) return undefined;
-  const { secret, service } = TOKEN_INPUTS[input];
-  return { status: "skip", message: { key: "needs_token", params: { input, secret, service } } };
+  const s: { secret?: string; default?: boolean; service?: string } = SWITCHES[input];
+  return { key: `switch_${input}`, params: { input, secret: s.secret ?? "", service: s.service ?? "" } };
 }
 
-/**
- * Runs website checks when a website was scanned and repository checks when a repository was scanned.
- * Each check runs on its own: one that throws, hangs or returns nothing becomes "error" and the others still run.
- * A rule that `requires` a token input not in `tokens` is skipped without running.
- */
 export async function runChecks(
   checks: LoadedCheck[],
   targets: { web?: ScanContext; repo?: RepoContext },
-  tokens: readonly TokenInput[] = [],
+  enabled: readonly Switch[] = [],
 ): Promise<Outcome[]> {
   const outcomes: Outcome[] = [];
   for (const { id, rule, check } of checks) {
     const run = bind(check, targets);
     if (!run) continue;
-    const skipped = missingToken(rule, tokens);
-    if (skipped) {
-      outcomes.push({ id, rule, status: "skip", message: skipped.message, details: [] });
+    const off = switchedOff(rule, enabled);
+    if (off) {
+      outcomes.push({ id, rule, status: "skip", message: off, details: [] });
       continue;
     }
     const [deadline, stop] = timeoutAfter(TIMEOUT, `timed out after ${TIMEOUT / 1000}s`);

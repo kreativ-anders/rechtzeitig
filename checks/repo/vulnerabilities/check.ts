@@ -5,7 +5,6 @@ const SERIOUS = new Set(["CRITICAL", "HIGH"]);
 export default defineRepoCheck({
   run(repo) {
     if (!repo.components.length) return skip(msg("no_components"));
-    if (repo.osv === "skipped") return skip(msg("lookup_off"));
     if (!repo.osv.startsWith("ok")) return warn(msg("osv_error", { error: repo.osv }));
     if (!repo.vulnerabilities.length) return pass(msg("none", { count: repo.components.length }));
 
