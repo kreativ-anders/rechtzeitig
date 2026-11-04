@@ -29,3 +29,13 @@
     else delete root.dataset.theme;
   });
 })();
+
+// A link to a closed <details> (for example ./#updates) opens it.
+(() => {
+  const open = () => {
+    const el = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (el instanceof HTMLDetailsElement) el.open = true;
+  };
+  open();
+  addEventListener("hashchange", open);
+})();

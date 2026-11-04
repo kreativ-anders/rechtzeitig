@@ -490,3 +490,11 @@ a.sends:hover { border-style: solid; }
   .status::before, .sends::before { background: CanvasText; }
   .sev i { border: 1px solid CanvasText; }
 }
+
+/* FAQ on the start page */
+.faq { display: grid; gap: 0.6rem; margin: 1rem 0 2rem; }
+.faq details { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--radius); padding: 0 1.1rem; }
+.faq details[open], .faq details:target { border-color: color-mix(in srgb, var(--seal) 45%, var(--line)); }
+.faq summary { cursor: pointer; padding: 0.85rem 0; font: 600 1.05rem/1.35 var(--serif); }
+.faq details > :last-child { margin-bottom: 1rem; }
+.faq pre { margin: 0.75rem 0; }
