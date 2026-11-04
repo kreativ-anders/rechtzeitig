@@ -5,8 +5,13 @@ const LEAKS = DATA.patterns.map((p) => new RegExp(p));
 const VERSION_HEADERS = DATA.version_headers;
 
 // Text a visitor sees: no scripts, styles, tags or attributes (an href="/home/about" is no server path).
+// Leftover angle brackets from broken or nested tags go too, so no tag survives in the finding text.
 const visibleText = (html: string) =>
-  html.replace(/<(script|style)\b[^>]*>[^]*?<\/\1\s*>/gi, " ").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
+  html
+    .replace(/<(script|style)\b[^>]*>[^]*?<\/\1\s*>/gi, " ")
+    .replace(/<[^>]*>/g, "")
+    .replace(/[<>]/g, "")
+    .replace(/&nbsp;/g, " ");
 
 export default defineCheck({
   run(ctx) {

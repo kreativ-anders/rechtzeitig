@@ -2,7 +2,7 @@
 
 ## Report a vulnerability
 
-Report it privately: on GitHub, open the repository's **Security** tab and choose **Report a vulnerability** (a private security advisory). Please do not open a public issue.
+Report it privately as a security advisory: <https://github.com/kreativ-anders/rechtzeitig/security/advisories/new> (or open the repository's **Security** tab and choose **Report a vulnerability**). Please do not open a public issue.
 
 Include what you did, what happened and, if you can, a small site or repository that shows it. We aim to answer within a week and will tell you when a fix is out.
 
