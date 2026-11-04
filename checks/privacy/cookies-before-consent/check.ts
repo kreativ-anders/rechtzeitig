@@ -1,4 +1,4 @@
-import { defineCheck, fail, info, pass, siteCookies, warn } from "../../../src/sdk.ts";
+import { defineCheck, fail, info, msg, pass, siteCookies, warn, type Finding } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
@@ -8,18 +8,17 @@ export default defineCheck({
     const tracking = cookies.filter((c) => ctx.trackingCookie(c.name));
     const foreign = cookies.filter((c) => !ctx.trackingCookie(c.name) && ctx.isThirdParty(c.domain));
     const own = cookies.filter((c) => !ctx.trackingCookie(c.name) && !ctx.isThirdParty(c.domain));
-    const details = [
-      ...tracking.map((c) => `${c.name} (${c.domain}, set on ${c.page}): tracking cookie of ${ctx.trackingCookie(c.name)?.name}`),
-      ...foreign.map((c) => `${c.name} (${c.domain}, set on ${c.page}): third-party cookie`),
-      ...own.map((c) => `${c.name} (${c.domain}, set on ${c.page})`),
-      ...[...storage].map((key) => `localStorage: ${key}`),
+    const where = (c: (typeof cookies)[number]) => ({ name: c.name, domain: c.domain, page: c.page });
+    const details: Finding[] = [
+      ...tracking.map((c) => ({ key: "tracking_cookie", params: { ...where(c), vendor: ctx.trackingCookie(c.name)?.name ?? "" } })),
+      ...foreign.map((c) => ({ key: "third_party_cookie", params: where(c) })),
+      ...own.map((c) => ({ key: "own_cookie", params: where(c) })),
+      ...[...storage].map((key) => ({ key: "storage", params: { key } })),
     ];
 
-    if (tracking.length) return fail(`${tracking.length} tracking cookie(s) set before consent.`, details);
-    if (foreign.length) return warn(`${foreign.length} third-party cookie(s) set before consent.`, details);
-    if (details.length) {
-      return info(`${details.length} cookie(s) or storage entries set before consent. Without consent, only strictly necessary ones are allowed.`, details);
-    }
-    return pass("No cookies or local storage before consent.");
+    if (tracking.length) return fail(msg("tracking", { count: tracking.length }), details);
+    if (foreign.length) return warn(msg("third_party", { count: foreign.length }), details);
+    if (details.length) return info(msg("review", { count: details.length }), details);
+    return pass(msg("none"));
   },
 });

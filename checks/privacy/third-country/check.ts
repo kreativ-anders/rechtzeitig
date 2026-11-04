@@ -1,4 +1,4 @@
-import { defineCheck, info, loadYaml, needLegalPage, pass, thirdPartyServices, warn } from "../../../src/sdk.ts";
+import { defineCheck, info, loadYaml, msg, needLegalPage, pass, thirdPartyServices, warn, type Finding } from "../../../src/sdk.ts";
 
 const EEA = new Set(loadYaml<{ eea: string[] }>("data/countries.yml").eea);
 
@@ -17,15 +17,13 @@ export default defineCheck({
       else if (!EEA.has(country)) outside.set(service.name, country);
     }
     const known = services.size - unknown.size;
-    const notes = unknown.size
-      ? [`Country unknown for ${[...unknown].join(", ")}. Set the ipinfo-token input to look it up.`]
-      : [];
-    const list = [...outside].map(([name, country]) => `${name} (${country})`);
+    const notes: Finding[] = unknown.size ? [{ key: "country_unknown", params: { names: [...unknown].join(", ") } }] : [];
+    const list: Finding[] = [...outside].map(([name, country]) => ({ text: `${name} (${country})` }));
 
-    if (!services.size) return pass("No third-party service contacted.");
-    if (!known) return info(`Country unknown for all ${unknown.size} third-party service(s); transfers outside the EU/EEA could not be checked.`, notes);
-    if (!outside.size) return pass("No service outside the EU/EEA detected.", notes);
-    if (ctx.says("third_country", policy.js.text)) return pass(`The privacy policy covers transfers outside the EU/EEA.`, [...list, ...notes]);
-    return warn(`${outside.size} service(s) outside the EU/EEA, but the privacy policy does not mention third countries.`, [...list, ...notes]);
+    if (!services.size) return pass(msg("no_services"));
+    if (!known) return info(msg("all_unknown", { count: unknown.size }), notes);
+    if (!outside.size) return pass(msg("none_outside"), notes);
+    if (ctx.says("third_country", policy.js.text)) return pass(msg("covered"), [...list, ...notes]);
+    return warn(msg("not_covered", { count: outside.size }), [...list, ...notes]);
   },
 });
