@@ -23,3 +23,10 @@ test("warns for version headers", async () => {
   assert.equal(result.status, "warn");
   assert.deepEqual(result.details, ["x-powered-by: PHP/8.2.1"]);
 });
+
+test("leaves no tag in the finding text, even from nested tags", async () => {
+  const result = await runCheck(here, "nested-tags");
+  assert.equal(result.status, "fail");
+  assert.ok(result.details?.length);
+  assert.ok(result.details.every((d) => !/[<>]/.test(d)));
+});
