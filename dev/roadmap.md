@@ -18,14 +18,13 @@ Open points from the audit of 2026-11-03, after the fixes.
 
 1. Secrets in the git history. By default only the commits a pull request or push adds, so old, revoked keys do not flood every run; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
 2. Third-party services in the code: hosts and SDK packages from `data/third-parties.yml`, e.g. Google Fonts URLs (§ 25 TDDDG, Art. 13 DSGVO).
-3. Secret-looking names behind public env prefixes (`NEXT_PUBLIC_`, `VITE_`, `PUBLIC_`) that end up in the client bundle.
-4. Package names that do not exist or look like typos of popular ones.
-5. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
-6. SBOM fields as BSI TR-03183-2 asks (CRA Annex I Part II).
-7. `cors` with `origin: *` and credentials, admin routes without an auth check.
-8. License headers of other projects inside your own files.
-9. Google Tag Manager container exports in the repo: tags, triggers, Consent Mode wiring.
-10. Repository health beyond the audit list: LICENSE file present, recent maintenance, CI tests configured.
+3. Package names that do not exist or look like typos of popular ones.
+4. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
+5. SBOM fields as BSI TR-03183-2 asks (CRA Annex I Part II).
+6. `cors` with `origin: *` and credentials, admin routes without an auth check.
+7. License headers of other projects inside your own files.
+8. Google Tag Manager container exports in the repo: tags, triggers, Consent Mode wiring.
+9. Repository health beyond the audit list: LICENSE file present, recent maintenance, CI tests configured.
 
 ## Next: repository and website together
 
