@@ -3,7 +3,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { SEVERITIES, SWITCHES, type Switch } from "./rules.ts";
+import { SEVERITIES, switchSpec, type Switch } from "./rules.ts";
 import { loadChecks, moduleOf, type LoadedCheck } from "./runner.ts";
 
 const CHECKS_PAGE = new URL("../docs/checks.html", import.meta.url);
@@ -26,7 +26,7 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, "");
 
 /** Badge for an input that sends data to an outside service; empty when it sends nothing. Links to § 7 of the workflow page. */
 export function sendsBadge(input: Switch, link = true): string {
-  const s: { secret?: string; default?: boolean; service?: string } = SWITCHES[input];
+  const s = switchSpec(input);
   if (!s.service) return "";
   const label = `Sends data to ${esc(s.service)}${s.secret ? " (opt-in)" : ""}`;
   return link
@@ -36,7 +36,7 @@ export function sendsBadge(input: Switch, link = true): string {
 
 /** When a rule with this input runs, in one sentence for the docs. */
 export function runsWhen(input: Switch): string {
-  const s: { secret?: string; default?: boolean; service?: string } = SWITCHES[input];
+  const s = switchSpec(input);
   if (s.secret) return `Opt-in: only when the secret <code>${s.secret}</code> is set (input <code>${input}</code>, token from ${esc(s.service ?? "")}). Without it the check is skipped and nothing is sent.`;
   if (s.default) return `On by default; sends data to ${esc(s.service ?? "")}. Turn it off with <code>${input}: false</code>.`;
   return `Opt-in: only with <code>${input}: true</code>.`;
@@ -53,7 +53,7 @@ export function switchesHtml(checks: LoadedCheck[]): string {
     `<tbody>`,
     `<tr><td>All website checks</td><td>Only with a <code>url</code>.</td></tr>`,
     `<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before rechtzeitig (folder: input <code>repository</code>).</td></tr>`,
-    `<tr><td>A group of checks</td><td><code>modules</code> picks groups: legal, privacy, security, sustainability, accessibility, repo. Empty runs all.</td></tr>`,
+    `<tr><td>A group of checks</td><td><code>modules</code> picks groups: ${Object.keys(MODULES).join(", ")}. Empty runs all.</td></tr>`,
     ...rows,
     `</tbody></table></div>`,
   ].join("\n");
@@ -80,7 +80,7 @@ function card(c: LoadedCheck, module: string): string {
     needs.length ? `<div><dt>Runs when</dt><dd>${needs.join("<br>")}</dd></div>` : "",
     `<div><dt>How to fix</dt><dd>${text(r.fix_hint.en)}</dd></div>`,
     `<div><dt>Code</dt><dd><a href="${SOURCE}/${c.id}"><code>checks/${c.id}</code></a></dd></div>`,
-    sources ? `<div><dt>Sources</dt><dd>${sources}</dd></div>` : "",
+    `<div><dt>Sources</dt><dd>${sources}</dd></div>`,
     `<div><dt>Reviewed</dt><dd><time datetime="${esc(r.meta.last_reviewed)}">${esc(r.meta.last_reviewed)}</time></dd></div>`,
     `</dl></div>`,
     `</details>`,

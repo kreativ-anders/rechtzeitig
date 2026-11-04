@@ -1,4 +1,4 @@
-import { defineRepoCheck, fail, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { defineRepoCheck, fail, lineAt, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
 
 // Each runs on one SQL statement, anchored at its start, so no pattern spans two statements.
 const NAME = String.raw`(?:"?(\w+)"?\s*\.\s*)?"?(\w+)"?`; // optional schema, table
@@ -25,7 +25,6 @@ function statements(sql: string): Array<{ text: string; line: number }> {
 }
 
 /** 1-based line of a position in a text. */
-const lineAt = (text: string, index: number) => text.slice(0, index).split("\n").length;
 
 /** "schema.table" in lower case; tables without a schema are in public. */
 const table = (m: RegExpExecArray) => `${(m[1] ?? "public").toLowerCase()}.${m[2].toLowerCase()}`;

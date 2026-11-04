@@ -4,6 +4,7 @@ import { siteOf } from "./text.ts";
 import type { UiLanguage } from "./rules.ts";
 
 export { loadYaml } from "./data.ts";
+export { isWebUrl } from "./text.ts";
 export { MANIFESTS } from "./repo/lockfiles.ts";
 
 export const STATUSES = ["pass", "warn", "fail", "info", "skip"] as const;
@@ -72,32 +73,34 @@ export const WORKFLOWS = /^\.github\/workflows\/.*\.ya?ml$/;
 /** Fewer visible characters than this count as an empty page. */
 export const MIN_TEXT = 100;
 
+/** The items whose `key` was not seen before, in order. */
+export function unique<T>(items: T[], key: (item: T) => string): T[] {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const k = key(item);
+    return !seen.has(k) && !!seen.add(k);
+  });
+}
+
+/** Line number (from 1) of a character index in a text. */
+export const lineAt = (text: string, index: number) => text.slice(0, index).split("\n").length;
+
 /** true when the snapshot loaded with HTTP 2xx/3xx. */
 export const loaded = (s?: Snapshot): s is Snapshot => !!s && s.status > 0 && s.status < 400;
 
 // ---------- Start page
 
 /** Links and buttons of both loads of a page, JavaScript on first, without duplicates. */
-export function pageLinks(page: Page): Link[] {
-  const seen = new Set<string>();
-  return [...page.js.links, ...page.noJs.links].filter((l) => {
-    const key = `${l.href}\n${l.label}\n${l.area}\n${l.button}`;
-    return !seen.has(key) && !!seen.add(key);
-  });
-}
+export const pageLinks = (page: Page): Link[] =>
+  unique([...page.js.links, ...page.noJs.links], (l) => `${l.href}\n${l.label}\n${l.area}\n${l.button}`);
 
 /** Links and buttons on the start page, both loads; with `concept`, only those matching it (lang/*.yml `links`). */
 export const startLinks = (ctx: ScanContext, concept?: string): Link[] =>
   concept ? ctx.links(concept, pageLinks(ctx.start)) : pageLinks(ctx.start);
 
 /** Checkboxes on the start page, both loads, without duplicates. */
-export function startCheckboxes(ctx: ScanContext): Checkbox[] {
-  const seen = new Set<string>();
-  return [...ctx.start.js.checkboxes, ...ctx.start.noJs.checkboxes].filter((b) => {
-    const key = `${b.label}\n${b.checked}\n${b.disabled}`;
-    return !seen.has(key) && !!seen.add(key);
-  });
-}
+export const startCheckboxes = (ctx: ScanContext): Checkbox[] =>
+  unique([...ctx.start.js.checkboxes, ...ctx.start.noJs.checkboxes], (b) => `${b.label}\n${b.checked}\n${b.disabled}`);
 
 /**
  * The start page as the server sent it, for status, headers, `meta` and `lang`:
@@ -109,16 +112,16 @@ export const startSnapshot = (ctx: ScanContext): Snapshot => (ctx.start.noJs.sta
 
 /** Pages every site must link. `concept` is the lang/*.yml `links` key, `check` the rule that looks for the link. */
 export const LEGAL_PAGES = [
-  { concept: "imprint", name: "imprint", law: "Impressum", check: "legal/imprint" },
-  { concept: "privacy", name: "privacy policy", law: "Datenschutzerklärung", check: "legal/privacy-policy" },
+  { concept: "imprint", check: "legal/imprint" },
+  { concept: "privacy", check: "legal/privacy-policy" },
 ] as const;
 /** The page's name as a message (`messages.common.page_<concept>`). */
-const pageName = (concept: LegalConcept): Msg => msg(`page_${concept}`);
+export const pageName = (concept: LegalConcept): Msg => msg(`page_${concept}`);
 export type LegalConcept = (typeof LEGAL_PAGES)[number]["concept"];
 const legal = (concept: LegalConcept) => LEGAL_PAGES.find((p) => p.concept === concept)!;
 
 /** The page a legal link leads to, if it was visited and loaded. */
-export function loadedPage(ctx: ScanContext, concept: string): Page | undefined {
+function loadedPage(ctx: ScanContext, concept: string): Page | undefined {
   const page = ctx.legalPage(concept)?.page;
   return page && loaded(page.js) ? page : undefined;
 }

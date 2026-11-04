@@ -19,6 +19,8 @@ export interface ScanOptions {
   timeout?: number;
   offline?: boolean;
   ipinfoToken?: string;
+  /** Start Chrome without its sandbox where the runner has none. */
+  unsandboxed?: boolean;
   /** Reuse a running browser (tests). */
   browser?: Browser;
   /** Called with problems that do not stop the scan, for the report. */
@@ -28,12 +30,16 @@ export interface ScanOptions {
 // The browser gets only these variables, never tokens from the workflow (IPINFO_TOKEN, GITHUB_TOKEN, ...).
 const BROWSER_ENV = ["PATH", "HOME", "TMPDIR", "TMP", "TEMP", "LANG", "LC_ALL", "DISPLAY", "XDG_RUNTIME_DIR", "SystemRoot", "LOCALAPPDATA"];
 
-/** Starts Chromium with its sandbox. Where the runner cannot sandbox, it retries without and warns. */
-export async function launchBrowser(onWarning: (message: string) => void = () => {}): Promise<Browser> {
+/**
+ * Starts Chromium with its sandbox. Where the runner cannot sandbox, it stops, unless `unsandboxed`
+ * allows a start without (input require-sandbox: false), which the report then warns about.
+ */
+export async function launchBrowser(onWarning: (message: string) => void = () => {}, unsandboxed = false): Promise<Browser> {
   const env = Object.fromEntries(BROWSER_ENV.filter((k) => process.env[k] !== undefined).map((k) => [k, process.env[k]!]));
   try {
     return await chromium.launch({ env, chromiumSandbox: true });
   } catch (e) {
+    if (!unsandboxed) throw new Error(`Chrome cannot start with its sandbox on this runner (${errorMessage(e)}). Only for sites you trust: require-sandbox: false scans without it.`);
     onWarning(`Chrome sandbox not available on this runner, scanning without it (${errorMessage(e)})`);
     return chromium.launch({ env, chromiumSandbox: false });
   }
@@ -42,7 +48,7 @@ export async function launchBrowser(onWarning: (message: string) => void = () =>
 export async function scan(url: string, opts: ScanOptions = {}): Promise<ScanContext> {
   const languages = resolveLanguages(opts.language ?? "de");
   const lang = loadLanguages(languages);
-  const browser = opts.browser ?? (await launchBrowser(opts.onWarning));
+  const browser = opts.browser ?? (await launchBrowser(opts.onWarning, opts.unsandboxed));
   try {
     const chrome = browser.version().split(".")[0];
     const userAgent =

@@ -1,4 +1,4 @@
-import { defineCheck, info, LEGAL_PAGES, msg, pass, warn, type Finding, type Msg } from "../../../src/sdk.ts";
+import { defineCheck, info, LEGAL_PAGES, msg, pageName, pass, warn, type Finding, type Msg } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
@@ -6,7 +6,7 @@ export default defineCheck({
     if (pages.length < 2) return info(msg("start_only"));
     const gaps: Finding[] = [];
     for (const page of pages) {
-      const missing = LEGAL_PAGES.filter(({ concept }) => !ctx.links(concept, page.js).some((l) => l.href)).map(({ concept }) => msg(`page_${concept}`));
+      const missing = LEGAL_PAGES.filter(({ concept }) => !ctx.links(concept, page.js).some((l) => l.href)).map(({ concept }) => pageName(concept));
       if (missing.length) {
         const names = missing.reduce((a: Msg, b) => msg("or", { a, b }));
         gaps.push({ key: "gap", params: { where: ctx.short(page.url), pages: names } });

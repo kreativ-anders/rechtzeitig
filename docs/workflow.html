@@ -72,6 +72,7 @@
             <tr><td><code>repository</code></td><td>workspace</td><td>Folder to read lockfiles, licenses and secrets from. Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
             <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from <a href="https://ipinfo.io">ipinfo.io</a>, passed from the secret <code>IPINFO_TOKEN</code>. Turns on the <a href="checks.html#LEG-EU-DSE-005">third-country check</a>. Empty skips it, see <a href="#secrets">Secrets</a>.</td></tr>
             <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> sends nothing there and the vulnerability check is skipped.</td></tr>
+            <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>Stops the scan when Chrome cannot start with its sandbox. <code>false</code> scans without it, see <a href="#safe">Safe use</a>.</td></tr>
             <tr><td><code>retention-days</code></td><td><code>7</code></td><td>Days GitHub keeps the report artifact, see <a href="#report">The report</a>.</td></tr>
           </tbody>
         </table></div>
@@ -160,6 +161,7 @@
         <h2><span class="par">§ 8</span>Safe use</h2>
         <p class="note">Never run rechtzeitig in a workflow triggered by <code>pull_request_target</code>. That trigger runs with your secrets and a token that can write to the repository, while the scanned code comes from a fork. Use <code>workflow_dispatch</code>, <code>schedule</code>, <code>push</code> or <code>pull_request</code>.</p>
         <p>Check out with <code>persist-credentials: false</code> as in the example workflow. rechtzeitig does not need the token, so it should not be left in the checkout.</p>
+        <p>The scanned site is untrusted. Chrome runs with its sandbox; where the runner has none, the scan stops. <code>require-sandbox: false</code> scans anyway; only do that for sites you trust. Neither the browser nor any other request reaches private addresses (<code>localhost</code>, <code>10.x</code>, cloud metadata), except the host of <code>url</code> itself.</p>
         <p>rechtzeitig is a composite action and sets up Node 24 with <code>actions/setup-node</code>. That Node stays on the <code>PATH</code> for the steps after it in the same job. Set up your own Node version after rechtzeitig, or run it in a separate job.</p>
       </section>
     </div>

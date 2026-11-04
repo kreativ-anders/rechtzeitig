@@ -1,9 +1,8 @@
-import { WORKFLOWS, defineRepoCheck, info, msg, pass, skip, type Finding } from "../../../src/sdk.ts";
+import { WORKFLOWS, defineRepoCheck, info, lineAt, msg, pass, skip, type Finding } from "../../../src/sdk.ts";
 
 const USES = /^[ \t]*-?[ \t]*uses:[ \t]*["']?([^"'\s#]+)/gm;
 
 /** 1-based line of a position in a text. */
-const lineAt = (text: string, index: number) => text.slice(0, index).split("\n").length;
 
 export default defineRepoCheck({
   run(repo) {

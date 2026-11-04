@@ -7,6 +7,8 @@ import { availableLanguages, loadLanguages } from "./lang.ts";
 import { loadYaml } from "./data.ts";
 
 const data = (file: string) => loadYaml<Array<Record<string, string>>>(`data/${file}`);
+// Loading also compiles every language pattern; an invalid one throws here.
+const all = loadLanguages(availableLanguages());
 const patterns: Array<[string, RegExp]> = [
   ...data("secrets.yml").map((r): [string, RegExp] => [`secrets.yml ${r.name}`, new RegExp(r.pattern)]),
   ...loadYaml<{ patterns: string[] }>("data/leaks.yml").patterns.map((p): [string, RegExp] => [`leaks.yml ${p}`, new RegExp(p)]),
@@ -17,7 +19,7 @@ const patterns: Array<[string, RegExp]> = [
     .flatMap(([group, list]) => list.map((p): [string, RegExp] => [`licenses.yml ${group}`, new RegExp(p, "i")])),
   ["update-tools.yml renovate", new RegExp(loadYaml<{ renovate: string }>("data/update-tools.yml").renovate)],
   ...data("probes.yml").filter((p) => p.expect).map((p): [string, RegExp] => [`probes.yml ${p.path}`, new RegExp(p.expect, "m")]),
-  ...Object.entries({ ...loadLanguages(availableLanguages()).links, ...loadLanguages(availableLanguages()).text })
+  ...Object.entries({ ...all.links, ...all.text })
     .flatMap(([concept, res]) => res.map((re): [string, RegExp] => [`lang ${concept}`, re])),
 ];
 const N = 50_000;

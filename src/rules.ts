@@ -3,6 +3,8 @@
 
 import { loadYaml } from "./data.ts";
 import { DAY } from "./deadline.ts";
+import { hostIn } from "./text.ts";
+import type { Localized } from "./sdk.ts";
 
 export const LANGUAGES = ["de", "en"] as const;
 export type UiLanguage = (typeof LANGUAGES)[number];
@@ -19,13 +21,18 @@ const SOURCE_DOMAINS = Object.values(loadYaml<Record<string, string[]>>("data/so
 const officialSource = (url: string): boolean => {
   try {
     const host = new URL(url).hostname;
-    return SOURCE_DOMAINS.some((d) => host === d || host.endsWith(`.${d}`));
+    return SOURCE_DOMAINS.some((d) => hostIn(host, d));
   } catch {
     return false;
   }
 };
 
-type Text = Record<UiLanguage, string>;
+/** The report languages a localized text lacks or leaves empty. */
+export const missingLanguages = (value: unknown): UiLanguage[] =>
+  LANGUAGES.filter((l) => {
+    const v = (value as Localized | undefined)?.[l];
+    return typeof v !== "string" || !v.trim();
+  });
 
 /**
  * Inputs that turn a rule on or off. A rule names them in `requires`; the runner skips it unless each is on.
@@ -41,15 +48,17 @@ export const SWITCHES = {
   vulnerabilities: { default: true, service: "api.osv.dev" },
 } as const satisfies Record<string, { secret: string; service: string } | { default: boolean; service?: string }>;
 export type Switch = keyof typeof SWITCHES;
+/** One switch with every field optional, so callers need no cast. */
+export const switchSpec = (input: Switch): { secret?: string; default?: boolean; service?: string } => SWITCHES[input];
 
 export interface Rule {
   id: string;
   severity: Severity;
-  title: Text;
-  legal_basis?: Text;
+  title: Localized;
+  legal_basis?: Localized;
   /** One sentence: how check.ts detects it, naming the data files it uses. Shown in docs/checks.html. */
   how: string;
-  fix_hint: Text;
+  fix_hint: Localized;
   /** Inputs the rule needs (SWITCHES). Without them it is skipped. */
   requires?: Switch[];
   meta: { last_reviewed: string; sources: string[] };
@@ -67,10 +76,7 @@ export function validateRule(rule: Rule, today = new Date()): string[] {
   const p: string[] = [];
   const text = (name: string, value: unknown, required = true) => {
     if (value === undefined && !required) return;
-    for (const lang of LANGUAGES) {
-      const v = (value as Text | undefined)?.[lang];
-      if (typeof v !== "string" || !v.trim()) p.push(`${name}.${lang} is missing`);
-    }
+    for (const lang of missingLanguages(value)) p.push(`${name}.${lang} is missing`);
   };
   if (!ID.test(rule?.id ?? "")) p.push(`id "${rule?.id}" does not match ${ID}`);
   if (!SEVERITIES.includes(rule?.severity)) p.push(`severity must be one of ${SEVERITIES.join(", ")}`);

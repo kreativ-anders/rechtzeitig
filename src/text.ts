@@ -51,6 +51,9 @@ export function siteOf(host: string): string {
 }
 
 /** true for http:// and https:// URLs. */
+/** true when `host` is `domain` or one of its subdomains. */
+export const hostIn = (host: string, domain: string) => host === domain || host.endsWith(`.${domain}`);
+
 export const isWebUrl = (url: string | null | undefined): url is string => !!url && /^https?:/i.test(url);
 
 /** First line of an error, preferring the network cause (ECONNREFUSED, CERT_HAS_EXPIRED) over fetch's "fetch failed". */

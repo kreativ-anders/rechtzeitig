@@ -1,10 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
+import { connect } from "node:net";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { assertPublicHost, BlockedHostError, blockedInBrowser, fetchPublic, isIpOrLocal, isPublicAddress } from "./net.ts";
+import { BlockedHostError, fetchPublic, isIpOrLocal, isPublicAddress, pinned, publicAddresses } from "./net.ts";
+import { launchBrowser, scan } from "./scan.ts";
 import { scanFixture } from "../test/helpers.ts";
 
 test("private, loopback, link-local and mapped addresses are not public", () => {
@@ -15,25 +17,37 @@ test("private, loopback, link-local and mapped addresses are not public", () => 
   for (const ip of ["8.8.8.8", "1.1.1.1", "2606:4700:4700::1111", "::ffff:8.8.8.8"]) assert.equal(isPublicAddress(ip), true, ip);
 });
 
-test("the browser blocks localhost and private IP literals, except the trusted host", () => {
-  assert.equal(blockedInBrowser("localhost"), true);
-  assert.equal(blockedInBrowser("api.localhost"), true);
-  assert.equal(blockedInBrowser("169.254.169.254"), true);
-  assert.equal(blockedInBrowser("[::1]"), true);
-  assert.equal(blockedInBrowser("127.0.0.1", "127.0.0.1"), false);
-  assert.equal(blockedInBrowser("example.de"), false);
-});
-
 test("IP literals and localhost have no domain", () => {
   for (const host of ["127.0.0.1", "[::1]", "::1", "localhost", "app.localhost"]) assert.ok(isIpOrLocal(host), host);
   assert.ok(!isIpOrLocal("example.de"));
 });
 
-test("hosts are checked after DNS, the trusted host is allowed", async () => {
-  await assert.rejects(assertPublicHost("localhost"), BlockedHostError);
-  await assert.rejects(assertPublicHost("10.0.0.1"), BlockedHostError);
-  await assertPublicHost("127.0.0.1", "127.0.0.1");
-  await assertPublicHost("8.8.8.8");
+test("a host is resolved once, and every address must be public unless it is trusted", async () => {
+  let calls = 0;
+  const answers = [["8.8.8.8"], ["8.8.8.8", "10.0.0.1"], ["127.0.0.1"]];
+  const resolve = async () => answers[calls++];
+  assert.deepEqual(await publicAddresses("rebind.test", undefined, resolve), ["8.8.8.8"]);
+  await assert.rejects(publicAddresses("rebind.test", undefined, resolve), BlockedHostError);
+  assert.deepEqual(await publicAddresses("rebind.test", "rebind.test", resolve), ["127.0.0.1"]);
+  assert.equal(calls, 3);
+  await assert.rejects(publicAddresses("localhost"), BlockedHostError);
+  await assert.rejects(publicAddresses("10.0.0.1"), BlockedHostError);
+  assert.deepEqual(await publicAddresses("127.0.0.1", "127.0.0.1"), ["127.0.0.1"]);
+  assert.deepEqual(await publicAddresses("8.8.8.8"), ["8.8.8.8"]);
+});
+
+test("connections go to the checked addresses, the name is not resolved again", async () => {
+  const server = createServer((_, res) => res.end("ok"));
+  await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
+  const { port } = server.address() as { port: number };
+  try {
+    // rebind.invalid has no DNS entry; reaching the server proves the pinned address was used.
+    const socket = connect({ host: "rebind.invalid", port, lookup: pinned(["127.0.0.1"]) });
+    await new Promise<void>((done, fail) => socket.once("connect", done).once("error", fail));
+    socket.destroy();
+  } finally {
+    server.close();
+  }
 });
 
 test("fetchPublic checks every redirect hop", async () => {
@@ -44,9 +58,10 @@ test("fetchPublic checks every redirect hop", async () => {
   await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
   const { port } = server.address() as { port: number };
   try {
-    const url = `http://127.0.0.1:${port}/`;
-    assert.equal((await fetchPublic(url, {}, "127.0.0.1")).res.status, 302);
-    await assert.rejects(fetchPublic(url, {}, "127.0.0.1", 5), BlockedHostError);
+    // localhost may resolve to ::1 first; the server listens on 127.0.0.1 only, so every address is tried.
+    const url = `http://localhost:${port}/`;
+    assert.equal((await fetchPublic(url, {}, "localhost")).res.status, 302);
+    await assert.rejects(fetchPublic(url, {}, "localhost", 5), BlockedHostError);
     await assert.rejects(fetchPublic(url, {}, undefined), BlockedHostError);
   } finally {
     server.close();
@@ -58,4 +73,25 @@ test("legal links into private networks are not visited", async () => {
   writeFileSync(join(site, "index.html"), `<footer><a href="http://169.254.169.254/impressum">Impressum</a><a href="http://localhost:1/datenschutz">Datenschutz</a></footer>`);
   const ctx = await scanFixture(site);
   assert.deepEqual(ctx.pages.map((p) => new URL(p.url).hostname), ["127.0.0.1"]);
+});
+
+test("the browser reaches private addresses only on the trusted host, also through redirects", async () => {
+  const hits: string[] = [];
+  const server = createServer((req, res) => {
+    hits.push(req.url ?? "");
+    if (req.url === "/redirect") res.writeHead(302, { location: `http://localhost:${port}/leak-redirect` }).end();
+    else res.writeHead(200, { "content-type": "text/html" }).end(`<img src="http://localhost:${port}/leak-name"><img src="/redirect">`);
+  });
+  await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
+  const { port } = server.address() as { port: number };
+  const browser = await launchBrowser();
+  try {
+    // Not offline: nothing aborts requests in the browser, only the proxy decides.
+    await scan(`http://127.0.0.1:${port}/`, { browser, maxPages: 1, timeout: 10_000 });
+    assert.ok(hits.includes("/redirect"));
+    assert.deepEqual(hits.filter((h) => h.startsWith("/leak")), []);
+  } finally {
+    await browser.close();
+    server.close();
+  }
 });
