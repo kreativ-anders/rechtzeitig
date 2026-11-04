@@ -145,32 +145,28 @@ export interface ButtonRule {
   similar: string;
   /** lang/*.yml `text` concept for the confirmation button on the page behind it. */
   confirm: string;
-  /** For messages: what the page is called ("cancellation"), the wording of both buttons, the law of the confirmation. */
-  name: string;
-  wording: string;
-  confirmWording: string;
-  confirmLaw: string;
-  /** fail message when there is no such button. */
-  missing: string;
 }
 
 /**
  * Finds the button with the wording from the law (or similar wording, which warns) and checks the
  * confirmation button on the page behind it. A control that could not be followed gives info.
+ * The calling check's messages name the page and the wording from the law: missing, not_followed,
+ * not_followed_button, no_confirm, similar, unconfirmed, incomplete, found (`{text}` = button text, `{where}` = URL).
  */
 export function requiredButton(ctx: ScanContext, rule: ButtonRule): Result {
   const exact = startLinks(ctx, rule.exact);
   const link = exact[0] ?? startLinks(ctx).find((l) => ctx.says(rule.similar, l.text));
-  if (!link) return fail(rule.missing);
+  if (!link) return fail(msg("missing"));
+  const text = link.text;
   const target = ctx.page(link.href)?.js;
-  const problems = !loaded(target)
-    ? [`Could not follow "${link.text}" to the ${rule.name} page${link.href ? ` ${ctx.short(link.href)}` : " (a button without a link)"}; the confirmation button "${rule.confirmWording}" was not checked.`]
+  const problems: Finding[] = !loaded(target)
+    ? [link.href ? { key: "not_followed", params: { text, where: ctx.short(link.href) } } : { key: "not_followed_button", params: { text } }]
     : ctx.says(rule.confirm, target.text) ? []
-    : [`${ctx.short(target.finalUrl)} has no confirmation button "${rule.confirmWording}" (${rule.confirmLaw}).`];
-  if (!exact.length) return warn(`Found "${link.text}", but the law asks for "${rule.wording}" or equally clear wording.`, problems);
-  if (!loaded(target)) return info(`Found "${link.text}", but could not follow it to the confirmation page.`, problems);
-  if (problems.length) return warn(`Found "${link.text}", but the ${rule.name} page looks incomplete.`, problems);
-  return pass(`Found "${link.text}".`);
+    : [{ key: "no_confirm", params: { where: ctx.short(target.finalUrl) } }];
+  if (!exact.length) return warn(msg("similar", { text }), problems);
+  if (!loaded(target)) return info(msg("unconfirmed", { text }), problems);
+  if (problems.length) return warn(msg("incomplete", { text }), problems);
+  return pass(msg("found", { text }));
 }
 
 // ---------- Requests and cookies

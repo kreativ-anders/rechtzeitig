@@ -1,4 +1,4 @@
-import { defineCheck, fail, needLegalPage, pass, warn } from "../../../src/sdk.ts";
+import { defineCheck, fail, msg, needLegalPage, pass, warn, type Finding } from "../../../src/sdk.ts";
 
 // Formats from German law, so they do not depend on the page language.
 const EMAIL = /[\w.+-]+\s*(@|[[(]\s*at\s*[\])])\s*[\w-]+(\.[\w-]+)*\.[a-z]{2,}/i;
@@ -16,18 +16,16 @@ export default defineCheck({
     if ("status" in page) return page;
     const text = page.js.text;
     const hasEmail = EMAIL.test(text) || page.js.links.some((l) => l.href?.startsWith("mailto:"));
-    const missing: string[] = [];
-    if (!POSTCODE.test(text)) missing.push("No postal address with a German postcode found (Nr. 1).");
-    if (!PHONE.test(text.replace(IBAN, " ")) &&!ctx.says("contact_form", text)) {
-      missing.push("No phone number or contact form found. Besides email, a second fast way of contact is required (Nr. 2).");
-    }
-    const optional = [
-      VAT_ID.test(text) ? "VAT ID (USt-IdNr.) found." : "No VAT ID (USt-IdNr.) found. Required if you have one (Nr. 6).",
-      REGISTER.test(text) ? "Register entry found." : "No register entry (HRB, VR, ...) found. Required if registered (Nr. 4).",
+    const missing: Finding[] = [];
+    if (!POSTCODE.test(text)) missing.push({ key: "no_address" });
+    if (!PHONE.test(text.replace(IBAN, " ")) && !ctx.says("contact_form", text)) missing.push({ key: "no_second_contact" });
+    const optional: Finding[] = [
+      { key: VAT_ID.test(text) ? "vat_id" : "no_vat_id" },
+      { key: REGISTER.test(text) ? "register" : "no_register" },
     ];
 
-    if (!hasEmail) return fail("The imprint has no email address (Nr. 2).", [...missing, ...optional]);
-    if (missing.length) return warn(`The imprint may be incomplete: ${missing.length} item(s) not found.`, [...missing, ...optional]);
-    return pass("Address, email and a second way of contact found in the imprint.", optional);
+    if (!hasEmail) return fail(msg("no_email"), [...missing, ...optional]);
+    if (missing.length) return warn(msg("incomplete", { count: missing.length }), [...missing, ...optional]);
+    return pass(msg("complete"), optional);
   },
 });
