@@ -4,6 +4,12 @@ rechtzeitig is a CI tool for technical decision makers. The repository scan is t
 
 Items are listed in order of priority.
 
+## Released: v0.2.0 (2026-11-04)
+
+An immutable GitHub pre-release; `examples/workflows/rechtzeitig.yml` is pinned to its commit SHA.
+
+It contains: Chrome's sandbox on GitHub-hosted Ubuntu runners (v0.1.0 stopped every URL scan on `ubuntu-latest`); PR annotations for findings with file and line; reports fully in the chosen language (checks return message keys, the sentences and vendor advice are in `lang/*.yml` and `data/third-parties.yml` per language); the third-country check opt-in via `IPINFO_TOKEN`; connections only to checked addresses, also from the browser; HSTS taken as given under preloaded top-level domains; DMARC `p=reject` and null MX for domains without mail. Self-scan of this repository and rechtzeitig.dev: 1 warn (headers GitHub Pages cannot set), 27 pass.
+
 ## Released: v0.1.0 (2026-11-04)
 
 The first pre-release, not yet alpha or beta. An immutable GitHub pre-release; `examples/workflows/rechtzeitig.yml` is pinned to its commit SHA. No moving major tag before `v1.0.0`.
@@ -18,7 +24,6 @@ It contains the security fixes, CI hardening, detection fixes and lean-code refa
 - A ruleset for `v*` tags: no update, no delete.
 - Code scanning: CodeQL runs once the repository is public (`.github/workflows/codeql.yml` skips while it is private); add the OpenSSF Scorecard action.
 - `CODEOWNERS`.
-- Run `rechtzeitig.yml` on this repository and its site once more. The first run stopped: Ubuntu 24.04 blocks the user namespaces Chrome's sandbox needs. `action.yml` now allows them for the Chrome binary on GitHub-hosted runners; confirm the scan starts with the sandbox.
 
 ## Next: hardening
 
@@ -30,8 +35,6 @@ Open points from the audit of 2026-11-03, after the fixes.
 4. Timing tests (`capture.test.ts`, the backtracking tests) fail when the machine sleeps during the run. Run local test runs with `caffeinate` on macOS, or measure CPU time.
 
 ## Next: repository
-
-Done since v0.1.0: PR annotations for findings with file and line; reports fully in the chosen language (checks return message keys, the sentences and vendor advice are in `lang/*.yml` and `data/third-parties.yml` per language).
 
 1. Workflows with `pull_request_target` and a checkout of the PR head, `${{ github.event.* }}` in `run:`, missing or `write-all` permissions, `curl | sh`.
 2. Secrets in the git history. By default only the commits a pull request or push adds, so old, revoked keys do not flood every run; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
