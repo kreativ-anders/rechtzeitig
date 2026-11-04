@@ -126,6 +126,8 @@ messages:
     severity: "Schwere"
     result: "Ergebnis"
     details: "Details"
+    findings_only: "Nur Befunde. Bestandene und übersprungene Prüfungen stehen im vollständigen Bericht im Artifact rechtzeitig-report."
+    no_findings: "Keine Befunde. Der vollständige Bericht liegt im Artifact rechtzeitig-report."
     scan: "Scan"
     fix: "Behebung"
     pages: "Seiten"
@@ -291,6 +293,7 @@ messages:
     not_checked: "DNS wurde nicht geprüft."
     no_spf: "Kein SPF-Eintrag. Die eigenen Mailserver eintragen."
     no_spf_no_mail: 'Kein SPF-Eintrag. Die Domain versendet keine Mails, also "v=spf1 -all" veröffentlichen.'
+    no_dmarc_no_mail: 'Kein DMARC-Eintrag unter _dmarc.{domain}. Die Domain versendet keine Mails, also "v=DMARC1; p=reject" veröffentlichen.'
     open_spf: 'SPF erlaubt jedem Server, Mails zu senden ("{spf}"). Mit "-all" oder "~all" abschließen.'
     no_dmarc: 'Kein DMARC-Eintrag unter _dmarc.{domain}. Mit "v=DMARC1; p=quarantine" beginnen.'
     dmarc_none: "DMARC beobachtet nur (p=none). Mails, die die Prüfung nicht bestehen, werden trotzdem zugestellt."
@@ -311,6 +314,7 @@ messages:
     frame: "X-Frame-Options oder CSP frame-ancestors"
     frame_meta: "X-Frame-Options oder CSP frame-ancestors (Browser ignorieren frame-ancestors in <meta>)"
     from_meta: "Als <meta> gesetzt: {names}"
+    hsts_preloaded: "Kein Strict-Transport-Security-Header, aber .{tld} steht auf der HSTS-Preload-Liste der Browser. Seiten darunter laden ohnehin nur über HTTPS."
     missing:
       one: "{count} Sicherheits-Header fehlt."
       other: "{count} Sicherheits-Header fehlen."

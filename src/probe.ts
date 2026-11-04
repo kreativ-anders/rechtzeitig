@@ -134,7 +134,8 @@ export async function emailDns(url: string): Promise<ScanContext["dns"]> {
     domain,
     spf: root.find((r) => r.toLowerCase().startsWith("v=spf1")),
     dmarc: dmarc.find((r) => r.toLowerCase().startsWith("v=dmarc1")),
-    mx: mx.length > 0,
+    // A null MX ("0 .", RFC 7505) says the domain takes no mail; Node returns its exchange as "".
+    mx: mx.some((r) => r.exchange !== "" && r.exchange !== "."),
   };
 }
 

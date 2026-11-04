@@ -107,6 +107,8 @@ messages:
     severity: "Severity"
     result: "Result"
     details: "Details"
+    findings_only: "Findings only. Passed and skipped checks are in the full report in the artifact rechtzeitig-report."
+    no_findings: "No findings. The full report is in the artifact rechtzeitig-report."
     scan: "Scan"
     fix: "Fix"
     pages: "Pages"
@@ -272,6 +274,7 @@ messages:
     not_checked: "DNS was not checked."
     no_spf: "No SPF record. List your mail servers."
     no_spf_no_mail: 'No SPF record. The domain sends no mail, so publish "v=spf1 -all".'
+    no_dmarc_no_mail: 'No DMARC record at _dmarc.{domain}. The domain sends no mail, so publish "v=DMARC1; p=reject".'
     open_spf: 'SPF allows every server to send mail ("{spf}"). End it with "-all" or "~all".'
     no_dmarc: 'No DMARC record at _dmarc.{domain}. Start with "v=DMARC1; p=quarantine".'
     dmarc_none: "DMARC only monitors (p=none). Mail that fails checks is still delivered."
@@ -292,6 +295,7 @@ messages:
     frame: "X-Frame-Options or CSP frame-ancestors"
     frame_meta: "X-Frame-Options or CSP frame-ancestors (browsers ignore frame-ancestors in <meta>)"
     from_meta: "Set as <meta>: {names}"
+    hsts_preloaded: "No Strict-Transport-Security header, but .{tld} is on the browsers' HSTS preload list. Sites under it load over HTTPS only anyway."
     missing:
       one: "{count} security header missing."
       other: "{count} security headers missing."

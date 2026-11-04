@@ -9,7 +9,7 @@ on:
       language:
         description: Language of the site
         type: choice
-        default: de
+        default: en
         options: [de, en, all]
       subscriptions:
         description: Visitors can sign up for subscriptions

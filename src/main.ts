@@ -97,7 +97,7 @@ const failing = outcomes.some((o) => FAIL_ON[failOn].includes(o.status));
 // The most urgent outcome decides: fail (also for errors), warn, otherwise pass.
 const worst = OUTCOMES.find((s) => outcomes.some((o) => o.status === s));
 const result = worst === "fail" || worst === "error" ? "fail" : worst === "warn" ? "warn" : "pass";
-if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
+if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, toMarkdown(report, { findingsOnly: true }));
 if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `result=${result}\n`);
 process.exit(failing ? 1 : 0);
 

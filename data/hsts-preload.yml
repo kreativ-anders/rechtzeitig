@@ -1,0 +1,41 @@
+# Top-level domains on the HSTS preload list that Chromium maintains and other browsers build on.
+# Every site under them loads over HTTPS only, with or without a Strict-Transport-Security header.
+# Each entry was checked with https://hstspreload.org/api/v2/status?domain=<tld> ("preloaded") on 2026-11-04.
+tlds:
+  - android
+  - app
+  - bank
+  - bing
+  - boo
+  - channel
+  - chrome
+  - dad
+  - day
+  - dev
+  - eat
+  - esq
+  - fly
+  - foo
+  - gle
+  - gmail
+  - google
+  - hangout
+  - here
+  - hotmail
+  - ing
+  - insurance
+  - meet
+  - meme
+  - microsoft
+  - mov
+  - new
+  - nexus
+  - page
+  - phd
+  - play
+  - prof
+  - rsvp
+  - search
+  - windows
+  - youtube
+  - zip

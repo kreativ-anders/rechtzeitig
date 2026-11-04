@@ -110,23 +110,27 @@ const sorted = (outcomes: Outcome[]) =>
   );
 const open = (o: Outcome) => o.status === "fail" || o.status === "warn" || o.status === "info";
 
-export function toMarkdown(r: Report): string {
+/**
+ * The report as Markdown. With `findingsOnly` (the step summary) passed and skipped checks are left out
+ * and a line points to the artifact, which keeps the full report.
+ */
+export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
   const t = ui(r.language);
   const lang = r.language;
-  const list = sorted(r.outcomes);
-  const lines = [
-    `## rechtzeitig: ${md(title(r))}`,
-    "",
-    summaryLine(r, true),
-    "",
-    `| | ${t("check")} | ${t("severity")} | ${t("result")} |`,
-    "|---|---|---|---|",
-    ...list.map((o) => {
-      const law = o.rule.legal_basis?.[lang];
-      return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${t(`severity_${o.rule.severity}`)} | ${md(say(o, lang))} |`;
-    }),
-    "",
-  ];
+  const list = sorted(r.outcomes).filter((o) => !findingsOnly || (o.status !== "pass" && o.status !== "skip"));
+  const lines = [`## rechtzeitig: ${md(title(r))}`, "", summaryLine(r, true), ""];
+  if (findingsOnly) lines.push(`_${t(list.length ? "findings_only" : "no_findings")}_`, "");
+  if (list.length) {
+    lines.push(
+      `| | ${t("check")} | ${t("severity")} | ${t("result")} |`,
+      "|---|---|---|---|",
+      ...list.map((o) => {
+        const law = o.rule.legal_basis?.[lang];
+        return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${t(`severity_${o.rule.severity}`)} | ${md(say(o, lang))} |`;
+      }),
+      "",
+    );
+  }
   const withDetails = list.filter((o) => o.details.length || open(o));
   if (withDetails.length) {
     lines.push(`### ${t("details")}`, "");

@@ -380,7 +380,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-HDR-001" data-module="security" data-severity="low" data-search="sec-hdr-001 security/headers security headers are set sicherheits-header sind gesetzt art. 32 gdpr reads the response headers of the start page (hsts, csp, x-content-type-options, referrer-policy, frame protection) and accepts csp and referrer-policy from &lt;meta&gt; tags, which browsers apply too.">
+<details class="rule" id="SEC-HDR-001" data-module="security" data-severity="low" data-search="sec-hdr-001 security/headers security headers are set sicherheits-header sind gesetzt art. 32 gdpr reads the response headers of the start page (hsts, csp, x-content-type-options, referrer-policy, frame protection), accepts csp and referrer-policy from &lt;meta&gt; tags, which browsers apply too, and hsts as given for top-level domains in `data/hsts-preload.yml`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-HDR-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
 <span class="rule-title">Security headers are set</span>
@@ -388,11 +388,11 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads the response headers of the start page (HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame protection) and accepts CSP and Referrer-Policy from &lt;meta&gt; tags, which browsers apply too.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads the response headers of the start page (HSTS, CSP, X-Content-Type-Options, Referrer-Policy, frame protection), accepts CSP and Referrer-Policy from &lt;meta&gt; tags, which browsers apply too, and HSTS as given for top-level domains in <code>data/hsts-preload.yml</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Set the missing headers in the web server or hosting. CSP and Referrer-Policy also work as &lt;meta&gt; tags; frame-ancestors and nosniff only work as headers.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/headers"><code>checks/security/headers</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/CSP3/#meta-element">w3.org</a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/CSP3/#meta-element">w3.org</a>, <a href="https://hstspreload.org/">hstspreload.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-DNS-002" data-module="security" data-severity="low" data-search="sec-dns-002 security/host-variants www and non-www addresses both work www- und domain-adresse funktionieren beide art. 32 gdpr requests the domain with `www.` added or removed and follows redirects.">

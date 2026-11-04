@@ -38,6 +38,20 @@ test("the step summary names the tool and its maker in the report language", () 
   assert.match(toMarkdown({ ...report("m", []), language: "de" }), /· von \[kreativ-anders\]/);
 });
 
+test("the step summary shows only findings, the full report every check", () => {
+  const outcome = (id: string, status: "fail" | "pass" | "skip", details: string[] = []) => ({ id, rule: { ...rule, id }, status, message: id, details });
+  const r: Report = { ...report("m", []), outcomes: [outcome("SEC-A-001", "fail"), outcome("SEC-P-001", "pass", ["note"]), outcome("SEC-S-001", "skip")] };
+  const summary = toMarkdown(r, { findingsOnly: true });
+  assert.match(summary, /SEC-A-001/);
+  assert.doesNotMatch(summary, /SEC-P-001|SEC-S-001/);
+  assert.match(summary, /❌ 1 fail · ✅ 1 pass · ⏭️ 1 skip/);
+  assert.match(summary, /_Findings only\./);
+  assert.match(toMarkdown(r), /SEC-P-001[\s\S]*SEC-S-001/);
+  const clean = toMarkdown({ ...r, outcomes: [outcome("SEC-P-001", "pass")] }, { findingsOnly: true });
+  assert.match(clean, /_No findings\./);
+  assert.doesNotMatch(clean, /\| Check \|/);
+});
+
 test("warnings such as a missing sandbox show in the summary and the log", () => {
   const r = { ...report("m", []), warnings: ["Chrome sandbox not available on this runner"] };
   assert.match(toMarkdown(r), /- ⚠️ Chrome sandbox not available on this runner/);

@@ -11,7 +11,7 @@ export default defineCheck({
     const issues: Finding[] = [];
     if (!spf) issues.push({ key: dns.mx ? "no_spf" : "no_spf_no_mail" });
     else if (OPEN_SPF.test(spf)) issues.push({ key: "open_spf", params: { spf } });
-    if (!dmarc) issues.push({ key: "no_dmarc", params: { domain } });
+    if (!dmarc) issues.push({ key: dns.mx ? "no_dmarc" : "no_dmarc_no_mail", params: { domain } });
     // p= only; sp= is the policy for subdomains.
     else if (/(^|;)\s*p=none\b/i.test(dmarc)) issues.push({ key: "dmarc_none" });
     if (issues.length) return warn(msg("spoofable", { domain }), issues);

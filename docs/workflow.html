@@ -126,7 +126,7 @@
 
       <section id="report">
         <h2><span class="par">§ 5</span>The report</h2>
-        <p>The summary page of the run shows a table of all checks with details, in the report language. Findings in a file of the repository also appear as annotations: in a pull request at the line, otherwise on the run page. GitHub shows at most 10 errors and 10 warnings there; the summary and the artifact always have all of them. The artifact <code>rechtzeitig-report</code> contains:</p>
+        <p>The summary page of the run shows the findings (fail, error, warn, info) with details, in the report language. Passed and skipped checks are only in the artifact. Findings in a file of the repository also appear as annotations: in a pull request at the line, otherwise on the run page. GitHub shows at most 10 errors and 10 warnings there; the summary always has all findings, the artifact all checks. The artifact <code>rechtzeitig-report</code> contains:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">File</th><th scope="col">Content</th></tr></thead>
           <tbody>

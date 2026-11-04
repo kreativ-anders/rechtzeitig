@@ -38,3 +38,8 @@ test("names the domain that was queried, also for a subdomain site", async () =>
   assert.match(result.message, /of example\.de\./);
   assert.ok(result.details?.includes('No DMARC record at _dmarc.example.de. Start with "v=DMARC1; p=quarantine".'));
 });
+
+test("suggests an enforcing DMARC policy right away for domains without mail", async () => {
+  const result = await runFake(here, {}, { dns: { domain: "example.de", mx: false } });
+  assert.ok(result.details?.includes('No DMARC record at _dmarc.example.de. The domain sends no mail, so publish "v=DMARC1; p=reject".'));
+});
