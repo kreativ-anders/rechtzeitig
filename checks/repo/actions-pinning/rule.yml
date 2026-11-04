@@ -5,13 +5,13 @@ title:
   de: "GitHub Actions sind auf einen Commit gepinnt"
   en: "GitHub Actions are pinned to a commit"
 legal_basis:
-  de: "CRA Anhang I (Lieferkette)"
-  en: "CRA Annex I (supply chain)"
+  de: "CRA Art. 13 Abs. 5, Sorgfalt bei Komponenten Dritter (ab 11.12.2027)"
+  en: "CRA Art. 13(5), due diligence for third-party components (from 11 Dec 2027)"
 how: "Reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit SHA."
 fix_hint:
   de: "uses: owner/action@<commit-sha> statt eines Tags verwenden; Dependabot hält die SHAs aktuell."
   en: "Use owner/action@<commit-sha> instead of a tag; Dependabot keeps the SHAs current."
 meta:
-  last_reviewed: "2026-11-03"
+  last_reviewed: "2026-11-04"
   sources:
   - https://eur-lex.europa.eu/eli/reg/2024/2847/oj

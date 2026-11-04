@@ -9,9 +9,10 @@ legal_basis:
   en: "Regulation (EU) 2024/3228"
 how: "Looks for links to or mentions of the closed EU dispute platform (`odr` in `data/outdated-links.yml`) on every visited page."
 fix_hint:
-  de: "Link und Hinweis auf die OS-Plattform entfernen. Die Plattform ist seit 20.07.2025 abgeschaltet."
-  en: "Remove the link and the notice. The platform closed on 20 July 2025."
+  de: "Link und Hinweis auf die OS-Plattform entfernen. Die Plattform ist seit 20.07.2025 abgeschaltet. Die Angabe nach § 36 VSBG, ob Sie an Streitbeilegung vor einer Verbraucherschlichtungsstelle teilnehmen, bleibt Pflicht, außer bei höchstens 10 Beschäftigten."
+  en: "Remove the link and the notice. The platform closed on 20 July 2025. The statement under § 36 VSBG on whether you take part in consumer dispute resolution stays required, unless you have 10 employees or fewer."
 meta:
-  last_reviewed: "2026-11-03"
+  last_reviewed: "2026-11-04"
   sources:
   - https://eur-lex.europa.eu/eli/reg/2024/3228/oj
+  - https://www.gesetze-im-internet.de/vsbg/__36.html

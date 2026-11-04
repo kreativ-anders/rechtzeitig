@@ -8,16 +8,13 @@ Items are listed in order of priority.
 
 The first pre-release. Not yet alpha or beta.
 
-Done: security fixes, CI hardening, detection fixes and lean-code refactors from the audit of 2026-11-03; `tier` removed.
+Done: security fixes, CI hardening, detection fixes and lean-code refactors from the audit of 2026-11-03; `tier` removed; legal references reviewed on 2026-11-04 (CRA articles and dates, BFSG via EN 301 549 V3.2.1, § 36 VSBG, rulings as sources); repository settings: read-only workflow token, GitHub-owned actions only, SHA pinning required, immutable releases, head branches deleted after merge, Dependabot alerts.
 
-1. Legal references in `rule.yml`: CRA scope and dates (Art. 13(5), Art. 71 CRA), BFSG via EN 301 549, keep the § 36 VSBG statement in the ODR fix hint, recent rulings as sources.
-2. GitHub settings of this repository (only the owner can change them):
-   - Settings → Actions → General → Workflow permissions: "Read repository contents", and untick "Allow GitHub Actions to create and approve pull requests".
-   - Settings → Security: turn on private vulnerability reporting, which `SECURITY.md` points to. Confirm the answer time stated there.
-3. Release: tag `v0.1.0` as a GitHub pre-release, pin `examples/workflows/rechtzeitig.yml` to its commit SHA and drop the exception in `src/pinning.test.ts`. No moving major tag before `v1.0.0`. Turn on immutable releases.
+1. Release: tag `v0.1.0` as a GitHub pre-release, pin `examples/workflows/rechtzeitig.yml` to its commit SHA and drop the exception in `src/pinning.test.ts`. No moving major tag before `v1.0.0`.
 
 Before the repository goes public:
 
+- Turn on private vulnerability reporting (only possible for public repositories), which `SECURITY.md` points to. Confirm the answer time stated there.
 - A ruleset for `main`: pull requests only, status check `test` required, no force push, signed commits.
 - A ruleset for `v*` tags: no update, no delete.
 - Code scanning: CodeQL runs once the repository is public (`.github/workflows/codeql.yml` skips while it is private); add the OpenSSF Scorecard action.
