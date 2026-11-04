@@ -1,7 +1,7 @@
-import type { BrowserContext } from "playwright";
+import type { BrowserContext, Request as PlaywrightRequest } from "playwright";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage, isWebUrl, normalize } from "./text.ts";
-import { cookieKey, type Area, type Checkbox, type Form, type Link, type Snapshot } from "./sdk.ts";
+import { cookieKey, type Area, type Checkbox, type Form, type Link, type Request, type Snapshot } from "./sdk.ts";
 
 interface RawLink {
   href: string | null;
@@ -129,10 +129,26 @@ export const emptySnapshot = (finalUrl: string): Snapshot => ({
 /** Loads a URL once in the given browser context and records what a visitor gets without clicking anything. */
 export async function capture(context: BrowserContext, url: string, js: boolean, timeout: number): Promise<Snapshot> {
   const page = await context.newPage();
+  // With the cache off, every page answers with its own headers, and checks see each file as a first visit would.
+  await context.newCDPSession(page).then((cdp) => cdp.send("Network.setCacheDisabled", { cacheDisabled: true })).catch(() => {});
   const requests: Snapshot["requests"] = [];
+  const pending = new Map<PlaywrightRequest, Request>();
   page.on("request", (r) => {
     const u = r.url();
-    if (isWebUrl(u) && requests.length < MAX_REQUESTS) requests.push({ url: u, host: new URL(u).hostname, type: r.resourceType() });
+    if (!isWebUrl(u) || requests.length >= MAX_REQUESTS) return;
+    const entry: Request = { url: u, host: new URL(u).hostname, type: r.resourceType() };
+    requests.push(entry);
+    pending.set(r, entry);
+  });
+  page.on("response", (res) => {
+    const entry = pending.get(res.request());
+    if (!entry) return;
+    pending.delete(res.request());
+    const h = res.headers();
+    entry.status = res.status();
+    if (h["content-type"]) entry.contentType = h["content-type"];
+    if (h["cache-control"]) entry.cacheControl = h["cache-control"];
+    if (h["expires"]) entry.expires = h["expires"];
   });
   const before = new Set((await context.cookies()).map(cookieKey));
   const load = async (): Promise<Snapshot> => {

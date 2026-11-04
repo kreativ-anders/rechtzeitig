@@ -73,10 +73,7 @@ Start page and legal pages only. No full-site crawl.
 
 A few sustainability checks. Page weight, compression and CO2 are out of scope. No legal basis; W3C Web Sustainability Guidelines as sources only.
 
-1. Record content type and cache headers of every request, with the browser cache off.
-2. Images in JPEG, PNG or GIF instead of WebP or AVIF, fonts in TTF or OTF instead of WOFF2.
-3. Own static files served without cache headers.
-4. Green hosting of the site, checked with the Green Web Foundation, on by default with an input to turn it off. This sends the host name to them, so `docs/privacy.html` names it.
+1. Green hosting of the site, checked with the Green Web Foundation, on by default with an input to turn it off. This sends the host name to them, so `docs/privacy.html` names it.
 
 ## Later
 

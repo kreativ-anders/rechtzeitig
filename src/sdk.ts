@@ -266,6 +266,11 @@ export interface Request {
   host: string;
   /** Playwright resource type: document, stylesheet, script, font, image, xhr, fetch ... */
   type: string;
+  /** HTTP status and headers of the answer, with the browser cache off. Missing when no answer came. */
+  status?: number;
+  contentType?: string;
+  cacheControl?: string;
+  expires?: string;
 }
 
 export interface Cookie {

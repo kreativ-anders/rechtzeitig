@@ -1,0 +1,15 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SUS-FMT-001
+severity: low
+title:
+  de: "Bilder und Schriften nutzen sparsame Formate"
+  en: "Images and fonts use efficient formats"
+how: "Lists the site's own images in JPEG, PNG or GIF and fonts in TTF or OTF, by Content-Type or else file extension (`data/file-formats.yml`), ignoring favicons and touch icons."
+fix_hint:
+  de: "Bilder als WebP oder AVIF ausliefern (mit <picture> und Fallback, falls nötig), Schriften als WOFF2."
+  en: "Serve images as WebP or AVIF (with <picture> and a fallback where needed) and fonts as WOFF2."
+meta:
+  last_reviewed: "2026-11-04"
+  sources:
+  - https://www.w3.org/TR/web-sustainability-guidelines/#optimized-media
+  - https://www.w3.org/TR/web-sustainability-guidelines/#web-font-optimization

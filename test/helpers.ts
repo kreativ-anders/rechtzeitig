@@ -26,22 +26,31 @@ const TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css",
   ".js": "text/javascript",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+  ".ico": "image/x-icon",
+  ".woff2": "font/woff2",
+  ".ttf": "font/ttf",
 };
 
 /**
  * Serves a folder. "/about" finds about.html or about/index.html.
- * An optional _headers.json in the folder adds response headers to every document.
+ * An optional _headers.json in the folder adds response headers to every document,
+ * an optional _static-headers.json to every other file.
  */
 export async function serve(dir: string): Promise<{ url: string; close: () => void }> {
-  const headersFile = join(dir, "_headers.json");
-  const extra = existsSync(headersFile) ? JSON.parse(readFileSync(headersFile, "utf8")) : {};
+  const json = (name: string) => (existsSync(join(dir, name)) ? JSON.parse(readFileSync(join(dir, name), "utf8")) : {});
+  const extra = json("_headers.json");
+  const staticExtra = json("_static-headers.json");
   const server = createServer((req, res) => {
     const path = decodeURIComponent(new URL(req.url ?? "/", "http://x").pathname);
     for (const candidate of [path, `${path}.html`, join(path, "index.html")]) {
       const file = resolve(dir, `.${candidate}`);
       if (file.startsWith(resolve(dir)) && existsSync(file) && statSync(file).isFile()) {
         const type = TYPES[extname(file)] ?? "application/octet-stream";
-        res.writeHead(200, { "content-type": type, ...(type.startsWith("text/html") ? extra : {}) });
+        res.writeHead(200, { "content-type": type, ...(type.startsWith("text/html") ? extra : staticExtra) });
         res.end(readFileSync(file));
         return;
       }

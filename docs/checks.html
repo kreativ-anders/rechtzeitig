@@ -488,8 +488,23 @@
 </div>
 </section>
 <section class="module" data-module="sustainability">
-<h3>Sustainability <small>2 rules</small></h3>
+<h3>Sustainability <small>4 rules</small></h3>
 <div class="rules">
+<details class="rule" id="SUS-CACHE-001" data-module="sustainability" data-severity="low" data-search="sus-cache-001 sustainability/cache-headers own static files may stay in the browser cache eigene statische dateien dürfen im browser-cache bleiben  loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (`static` in `data/file-formats.yml`) whose answer has no positive `max-age`, no `immutable` and no future `expires`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SUS-CACHE-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Own static files may stay in the browser cache</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (<code>static</code> in <code>data/file-formats.yml</code>) whose answer has no positive <code>max-age</code>, no <code>immutable</code> and no future <code>Expires</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Send Cache-Control: public, max-age=31536000, immutable for files with a version or hash in their name, and a shorter max-age for other static files.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/cache-headers"><code>checks/sustainability/cache-headers</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#client-side-caching">w3.org</a>, <a href="https://www.rfc-editor.org/rfc/rfc9111">rfc-editor.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SUS-JS-002" data-module="sustainability" data-severity="low" data-search="sus-js-002 sustainability/content-without-js start page shows content without javascript startseite zeigt inhalt ohne javascript  compares the visible text of the start page with javascript off and on and warns when less than 20 % of it is shown without javascript.">
 <summary>
 <span class="rule-head"><span class="rule-id">SUS-JS-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
@@ -517,6 +532,21 @@
 <div><dt>How to fix</dt><dd>Deliver the links and texts of the legal pages as static HTML.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/legal-pages-without-js"><code>checks/sustainability/legal-pages-without-js</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SUS-FMT-001" data-module="sustainability" data-severity="low" data-search="sus-fmt-001 sustainability/modern-formats images and fonts use efficient formats bilder und schriften nutzen sparsame formate  lists the site's own images in jpeg, png or gif and fonts in ttf or otf, by content-type or else file extension (`data/file-formats.yml`), ignoring favicons and touch icons.">
+<summary>
+<span class="rule-head"><span class="rule-id">SUS-FMT-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Images and fonts use efficient formats</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists the site's own images in JPEG, PNG or GIF and fonts in TTF or OTF, by Content-Type or else file extension (<code>data/file-formats.yml</code>), ignoring favicons and touch icons.</dd></div>
+<div><dt>How to fix</dt><dd>Serve images as WebP or AVIF (with &lt;picture&gt; and a fallback where needed) and fonts as WOFF2.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/modern-formats"><code>checks/sustainability/modern-formats</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#optimized-media">w3.org</a>, <a href="https://www.w3.org/TR/web-sustainability-guidelines/#web-font-optimization">w3.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>

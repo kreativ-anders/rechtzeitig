@@ -1,0 +1,20 @@
+# File formats and static files on the site's own pages.
+# Used by sustainability/modern-formats and sustainability/cache-headers.
+
+# Older formats with a smaller successor every current browser supports.
+# A file counts when its Content-Type is in `types`, or, without one, its path ends in an extension from `extensions`.
+legacy:
+  image:
+    types: [image/jpeg, image/png, image/gif]
+    extensions: [jpg, jpeg, png, gif]
+    better: WebP, AVIF
+  font:
+    types: [font/ttf, font/otf, font/sfnt, application/x-font-ttf, application/x-font-otf, application/x-font-truetype, application/x-font-opentype, application/font-sfnt]
+    extensions: [ttf, otf]
+    better: WOFF2
+
+# Icons that browsers and phones ask for in PNG or ICO; never flagged (regular expressions on the path).
+ignore: ['favicon', 'apple-touch-icon', 'android-chrome', 'mstile']
+
+# Playwright resource types of files that rarely change and should be cached.
+static: [script, stylesheet, image, font]

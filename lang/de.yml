@@ -368,6 +368,17 @@ messages:
     declared: 'Die Seite gibt lang="{lang}" an.'
 
   # ---------- sustainability
+  sustainability/cache-headers:
+    no_files: "Keine eigenen Skripte, Stylesheets, Bilder oder Schriften geladen."
+    cached:
+      one: "{count} eigene statische Datei darf im Cache bleiben."
+      other: "Alle {count} eigenen statischen Dateien dürfen im Cache bleiben."
+    uncached:
+      one: "{count} von {total} eigenen statischen Dateien hat keine Cache-Dauer und wird bei jedem Besuch neu geladen."
+      other: "{count} von {total} eigenen statischen Dateien haben keine Cache-Dauer und werden bei jedem Besuch neu geladen."
+    more:
+      one: "und {count} weitere Datei"
+      other: "und {count} weitere Dateien"
   sustainability/content-without-js:
     shows:
       one: "Ohne JavaScript zeigt die Startseite {shown} von {count} Zeichen."
@@ -386,6 +397,16 @@ messages:
     readable: "Beide sind verlinkt und ohne JavaScript lesbar."
 
   # ---------- repo
+  sustainability/modern-formats:
+    modern: "Eigene Bilder und Schriften nutzen sparsame Formate."
+    legacy:
+      one: "{count} eigenes Bild oder eigene Schrift in einem älteren, größeren Format."
+      other: "{count} eigene Bilder oder Schriften in älteren, größeren Formaten."
+    image: "{url}: Bild in einem älteren Format, {better} ist kleiner."
+    font: "{url}: Schrift in einem älteren Format, {better} ist kleiner."
+    more:
+      one: "und {count} weitere Datei"
+      other: "und {count} weitere Dateien"
   repo/actions-pinning:
     no_workflows: "Keine GitHub-Workflows."
     unpinned:
