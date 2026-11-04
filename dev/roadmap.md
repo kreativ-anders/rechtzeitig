@@ -44,35 +44,32 @@ Findings that only a scan of both can give. Today a check gets either the websit
 Start page and legal pages only. No full-site crawl.
 
 1. After a click on "reject": check that no tracker loads. The only check that would need a click.
-2. Order button labeled "zahlungspflichtig bestellen" for shops (§ 312j BGB).
-3. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
-4. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
-5. A few unambiguous accessibility checks (selected axe-core rules: alt text, form labels, contrast) and the accessibility information for shops (BFSG, § 14 and Anlage 3) or the accessibility statement with feedback contact for public bodies (BITV 2.0 § 7), not a full axe-core run.
-6. Total prices including VAT where prices appear (PAngV).
-7. Withdrawal notice says where the withdrawal function is, with `sales: true` (Art. 246a § 1 Abs. 2 EGBGB).
-8. Forms that send to another site: receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO).
-9. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
-10. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.
-11. A named natural person as editorially responsible when the site has journalistic content, blog, news or podcast (§ 18 Abs. 2 MStV).
-12. Newsletter signup: double opt-in wording and an unsubscribe link next to the form (UWG § 7).
-13. With `sales: true`: T&Cs linked and reachable, and the full withdrawal instruction with the model form (Art. 246a § 1 EGBGB), not only the pointer to the withdrawal function (item 9).
-14. With `sales: true`, PAngV beyond item 8: base price (Grundpreis), shipping cost notice, and the 30-day rule for strikethrough prices.
-15. With `sales: true`: product pages name manufacturer, importer or responsible person and safety information (Reg. (EU) 2023/988, since 13.12.2024); packaging registration number (VerpackG § 9, LUCID) in the imprint; PPWR packaging labeling from 12.08.2026.
-16. With `sales: true`: legal guarantee and commercial guarantee labels per Directive (EU) 2024/825 from 27.09.2026, besides the environmental claims above.
-17. Global Privacy Control (GPC) signal honored by the consent tool, as a warning.
-18. The served HTML and client JS of normal pages: suspicious comments, personal data, exposed API keys.
-19. Client-side JS libraries in the served bundle with known CVEs; the repo vulnerability check covers dependencies, not the bundle.
-20. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs.
-21. DNSSEC and CAA records of the domain, the depth of SPF includes, MTA-STS and TLS-RPT; `email-dns` today covers only SPF, DMARC and MX.
-22. Permissive `crossdomain.xml` / `clientaccesspolicy.xml` and directory listings beyond the probe list.
-23. Subdomain takeover: dangling DNS records of own subdomains via certificate transparency logs and a fingerprint list. Sends subdomain names to external log services, so off by default with an input.
-24. Open ports and exposed services on the scanned host only, a port scan from the runner.
-25. Customer reviews or trust badges on the page without a statement whether and how their authenticity is checked (§ 5b Abs. 3 UWG).
-26. Sites with user content (comments, uploads, marketplace): DSA contact points (Art. 11, 12), a notice-and-action route (Art. 16) and the content rules in the terms (Art. 14); ad labeling on platforms (Art. 26). As a warning, since the scan cannot tell whether the site is a hosting service.
-27. Machine-readable reservation against text and data mining (robots.txt rules for AI crawlers, TDMRep header or `/.well-known/tdmrep.json`), as info only, since it is the owner's choice (§ 44b Abs. 3 UrhG, Art. 53 Abs. 1 lit. c AI Act).
-28. With `sales: true`: WEEE registration number and take-back notices for electrical devices and batteries (§ 18 ElektroG, BattDG), textile fiber labeling (Reg. (EU) 1007/2011).
-29. The contact page as one more visited page, since most forms with personal data live there.
-30. Screenshots of findings and a HAR file of the run as workflow artifacts, as evidence for the report.
+2. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
+3. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
+4. A few unambiguous accessibility checks (selected axe-core rules: alt text, form labels, contrast) and the accessibility information for shops (BFSG, § 14 and Anlage 3) or the accessibility statement with feedback contact for public bodies (BITV 2.0 § 7), not a full axe-core run.
+5. Forms that send to another site: receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO).
+6. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
+7. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.
+8. A named natural person as editorially responsible when the site has journalistic content, blog, news or podcast (§ 18 Abs. 2 MStV).
+9. Newsletter signup: double opt-in wording and an unsubscribe link next to the form (UWG § 7).
+10. With `sales: true`: product pages name manufacturer, importer or responsible person and safety information (Reg. (EU) 2023/988, since 13.12.2024); packaging registration number (VerpackG § 9, LUCID) in the imprint; PPWR packaging labeling from 12.08.2026.
+11. With `sales: true`: legal guarantee and commercial guarantee labels per Directive (EU) 2024/825 from 27.09.2026, besides the environmental claims above.
+12. Global Privacy Control (GPC) signal honored by the consent tool, as a warning.
+13. The served HTML and client JS of normal pages: suspicious comments, personal data, exposed API keys.
+14. Client-side JS libraries in the served bundle with known CVEs; the repo vulnerability check covers dependencies, not the bundle.
+15. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs.
+16. DNSSEC and CAA records of the domain, the depth of SPF includes, MTA-STS and TLS-RPT; `email-dns` today covers only SPF, DMARC and MX.
+17. Permissive `crossdomain.xml` / `clientaccesspolicy.xml` and directory listings beyond the probe list.
+18. Subdomain takeover: dangling DNS records of own subdomains via certificate transparency logs and a fingerprint list. Sends subdomain names to external log services, so off by default with an input.
+19. Open ports and exposed services on the scanned host only, a port scan from the runner.
+20. Customer reviews or trust badges on the page without a statement whether and how their authenticity is checked (§ 5b Abs. 3 UWG).
+21. Sites with user content (comments, uploads, marketplace): DSA contact points (Art. 11, 12), a notice-and-action route (Art. 16) and the content rules in the terms (Art. 14); ad labeling on platforms (Art. 26). As a warning, since the scan cannot tell whether the site is a hosting service.
+22. Machine-readable reservation against text and data mining (robots.txt rules for AI crawlers, TDMRep header or `/.well-known/tdmrep.json`), as info only, since it is the owner's choice (§ 44b Abs. 3 UrhG, Art. 53 Abs. 1 lit. c AI Act).
+23. With `sales: true`: WEEE registration number and take-back notices for electrical devices and batteries (§ 18 ElektroG, BattDG), textile fiber labeling (Reg. (EU) 1007/2011).
+24. The contact page as one more visited page, since most forms with personal data live there.
+25. Screenshots of findings and a HAR file of the run as workflow artifacts, as evidence for the report.
+26. With `sales: true`: price reductions shown other than as a struck-through price, such as "-20 %" labels, checked for the 30-day lowest price (§ 11 PAngV).
+27. Visit the T&Cs and withdrawal pages only with `sales: true`, so they do not use up `max-pages` on sites without a shop.
 
 ## Later
 
