@@ -1,6 +1,6 @@
 # Copy to .github/workflows/rechtzeitig.yml in your repository.
 # Then: Actions → rechtzeitig → Run workflow.
-# Docs: https://kreativ-anders.github.io/rechtzeitig/
+# Docs: https://rechtzeitig.dev/
 name: rechtzeitig
 
 on:
