@@ -45,9 +45,9 @@ No secret needed. Optional switches (`sales`, `subscriptions`, `sarif-upload`, `
 
 ```sh
 npm ci
-npx playwright install chromium
+npx playwright install --only-shell chromium
 node src/main.ts --url https://example.de --repo . --language de
-npm run typecheck && npm test
+npm run docs && npm run typecheck && npm test && npm run drift
 ```
 
 Architecture and how to add a check: [dev/](dev/). Pull requests: [CONTRIBUTING.md](CONTRIBUTING.md). Security issues: [SECURITY.md](SECURITY.md).

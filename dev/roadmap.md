@@ -15,18 +15,24 @@ Open points from the audit of 2026-11-03, after the fixes.
 
 ## Next: repository
 
-1. Secrets in the git history. By default only the commits a pull request or push adds, so old, revoked keys do not flood every run; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
-2. Third-party services in the code: hosts and SDK packages from `data/third-parties.yml`, e.g. Google Fonts URLs (§ 25 TDDDG, Art. 13 DSGVO).
-3. Package names that do not exist or look like typos of popular ones.
-4. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go).
-5. SBOM fields as BSI TR-03183-2 asks (CRA Annex I Part II).
-6. In code: `cors` with `origin: *` and credentials, admin routes without an auth check. `security/cors` checks only the headers the site sends.
-7. License headers of other projects inside your own files.
-8. Google Tag Manager container exports in the repo: tags, triggers, Consent Mode wiring.
-9. Repository health beyond the audit list: LICENSE file present, recent maintenance, CI tests configured.
-10. CRA for repositories that are products (library, CLI, firmware): support period or supported versions in `SECURITY.md` (Art. 13 Abs. 8, Annex II CRA), a coordinated disclosure policy, signed releases with provenance. `repo/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
-11. Dockerfile and infrastructure code: containers running as root, base images on `latest`, security groups open to the internet.
-12. AI model files and references (weights, Hugging Face model IDs) with their licenses (Llama, OpenRAIL) in the license check.
+Ordered by value per effort. The first seven need only a new `data/*.yml` and the existing `RepoContext`.
+
+1. TLS verification turned off in code and scripts: `rejectUnauthorized: false`, `NODE_TLS_REJECT_UNAUTHORIZED=0`, `verify=False`, `InsecureSkipVerify`, `curl -k` (Art. 32 DSGVO, BSI TR-02102-2).
+2. Committed key and data files that `env-files` misses: `*.pem`, `*.key`, `*.p12`, `id_rsa*`, `*.tfstate`, service-account JSON, `.npmrc` with a token, database dumps (Art. 5 Abs. 1 lit. f, Art. 32 DSGVO).
+3. Unverifiable install sources: `http://` or missing `integrity` in lockfiles, git dependencies without a commit, `--extra-index-url`, `strict-ssl=false` (CRA Annex I Part I).
+4. Third-party SDKs in the lockfiles (`@sentry/*`, `posthog-js`, `firebase`, `openai`, ...) as info with vendor and country, via a `packages:` field in `data/third-parties.yml` (Art. 13, 28, 44 DSGVO).
+5. Dockerfile and Compose: no `USER` or `USER root`, `:latest` base images, secrets in `ENV`/`ARG`, `privileged: true`, the Docker socket mounted, database ports published.
+6. CRA for repositories that are products (library, CLI, firmware): support period in `SECURITY.md` (Art. 13 Abs. 8 CRA) and releases with provenance or a signature. `repo/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
+7. More patterns in `workflow-risks`: secrets echoed into logs, `secrets: inherit` to external workflows, self-hosted runners on pull requests.
+8. Runtimes past their end of life (`engines.node`, `.nvmrc`, `FROM php:7.4`, `requires-python`), dates in a data file.
+9. In code: `cors` with `origin: *` and credentials, in JS and header config files. `security/cors` checks only the headers the site sends.
+10. Secrets in the git history. By default only the commits a pull request or push adds; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
+11. Third-party hosts in templates and styles, e.g. Google Fonts URLs (§ 25 TDDDG, Art. 13 DSGVO), as a warning.
+12. SBOM fields as BSI TR-03183-2 asks: hashes, supplier, dependency graph (CRA Annex I Part II).
+13. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go). Needs a registry API, so a switch.
+14. Package names that look like typos of popular ones.
+15. Infrastructure code: Terraform security groups open to `0.0.0.0/0`, public buckets, privileged Kubernetes pods.
+16. AI model files and references (weights, Hugging Face model IDs) with their licenses (Llama, OpenRAIL) in the license check.
 
 ## Next: repository and website together
 
@@ -73,6 +79,7 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 
 ## Later
 
+- Repository checks with a high false-positive risk or no legal basis: admin routes without an auth check, license headers of other projects, Google Tag Manager exports, repository health (LICENSE file, maintenance, CI).
 - More report languages.
 - Prebuilt container image to skip the browser download.
 - `v1.0.0` with a moving `v1` tag, once the checks are stable.

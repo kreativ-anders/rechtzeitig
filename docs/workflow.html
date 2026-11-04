@@ -64,14 +64,14 @@
           <thead><tr><th scope="col">Input</th><th scope="col">Default</th><th scope="col">Meaning</th></tr></thead>
           <tbody>
             <tr><td><code>url</code></td><td>empty</td><td>Start page to check. Empty scans only the repository.</td></tr>
-            <tr><td><code>language</code></td><td><code>de</code></td><td>Language of the site: <code>de</code>, <code>en</code> or <code>all</code>. Decides which words count as "Impressum", "Datenschutz" and so on.</td></tr>
+            <tr><td><code>language</code></td><td><code>de</code></td><td>Language of the site: <code>de</code>, <code>en</code>, both as <code>de,en</code>, or <code>all</code>. Decides which words count as "Impressum", "Datenschutz" and so on.</td></tr>
             <tr><td><code>subscriptions</code></td><td><code>false</code></td><td><code>true</code> if visitors can sign up for subscriptions. Turns on the cancellation button check (§ 312k BGB).</td></tr>
             <tr><td><code>sales</code></td><td><code>false</code></td><td><code>true</code> if consumers buy or sign contracts on the site. Turns on the shop checks: withdrawal, order button, prices and T&amp;C link. To check a product or checkout page, point <code>url</code> at it.</td></tr>
             <tr><td><code>modules</code></td><td>all</td><td>Comma list of check groups: <code>legal</code>, <code>privacy</code>, <code>security</code>, <code>sustainability</code>, <code>accessibility</code>, <code>repo</code>.</td></tr>
             <tr><td><code>report-language</code></td><td><code>language</code></td><td><code>de</code> or <code>en</code>. Empty uses <code>language</code>; with <code>all</code> the report is in English.</td></tr>
             <tr><td><code>fail-on</code></td><td><code>never</code></td><td>When the run turns red, see <a href="#fail-on">fail-on</a>.</td></tr>
             <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Pages to visit at most.</td></tr>
-            <tr><td><code>repository</code></td><td>workspace</td><td>Folder to read lockfiles, licenses and secrets from. Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
+            <tr><td><code>repository</code></td><td>workspace</td><td>Folder with the checked-out repository (lockfiles, workflows, configs). Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
             <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from the secret <code>IPINFO_TOKEN</code>. Turns on the <a href="checks.html#LEG-EU-DSE-005">third-country check</a>, see <a href="#secrets">Secrets</a>.</td></tr>
             <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> skips the check and sends nothing.</td></tr>
             <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the host runs on green energy (sends the host name). <code>false</code> skips the <a href="checks.html#SUS-HOST-001">check</a> and sends nothing.</td></tr>

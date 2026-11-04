@@ -10,7 +10,7 @@ inputs:
     description: URL of the start page. Leave empty to scan only the repository.
     default: ""
   language:
-    description: Language of the site (de, en or all).
+    description: Language of the site (de, en, a list such as de,en, or all).
     default: de
   subscriptions:
     description: true if visitors can sign up for subscriptions (checks the cancellation button, § 312k BGB).
