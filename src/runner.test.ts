@@ -56,7 +56,7 @@ test("a broken check becomes an error and the others still run", async () => {
   const checks = [
     { id: "x/throws", rule, check: defineCheck({ run: () => { throw new Error("boom"); } }) },
     { id: "x/empty", rule, check: defineCheck({ run: () => undefined as never }) },
-    { id: "x/ok", rule, check: defineCheck({ run: () => pass("fine") }) },
+    { id: "x/ok", rule, check: defineCheck({ run: () => pass({ key: "fine" }) }) },
   ];
   const outcomes = await runChecks(checks, { web: fakeContext({}) });
   assert.deepEqual(outcomes.map((o) => o.status), ["error", "error", "pass"]);
@@ -70,7 +70,7 @@ test("a check that throws a non-Error still gets a message", async () => {
 });
 
 test("asking for an unknown concept is an error, not a silent pass", async () => {
-  const checks = [{ id: "x/typo", rule, check: defineCheck({ run: (ctx) => pass(String(ctx.says("imprnt", "x"))) }) }];
+  const checks = [{ id: "x/typo", rule, check: defineCheck({ run: (ctx) => pass({ key: String(ctx.says("imprnt", "x")) }) }) }];
   const [outcome] = await runChecks(checks, { web: fakeContext({}) });
   assert.equal(outcome.status, "error");
   assert.match(String(outcome.message), /Unknown concept "imprnt"/);

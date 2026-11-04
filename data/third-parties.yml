@@ -7,7 +7,7 @@
 #          an EU subsidiary is the contract partner, because data can reach the parent company.
 # names:   how a privacy policy would mention the vendor (default: name)
 # cookies: regular expressions for the vendor's cookie names
-# advice:  shown in the report
+# advice:  shown in the report, one text per report language (de, en)
 
 - name: Google Fonts
   hosts: [fonts.googleapis.com, fonts.gstatic.com]
@@ -15,7 +15,9 @@
   consent: required
   country: US
   names: [google fonts]
-  advice: Host the fonts yourself, for example with @fontsource. LG München I, 20.01.2022, 3 O 17493/20.
+  advice:
+    de: "Schriften selbst hosten, zum Beispiel mit @fontsource. LG München I, 20.01.2022, 3 O 17493/20."
+    en: "Host the fonts yourself, for example with @fontsource. LG München I, 20.01.2022, 3 O 17493/20."
 
 - name: Adobe Fonts
   hosts: [use.typekit.net, p.typekit.net]
@@ -23,14 +25,18 @@
   consent: required
   country: US
   names: [adobe fonts, typekit]
-  advice: Host the fonts yourself if the license allows it.
+  advice:
+    de: "Schriften selbst hosten, wenn die Lizenz es erlaubt."
+    en: "Host the fonts yourself if the license allows it."
 
 - name: Font Awesome
   hosts: [kit.fontawesome.com, use.fontawesome.com, ka-f.fontawesome.com]
   purpose: fonts
   consent: required
   country: US
-  advice: Install Font Awesome as a package and serve it from your own server.
+  advice:
+    de: "Font Awesome als Paket installieren und vom eigenen Server ausliefern."
+    en: "Install Font Awesome as a package and serve it from your own server."
 
 - name: Google Analytics
   hosts: [google-analytics.com, analytics.google.com]
@@ -59,7 +65,9 @@
   purpose: video
   consent: required
   country: US
-  advice: Show a preview image and load the video only after a click.
+  advice:
+    de: "Ein Vorschaubild zeigen und das Video erst nach einem Klick laden."
+    en: "Show a preview image and load the video only after a click."
   cookies: ['^VISITOR_INFO1_LIVE$', '^YSC$']
 
 - name: Vimeo
@@ -67,7 +75,9 @@
   purpose: video
   consent: required
   country: US
-  advice: Show a preview image and load the video only after a click.
+  advice:
+    de: "Ein Vorschaubild zeigen und das Video erst nach einem Klick laden."
+    en: "Show a preview image and load the video only after a click."
 
 - name: Google Maps
   hosts: [maps.googleapis.com, maps.gstatic.com]
@@ -75,7 +85,9 @@
   consent: required
   country: US
   names: [google maps]
-  advice: Show a static image or a link and load the map only after a click.
+  advice:
+    de: "Ein statisches Bild oder einen Link zeigen und die Karte erst nach einem Klick laden."
+    en: "Show a static image or a link and load the map only after a click."
 
 - name: Mapbox
   hosts: [mapbox.com]
@@ -89,7 +101,9 @@
   consent: required
   country: GB
   names: [openstreetmap]
-  advice: Load the map after a click, or serve tiles from your own server.
+  advice:
+    de: "Die Karte erst nach einem Klick laden oder die Kacheln vom eigenen Server ausliefern."
+    en: "Load the map after a click, or serve tiles from your own server."
 
 - name: Google (gstatic, reCAPTCHA)
   hosts: [www.gstatic.com, www.google.com, recaptcha.net]
@@ -215,21 +229,27 @@
   purpose: API and file hosting
   consent: check
   country: US
-  advice: Fetch the data at build time or on your own server.
+  advice:
+    de: "Die Daten beim Build oder auf dem eigenen Server abrufen."
+    en: "Fetch the data at build time or on your own server."
 
 - name: jsDelivr
   hosts: [jsdelivr.net]
   purpose: CDN
   consent: check
   country: PL
-  advice: Serve the files from your own server.
+  advice:
+    de: "Die Dateien vom eigenen Server ausliefern."
+    en: "Serve the files from your own server."
 
 - name: unpkg
   hosts: [unpkg.com]
   purpose: CDN
   consent: check
   country: US
-  advice: Serve the files from your own server.
+  advice:
+    de: "Die Dateien vom eigenen Server ausliefern."
+    en: "Serve the files from your own server."
 
 - name: cdnjs (Cloudflare)
   hosts: [cdnjs.cloudflare.com]
@@ -237,7 +257,9 @@
   consent: check
   country: US
   names: [cdnjs, cloudflare]
-  advice: Serve the files from your own server.
+  advice:
+    de: "Die Dateien vom eigenen Server ausliefern."
+    en: "Serve the files from your own server."
 
 - name: Google Hosted Libraries
   hosts: [ajax.googleapis.com]
@@ -245,7 +267,9 @@
   consent: check
   country: US
   names: [google]
-  advice: Serve the files from your own server.
+  advice:
+    de: "Die Dateien vom eigenen Server ausliefern."
+    en: "Serve the files from your own server."
 
 - name: jQuery CDN
   hosts: [code.jquery.com]
@@ -253,7 +277,9 @@
   consent: check
   country: US
   names: [jquery]
-  advice: Serve the files from your own server.
+  advice:
+    de: "Die Dateien vom eigenen Server ausliefern."
+    en: "Serve the files from your own server."
 
 - name: Bootstrap CDN
   hosts: [stackpath.bootstrapcdn.com, maxcdn.bootstrapcdn.com, bootstrapcdn.com]
@@ -261,7 +287,9 @@
   consent: check
   country: US
   names: [bootstrapcdn, stackpath]
-  advice: Serve the files from your own server.
+  advice:
+    de: "Die Dateien vom eigenen Server ausliefern."
+    en: "Serve the files from your own server."
 
 - name: Stripe
   hosts: [stripe.com, stripe.network]

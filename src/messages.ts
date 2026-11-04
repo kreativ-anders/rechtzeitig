@@ -32,7 +32,7 @@ export class MissingMessageError extends Error {}
 
 /** A message in `lang`. `scope` is the check id; keys not found there come from `common`. */
 export function render(m: Msg | string, scope: string, lang: string): string {
-  if (typeof m === "string") return m; // not migrated yet: plain English text
+  if (typeof m === "string") return m; // engine errors (src/runner.ts) are plain text
   const { locale, messages } = pack(lang);
   const template = messages[scope]?.[m.key] ?? messages.common?.[m.key];
   if (template === undefined) throw new MissingMessageError(`lang/${lang}.yml: messages.${scope}.${m.key} is missing`);
@@ -41,7 +41,8 @@ export function render(m: Msg | string, scope: string, lang: string): string {
   return text.replace(/\{(\w+)\}/g, (all, name: string) => {
     const value = params[name];
     if (value === undefined) return all;
-    return typeof value === "object" ? render(value, scope, lang) : String(value);
+    if (typeof value !== "object") return String(value);
+    return "key" in value ? render(value as Msg, scope, lang) : ((value as Record<string, string>)[lang] ?? (value as Record<string, string>).en);
   });
 }
 

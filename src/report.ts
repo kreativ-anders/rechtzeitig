@@ -46,7 +46,13 @@ export const where = (o: Outcome, lang: UiLanguage) => o.details.map((d) => rend
 
 /** Parameters can hold text from the scanned site; one line each, like every other output. */
 const cleanParams = (params?: Params): Params | undefined =>
-  params && Object.fromEntries(Object.entries(params).map(([k, v]) => [k, typeof v === "string" ? oneLine(v) : typeof v === "number" ? v : { key: v.key, params: cleanParams(v.params) }]));
+  params && Object.fromEntries(Object.entries(params).map(([k, v]) => [k, cleanValue(v)]));
+const cleanValue = (v: Params[string]): Params[string] => {
+  if (typeof v === "string") return oneLine(v);
+  if (typeof v === "number") return v;
+  if ("key" in v) return { key: v.key, params: cleanParams(v.params as Params | undefined) };
+  return Object.fromEntries(Object.entries(v).map(([lang, text]) => [lang, oneLine(text)])) as typeof v;
+};
 
 export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">, lang: UiLanguage = "en"): Findings {
   return {

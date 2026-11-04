@@ -1,6 +1,7 @@
 // Everything a check needs. Checks import from this file and nothing else.
 
 import { siteOf } from "./text.ts";
+import type { UiLanguage } from "./rules.ts";
 
 export { loadYaml } from "./data.ts";
 export { MANIFESTS } from "./repo/lockfiles.ts";
@@ -8,8 +9,14 @@ export { MANIFESTS } from "./repo/lockfiles.ts";
 export const STATUSES = ["pass", "warn", "fail", "info", "skip"] as const;
 export type Status = (typeof STATUSES)[number];
 
-/** Parameters of a message. A Msg as value is rendered in the same language (for example a page name). */
-export type Params = Record<string, string | number | Msg>;
+/** A text in every report language, from data/*.yml (for example a vendor's advice). */
+export type Localized = Record<UiLanguage, string>;
+
+/**
+ * Parameters of a message. A Msg as value is rendered in the same language (for example a page name),
+ * a Localized picks the report language.
+ */
+export type Params = Record<string, string | number | Msg | Localized>;
 
 /** A sentence by key; the words are in lang/<code>.yml `messages.<check id>` or `messages.common`. */
 export interface Msg {
@@ -30,9 +37,9 @@ export interface Finding {
 
 export interface Result {
   status: Status;
-  /** A Msg; plain English text only in checks not yet moved to message keys. */
-  message: Msg | string;
-  details?: Array<Finding | string>;
+  /** Never a sentence: the words are in lang/<code>.yml, so the report can use any language. */
+  message: Msg;
+  details?: Finding[];
 }
 
 export const msg = (key: string, params?: Params): Msg => ({ key, params });
@@ -53,11 +60,11 @@ export const defineCheck = (check: Omit<Check, "repo">): Check => ({ ...check, r
 export const defineRepoCheck = (check: Omit<RepoCheck, "repo">): RepoCheck => ({ ...check, repo: true });
 
 type Details = Result["details"];
-export const pass = (message: Msg | string, details?: Details): Result => ({ status: "pass", message, details });
-export const warn = (message: Msg | string, details?: Details): Result => ({ status: "warn", message, details });
-export const fail = (message: Msg | string, details?: Details): Result => ({ status: "fail", message, details });
-export const info = (message: Msg | string, details?: Details): Result => ({ status: "info", message, details });
-export const skip = (message: Msg | string, details?: Details): Result => ({ status: "skip", message, details });
+export const pass = (message: Msg, details?: Details): Result => ({ status: "pass", message, details });
+export const warn = (message: Msg, details?: Details): Result => ({ status: "warn", message, details });
+export const fail = (message: Msg, details?: Details): Result => ({ status: "fail", message, details });
+export const info = (message: Msg, details?: Details): Result => ({ status: "info", message, details });
+export const skip = (message: Msg, details?: Details): Result => ({ status: "skip", message, details });
 
 /** GitHub Actions workflow files, for `repo.find(WORKFLOWS)`. */
 export const WORKFLOWS = /^\.github\/workflows\/.*\.ya?ml$/;
@@ -316,7 +323,8 @@ export interface Vendor {
   country?: string;
   /** How a privacy policy would name this vendor (normalized). */
   names: string[];
-  advice?: string;
+  /** What to do instead, per report language. */
+  advice?: Localized;
 }
 
 export interface ScanContext {
