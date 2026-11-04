@@ -41,7 +41,7 @@ jobs:
         with:
           persist-credentials: false
       # Pinned to a release. Dependabot can move the pin: https://rechtzeitig.dev/workflow.html#updates
-      - uses: kreativ-anders/rechtzeitig@4b4b01cd3565c6e4a8e207398f9bc7994253c76c # v0.1.0
+      - uses: kreativ-anders/rechtzeitig@be90f5644d424f63480fb882390a13ee33496aff # v0.2.0
         with:
           url: ${{ inputs.url }}
           language: ${{ inputs.language }}
