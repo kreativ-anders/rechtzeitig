@@ -76,3 +76,10 @@ test("findings carry the message key and clean parameters for tools", () => {
   assert.equal(f.key, "no_link");
   assert.deepEqual(f.params, { page: { key: "page_imprint", params: undefined }, where: "a ::x" });
 });
+
+test("the step summary's own wording follows the report language", () => {
+  const de = toMarkdown({ ...report("m", []), language: "de" });
+  assert.match(de, /\| \| Prüfung \| Schwere \| Ergebnis \|/);
+  assert.match(de, /_Technische Risikohinweise .* Keine Rechtsberatung\._/);
+  assert.match(toMarkdown(report("m", [])), /\| \| Check \| Severity \| Result \|/);
+});

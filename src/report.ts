@@ -63,25 +63,8 @@ export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">,
   };
 }
 
-// Report wording. Titles, legal bases and fix hints come from each rule.yml; messages from the checks are English.
-const UI = {
-  en: {
-    check: "Check", severity: "Severity", result: "Result", details: "Details", scan: "Scan", fix: "Fix",
-    pages: "Pages", language: "Language", subscriptions: "Subscriptions", sales: "Sales", yes: "yes", no: "no",
-    visitor: "Visitor: fresh browser, no clicks, no consent given", runner: "GitHub-hosted runner (US data center)",
-    repository: (files: number, components: number, lockfiles: number, osv: string) =>
-      `Repository: ${files} files, ${components} components from ${lockfiles} lockfile(s), OSV: ${osv}`,
-    disclaimer: "Technical risk hints with the place they were found and the legal basis they relate to. Not legal advice.",
-  },
-  de: {
-    check: "Prüfung", severity: "Schwere", result: "Ergebnis", details: "Details", scan: "Scan", fix: "Behebung",
-    pages: "Seiten", language: "Sprache", subscriptions: "Abos", sales: "Verkauf", yes: "ja", no: "nein",
-    visitor: "Besucher: frischer Browser, keine Klicks, keine Einwilligung", runner: "GitHub-Runner (Rechenzentrum in den USA)",
-    repository: (files: number, components: number, lockfiles: number, osv: string) =>
-      `Repository: ${files} Dateien, ${components} Komponenten aus ${lockfiles} Lockfile(s), OSV: ${osv}`,
-    disclaimer: "Technische Risikohinweise mit Fundstelle und Bezug zur Rechtsgrundlage. Keine Rechtsberatung.",
-  },
-} satisfies Record<UiLanguage, unknown>;
+// Report wording comes from lang/<code>.yml `messages.report`; rule titles, legal bases and fix hints from each rule.yml.
+const ui = (lang: UiLanguage) => (key: string, params?: Params) => render({ key, params }, "report", lang);
 
 export interface Report {
   web?: ScanContext;
@@ -119,7 +102,7 @@ const sorted = (outcomes: Outcome[]) =>
 const open = (o: Outcome) => o.status === "fail" || o.status === "warn" || o.status === "info";
 
 export function toMarkdown(r: Report): string {
-  const t = UI[r.language];
+  const t = ui(r.language);
   const lang = r.language;
   const list = sorted(r.outcomes);
   const lines = [
@@ -127,7 +110,7 @@ export function toMarkdown(r: Report): string {
     "",
     summaryLine(r, true),
     "",
-    `| | ${t.check} | ${t.severity} | ${t.result} |`,
+    `| | ${t("check")} | ${t("severity")} | ${t("result")} |`,
     "|---|---|---|---|",
     ...list.map((o) => {
       const law = o.rule.legal_basis?.[lang];
@@ -137,24 +120,24 @@ export function toMarkdown(r: Report): string {
   ];
   const withDetails = list.filter((o) => o.details.length || open(o));
   if (withDetails.length) {
-    lines.push(`### ${t.details}`, "");
+    lines.push(`### ${t("details")}`, "");
     for (const o of withDetails) {
-      const fix = open(o) ? [`**${t.fix}:** ${o.rule.fix_hint[lang]}`, ""] : [];
+      const fix = open(o) ? [`**${t("fix")}:** ${o.rule.fix_hint[lang]}`, ""] : [];
       lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...fix, ...where(o, lang).map((d) => `- ${md(d)}`), "", "</details>", "");
     }
   }
-  lines.push(`### ${t.scan}`, "");
+  lines.push(`### ${t("scan")}`, "");
   if (r.web) {
     const w = r.web;
     lines.push(
-      `- ${t.pages}: ${w.pages.map((p) => md(w.short(p.url))).join(", ")}`,
-      `- ${t.language}: ${w.languages.join(", ")} · ${t.subscriptions}: ${w.subscriptions ? t.yes : t.no} · ${t.sales}: ${w.sales ? t.yes : t.no}`,
-      `- ${t.visitor}${r.onGitHub ? `, ${t.runner}` : ""}`,
+      `- ${t("pages")}: ${w.pages.map((p) => md(w.short(p.url))).join(", ")}`,
+      `- ${t("language")}: ${w.languages.join(", ")} · ${t("subscriptions")}: ${t(w.subscriptions ? "yes" : "no")} · ${t("sales")}: ${t(w.sales ? "yes" : "no")}`,
+      `- ${t("visitor")}${r.onGitHub ? `, ${t("runner")}` : ""}`,
     );
   }
-  if (r.repo) lines.push(`- ${t.repository(r.repo.files.length, r.repo.components.length, r.repo.lockfiles.length, r.repo.osv)}`);
+  if (r.repo) lines.push(`- ${t("repository", { files: r.repo.files.length, components: r.repo.components.length, lockfiles: r.repo.lockfiles.length, osv: md(r.repo.osv) })}`);
   for (const w of r.warnings ?? []) lines.push(`- ⚠️ ${md(w)}`);
-  lines.push(`- rechtzeitig ${r.version} · ${r.startedAt}`, "", `_${t.disclaimer}_`, "");
+  lines.push(`- rechtzeitig ${r.version} · ${r.startedAt}`, "", `_${t("disclaimer")}_`, "");
   return lines.join("\n");
 }
 

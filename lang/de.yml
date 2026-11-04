@@ -117,6 +117,23 @@ messages:
     empty: "{page}: {where} ist fast leer."
     no_page: "{page}: keine Seite zum Lesen (siehe {check})."
     found: "{page} gefunden: {where}."
+  report:
+    check: "Prüfung"
+    severity: "Schwere"
+    result: "Ergebnis"
+    details: "Details"
+    scan: "Scan"
+    fix: "Behebung"
+    pages: "Seiten"
+    language: "Sprache"
+    subscriptions: "Abos"
+    sales: "Verkauf"
+    "yes": "ja"
+    "no": "nein"
+    visitor: "Besucher: frischer Browser, keine Klicks, keine Einwilligung"
+    runner: "GitHub-Runner (Rechenzentrum in den USA)"
+    repository: "Repository: {files} Dateien, {components} Komponenten aus {lockfiles} Lockfile(s), OSV: {osv}"
+    disclaimer: "Technische Risikohinweise mit Fundstelle und Bezug zur Rechtsgrundlage. Keine Rechtsberatung."
   # ---------- legal
   legal/cancellation-button: {}
   legal/form-privacy-notice: {}
