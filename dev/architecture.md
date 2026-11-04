@@ -45,6 +45,8 @@ Checks return message keys with parameters, not sentences. `src/messages.ts` ren
 
 `report-visibility` decides what of this the run shows. `auto` reads `repository.private` and `repository.visibility` from the event payload (`GITHUB_EVENT_PATH`): private or internal gives `full`, anything else, a missing field included, gives `counts`. Outside GitHub it is `full`. `counts` prints `toCounts` to the log and the summary and writes no files, so the action uploads no artifact; `none` prints one line. The report JSON is the interface for anything built on top of rechtzeitig.
 
+`--sarif <file>` (input `sarif-upload`) writes `toSarif` from `src/sarif.ts`, independent of `report-visibility`, to `$RUNNER_TEMP/sarif/`, outside the artifact folder. The action then uploads it with `github/codeql-action/upload-sarif` (category `rechtzeitig`, `continue-on-error`). Findings with a file point to file and line; the rest, website findings included, get one alert per rule at the workflow file from `GITHUB_WORKFLOW_REF`. Fingerprints leave out the line, so an alert survives moved code.
+
 ## Layout
 
 | Path | Content |

@@ -77,6 +77,7 @@
             <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the site's host runs on green energy. Sends only the host name. <code>false</code> sends nothing there and the <a href="checks.html#SUS-HOST-001">green hosting check</a> is skipped.</td></tr>
             <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>Stops the scan when Chrome cannot start with its sandbox. <code>false</code> scans without it, see <a href="#safe">Safe use</a>.</td></tr>
             <tr><td><code>report-visibility</code></td><td><code>auto</code></td><td>How much of the report the run shows: <code>auto</code>, <code>full</code>, <code>counts</code> or <code>none</code>, see <a href="#report">The report</a>.</td></tr>
+            <tr><td><code>sarif-upload</code></td><td><code>false</code></td><td>Opt-in. <code>true</code> also uploads the findings as SARIF to the repository's Security tab, see <a href="#security-tab">Findings in the Security tab</a>.</td></tr>
             <tr><td><code>retention-days</code></td><td><code>7</code></td><td>Days GitHub keeps the report artifact, see <a href="#report">The report</a>.</td></tr>
           </tbody>
         </table></div>
@@ -152,6 +153,14 @@
         </table></div>
         <p>Keep the SBOM with each release. It shows which versions you shipped and that you checked them.</p>
         <p class="note">On a public repository the report is public too, so <code>auto</code> shows only counts there. With <code>report-visibility: full</code>, anyone who can see the repository can read the summary page, the log and the annotations, and anyone signed in to GitHub can download the artifact, including the list of your dependencies and where findings were found. Secret values are redacted, their file and line are not. GitHub deletes the artifact after <code>retention-days</code> (default 7) and the summary and log after the log retention set in the repository settings (default 90 days). To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout of your code.</p>
+        <h3 id="security-tab">Findings in the Security tab</h3>
+        <p>With <code>sarif-upload: true</code>, rechtzeitig writes its findings as a SARIF file and hands it to GitHub code scanning. They then show as alerts in the repository's <b>Security</b> tab, which only people with write access can see, even on a public repository. Together with <code>report-visibility: auto</code>, a public repository shows only counts on the run page and the details in the Security tab. GitHub keeps the alerts across runs, closes them when a finding is gone, and lets you dismiss one with a reason.</p>
+        <p>This only uses GitHub's code scanning to show the results. rechtzeitig does its own checks, it runs no other scanner. A finding in a file of the repository points to that file and line. A website finding has no file, so it points to the workflow file and names the page.</p>
+        <p>The job needs this permission:</p>
+        <pre><code>permissions:
+  contents: read
+  security-events: write</code></pre>
+        <p>Code scanning is free on public repositories; private ones also need GitHub Code Security. In pull requests, GitHub shows alerts on changed lines to everyone who can read the pull request. A failed upload, for example without the permission or from a fork, shows on the step but does not fail the job.</p>
       </section>
 
       <section id="visit">
@@ -162,7 +171,7 @@
 
       <section id="data">
         <h2><span class="par">§ 7</span>Data that leaves the runner</h2>
-        <p>Besides visiting your website, rechtzeitig sends data to three services. Nothing else leaves the runner.</p>
+        <p>Besides visiting your website, rechtzeitig sends data to three services. With <code>sarif-upload: true</code>, the findings also go to GitHub code scanning of your own repository. Nothing else leaves the runner.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>

@@ -1,12 +1,13 @@
 // Command line entry. Used by action.yml and for local runs:
 //   node src/main.ts --url https://example.de --repo . --language de
 
-import { appendFileSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
 import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
+import { toSarif, workflowFile } from "./sarif.ts";
 import { loadChecks, OUTCOMES, runChecks, selectModules, type OutcomeStatus } from "./runner.ts";
 import { LANGUAGES, SWITCHES, switchSpec, type Switch, type UiLanguage } from "./rules.ts";
 import { errorMessage } from "./text.ts";
@@ -37,6 +38,7 @@ const { values, positionals } = parseArgs({
     "green-hosting": { type: "string", default: "true" },
     "require-sandbox": { type: "string", default: "true" },
     "report-visibility": { type: "string", default: "auto" },
+    sarif: { type: "string", default: "" },
     out: { type: "string", default: "rechtzeitig-report" },
   },
 });
@@ -95,6 +97,13 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
 const outcomes = await runChecks(checks, { web, repo }, enabled);
 const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub, language, warnings };
 const log = (text: string) => console.log(onGitHub ? withoutCommands(text) : text);
+// Scanned repository's folder relative to the workspace, for annotations and SARIF.
+const base = repo ? relative(process.env.GITHUB_WORKSPACE ?? process.cwd(), resolve(repo.root)).split(sep).join("/") : "";
+// sarif-upload is opt-in and independent of report-visibility: the file goes to the Security tab, not the artifact.
+if (values.sarif) {
+  mkdirSync(dirname(values.sarif), { recursive: true });
+  writeFileSync(values.sarif, JSON.stringify(toSarif(report, { base, anchor: workflowFile() }), null, 2));
+}
 let summary: string | undefined;
 if (visibility === "full") {
   const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) } }, language);
@@ -103,10 +112,7 @@ if (visibility === "full") {
   if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));
   log(toText(report));
   // Annotations for findings in files, outside the stop-commands block above; src/report.ts escapes every value.
-  if (onGitHub && repo) {
-    const base = relative(process.env.GITHUB_WORKSPACE ?? process.cwd(), resolve(repo.root)).split(sep).join("/");
-    for (const line of toAnnotations(report, base)) console.log(line);
-  }
+  if (onGitHub && repo) for (const line of toAnnotations(report, base)) console.log(line);
   summary = toMarkdown(report, { findingsOnly: true });
 } else if (visibility === "counts") {
   // No files, so no artifact: the SBOM lists vulnerabilities, the findings their places.

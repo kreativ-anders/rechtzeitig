@@ -88,3 +88,18 @@ test("report-visibility full and none override the repository's visibility", () 
   assert.deepEqual(none.files, []);
   assert.match(onGitHub({ repository: { private: true } }, "--report-visibility", "counts").summary, /Details hidden by report-visibility: counts/);
 });
+
+test("sarif writes the findings with places even when report-visibility hides them", () => {
+  const dir = mkdtempSync(join(tmpdir(), "rechtzeitig-sarif-"));
+  try {
+    const file = join(dir, "sarif", "rechtzeitig.sarif");
+    const r = onGitHub({ repository: { private: false } }, "--sarif", file);
+    assert.deepEqual(r.files, []);
+    assert.doesNotMatch(r.log, /config\.js/);
+    const sarif = JSON.parse(readFileSync(file, "utf8"));
+    assert.ok(sarif.runs[0].results.some((x: { locations?: Array<{ physicalLocation: { artifactLocation: { uri: string } } }> }) =>
+      x.locations?.[0].physicalLocation.artifactLocation.uri === "repo/config.js"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

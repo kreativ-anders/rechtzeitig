@@ -106,8 +106,9 @@ Free, in this repository:
 - Every check, the SBOM, the report as Markdown and JSON, `fail-on`, annotations, step summary.
 - Keeping findings private (`report-visibility`). Nobody pays for their weaknesses not being published.
 - A stable, versioned report JSON. It is the interface to the hosted service.
+- Findings as SARIF in GitHub's Security tab (`sarif-upload`). For a single public repository this already gives new, fixed and dismissed findings, so the paid service does not compete with it.
 
-Paid, a hosted service in its own repository:
+Paid, a hosted service in its own repository, for what the Security tab does not cover: private repositories without GitHub Code Security, many sites at once, sites without GitHub, and readers without a GitHub account.
 
 - Dashboard with the history of runs: trends, what is new, what was fixed.
 - One view over many sites and repositories, for agencies with client projects.

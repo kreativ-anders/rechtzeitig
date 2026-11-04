@@ -30,6 +30,8 @@ on:
 
 permissions:
   contents: read
+  # Only for sarif-upload: true.
+  # security-events: write
 
 jobs:
   scan:
@@ -66,5 +68,8 @@ jobs:
           # Optional: how much of the report the run shows (auto, full, counts, none).
           # auto = full for private repositories, only counts for public ones, since anyone can read their runs.
           # report-visibility: auto
+          # Optional opt-in: true also uploads the findings as SARIF to the Security tab (code scanning alerts),
+          # visible only to people with write access. Needs "security-events: write" under permissions.
+          # sarif-upload: "false"
           # Optional: days to keep the report artifact. On public repositories anyone signed in can download it.
           # retention-days: "7"
