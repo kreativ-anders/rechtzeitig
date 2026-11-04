@@ -179,22 +179,100 @@ messages:
       other: "All {count} services are mentioned in the privacy policy."
 
   # ---------- security
-  security/cookie-flags: {}
-  security/email-dns: {}
-  security/error-disclosure: {}
-  security/exposed-files: {}
-  security/headers: {}
-  security/host-variants: {}
-  security/https: {}
-  security/mixed-content: {}
-  security/tls: {}
+  security/cookie-flags:
+    none: "No cookies set without login."
+    secure_samesite: "Secure (required with SameSite=None)"
+    two_flags: "{first}, {second}"
+    missing: "{name}: missing {flags}"
+    missing_foreign: "{name}: missing {flags} (set by another site, the site cannot change it)"
+    lack_flags:
+      one: "{count} of {total} cookies lacks security flags."
+      other: "{count} of {total} cookies lack security flags."
+    only_foreign: "Only cookies of other sites lack security flags."
+    all_set:
+      one: "{count} cookie has the expected flags."
+      other: "All {count} cookies have the expected flags."
+  security/email-dns:
+    not_checked: "DNS was not checked."
+    no_spf: "No SPF record. List your mail servers."
+    no_spf_no_mail: 'No SPF record. The domain sends no mail, so publish "v=spf1 -all".'
+    open_spf: 'SPF allows every server to send mail ("{spf}"). End it with "-all" or "~all".'
+    no_dmarc: 'No DMARC record at _dmarc.{domain}. Start with "v=DMARC1; p=quarantine".'
+    dmarc_none: "DMARC only monitors (p=none). Mail that fails checks is still delivered."
+    spoofable: "Others can send email in the name of {domain}."
+    set: "SPF and DMARC are set."
+  security/error-disclosure:
+    leaks: "Error pages show technical details that help attackers."
+    versions: "Response headers reveal software and versions."
+    none: "Error pages and headers reveal no technical details."
+  security/exposed-files:
+    exposed:
+      one: "{count} private file can be downloaded. Remove it or block it in the web server."
+      other: "{count} private files can be downloaded. Remove them or block them in the web server."
+    none:
+      one: "The {count} common private path checked (.env, .git, backups, phpinfo) is not public."
+      other: "None of {count} common private paths (.env, .git, backups, phpinfo) is public."
+  security/headers:
+    frame: "X-Frame-Options or CSP frame-ancestors"
+    frame_meta: "X-Frame-Options or CSP frame-ancestors (browsers ignore frame-ancestors in <meta>)"
+    from_meta: "Set as <meta>: {names}"
+    missing:
+      one: "{count} security header missing."
+      other: "{count} security headers missing."
+    all_set: "All common security headers are set."
+  security/host-variants:
+    no_variant: "The other address variant does not exist."
+    no_answer: "{host} exists in DNS but does not answer over HTTPS ({error})."
+    http_error: "{host} answers with HTTP {status}."
+    no_redirect: "{host} shows the site without redirecting to {target}."
+    redirects: "{host} redirects to {target}."
+  security/https:
+    no_https: "The site is not served over HTTPS."
+    not_checked: "Plain HTTP was not checked."
+    no_http: "Served over HTTPS. Plain HTTP is not offered."
+    redirects: "Served over HTTPS. Plain HTTP redirects to HTTPS."
+    no_redirect: "Plain HTTP answers with {status} instead of redirecting to HTTPS."
+  security/mixed-content:
+    no_https: "The site does not use HTTPS (see security/https)."
+    on_page: "{url} on {page}"
+    insecure:
+      one: "{count} resource loads over plain HTTP."
+      other: "{count} resources load over plain HTTP."
+    all_https: "All resources load over HTTPS."
+  security/tls:
+    none: "No TLS connection to check."
+    failed: "TLS connection failed: {error}"
+    untrusted: "The certificate is not trusted."
+    untrusted_error: "The certificate is not trusted: {error}"
+    outdated: "The server uses {protocol}, which is outdated. Use TLS 1.2 or 1.3."
+    expires:
+      one: "The certificate expires in {count} day, on {date}."
+      other: "The certificate expires in {count} days, on {date}."
+    valid: "{protocol}, certificate valid until {date}."
 
   # ---------- accessibility
-  accessibility/page-language: {}
+  accessibility/page-language:
+    missing: "The start page has no <html lang> attribute. Screen readers then have to guess the language."
+    mismatch: 'The page declares lang="{lang}", but the scan used {languages}. Pick the matching language when you start the scan.'
+    declared: 'The page declares lang="{lang}".'
 
   # ---------- sustainability
-  sustainability/content-without-js: {}
-  sustainability/legal-pages-without-js: {}
+  sustainability/content-without-js:
+    shows:
+      one: "Without JavaScript the start page shows {shown} of {count} character."
+      other: "Without JavaScript the start page shows {shown} of {count} characters."
+    shows_only:
+      one: "Without JavaScript the start page shows only {shown} of {count} character."
+      other: "Without JavaScript the start page shows only {shown} of {count} characters."
+    render_html: "Render content as HTML on the server or at build time. It then works for every visitor and loads faster."
+  sustainability/legal-pages-without-js:
+    label_imprint: "Imprint"
+    label_privacy: "Privacy policy"
+    link_needs_js: "{page}: the link only appears with JavaScript."
+    no_text: "{page}: {url} shows no text without JavaScript."
+    no_links: "No imprint or privacy policy link found (see legal/*)."
+    needs_js: "Mandatory information needs JavaScript. Visitors without it, and many crawlers, cannot find it."
+    readable: "Both are linked and readable without JavaScript."
 
   # ---------- repo
   repo/actions-pinning: {}

@@ -1,13 +1,13 @@
-import { defineCheck, info, pass, skip, warn } from "../../../src/sdk.ts";
+import { defineCheck, info, msg, pass, skip, warn } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
     const v = ctx.variant;
-    if (!v) return skip("The other address variant does not exist.");
+    if (!v) return skip(msg("no_variant"));
     const host = new URL(v.url).hostname;
-    if ("error" in v) return warn(`${host} exists in DNS but does not answer over HTTPS (${v.error}).`);
-    if (v.status >= 400) return warn(`${host} answers with HTTP ${v.status}.`);
-    if (new URL(v.finalUrl).hostname === host) return info(`${host} shows the site without redirecting to ${new URL(ctx.url).hostname}.`);
-    return pass(`${host} redirects to ${new URL(v.finalUrl).hostname}.`);
+    if ("error" in v) return warn(msg("no_answer", { host, error: v.error }));
+    if (v.status >= 400) return warn(msg("http_error", { host, status: v.status }));
+    if (new URL(v.finalUrl).hostname === host) return info(msg("no_redirect", { host, target: new URL(ctx.url).hostname }));
+    return pass(msg("redirects", { host, target: new URL(v.finalUrl).hostname }));
   },
 });

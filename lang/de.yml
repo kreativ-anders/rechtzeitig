@@ -198,22 +198,100 @@ messages:
       other: "Alle {count} genutzten Dienste stehen in der Datenschutzerklärung."
 
   # ---------- security
-  security/cookie-flags: {}
-  security/email-dns: {}
-  security/error-disclosure: {}
-  security/exposed-files: {}
-  security/headers: {}
-  security/host-variants: {}
-  security/https: {}
-  security/mixed-content: {}
-  security/tls: {}
+  security/cookie-flags:
+    none: "Ohne Login werden keine Cookies gesetzt."
+    secure_samesite: "Secure (Pflicht bei SameSite=None)"
+    two_flags: "{first}, {second}"
+    missing: "{name}: ohne {flags}"
+    missing_foreign: "{name}: ohne {flags} (von einer anderen Website gesetzt, die Website kann das nicht ändern)"
+    lack_flags:
+      one: "{count} von {total} Cookies ohne Sicherheits-Flags."
+      other: "{count} von {total} Cookies ohne Sicherheits-Flags."
+    only_foreign: "Nur Cookies anderer Websites haben keine Sicherheits-Flags."
+    all_set:
+      one: "{count} Cookie hat die erwarteten Flags."
+      other: "Alle {count} Cookies haben die erwarteten Flags."
+  security/email-dns:
+    not_checked: "DNS wurde nicht geprüft."
+    no_spf: "Kein SPF-Eintrag. Die eigenen Mailserver eintragen."
+    no_spf_no_mail: 'Kein SPF-Eintrag. Die Domain versendet keine Mails, also "v=spf1 -all" veröffentlichen.'
+    open_spf: 'SPF erlaubt jedem Server, Mails zu senden ("{spf}"). Mit "-all" oder "~all" abschließen.'
+    no_dmarc: 'Kein DMARC-Eintrag unter _dmarc.{domain}. Mit "v=DMARC1; p=quarantine" beginnen.'
+    dmarc_none: "DMARC beobachtet nur (p=none). Mails, die die Prüfung nicht bestehen, werden trotzdem zugestellt."
+    spoofable: "Andere können E-Mails im Namen von {domain} versenden."
+    set: "SPF und DMARC sind gesetzt."
+  security/error-disclosure:
+    leaks: "Fehlerseiten zeigen technische Details, die Angreifern helfen."
+    versions: "Antwort-Header verraten Software und Versionen."
+    none: "Fehlerseiten und Header verraten keine technischen Details."
+  security/exposed-files:
+    exposed:
+      one: "{count} private Datei lässt sich herunterladen. Entfernen oder im Webserver sperren."
+      other: "{count} private Dateien lassen sich herunterladen. Entfernen oder im Webserver sperren."
+    none:
+      one: "Der geprüfte übliche private Pfad (.env, .git, Backups, phpinfo) ist nicht öffentlich."
+      other: "Keiner von {count} üblichen privaten Pfaden (.env, .git, Backups, phpinfo) ist öffentlich."
+  security/headers:
+    frame: "X-Frame-Options oder CSP frame-ancestors"
+    frame_meta: "X-Frame-Options oder CSP frame-ancestors (Browser ignorieren frame-ancestors in <meta>)"
+    from_meta: "Als <meta> gesetzt: {names}"
+    missing:
+      one: "{count} Sicherheits-Header fehlt."
+      other: "{count} Sicherheits-Header fehlen."
+    all_set: "Alle üblichen Sicherheits-Header sind gesetzt."
+  security/host-variants:
+    no_variant: "Die andere Adressvariante gibt es nicht."
+    no_answer: "{host} steht im DNS, antwortet aber nicht über HTTPS ({error})."
+    http_error: "{host} antwortet mit HTTP {status}."
+    no_redirect: "{host} zeigt die Website, ohne auf {target} weiterzuleiten."
+    redirects: "{host} leitet auf {target} weiter."
+  security/https:
+    no_https: "Die Website wird nicht über HTTPS ausgeliefert."
+    not_checked: "Unverschlüsseltes HTTP wurde nicht geprüft."
+    no_http: "Über HTTPS ausgeliefert. Unverschlüsseltes HTTP wird nicht angeboten."
+    redirects: "Über HTTPS ausgeliefert. Unverschlüsseltes HTTP leitet auf HTTPS weiter."
+    no_redirect: "Unverschlüsseltes HTTP antwortet mit {status}, statt auf HTTPS weiterzuleiten."
+  security/mixed-content:
+    no_https: "Die Website nutzt kein HTTPS (siehe security/https)."
+    on_page: "{url} auf {page}"
+    insecure:
+      one: "{count} Ressource lädt über unverschlüsseltes HTTP."
+      other: "{count} Ressourcen laden über unverschlüsseltes HTTP."
+    all_https: "Alle Ressourcen laden über HTTPS."
+  security/tls:
+    none: "Keine TLS-Verbindung zum Prüfen."
+    failed: "TLS-Verbindung fehlgeschlagen: {error}"
+    untrusted: "Dem Zertifikat wird nicht vertraut."
+    untrusted_error: "Dem Zertifikat wird nicht vertraut: {error}"
+    outdated: "Der Server nutzt das veraltete {protocol}. TLS 1.2 oder 1.3 verwenden."
+    expires:
+      one: "Das Zertifikat läuft in {count} Tag ab, am {date}."
+      other: "Das Zertifikat läuft in {count} Tagen ab, am {date}."
+    valid: "{protocol}, Zertifikat gültig bis {date}."
 
   # ---------- accessibility
-  accessibility/page-language: {}
+  accessibility/page-language:
+    missing: "Die Startseite hat kein Attribut <html lang>. Screenreader müssen die Sprache dann raten."
+    mismatch: 'Die Seite gibt lang="{lang}" an, der Scan nutzte aber {languages}. Beim Start des Scans die passende Sprache wählen.'
+    declared: 'Die Seite gibt lang="{lang}" an.'
 
   # ---------- sustainability
-  sustainability/content-without-js: {}
-  sustainability/legal-pages-without-js: {}
+  sustainability/content-without-js:
+    shows:
+      one: "Ohne JavaScript zeigt die Startseite {shown} von {count} Zeichen."
+      other: "Ohne JavaScript zeigt die Startseite {shown} von {count} Zeichen."
+    shows_only:
+      one: "Ohne JavaScript zeigt die Startseite nur {shown} von {count} Zeichen."
+      other: "Ohne JavaScript zeigt die Startseite nur {shown} von {count} Zeichen."
+    render_html: "Inhalte auf dem Server oder beim Build als HTML erzeugen. Dann funktionieren sie für alle Besucher und laden schneller."
+  sustainability/legal-pages-without-js:
+    label_imprint: "Impressum"
+    label_privacy: "Datenschutzerklärung"
+    link_needs_js: "{page}: der Link erscheint nur mit JavaScript."
+    no_text: "{page}: {url} zeigt ohne JavaScript keinen Text."
+    no_links: "Kein Link zu Impressum oder Datenschutzerklärung gefunden (siehe legal/*)."
+    needs_js: "Pflichtangaben brauchen JavaScript. Besucher ohne JavaScript und viele Crawler finden sie nicht."
+    readable: "Beide sind verlinkt und ohne JavaScript lesbar."
 
   # ---------- repo
   repo/actions-pinning: {}

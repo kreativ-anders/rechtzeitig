@@ -1,12 +1,10 @@
-import { defineCheck, fail, pass } from "../../../src/sdk.ts";
+import { defineCheck, fail, msg, pass } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
     const files = ctx.probes.filter((p) => p.kind === "file");
     const exposed = files.filter((p) => p.exposed);
-    if (exposed.length) {
-      return fail(`${exposed.length} private file(s) can be downloaded. Remove them or block them in the web server.`, exposed.map((p) => p.path));
-    }
-    return pass(`None of ${files.length} common private paths (.env, .git, backups, phpinfo) is public.`);
+    if (exposed.length) return fail(msg("exposed", { count: exposed.length }), exposed.map((p) => ({ text: p.path })));
+    return pass(msg("none", { count: files.length }));
   },
 });

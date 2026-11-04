@@ -1,16 +1,14 @@
-import { defineCheck, fail, pass, skip } from "../../../src/sdk.ts";
+import { defineCheck, fail, msg, pass, skip } from "../../../src/sdk.ts";
 
 const REDIRECTS = new Set([301, 302, 303, 307, 308]);
 
 export default defineCheck({
   run(ctx) {
-    if (!ctx.https) return fail("The site is not served over HTTPS.");
+    if (!ctx.https) return fail(msg("no_https"));
     const http = ctx.http;
-    if (!http) return skip("Plain HTTP was not checked.");
-    if ("error" in http) return pass("Served over HTTPS. Plain HTTP is not offered.");
-    if (REDIRECTS.has(http.status) && http.location.startsWith("https:")) {
-      return pass("Served over HTTPS. Plain HTTP redirects to HTTPS.");
-    }
-    return fail(`Plain HTTP answers with ${http.status} instead of redirecting to HTTPS.`);
+    if (!http) return skip(msg("not_checked"));
+    if ("error" in http) return pass(msg("no_http"));
+    if (REDIRECTS.has(http.status) && http.location.startsWith("https:")) return pass(msg("redirects"));
+    return fail(msg("no_redirect", { status: http.status }));
   },
 });
