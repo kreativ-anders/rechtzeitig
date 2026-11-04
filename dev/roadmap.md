@@ -4,11 +4,6 @@ rechtzeitig is a CI tool for technical decision makers. The repository scan is t
 
 Items are listed in order of priority.
 
-## Next: repository settings
-
-- The OpenSSF Scorecard action.
-- `CODEOWNERS`.
-
 ## Next: hardening
 
 Open points from the audit of 2026-11-03, after the fixes.
