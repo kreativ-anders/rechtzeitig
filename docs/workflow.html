@@ -156,7 +156,7 @@
         <h3 id="security-tab">Findings in the Security tab</h3>
         <p>With <code>sarif-upload: true</code>, rechtzeitig writes its findings as a SARIF file and hands it to GitHub code scanning. They then show as alerts in the repository's <b>Security</b> tab, which only people with write access can see, even on a public repository. Together with <code>report-visibility: auto</code>, a public repository shows only counts on the run page and the details in the Security tab. GitHub keeps the alerts across runs, closes them when a finding is gone, and lets you dismiss one with a reason.</p>
         <p>This only uses GitHub's code scanning to show the results. rechtzeitig does its own checks, it runs no other scanner. A finding in a file of the repository points to that file and line. A website finding has no file, so it points to the workflow file and names the page.</p>
-        <p>The job needs this permission:</p>
+        <p>In the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> both are choices in the <b>Run workflow</b> dialog, and the job already has the permission it needs:</p>
         <pre><code>permissions:
   contents: read
   security-events: write</code></pre>
