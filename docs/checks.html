@@ -489,7 +489,7 @@
 </div>
 </section>
 <section class="module" data-module="sustainability">
-<h3>Sustainability <small>5 rules</small></h3>
+<h3>Sustainability <small>6 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SUS-CACHE-001" data-module="sustainability" data-severity="low" data-search="sus-cache-001 sustainability/cache-headers own static files may stay in the browser cache eigene statische dateien dürfen im browser-cache bleiben  loads pages with the browser cache off and lists the site's own scripts, stylesheets, images and fonts (`static` in `data/file-formats.yml`) whose answer has no positive `max-age`, no `immutable` and no future `expires`, or says `no-store` or `no-cache`.">
 <summary>
@@ -538,6 +538,21 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SUS-LAZY-001" data-module="sustainability" data-severity="low" data-search="sus-lazy-001 sustainability/lazy-loading images below the fold load lazily bilder unterhalb des ersten bildschirms laden erst bei bedarf  lists images on all visited own pages, loaded with javascript, whose top edge lies below the first 1280x720 viewport and that have no `loading=&quot;lazy&quot;`, ignoring images under 50x50 pixels and the data: placeholders that script-based lazy loading shows until scrolling.">
+<summary>
+<span class="rule-head"><span class="rule-id">SUS-LAZY-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
+<span class="rule-title">Images below the fold load lazily</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists images on all visited own pages, loaded with JavaScript, whose top edge lies below the first 1280x720 viewport and that have no <code>loading=&quot;lazy&quot;</code>, ignoring images under 50x50 pixels and the data: placeholders that script-based lazy loading shows until scrolling.</dd></div>
+<div><dt>How to fix</dt><dd>Give images below the first screen loading=&quot;lazy&quot;, with width and height so nothing jumps. Load images in the first screen without lazy.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/lazy-loading"><code>checks/sustainability/lazy-loading</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/web-sustainability-guidelines/#lazy-loading">w3.org</a>, <a href="https://www.w3.org/TR/web-sustainability-guidelines/#defer-the-loading-of-non-critical-resources">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SUS-JS-001" data-module="sustainability" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible), art. 12(1) gdpr (easily accessible form) checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with javascript off and that the linked page that loaded shows at least 100 characters of text without it.">
 <summary>
 <span class="rule-head"><span class="rule-id">SUS-JS-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
@@ -571,8 +586,23 @@
 </div>
 </section>
 <section class="module" data-module="accessibility">
-<h3>Accessibility <small>1 rule</small></h3>
+<h3>Accessibility <small>2 rules</small></h3>
 <div class="rules">
+<details class="rule" id="A11Y-MOTION-001" data-module="accessibility" data-severity="medium" data-search="a11y-motion-001 accessibility/autoplay-media videos that start automatically can be paused automatisch startende videos lassen sich anhalten bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.2.2.2 (wcag 2.1 success criterion 2.2.2) and, with sound, clause 9.1.4.2 (wcag 2.1 success criterion 1.4.2) lists `&lt;video autoplay&gt;` elements without the controls attribute on all visited own pages, loaded with javascript, and names those that are not muted as playing sound; it cannot see the video's length or custom play buttons, so it only warns.">
+<summary>
+<span class="rule-head"><span class="rule-id">A11Y-MOTION-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><b>medium</b></span></span>
+<span class="rule-title">Videos that start automatically can be paused</span>
+<span class="rule-law">BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.2.2.2 (WCAG 2.1 success criterion 2.2.2) and, with sound, clause 9.1.4.2 (WCAG 2.1 success criterion 1.4.2)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists <code>&lt;video autoplay&gt;</code> elements without the controls attribute on all visited own pages, loaded with JavaScript, and names those that are not muted as playing sound; it cannot see the video's length or custom play buttons, so it only warns.</dd></div>
+<div><dt>How to fix</dt><dd>Do not start videos automatically, or offer the controls attribute or your own pause button. Never play sound automatically. Autoplay also loads data many visitors never watch; preload=&quot;none&quot; and a poster image save it.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/autoplay-media"><code>checks/accessibility/autoplay-media</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bfsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bfsgv/">gesetze-im-internet.de</a>, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">etsi.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">w3.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/audio-control.html">w3.org</a>, <a href="https://www.w3.org/TR/web-sustainability-guidelines/#user-controlled-media">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="A11Y-LANG-001" data-module="accessibility" data-severity="low" data-search="a11y-lang-001 accessibility/page-language page declares its language seite gibt ihre sprache an bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.3.1.1 (wcag 2.1 success criterion 3.1.1) reads `&lt;html lang&gt;` of the start page as the server sent it (javascript off) and compares it with the chosen language.">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-LANG-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><b>low</b></span></span>
