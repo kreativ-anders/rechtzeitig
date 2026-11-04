@@ -13,7 +13,7 @@ test("passes for MIT dependencies in an MIT project", async () => {
 test("warns for a GPL dependency in an MIT project", async () => {
   const result = await runRepoCheck(here, { "package.json": '{"license":"MIT"}', "package-lock.json": lock("GPL-3.0") });
   assert.equal(result.status, "warn");
-  assert.match(result.details?.[0] ?? "", /^lib@1\.0\.0: GPL-3\.0\. If you ship it/);
+  assert.match(result.details?.[0] ?? "", /^package-lock\.json: lib@1\.0\.0: GPL-3\.0\. If you ship it/);
 });
 
 test("warns for GPL-or-later, but not when another license can be chosen", async () => {

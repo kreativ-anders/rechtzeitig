@@ -27,7 +27,7 @@ function run(...args: string[]) {
 }
 
 test("vulnerabilities=false skips the OSV lookup", () => {
-  const result = run("--vulnerabilities", "false");
+  const result = run("--vulnerabilities", "false", "--report-language", "en");
   assert.equal(result.status, "skip");
   assert.match(result.message, /turned off/);
 });

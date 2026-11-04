@@ -153,12 +153,72 @@ messages:
   sustainability/legal-pages-without-js: {}
 
   # ---------- repo
-  repo/actions-pinning: {}
-  repo/database-rules: {}
-  repo/dependency-updates: {}
-  repo/env-files: {}
-  repo/licenses: {}
-  repo/sbom: {}
+  repo/actions-pinning:
+    no_workflows: "Keine GitHub-Workflows."
+    unpinned:
+      one: "{count} Action nutzt ein Tag statt eines Commit-SHA. Ein verschobenes Tag kann den ausgeführten Code ändern."
+      other: "{count} Actions nutzen ein Tag statt eines Commit-SHA. Ein verschobenes Tag kann den ausgeführten Code ändern."
+    pinned: "Alle Actions sind auf einen Commit-SHA festgelegt."
+  repo/database-rules:
+    nothing: "Keine Supabase-Migrationen oder Firebase-Regeln im Repository."
+    no_rls: "Supabase-Tabelle „{table}“ hat keine Row Level Security."
+    open_rules: "Erlaubt allen den Zugriff („if true“)."
+    test_mode: "Im Testmodus: alle haben Zugriff bis zum Datum in „request.time < timestamp.date(...)“."
+    open_data: "Daten können von allen mit dem öffentlichen Schlüssel gelesen oder geändert werden."
+    open_policies:
+      one: "{count} Supabase-Policy nutzt „using (true)“ oder „with check (true)“. Prüfen, ob diese Daten öffentlich sein sollen."
+      other: "{count} Supabase-Policies nutzen „using (true)“ oder „with check (true)“. Prüfen, ob diese Daten öffentlich sein sollen."
+    secured:
+      one: "{count} Supabase-Tabelle mit Row Level Security{rules}."
+      other: "{count} Supabase-Tabellen mit Row Level Security{rules}."
+    rule_files:
+      one: ", {count} Firebase-Regeldatei ohne offenen Zugriff"
+      other: ", {count} Firebase-Regeldateien ohne offenen Zugriff"
+  repo/dependency-updates:
+    no_components: "Keine Abhängigkeiten mit Lockfile."
+    renovate: "Renovate hält die Abhängigkeiten aktuell."
+    dependabot: "Dependabot deckt {ecosystems} ab."
+    dependabot_missing: "Dependabot deckt {ecosystems} nicht ab."
+    add_ecosystem: "package-ecosystem „{name}“ ergänzen."
+    scan_only: "Schwachstellen werden gescannt, aber kein Werkzeug öffnet Update-Pull-Requests."
+    unwatched: "Nichts überwacht die Abhängigkeiten auf neue Schwachstellen. Dependabot oder Renovate einrichten."
+    add_dependabot: ".github/dependabot.yml mit einem Eintrag je Ökosystem anlegen: {entries}."
+  repo/env-files:
+    committed:
+      one: "{count} .env-Datei ist eingecheckt. Ihre Werte stehen in der Git-Historie."
+      other: "{count} .env-Dateien sind eingecheckt. Ihre Werte stehen in der Git-Historie."
+    not_ignored: ".gitignore ignoriert .env nicht. „.env“ ergänzen, damit lokale Secrets nicht versehentlich eingecheckt werden."
+    none: "Keine .env-Datei eingecheckt."
+  repo/licenses:
+    commons_clause: "Projekt: {project}. GPL-3.0 § 7 erlaubt Empfängern, „weitere Beschränkungen“ zu entfernen; die Commons Clause greift daher womöglich nicht."
+    restricted: "{name}@{version}: {license}. Schränkt die Nutzung ein, oft die kommerzielle."
+    agpl: "{name}@{version}: {license}. Die AGPL gilt auch, wenn die Software nur über ein Netzwerk angeboten wird."
+    gpl: "{name}@{version}: {license}. Bei Auslieferung (App, Bibliothek, Browser-Bundle) muss das ganze Werk unter der GPL stehen{not}."
+    not_project: ", nicht unter {project}"
+    no_project_license: "Das Projekt hat keine Lizenz: alle Rechte vorbehalten. Für privaten Code in Ordnung."
+    unknown:
+      one: "{count} Produktionsabhängigkeit ohne Lizenz im Lockfile: {names}"
+      other: "{count} Produktionsabhängigkeiten ohne Lizenz im Lockfile: {names}"
+    questions:
+      one: "{count} Lizenzfrage zu klären."
+      other: "{count} Lizenzfragen zu klären."
+    unknown_licenses: "Keine Konflikte gefunden{with}, aber einige Lizenzen sind unbekannt."
+    with_project: " mit {project}"
+    no_conflicts: "Keine Konflikte mit {project}{counted}."
+    counted:
+      one: " in {count} lizenzierten Komponente"
+      other: " in {count} lizenzierten Komponenten"
+  repo/sbom:
+    no_manifests: "Keine Paket-Manifeste im Repository."
+    unlocked:
+      one: "{count} Manifest ohne Lockfile. Installierte Versionen können sich zwischen Builds ändern."
+      other: "{count} Manifeste ohne Lockfile. Installierte Versionen können sich zwischen Builds ändern."
+    summary:
+      one: "{count} Komponente aus {lockfiles}, gespeichert in rechtzeitig-sbom.cdx.json."
+      other: "{count} Komponenten aus {lockfiles}, gespeichert in rechtzeitig-sbom.cdx.json."
+    lockfiles:
+      one: "{count} Lockfile"
+      other: "{count} Lockfiles"
   repo/secrets:
     secret: "{name} ({start}… ({length} Zeichen))"
     secrets:
@@ -168,4 +228,19 @@ messages:
       one: "{count} Schlüssel gefunden, der absichtlich öffentlich sein kann. Prüfen, ob er eingeschränkt ist."
       other: "{count} Schlüssel gefunden, die absichtlich öffentlich sein können. Prüfen, ob jeder eingeschränkt ist."
     none: "Keine Secrets in den versionierten Dateien gefunden."
-  repo/vulnerabilities: {}
+  repo/vulnerabilities:
+    no_components: "Keine Abhängigkeiten mit Lockfile zu prüfen."
+    lookup_off: "Schwachstellenabfrage ist ausgeschaltet (Input vulnerabilities: false). Nichts wurde an OSV gesendet."
+    osv_error: "OSV-Abfrage fehlgeschlagen: {error}"
+    none:
+      one: "Keine bekannten Schwachstellen in {count} Komponente."
+      other: "Keine bekannten Schwachstellen in {count} Komponenten."
+    issue: "{name}@{version}{dev}: {id}{severity}.{summary}{fixed}"
+    dev: " (dev)"
+    fixed: " Behoben in {version}."
+    found:
+      one: "{count} bekannte Schwachstelle, {serious} hoch oder kritisch in Produktionsabhängigkeiten.{partial}"
+      other: "{count} bekannte Schwachstellen, {serious} hoch oder kritisch in Produktionsabhängigkeiten.{partial}"
+    partial:
+      one: " OSV lieferte Details zu {got} von {count} Schwachstelle; die übrigen haben hier keinen Schweregrad."
+      other: " OSV lieferte Details zu {got} von {count} Schwachstellen; die übrigen haben hier keinen Schweregrad."

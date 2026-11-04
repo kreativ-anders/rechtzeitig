@@ -14,7 +14,8 @@ test("passes for SHA pinned actions", async () => {
 test("lists actions pinned to a tag", async () => {
   const result = await runRepoCheck(here, { ".github/workflows/ci.yml": workflow("actions/checkout@v4") });
   assert.equal(result.status, "info");
-  assert.deepEqual(result.details, [".github/workflows/ci.yml: actions/checkout@v4"]);
+  assert.deepEqual(result.details, [".github/workflows/ci.yml:4: actions/checkout@v4"]);
+  assert.deepEqual(result.raw.details, [{ file: ".github/workflows/ci.yml", line: 4, text: "actions/checkout@v4" }]);
 });
 
 test("stays fast on many blank lines", async () => {

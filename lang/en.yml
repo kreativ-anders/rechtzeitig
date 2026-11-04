@@ -134,12 +134,72 @@ messages:
   sustainability/legal-pages-without-js: {}
 
   # ---------- repo
-  repo/actions-pinning: {}
-  repo/database-rules: {}
-  repo/dependency-updates: {}
-  repo/env-files: {}
-  repo/licenses: {}
-  repo/sbom: {}
+  repo/actions-pinning:
+    no_workflows: "No GitHub workflows."
+    unpinned:
+      one: "{count} action uses a tag instead of a commit SHA. A moved tag can change the code that runs."
+      other: "{count} actions use a tag instead of a commit SHA. A moved tag can change the code that runs."
+    pinned: "All actions are pinned to a commit SHA."
+  repo/database-rules:
+    nothing: "No Supabase migrations or Firebase rules in the repository."
+    no_rls: 'Supabase table "{table}" has no row level security.'
+    open_rules: 'Allows access for everyone ("if true").'
+    test_mode: 'In test mode: everyone has access until the date in "request.time < timestamp.date(...)".'
+    open_data: "Data can be read or changed by anyone with the public key."
+    open_policies:
+      one: '{count} Supabase policy uses "using (true)" or "with check (true)". Check that this data is meant to be public.'
+      other: '{count} Supabase policies use "using (true)" or "with check (true)". Check that this data is meant to be public.'
+    secured:
+      one: "{count} Supabase table with row level security{rules}."
+      other: "{count} Supabase tables with row level security{rules}."
+    rule_files:
+      one: ", {count} Firebase rule file without open access"
+      other: ", {count} Firebase rule files without open access"
+  repo/dependency-updates:
+    no_components: "No locked dependencies."
+    renovate: "Renovate keeps dependencies up to date."
+    dependabot: "Dependabot covers {ecosystems}."
+    dependabot_missing: "Dependabot does not cover {ecosystems}."
+    add_ecosystem: 'Add package-ecosystem "{name}".'
+    scan_only: "Vulnerabilities are scanned, but no tool opens update pull requests."
+    unwatched: "Nothing watches the dependencies for new vulnerabilities. Add Dependabot or Renovate."
+    add_dependabot: "Add .github/dependabot.yml with one entry per ecosystem: {entries}."
+  repo/env-files:
+    committed:
+      one: "{count} .env file is committed. Its values are in the git history."
+      other: "{count} .env files are committed. Their values are in the git history."
+    not_ignored: '.gitignore does not ignore .env. Add ".env" so local secrets are not committed by accident.'
+    none: "No .env file is committed."
+  repo/licenses:
+    commons_clause: 'Project: {project}. GPL-3.0 § 7 lets recipients remove "further restrictions", so the Commons Clause may not hold.'
+    restricted: "{name}@{version}: {license}. Restricts use, often commercial use."
+    agpl: "{name}@{version}: {license}. AGPL also applies when you only offer the software over a network."
+    gpl: "{name}@{version}: {license}. If you ship it (app, library, browser bundle), the whole work must be under the GPL{not}."
+    not_project: ", not {project}"
+    no_project_license: "The project has no license: all rights reserved. Fine for private code."
+    unknown:
+      one: "{count} production dependency without a license in the lockfile: {names}"
+      other: "{count} production dependencies without a license in the lockfile: {names}"
+    questions:
+      one: "{count} license question to clear."
+      other: "{count} license questions to clear."
+    unknown_licenses: "No conflicts found{with}, but some licenses are unknown."
+    with_project: " with {project}"
+    no_conflicts: "No conflicts with {project}{counted}."
+    counted:
+      one: " in {count} licensed component"
+      other: " in {count} licensed components"
+  repo/sbom:
+    no_manifests: "No package manifests in the repository."
+    unlocked:
+      one: "{count} manifest without a lockfile. Installed versions can change between builds."
+      other: "{count} manifests without a lockfile. Installed versions can change between builds."
+    summary:
+      one: "{count} component from {lockfiles}, written to rechtzeitig-sbom.cdx.json."
+      other: "{count} components from {lockfiles}, written to rechtzeitig-sbom.cdx.json."
+    lockfiles:
+      one: "{count} lockfile"
+      other: "{count} lockfiles"
   repo/secrets:
     secret: "{name} ({start}… ({length} chars))"
     secrets:
@@ -149,4 +209,19 @@ messages:
       one: "{count} key found that may be public by design. Check that it is restricted."
       other: "{count} keys found that may be public by design. Check that each is restricted."
     none: "No secrets found in tracked files."
-  repo/vulnerabilities: {}
+  repo/vulnerabilities:
+    no_components: "No locked dependencies to check."
+    lookup_off: "Vulnerability lookup is turned off (input vulnerabilities: false). Nothing was sent to OSV."
+    osv_error: "Could not query OSV: {error}"
+    none:
+      one: "No known vulnerabilities in {count} component."
+      other: "No known vulnerabilities in {count} components."
+    issue: "{name}@{version}{dev}: {id}{severity}.{summary}{fixed}"
+    dev: " (dev)"
+    fixed: " Fixed in {version}."
+    found:
+      one: "{count} known vulnerability, {serious} high or critical in production dependencies.{partial}"
+      other: "{count} known vulnerabilities, {serious} high or critical in production dependencies.{partial}"
+    partial:
+      one: " OSV sent details for {got} of {count} issue; the others have no severity here."
+      other: " OSV sent details for {got} of {count} issues; the others have no severity here."
