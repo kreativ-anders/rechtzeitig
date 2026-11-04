@@ -62,7 +62,7 @@ Checks return message keys with parameters, not sentences. `src/messages.ts` ren
 | `data/secrets.yml` | Secret patterns |
 | `data/licenses.yml` | License groups: AGPL, GPL, restricted, permissive |
 | `data/update-tools.yml` | Dependabot ecosystem names, Renovate config paths, vulnerability scanners |
-| `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml`, `data/hsts-preload.yml` | Lists for single checks: EEA countries, session cookie names, error traces, closed services, HSTS-preloaded top-level domains |
+| `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml`, `data/hsts-preload.yml`, `data/consent-design.yml`, `data/cookie-lifetime.yml` | Lists and thresholds for single checks: EEA countries, session cookie names, error traces, closed services, HSTS-preloaded top-level domains, consent banner button comparison, longest cookie lifetime |
 | `test/helpers.ts` | Serves a fixture on localhost, builds repositories and contexts for tests |
 | `docs/` | User documentation: plain HTML and one `style.css`, published with GitHub Pages, no build. `npm run docs` writes the rule cards in `checks.html`. Header and footer are copied into every page, so change them in all of them. `privacy.html` must stay true when the site starts loading anything new. `imprint.html` holds the provider details under § 5 DDG; update it when they change |
 | `action.yml` | Composite action: Node 24, Playwright, AppArmor profile for the Chrome sandbox on GitHub-hosted Ubuntu, scan, upload report |

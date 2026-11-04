@@ -84,6 +84,12 @@ text:
     - '\badvertis'
     - '\bpersonali[sz]ation\b'
     - '\bexternal media\b'
+  # Confirmation shaming: a refusal worded so that saying no sounds like a loss. Only clear phrases.
+  consent_shaming:
+    - '\b(no|i don.?t want|i do not want)\b.{0,40}\bbetter (offers?|content|ads|experience|deals|recommendations|prices)\b'
+    - '\bi (don.?t|do not) (want to|like to) (save|support)\b'
+    - '\bi.?d rather pay (the )?full price\b'
+    - '\bi prefer (a )?worse\b'
 
 # Report sentences. Checks return a key and parameters; {name} is replaced by a parameter.
 # A value with one/other is picked by the parameter count. Groups are check ids; `common` is shared.
@@ -214,6 +220,17 @@ messages:
     found: 'Found "{text}".'
 
   # ---------- privacy
+  privacy/consent-equal-choice:
+    no_banner: "No consent banner found on the start page."
+    no_reject: "The banner has no reject button on the first layer (see privacy/consent-reject)."
+    shaming: "\"{text}\": the refusal is worded to make users feel bad."
+    smaller: "\"{reject}\" has only {percent} % of the area of \"{accept}\"."
+    smaller_font: "\"{reject}\" uses a {reject_size} px font, \"{accept}\" {accept_size} px."
+    low_contrast: "\"{reject}\" has a contrast of {reject_ratio}:1, \"{accept}\" {accept_ratio}:1."
+    unequal:
+      one: "Rejecting looks less equal than accepting in the banner ({count} hint). Please look at it in a browser."
+      other: "Rejecting looks less equal than accepting in the banner ({count} hints). Please look at it in a browser."
+    equal: "\"{accept}\" and \"{reject}\" are of similar size and readability."
   privacy/consent-preselected:
     no_categories: "No optional cookie categories found on the start page."
     preselected:
@@ -226,6 +243,19 @@ messages:
     no_banner: "No consent banner found on the start page."
     no_reject: "The banner offers \"{accept}\" but no way to reject on the same layer. Rejecting must be as easy as accepting."
     both: "The banner offers \"{accept}\" and \"{reject}\"."
+  privacy/cookie-lifetime:
+    none: "No cookies set on the visited pages."
+    tracking_cookie: "{name} ({domain}, set on {page}): tracking cookie of {vendor}, expires in {days} days"
+    cookie: "{name} ({domain}, set on {page}): expires in {days} days"
+    too_long:
+      one: "{count} cookie that needs consent lives longer than {max} days (13 months)."
+      other: "{count} cookies that need consent live longer than {max} days (13 months)."
+    own_long:
+      one: "{count} own cookie lives longer than {max} days. Please check whether this lifetime is needed."
+      other: "{count} own cookies live longer than {max} days. Please check whether this lifetime is needed."
+    within:
+      one: "{count} cookie, it lives no longer than {max} days."
+      other: "{count} cookies, none lives longer than {max} days."
   privacy/cookies-before-consent:
     tracking_cookie: "{name} ({domain}, set on {page}): tracking cookie of {vendor}"
     third_party_cookie: "{name} ({domain}, set on {page}): third-party cookie"

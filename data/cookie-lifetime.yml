@@ -1,0 +1,6 @@
+# Threshold for privacy/cookie-lifetime.
+
+# Longest lifetime of a cookie that needs consent before the check warns: 13 months, as the CNIL
+# recommends for audience measurement cookies (recommendation 2020-092, Art. 5), counted as the
+# longest 13 calendar months. Chrome caps cookies at 400 days, so the limit must stay below 400.
+max_days: 397

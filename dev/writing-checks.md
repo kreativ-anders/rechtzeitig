@@ -101,5 +101,5 @@ The runner finds the check by itself. Nothing else needs to change.
 | `data/secrets.yml` | A secret pattern with `fail` or `warn`. With `payload`, match group 1 is decoded as a JWT payload and must have the listed claims. |
 | `data/licenses.yml` | A license pattern in one of the groups `agpl`, `gpl`, `restricted`, `permissive`. |
 | `data/update-tools.yml` | A Dependabot ecosystem name, a Renovate config path or a vulnerability scanner. |
-| `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml` | Country groups, cookie name patterns, error page traces and version headers, links to closed services. |
+| `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml`, `data/consent-design.yml`, `data/cookie-lifetime.yml` | Country groups, cookie name patterns, error page traces and version headers, links to closed services, consent button thresholds, longest cookie lifetime. |
 | `src/repo/lockfiles.ts` | A lockfile parser: one function plus one entry in `LOCKFILES`; its manifest in `MANIFESTS`. |
