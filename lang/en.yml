@@ -735,8 +735,26 @@ messages:
     counted:
       one: " in {count} licensed component"
       other: " in {count} licensed components"
+    unchecked:
+      one: "{count} production dependency not checked: lockfiles of {ecosystems} name no licenses."
+      other: "{count} production dependencies not checked: lockfiles of {ecosystems} name no licenses."
+    no_components: "No locked dependencies whose licenses could be compared."
+    no_licenses: "No lockfile names licenses ({ecosystems}), so nothing was compared."
   repo/sbom:
     no_manifests: "No package manifests in the repository."
+    failed:
+      one: "{count} lockfile could not be read, its components are missing from the SBOM."
+      other: "{count} lockfiles could not be read, their components are missing from the SBOM."
+    failed_file: "not read: {reason}"
+    reason_large: "too large"
+    reason_lfs: "Git LFS pointer, check out with lfs: true"
+    reason_binary: "binary"
+    reason_invalid: "not in the expected format"
+    unsupported:
+      one: "SBOM incomplete: rechtzeitig cannot read {count} package file ({ecosystems}) yet."
+      other: "SBOM incomplete: rechtzeitig cannot read {count} package files ({ecosystems}) yet."
+    unsupported_file: "{ecosystem}: no parser, not in the SBOM"
+    no_components: "No components in {lockfiles}: the SBOM is empty."
     unlocked:
       one: "{count} manifest without a lockfile. Installed versions can change between builds."
       other: "{count} manifests without a lockfile. Installed versions can change between builds."
@@ -754,7 +772,12 @@ messages:
     public_keys:
       one: "{count} key found that may be public by design. Check that it is restricted."
       other: "{count} keys found that may be public by design. Check that each is restricted."
-    none: "No secrets found in tracked files."
+    none:
+      one: "No secrets found in {count} file read."
+      other: "No secrets found in {count} files read."
+    unread:
+      one: "{count} file not read: binary, too large or only a Git LFS pointer."
+      other: "{count} files not read: binary, too large or only a Git LFS pointer."
   repo/security-contact:
     no_project: "No package manifest in the root, so no software project to report vulnerabilities for."
     missing: "No SECURITY.md and no security.txt. Without a contact, vulnerabilities are reported publicly or not at all."

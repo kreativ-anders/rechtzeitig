@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§§ 31, 69c UrhG"
   en: "§§ 31, 69c UrhG (German Copyright Act)"
-how: "Compares licenses from npm and Composer lockfiles with the project license (package.json, composer.json or LICENSE) using the groups in `data/licenses.yml`; an SPDX `OR` with a non-copyleft choice is not flagged."
+how: "Compares licenses from the lockfiles that carry them (`licenses_in_lockfile` in `data/ecosystems.yml`, today npm and Composer) with the project license (package.json, composer.json or LICENSE) using the groups in `data/licenses.yml`; an SPDX `OR` with a non-copyleft choice is not flagged, other ecosystems are named as not checked, and without a single license read the rule is skipped."
 fix_hint:
   de: "Lizenz jeder markierten Abhängigkeit prüfen; bei Konflikt ersetzen, Lizenz erwerben oder das Projekt passend lizenzieren."
   en: "Review the license of each flagged dependency; replace it, buy a license or license the project to match."

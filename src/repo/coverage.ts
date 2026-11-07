@@ -5,10 +5,8 @@ import { loadYaml } from "../data.ts";
 import { hostIn } from "../text.ts";
 import type { RepoCoverage } from "../sdk.ts";
 
-const ECOSYSTEMS = loadYaml<{ unsupported: Record<string, string>; licenses_in_lockfile: string[]; public_registries: string[] }>("data/ecosystems.yml");
+const ECOSYSTEMS = loadYaml<{ unsupported: Record<string, string>; public_registries: string[] }>("data/ecosystems.yml");
 const UNSUPPORTED = Object.entries(ECOSYSTEMS.unsupported).map(([name, ecosystem]) => ({ re: new RegExp(name), ecosystem }));
-/** Ecosystems whose lockfiles carry licenses (data/ecosystems.yml `licenses_in_lockfile`). */
-export const LICENSES_IN_LOCKFILE: readonly string[] = ECOSYSTEMS.licenses_in_lockfile;
 
 /** Package files of ecosystems without a parser (data/ecosystems.yml `unsupported`). */
 export function unsupportedFiles(files: string[]): RepoCoverage["unsupported"] {

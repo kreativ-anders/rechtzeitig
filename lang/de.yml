@@ -776,8 +776,26 @@ messages:
     counted:
       one: " in {count} lizenzierten Komponente"
       other: " in {count} lizenzierten Komponenten"
+    unchecked:
+      one: "{count} Produktionsabhängigkeit nicht geprüft: Lockfiles von {ecosystems} nennen keine Lizenzen."
+      other: "{count} Produktionsabhängigkeiten nicht geprüft: Lockfiles von {ecosystems} nennen keine Lizenzen."
+    no_components: "Keine gesperrten Abhängigkeiten, deren Lizenzen sich vergleichen ließen."
+    no_licenses: "Kein Lockfile nennt Lizenzen ({ecosystems}), daher wurde nichts verglichen."
   repo/sbom:
     no_manifests: "Keine Paket-Manifeste im Repository."
+    failed:
+      one: "{count} Lockfile ließ sich nicht lesen, seine Komponenten fehlen in der SBOM."
+      other: "{count} Lockfiles ließen sich nicht lesen, ihre Komponenten fehlen in der SBOM."
+    failed_file: "nicht gelesen: {reason}"
+    reason_large: "zu groß"
+    reason_lfs: "Git-LFS-Pointer, mit lfs: true auschecken"
+    reason_binary: "binär"
+    reason_invalid: "nicht im erwarteten Format"
+    unsupported:
+      one: "SBOM unvollständig: {count} Paketdatei ({ecosystems}) kann rechtzeitig noch nicht lesen."
+      other: "SBOM unvollständig: {count} Paketdateien ({ecosystems}) kann rechtzeitig noch nicht lesen."
+    unsupported_file: "{ecosystem}: kein Parser, nicht in der SBOM"
+    no_components: "Keine Komponenten in {lockfiles}: Die SBOM ist leer."
     unlocked:
       one: "{count} Manifest ohne Lockfile. Installierte Versionen können sich zwischen Builds ändern."
       other: "{count} Manifeste ohne Lockfile. Installierte Versionen können sich zwischen Builds ändern."
@@ -795,7 +813,12 @@ messages:
     public_keys:
       one: "{count} Schlüssel gefunden, der absichtlich öffentlich sein kann. Prüfen, ob er eingeschränkt ist."
       other: "{count} Schlüssel gefunden, die absichtlich öffentlich sein können. Prüfen, ob jeder eingeschränkt ist."
-    none: "Keine Secrets in den versionierten Dateien gefunden."
+    none:
+      one: "Keine Secrets in {count} gelesenen Datei gefunden."
+      other: "Keine Secrets in {count} gelesenen Dateien gefunden."
+    unread:
+      one: "{count} Datei nicht gelesen: binär, zu groß oder nur ein Git-LFS-Pointer."
+      other: "{count} Dateien nicht gelesen: binär, zu groß oder nur ein Git-LFS-Pointer."
   repo/security-contact:
     no_project: "Kein Paketmanifest im Hauptverzeichnis, also kein Softwareprojekt, für das Lücken gemeldet würden."
     missing: "Keine SECURITY.md und keine security.txt. Ohne Kontakt werden Lücken öffentlich gemeldet oder gar nicht."
