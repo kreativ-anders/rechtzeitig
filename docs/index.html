@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q=' https://api.pirsch.io; style-src 'self'; img-src 'self' data:; connect-src https://api.pirsch.io; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>rechtzeitig: GitHub Action for imprint and security checks</title>
-<meta name="description" content="Open source GitHub Action that checks your website and repository for a German imprint, GDPR cookie consent, security headers and licenses, with an SBOM.">
+<title>rechtzeitig: vibe code checker for GDPR, imprint and security</title>
+<meta name="description" content="Open source GitHub Action for code built fast or with AI: finds a missing imprint, trackers before consent, leaked keys, missing security headers, vulnerable packages.">
 <link rel="canonical" href="https://rechtzeitig.dev/">
 <link rel="alternate" hreflang="en" href="https://rechtzeitig.dev/">
 <link rel="alternate" hreflang="de" href="https://rechtzeitig.dev/de/">
 <link rel="alternate" hreflang="x-default" href="https://rechtzeitig.dev/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="rechtzeitig">
-<meta property="og:title" content="rechtzeitig: GitHub Action for imprint and security checks">
-<meta property="og:description" content="Open source GitHub Action that checks your website and repository for a German imprint, GDPR cookie consent, security headers and licenses, with an SBOM.">
+<meta property="og:title" content="rechtzeitig: vibe code checker for GDPR, imprint and security">
+<meta property="og:description" content="Open source GitHub Action for code built fast or with AI: finds a missing imprint, trackers before consent, leaked keys, missing security headers, vulnerable packages.">
 <meta property="og:url" content="https://rechtzeitig.dev/">
 <meta property="og:locale" content="en_GB">
 <meta property="og:locale:alternate" content="de_DE">
@@ -61,7 +61,7 @@
       "@type": "SoftwareApplication",
       "@id": "https://rechtzeitig.dev/#app",
       "name": "rechtzeitig",
-      "description": "GitHub Action that checks a website and its repository for German and EU legal basics (imprint, privacy policy, cookie consent), security headers, TLS, licenses and known vulnerabilities, and writes a CycloneDX SBOM.",
+      "description": "GitHub Action that checks a repository and its live website for the legal and security pitfalls that slip into fast or AI-written code: German and EU legal basics (imprint, privacy policy, cookie consent), committed secrets, security headers, TLS, licenses and known vulnerabilities. It writes a CycloneDX SBOM.",
       "url": "https://rechtzeitig.dev/",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "GitHub Actions",
@@ -93,7 +93,7 @@
         {"@type": "Question", "name": "Can it run on a schedule or on every push?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The example workflow starts by hand, but rechtzeitig works with any trigger except pull_request_target. A scheduled run has no form, so the URL goes into the workflow file: Run on a schedule."}},
         {"@type": "Question", "name": "Is this legal advice?", "acceptedAnswer": {"@type": "Answer", "text": "No. A finding is a technical hint with the place and the law it relates to, so you know where to look first. A clean report means these checks found nothing, not that the site is compliant."}},
         {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default the names and versions of your locked packages go to osv.dev (vulnerabilities: false turns it off) and your host name to the Green Web Foundation (green-hosting: false). The full list is under Data that leaves the runner."}},
-        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. More in The report."}},
+        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository, or turn on sarif-upload: the findings then show in the Security tab, which only people with write access see. More in The report."}},
         {"@type": "Question", "name": "How are the checks kept current?", "acceptedAnswer": {"@type": "Answer", "text": "Every check cites primary sources: laws, courts, authorities or standards, never blogs. Each records when its sources were last reviewed, and a check not reviewed for a year fails the project's tests, so it cannot be released. The releases list what changed."}}
       ]
     }
@@ -113,26 +113,35 @@
 <main id="content">
   <div class="hero">
     <div>
-      <h1>Imprint, consent and security checks for your website, as a GitHub Action</h1>
-      <p class="lead">rechtzeitig checks your website and repository for German and EU legal basics, security headers, TLS and licenses, and writes a CycloneDX SBOM. You get a list of places to fix, each with the law it relates to.</p>
+      <h1>Find the legal and security pitfalls that slip into AI-written code</h1>
+      <p class="lead">More code is written with AI, and the same things keep slipping through: no imprint, trackers that load before consent, API keys in the repository, missing security headers, outdated packages. rechtzeitig is a GitHub Action that checks your repository and, if you give it a URL, your live website. You get a list of places to fix, most with the law they relate to.</p>
       <div class="actions">
         <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Copy the workflow</a>
 <!-- hero-checks:start -->
 <a class="button secondary" href="checks.html">See all 56 checks</a>
 <!-- hero-checks:end -->
       </div>
-      <p class="hero-note">Free and open source. It needs no account and no secret, and your code stays on the runner.</p>
+      <p class="hero-note">Free and open source. It runs in your own CI, needs no account and no secret, and your code stays on the runner.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<span class="mark">§</span>in time</span></div>
   </div>
 
-  <h2 id="covers">What it checks</h2>
+  <h2 id="how">How it works</h2>
+  <ul class="covers">
+    <li><h3>Repository and live site</h3><p>The repository holds what visitors never see: lockfiles, workflows, keys, database rules. The website shows what they get: HTML, scripts, cookies, headers, TLS and DNS. rechtzeitig checks both in one run and one report. Checks that compare the two directly are <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/dev/roadmap.md">planned</a>.</p></li>
+    <li><h3>Every week, not once</h3><p>Run it on a schedule or on every push. A tracker that came with a new embed, a certificate close to expiry or a new vulnerability in a package you use shows up in the next run. See <a href="workflow.html#schedule">Run on a schedule</a>.</p></li>
+    <li><h3>Findings stay private</h3><p>On a private repository the run page shows the full report. On a public one it shows only counts by default, because anyone can open the run page. With <code>sarif-upload</code>, findings go to the <a href="workflow.html#security-tab">Security tab</a>, which only people with write access see.</p></li>
+    <li><h3>A hint, not a verdict</h3><p>Each finding names the place and the rule, which cites its legal basis where there is one and links a primary source, so you know where to look first. It is a technical risk hint, not legal advice.</p></li>
+  </ul>
+
+  <h2 id="covers">Typical pitfalls it checks</h2>
+  <p>These are the gaps that come up again and again in sites built fast, by hand or with AI.</p>
   <ul class="covers">
     <li><h3><a href="checks.html#legal">Legal pages</a></h3><p>The German imprint (<span lang="de">Impressum</span>) under § 5 DDG and the privacy policy under the GDPR: linked, reachable, complete</p></li>
     <li><h3><a href="checks.html#privacy">Cookie consent</a></h3><p>Third-party requests and cookies before consent, the banner, transfers outside the EU, § 25 TDDDG</p></li>
     <li><h3><a href="checks.html?q=BGB">Shop and contract buttons</a></h3><p>Cancellation, withdrawal and order buttons under the BGB, and <a href="checks.html#LEG-DE-PRICE-001">prices under the PAngV</a>. In German: <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton prüfen</a></p></li>
     <li><h3><a href="security.html">Security headers and TLS</a></h3><p>HTTPS, certificates, headers, exposed <code>.env</code> and <code>.git</code> files, error pages, SPF and DMARC</p></li>
-    <li><h3><a href="checks.html#repo">Repository and SBOM</a></h3><p>CycloneDX SBOM, known vulnerabilities from osv.dev, license conflicts, committed secrets, workflow risks</p></li>
+    <li><h3><a href="checks.html#repo">Repository and SBOM</a></h3><p>Committed secrets, also under public prefixes such as <code>NEXT_PUBLIC_</code> that end up in the browser bundle, Supabase tables without row level security, known vulnerabilities from osv.dev, license conflicts, workflow risks and a CycloneDX SBOM</p></li>
     <li><h3><a href="checks.html#sustainability">Sustainability</a> and <a href="checks.html#accessibility">accessibility</a></h3><p>Compression, caching, image formats, green hosting, page language, autoplay</p></li>
   </ul>
 
@@ -236,7 +245,7 @@
     <li><span>Open <span class="ui">Actions → rechtzeitig → Run workflow</span>, enter your URL and pick the language.</span></li>
     <li><span>Read the report on the run's summary page.</span></li>
   </ol>
-  <p>You start the example by hand. To check every week or on every push, add a trigger as shown in <a href="workflow.html#schedule">Run on a schedule</a>. Inputs, secrets and report files are described in <a href="workflow.html">The workflow</a>.</p>
+  <p>You start the example by hand. To check every week or on every push, which is how rechtzeitig is meant to run, add a trigger as shown in <a href="workflow.html#schedule">Run on a schedule</a>. Inputs, secrets and report files are described in <a href="workflow.html">The workflow</a>.</p>
 
   <section id="about" aria-labelledby="about-title">
     <h2 id="about-title">Who maintains it</h2>
@@ -273,7 +282,7 @@ updates:
     </details>
     <details id="visibility">
       <summary>Who can see the report?</summary>
-      <p>On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. More in <a href="workflow.html#report">The report</a>.</p>
+      <p>On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository, or turn on <code>sarif-upload</code>: the findings then show in the Security tab, which only people with write access see. More in <a href="workflow.html#report">The report</a>.</p>
     </details>
     <details id="current">
       <summary>How are the checks kept current?</summary>

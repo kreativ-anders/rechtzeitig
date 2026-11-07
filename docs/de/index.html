@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q=' https://api.pirsch.io; style-src 'self'; img-src 'self' data:; connect-src https://api.pirsch.io; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>rechtzeitig: Impressum- und DSGVO-Check als GitHub Action</title>
-<meta name="description" content="Open-Source-GitHub-Action, die Website und Repository prüft: Impressum, Cookies vor Einwilligung nach § 25 TDDDG, Security-Header, Lizenzen und SBOM.">
+<title>rechtzeitig: Vibe-Code-Check für Impressum, DSGVO und Sicherheit</title>
+<meta name="description" content="DSGVO-Check als Open-Source-GitHub-Action für Code, der schnell oder mit KI entsteht: fehlendes Impressum, Tracking vor Einwilligung, Secrets, Security-Header.">
 <link rel="canonical" href="https://rechtzeitig.dev/de/">
 <link rel="alternate" hreflang="en" href="https://rechtzeitig.dev/">
 <link rel="alternate" hreflang="de" href="https://rechtzeitig.dev/de/">
 <link rel="alternate" hreflang="x-default" href="https://rechtzeitig.dev/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="rechtzeitig">
-<meta property="og:title" content="rechtzeitig: Impressum- und DSGVO-Check als GitHub Action">
-<meta property="og:description" content="Open-Source-GitHub-Action, die Website und Repository prüft: Impressum, Cookies vor Einwilligung nach § 25 TDDDG, Security-Header, Lizenzen und SBOM.">
+<meta property="og:title" content="rechtzeitig: Vibe-Code-Check für Impressum, DSGVO und Sicherheit">
+<meta property="og:description" content="DSGVO-Check als Open-Source-GitHub-Action für Code, der schnell oder mit KI entsteht: fehlendes Impressum, Tracking vor Einwilligung, Secrets, Security-Header.">
 <meta property="og:url" content="https://rechtzeitig.dev/de/">
 <meta property="og:locale" content="de_DE">
 <meta property="og:locale:alternate" content="en_GB">
@@ -40,8 +40,8 @@
       "@type": "WebPage",
       "@id": "https://rechtzeitig.dev/de/#webpage",
       "url": "https://rechtzeitig.dev/de/",
-      "name": "rechtzeitig: Impressum- und DSGVO-Check als GitHub Action",
-      "description": "Open-Source-GitHub-Action, die Website und Repository prüft: Impressum, Cookies vor Einwilligung nach § 25 TDDDG, Security-Header, Lizenzen und SBOM.",
+      "name": "rechtzeitig: Vibe-Code-Check für Impressum, DSGVO und Sicherheit",
+      "description": "DSGVO-Check als Open-Source-GitHub-Action für Code, der schnell oder mit KI entsteht: fehlendes Impressum, Tracking vor Einwilligung, Secrets, Security-Header.",
       "inLanguage": "de",
       "isPartOf": {
         "@id": "https://rechtzeitig.dev/#website"
@@ -95,7 +95,7 @@
           "name": "Wer kann den Bericht sehen?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "In einem öffentlichen Repository zeigt er standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten. Mehr unter Der Bericht."
+            "text": "In einem öffentlichen Repository zeigt er standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten oder sarif-upload einschalten: Dann stehen die Befunde im Security-Tab, den nur Personen mit Schreibrechten sehen. Mehr unter Der Bericht."
           }
         },
         {
@@ -124,21 +124,29 @@
 <main id="content">
   <div class="hero">
     <div>
-      <h1>Impressum, Cookie-Einwilligung und Sicherheit prüfen, als GitHub Action</h1>
-      <p class="lead">rechtzeitig ist ein DSGVO-Check als GitHub Action. Er prüft Website und Repository auf deutsche und EU-rechtliche Grundlagen, Security-Header, TLS und Lizenzen und schreibt eine CycloneDX-SBOM. Am Ende steht eine Liste der Stellen, die zu beheben sind, jede mit dem Gesetz, auf das sie sich bezieht.</p>
+      <h1>Rechts- und Sicherheitslücken finden, die beim Coden mit KI durchrutschen</h1>
+      <p class="lead">Immer mehr Code entsteht mit KI, und dieselben Dinge rutschen immer wieder durch: kein Impressum, Tracking vor der Einwilligung, API-Keys im Repository, fehlende Security-Header, veraltete Pakete. rechtzeitig ist eine GitHub Action, die Ihr Repository prüft und, wenn Sie eine URL angeben, auch die Live-Website. Am Ende steht eine Liste der Stellen, die zu beheben sind, die meisten mit dem Gesetz, auf das sie sich beziehen.</p>
       <div class="actions">
         <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Workflow kopieren</a>
 <!-- hero-checks:start -->
 <a class="button secondary" href="../checks.html" hreflang="en">Alle 56 Prüfungen ansehen</a>
 <!-- hero-checks:end -->
       </div>
-      <p class="hero-note">Kostenlos und Open Source. Es braucht weder Konto noch Secret, und der Code bleibt auf dem Runner.</p>
+      <p class="hero-note">Kostenlos und Open Source. Es läuft in Ihrer eigenen CI, braucht weder Konto noch Secret, und der Code bleibt auf dem Runner.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>geprüft<span class="mark">§</span>rechtzeitig</span></div>
   </div>
 
-  <h2 id="covers">Was geprüft wird</h2>
-  <p>Die Prüfungen sind eine DSGVO-Checkliste für Webentwickler, die der Workflow selbst abarbeitet. Jeder Punkt hat eine feste ID, eine Fundstelle und eine Rechtsgrundlage. Der Impressum-Checker ist wie alle anderen Prüfungen Open Source.</p>
+  <h2 id="how">So funktioniert es</h2>
+  <ul class="covers">
+    <li><h3>Repository und Live-Website</h3><p>Im Repository steht, was Besucher nie sehen: Lockfiles, Workflows, Schlüssel, Datenbankregeln. Die Website zeigt, was bei ihnen ankommt: HTML, Skripte, Cookies, Header, TLS und DNS. rechtzeitig prüft beides in einem Lauf und einem Bericht. Prüfungen, die beides direkt vergleichen, sind <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/dev/roadmap.md" hreflang="en">geplant</a>.</p></li>
+    <li><h3>Jede Woche, nicht einmal</h3><p>Nach Zeitplan oder bei jedem Push laufen lassen. Ein Tracker, der mit einer neuen Einbettung kam, ein Zertifikat kurz vor Ablauf oder eine neue Schwachstelle in einem genutzten Paket fällt beim nächsten Lauf auf. Siehe <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>.</p></li>
+    <li><h3>Befunde bleiben privat</h3><p>In einem privaten Repository zeigt die Seite des Laufs den vollständigen Bericht. In einem öffentlichen zeigt sie standardmäßig nur die Zahlen, weil jeder die Seite des Laufs öffnen kann. Mit <code>sarif-upload</code> landen die Befunde im <a href="../workflow.html#security-tab" hreflang="en">Security-Tab</a>, den nur Personen mit Schreibrechten sehen.</p></li>
+    <li><h3>Ein Hinweis, kein Urteil</h3><p>Jeder Befund nennt Fundstelle und Prüfung. Die Prüfung nennt ihre Rechtsgrundlage, wo es eine gibt, und verlinkt eine Primärquelle, damit Sie wissen, wo Sie zuerst nachsehen. Es ist ein technischer Risikohinweis, keine Rechtsberatung.</p></li>
+  </ul>
+
+  <h2 id="covers">Typische Stolperfallen, die geprüft werden</h2>
+  <p>Diese Lücken tauchen immer wieder auf, wenn eine Website schnell entsteht, von Hand oder mit KI. Die Prüfungen sind eine DSGVO-Checkliste für Webentwickler, die der Workflow selbst abarbeitet. Jeder Punkt hat eine feste ID und eine Fundstelle. Der Impressum-Checker ist wie alle anderen Prüfungen Open Source.</p>
   <ul class="covers">
     <li><h3><a href="../checks.html#legal" hreflang="en">Rechtstexte</a></h3><p>Das Impressum nach § 5 DDG und die Datenschutzerklärung nach DSGVO: verlinkt, erreichbar, vollständig</p></li>
     <li><h3><a href="../checks.html#privacy" hreflang="en">Cookie-Einwilligung</a></h3><p>Tracking und Cookies vor der Einwilligung nach § 25 TDDDG, Google Fonts und andere fremde Server, das Banner, Übermittlungen außerhalb der EU</p></li>
@@ -248,7 +256,7 @@
     <li><span><span class="ui">Actions → rechtzeitig → Run workflow</span> öffnen, URL eintragen und die Sprache wählen.</span></li>
     <li><span>Den Bericht auf der Zusammenfassung des Laufs lesen.</span></li>
   </ol>
-  <p>Das Beispiel startet von Hand. Soll es jede Woche oder bei jedem Push laufen, einen Trigger ergänzen, wie unter <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a> gezeigt. Inputs, Secrets und Berichtsdateien beschreibt <a href="../workflow.html" hreflang="en">Der Workflow</a> (Englisch).</p>
+  <p>Das Beispiel startet von Hand. Gedacht ist rechtzeitig für regelmäßige Läufe: Soll es jede Woche oder bei jedem Push laufen, einen Trigger ergänzen, wie unter <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a> gezeigt. Inputs, Secrets und Berichtsdateien beschreibt <a href="../workflow.html" hreflang="en">Der Workflow</a> (Englisch).</p>
 
   <section id="about" aria-labelledby="about-title">
     <h2 id="about-title">Wer dahintersteht</h2>
@@ -285,7 +293,7 @@ updates:
     </details>
     <details id="visibility">
       <summary>Wer kann den Bericht sehen?</summary>
-      <p>In einem öffentlichen Repository zeigt er standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten. Mehr unter <a href="../workflow.html#report" hreflang="en">Der Bericht</a>.</p>
+      <p>In einem öffentlichen Repository zeigt er standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten oder <code>sarif-upload</code> einschalten: Dann stehen die Befunde im Security-Tab, den nur Personen mit Schreibrechten sehen. Mehr unter <a href="../workflow.html#report" hreflang="en">Der Bericht</a>.</p>
     </details>
     <details id="current">
       <summary>Wie bleiben die Prüfungen aktuell?</summary>
