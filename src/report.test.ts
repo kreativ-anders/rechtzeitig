@@ -123,7 +123,7 @@ test("skipped checks show grouped by reason under Not run, also in counts mode, 
   assert.match(summary, /- 1 check: Only needed when consumers buy .*sales: true/);
   assert.match(summary, /- 1 check ran but found nothing it could read\.\n {2}- t \(REPO\/ACTIONS-PINNING\): No GitHub workflows\./);
   assert.doesNotMatch(toMarkdown(r), /LEGAL\/IMPRINT/, "checks without a target are not listed one by one");
-  const counts = toCounts(r, "input", "md");
+  const counts = toCounts(r, "md");
   assert.match(counts, /Not run \(4\)[\s\S]*2 website checks: no url/);
   assert.doesNotMatch(counts, /ACTIONS-PINNING|No GitHub workflows/, "counts mode names no check");
   assert.match(toText(r), /^ {2}2 website checks: no url/m);

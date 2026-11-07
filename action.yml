@@ -46,14 +46,11 @@ inputs:
     description: true = stop when Chrome cannot start with its sandbox. false = then scan without it, only for sites you trust.
     default: "true"
   report-visibility:
-    description: How much of the report the run shows. auto = full for private repositories, counts for public ones. full = findings with places in summary, log, annotations and artifact. counts = only how many checks pass, warn or fail, no artifact. none = only the output result.
+    description: How much of the report the run shows. auto = everything for private and internal repositories; for public ones only how many checks pass, warn or fail, no artifact (the details go to the Security tab with sarif-upload). full = findings with places in summary, log, annotations and artifact, also on public repositories, where anyone can read them.
     default: auto
   sarif-upload:
-    description: Opt-in. true = also upload the findings as SARIF to GitHub code scanning, so they show as alerts in the Security tab, which only people with write access see. Needs the job permission security-events write; private repositories also need GitHub Code Security. A failed upload does not fail the job.
-    default: "false"
-  retention-days:
-    description: Days to keep the report artifact. Artifacts of public repositories can be downloaded by anyone signed in to GitHub.
-    default: "7"
+    description: Upload the findings as SARIF to GitHub code scanning, so they show as alerts in the Security tab, which only people with write access see. auto = upload where GitHub allows it (job permission security-events write; private repositories also need actions read and GitHub Code Security), otherwise skip with a notice. true = the same, but a skip or failure is a warning. false = never. The upload never fails the job.
+    default: auto
 
 outputs:
   result:
@@ -88,6 +85,16 @@ runs:
           fi
         fi
 
+    # Gets the job's token, which the scan step never sees. Empty counts as auto.
+    - name: Check code scanning
+      id: sarif
+      if: inputs.sarif-upload != 'false'
+      shell: bash
+      env:
+        MODE: ${{ inputs.sarif-upload }}
+        GITHUB_TOKEN: ${{ github.token }}
+      run: node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/sarif-preflight.ts"
+
     - name: Scan
       id: scan
       shell: bash
@@ -106,7 +113,7 @@ runs:
         GREEN_HOSTING: ${{ inputs.green-hosting }}
         REQUIRE_SANDBOX: ${{ inputs.require-sandbox }}
         REPORT_VISIBILITY: ${{ inputs.report-visibility }}
-        SARIF: ${{ inputs.sarif-upload == 'true' && format('{0}/sarif/rechtzeitig.sarif', runner.temp) || '' }}
+        SARIF: ${{ steps.sarif.outputs.upload == 'true' && format('{0}/sarif/rechtzeitig.sarif', runner.temp) || '' }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
@@ -121,13 +128,24 @@ runs:
         name: rechtzeitig-report
         path: ${{ runner.temp }}/rechtzeitig-*
         if-no-files-found: ignore
-        retention-days: ${{ inputs.retention-days }}
+        retention-days: 7
 
-    # Outside the artifact folder, so report-visibility counts or none keeps the artifact empty.
+    # Outside the artifact folder, so a counts-only report on a public repository keeps the artifact empty.
     - name: Upload SARIF
-      if: always() && inputs.sarif-upload == 'true'
+      id: upload
+      if: always() && steps.sarif.outputs.upload == 'true'
       continue-on-error: true
       uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
       with:
         sarif_file: ${{ runner.temp }}/sarif/rechtzeitig.sarif
         category: rechtzeitig
+
+    - name: SARIF upload result
+      if: always() && steps.upload.outcome == 'failure'
+      shell: bash
+      env:
+        MODE: ${{ inputs.sarif-upload }}
+      run: |
+        level=notice
+        if [ "$MODE" = true ]; then level=warning; fi
+        echo "::$level::rechtzeitig: could not upload SARIF to code scanning. The findings are in the report. See https://rechtzeitig.dev/workflow.html#security-tab"

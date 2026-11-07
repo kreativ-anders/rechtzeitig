@@ -155,17 +155,12 @@
   <h2 id="setup">Run it in CI</h2>
   <ol class="steps">
     <li><span>Copy the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> to <code>.github/workflows/rechtzeitig.yml</code>. It pins a release by its commit SHA.</span></li>
-    <li><span>To run only these checks, set <code>modules</code> in the rechtzeitig step, and give <code>url</code> a fallback for runs without the form:</span></li>
+    <li><span>Set <code>url</code>. To run only these checks, also set <code>modules</code> in the rechtzeitig step:</span></li>
   </ol>
-  <pre><code>url: ${{ inputs.url || 'https://www.example.de/' }}
+  <pre><code>url: https://www.example.de/
 modules: security
-fail-on: ${{ inputs.fail-on || 'fail' }} # red when a check fails</code></pre>
-  <p>Add a schedule next to <code>workflow_dispatch</code> to catch an expiring certificate or a header lost in a deploy:</p>
-  <pre><code>on:
-  workflow_dispatch:
-    # inputs as in the example
-  schedule:
-    - cron: "0 6 * * 1" # Mondays, 06:00 UTC</code></pre>
+fail-on: fail # red when a check fails</code></pre>
+  <p>The example runs every Monday, which catches an expiring certificate or a header lost in a deploy, see <a href="workflow.html#schedule">Run on a schedule</a>.</p>
   <p>All inputs, <code>fail-on</code> and the Security tab upload are described in <a href="workflow.html#inputs">The workflow</a>. Findings are technical hints with the law they relate to, not legal advice.</p>
 </main>
 

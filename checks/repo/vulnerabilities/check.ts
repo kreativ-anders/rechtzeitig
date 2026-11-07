@@ -23,6 +23,8 @@ export default defineRepoCheck({
           summary: v.summary ? ` ${v.summary}` : "",
           fixed: v.fixed ? msg("fixed", { version: v.fixed }) : "",
         },
+        // OSV can add a fixed version or change the summary; the alert stays the same.
+        fingerprint: `${v.purl} ${v.id}`,
       };
     });
     const serious = repo.vulnerabilities.filter((v) => SERIOUS.has(v.severity) && !component(v.purl)?.dev);

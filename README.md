@@ -27,7 +27,7 @@ More code is written with AI, and the same things keep slipping through: no impr
 
 - **Repository and live site.** It reads what visitors never see (lockfiles, workflows, keys, database rules) and what they get (HTML, scripts, cookies, headers, TLS, DNS), in one run and one report. Checks that compare the two directly are [planned](dev/roadmap.md).
 - **Continuous.** Run it weekly or on every push, so a new tracker, an expiring certificate or a newly published vulnerability shows up in the next run.
-- **Private where it should be.** Private repositories get the full report on the run page. Public ones show only counts by default; with `sarif-upload`, findings go to the Security tab, which only people with write access see.
+- **Private where it should be.** Private repositories get the full report on the run page. Public ones show only counts by default; the findings go to the Security tab, which only people with write access see, where GitHub allows the upload.
 
 ## What it checks
 
@@ -44,10 +44,10 @@ Every check names its legal basis and links a primary source. Your code stays on
 ## Quick start
 
 1. Copy [`examples/workflows/rechtzeitig.yml`](examples/workflows/rechtzeitig.yml) to `.github/workflows/rechtzeitig.yml`.
-2. Open **Actions → rechtzeitig → Run workflow** and enter your URL.
-3. Read the report on the run's summary page.
+2. Set `url` (and `language`, `sales`, `subscriptions`) in the file.
+3. Wait for Monday or open **Actions → rechtzeitig → Run workflow**, then read the report on the run's summary page.
 
-No secret needed. Optional switches (`sales`, `subscriptions`, `sarif-upload`, `IPINFO_TOKEN`) are listed in [What runs when](https://rechtzeitig.dev/workflow.html#scope). To get new releases, let Dependabot update the pin: [How do I get the latest version?](https://rechtzeitig.dev/#updates).
+No secret needed. The example runs weekly and fails when a check fails, so GitHub notifies you. Findings also go to the [Security tab](https://rechtzeitig.dev/workflow.html#security-tab) where GitHub allows it. Optional switches (`sales`, `subscriptions`, `IPINFO_TOKEN`) are listed in [What runs when](https://rechtzeitig.dev/workflow.html#scope). To get new releases, let Dependabot update the pin: [How do I get the latest version?](https://rechtzeitig.dev/#updates).
 
 ## Develop
 

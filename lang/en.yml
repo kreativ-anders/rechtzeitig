@@ -175,8 +175,6 @@ messages:
     findings_only: "Findings only. Passed and skipped checks are in the full report in the artifact rechtzeitig-report."
     no_findings: "No findings. The full report is in the artifact rechtzeitig-report."
     hidden_public: "Details hidden: on a public repository anyone can read this page. Set report-visibility: full to show them, or run rechtzeitig from a private repository."
-    hidden: "Details hidden by report-visibility: counts. Set report-visibility: full to show them."
-    hidden_none: "Report hidden by report-visibility: none. The result is in the output result."
     scan: "Scan"
     fix: "Fix"
     pages: "Pages"

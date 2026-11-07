@@ -252,18 +252,19 @@ export function toText(r: Report): string {
 }
 
 /**
- * How much of the report the run shows (input `report-visibility`). `full` shows everything; `counts` only
- * how many checks ended in each status, without rule ids, messages or places; `none` nothing.
+ * How much of the report the run shows (input `report-visibility`). `full` shows everything; `auto` shows
+ * everything for private repositories and only `counts` for public ones: how many checks ended in each status,
+ * without rule ids, messages or places.
  */
-export const VISIBILITIES = ["auto", "full", "counts", "none"] as const;
-export type Visibility = Exclude<(typeof VISIBILITIES)[number], "auto">;
-/** Why details are hidden: the repository is public (or did not say), or the input asked for it. */
-export type HiddenBecause = "public" | "input";
+export const VISIBILITIES = ["auto", "full"] as const;
+/** Removed values. For one more version they work like `auto`, with a warning. */
+export const REMOVED_VISIBILITIES = ["counts", "none"] as const;
+export type Visibility = "full" | "counts";
 
 /** The counts-only report for the step summary (`md`) or the log. Names no check and no place. */
-export function toCounts(r: Report, because: HiddenBecause, format: "md" | "text"): string {
+export function toCounts(r: Report, format: "md" | "text"): string {
   const t = ui(r.language);
-  const note = t(because === "public" ? "hidden_public" : "hidden");
+  const note = t("hidden_public");
   // The reasons name inputs, never a check or a place, so they may show here.
   if (format === "text") {
     return [`rechtzeitig: ${plain(title(r))}`, "", ...notRunLines(r, "text", false), ...(r.warnings ?? []).map((w) => `Warning: ${plain(w)}`), summaryLine(r, false), note].join("\n");
@@ -272,9 +273,6 @@ export function toCounts(r: Report, because: HiddenBecause, format: "md" | "text
   return [`## rechtzeitig: ${md(title(r))}`, "", summaryLine(r, true), "", `_${note}_`, "", ...notRunLines(r, "md", false), ...warnings, ...(warnings.length ? [""] : []),
     `- [rechtzeitig](${HOMEPAGE}) ${r.version} · ${r.startedAt}`, ""].join("\n");
 }
-
-/** The single log line for `report-visibility: none`. */
-export const noneNote = (lang: UiLanguage) => ui(lang)("hidden_none");
 
 const LEVEL: Partial<Record<OutcomeStatus, string>> = { fail: "error", error: "error", warn: "warning", info: "notice" };
 // Escaping of the GitHub Actions toolkit: data may not hold line breaks or %, properties also no , and :.

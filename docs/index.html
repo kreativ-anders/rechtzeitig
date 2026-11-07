@@ -93,10 +93,10 @@
       "@id": "https://rechtzeitig.dev/#faq",
       "mainEntity": [
         {"@type": "Question", "name": "How do I get the latest version?", "acceptedAnswer": {"@type": "Answer", "text": "The workflow pins a release by its commit SHA. Add .github/dependabot.yml to your repository: version: 2 updates: - package-ecosystem: github-actions directory: / schedule: interval: weekly Dependabot then opens a pull request whenever a new rechtzeitig release is out. Merge it and you have the new version."}},
-        {"@type": "Question", "name": "Can it run on a schedule or on every push?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The example workflow starts by hand, but rechtzeitig works with any trigger except pull_request_target. A scheduled run has no form, so the URL goes into the workflow file: Run on a schedule."}},
+        {"@type": "Question", "name": "Can it run on a schedule or on every push?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The example workflow runs every Monday and can also be started by hand. rechtzeitig works with any trigger except pull_request_target; the URL goes into the workflow file: Run on a schedule."}},
         {"@type": "Question", "name": "Is this legal advice?", "acceptedAnswer": {"@type": "Answer", "text": "No. A finding is a technical hint with the place and the law it relates to, so you know where to look first. A clean report means these checks found nothing, not that the site is compliant."}},
         {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default the names and versions of your locked packages go to osv.dev (vulnerabilities: false turns it off) and your host name to the Green Web Foundation (green-hosting: false). The full list is under Data that leaves the runner."}},
-        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository, or turn on sarif-upload: the findings then show in the Security tab, which only people with write access see. More in The report."}},
+        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository the run page shows only counts by default, because anyone can read it; the findings go to the Security tab, which only people with write access see. For the full report on the run page, run rechtzeitig from a private repository, or set report-visibility: full to publish it. More in The report."}},
         {"@type": "Question", "name": "How are the checks kept current?", "acceptedAnswer": {"@type": "Answer", "text": "Every check cites primary sources: laws, courts, authorities or standards, never blogs. Each records when its sources were last reviewed, and a check not reviewed for a year fails the project's tests, so it cannot be released. The releases list what changed."}}
       ]
     }
@@ -133,7 +133,7 @@
   <ul class="covers">
     <li><h3>Repository and live site</h3><p>The repository holds what visitors never see: lockfiles, workflows, keys, database rules. The website shows what they get: HTML, scripts, cookies, headers, TLS and DNS. rechtzeitig checks both in one run and one report. Checks that compare the two directly are <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/dev/roadmap.md">planned</a>.</p></li>
     <li><h3>Every week, not once</h3><p>Run it on a schedule or on every push. A tracker that came with a new embed, a certificate close to expiry or a new vulnerability in a package you use shows up in the next run. See <a href="workflow.html#schedule">Run on a schedule</a>.</p></li>
-    <li><h3>Findings stay private</h3><p>On a private repository the run page shows the full report. On a public one it shows only counts by default, because anyone can open the run page. With <code>sarif-upload</code>, findings go to the <a href="workflow.html#security-tab">Security tab</a>, which only people with write access see.</p></li>
+    <li><h3>Findings stay private</h3><p>On a private repository the run page shows the full report. On a public one it shows only counts by default, because anyone can open the run page. The findings go to the <a href="workflow.html#security-tab">Security tab</a>, which only people with write access see, where GitHub allows the upload.</p></li>
     <li><h3>A hint, not a verdict</h3><p>Each finding names the place and the rule, which cites its legal basis where there is one and links a primary source, so you know where to look first. It is a technical risk hint, not legal advice.</p></li>
   </ul>
 
@@ -245,10 +245,10 @@
   <h2 id="start">Start in two minutes</h2>
   <ol class="steps">
     <li><span>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository.</span></li>
-    <li><span>Open <span class="ui">Actions → rechtzeitig → Run workflow</span>, enter your URL and pick the language.</span></li>
-    <li><span>Read the report on the run's summary page.</span></li>
+    <li><span>Set <code>url</code> and the language in the file.</span></li>
+    <li><span>Wait for Monday or open <span class="ui">Actions → rechtzeitig → Run workflow</span>, then read the report on the run's summary page.</span></li>
   </ol>
-  <p>You start the example by hand. To check every week or on every push, which is how rechtzeitig is meant to run, add a trigger as shown in <a href="workflow.html#schedule">Run on a schedule</a>. Inputs, secrets and report files are described in <a href="workflow.html">The workflow</a>.</p>
+  <p>The example runs every week and fails when a check fails, so GitHub notifies you, see <a href="workflow.html#schedule">Run on a schedule</a>. Inputs, secrets and report files are described in <a href="workflow.html">The workflow</a>.</p>
 
   <section id="about" aria-labelledby="about-title">
     <h2 id="about-title">Who maintains it</h2>
@@ -273,7 +273,7 @@ updates:
     </details>
     <details id="schedule">
       <summary>Can it run on a schedule or on every push?</summary>
-      <p>Yes. The example workflow starts by hand, but rechtzeitig works with any trigger except <code>pull_request_target</code>. A scheduled run has no form, so the URL goes into the workflow file: <a href="workflow.html#schedule">Run on a schedule</a>.</p>
+      <p>Yes. The example workflow runs every Monday and can also be started by hand. rechtzeitig works with any trigger except <code>pull_request_target</code>; the URL goes into the workflow file: <a href="workflow.html#schedule">Run on a schedule</a>.</p>
     </details>
     <details id="advice">
       <summary>Is this legal advice?</summary>
@@ -285,7 +285,7 @@ updates:
     </details>
     <details id="visibility">
       <summary>Who can see the report?</summary>
-      <p>On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository, or turn on <code>sarif-upload</code>: the findings then show in the Security tab, which only people with write access see. More in <a href="workflow.html#report">The report</a>.</p>
+      <p>On a public repository the run page shows only counts by default, because anyone can read it; the findings go to the Security tab, which only people with write access see. For the full report on the run page, run rechtzeitig from a private repository, or set report-visibility: full to publish it. More in <a href="workflow.html#report">The report</a>.</p>
     </details>
     <details id="current">
       <summary>How are the checks kept current?</summary>

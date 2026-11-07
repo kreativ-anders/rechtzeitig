@@ -13,8 +13,8 @@ import { loadChecks, OUTCOMES, runChecks, selectModules, type OutcomeStatus } fr
 import { LANGUAGES, SWITCHES, switchSpec, type Switch, type UiLanguage } from "./rules.ts";
 import { errorMessage } from "./text.ts";
 import {
-  md, noneNote, plain, repoName, toAnnotations, toCounts, toFindings, toMarkdown, toText, VISIBILITIES, withoutCommands,
-  type HiddenBecause, type Report, type Visibility,
+  md, plain, repoName, REMOVED_VISIBILITIES, toAnnotations, toCounts, toFindings, toMarkdown, toText, VISIBILITIES, withoutCommands,
+  type Report, type Visibility,
 } from "./report.ts";
 
 const FAIL_ON: Record<string, OutcomeStatus[]> = {
@@ -27,6 +27,12 @@ const { values, positionals } = parseArgs({
   allowPositionals: true,
   options: CLI_OPTIONS,
 });
+// Runs without the Run workflow dialog (schedule, push) pass every `inputs.*` as "", so empty means the default.
+// url and repo have no default: empty there means "do not scan the site" or "no checkout".
+for (const [name, spec] of Object.entries(CLI_OPTIONS)) {
+  const key = name as keyof typeof values;
+  if ("default" in spec && typeof values[key] === "string" && !(values[key] as string).trim()) (values as Record<string, unknown>)[key] = spec.default;
+}
 
 let url = (values.url || positionals[0] || "").trim();
 if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;
@@ -35,13 +41,17 @@ if (!FAIL_ON[failOn]) exit(`fail-on must be one of: ${Object.keys(FAIL_ON).join(
 // The report follows the site language unless set; "all" and unknown languages fall back to English.
 const wanted = values["report-language"] || values.language!.split(",")[0];
 const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ? (wanted as UiLanguage) : "en";
-const wantedVisibility = values["report-visibility"] || "auto";
-if (!(VISIBILITIES as readonly string[]).includes(wantedVisibility)) exit(`report-visibility must be one of: ${VISIBILITIES.join(", ")}`);
+let wantedVisibility = values["report-visibility"] || "auto";
 const onGitHub = !!process.env.GITHUB_ACTIONS;
+if ((REMOVED_VISIBILITIES as readonly string[]).includes(wantedVisibility)) {
+  const note = `report-visibility: ${wantedVisibility} was removed and now works like auto. Remove the input or set full.`;
+  console.log(onGitHub ? `::warning::${note}` : `Warning: ${note}`);
+  wantedVisibility = "auto";
+}
+if (!(VISIBILITIES as readonly string[]).includes(wantedVisibility)) exit(`report-visibility must be one of: ${VISIBILITIES.join(", ")}`);
 // auto: full outside GitHub and for private or internal repositories; counts when the repository is public
 // or the event does not say, so a missing field never makes findings public.
-const visibility: Visibility = wantedVisibility === "auto" ? (!onGitHub || repositoryIsPrivate() ? "full" : "counts") : (wantedVisibility as Visibility);
-const hiddenBecause: HiddenBecause = wantedVisibility === "auto" ? "public" : "input";
+const visibility: Visibility = wantedVisibility === "full" || !onGitHub || repositoryIsPrivate() ? "full" : "counts";
 const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 
 const startedAt = new Date().toISOString();
@@ -101,12 +111,10 @@ if (visibility === "full") {
   // Annotations for findings in files, outside the stop-commands block above; src/report.ts escapes every value.
   if (onGitHub && repo) for (const line of toAnnotations(report, base)) console.log(line);
   summary = toMarkdown(report, { findingsOnly: true });
-} else if (visibility === "counts") {
-  // No files, so no artifact: the SBOM lists vulnerabilities, the findings their places.
-  log(toCounts(report, hiddenBecause, "text"));
-  summary = toCounts(report, hiddenBecause, "md");
 } else {
-  log(noneNote(language));
+  // No files, so no artifact: the SBOM lists vulnerabilities, the findings their places.
+  log(toCounts(report, "text"));
+  summary = toCounts(report, "md");
 }
 
 const failing = outcomes.some((o) => FAIL_ON[failOn].includes(o.status));

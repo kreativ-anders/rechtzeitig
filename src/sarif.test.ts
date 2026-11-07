@@ -47,6 +47,13 @@ test("fingerprints ignore the line and stay apart for repeated findings", () => 
   assert.deepEqual(at(10).runs[0].results.map((r) => r.partialFingerprints["rechtzeitig/v1"]), [a, b]);
 });
 
+test("a finding's own fingerprint keeps the alert when its parameters change", () => {
+  const fp = (summary: string, fingerprint?: string) => sarif(report([{ id: "repo/vulnerabilities", rule: rule("SEC-DEPS-001"), status: "warn", message: "m",
+    details: [{ file: "package-lock.json", key: "issue", params: { summary }, ...(fingerprint ? { fingerprint } : {}) }] }])).runs[0].results[0].partialFingerprints["rechtzeitig/v1"];
+  assert.equal(fp("old", "pkg:npm/a@1 GHSA-1"), fp("new, fixed in 2", "pkg:npm/a@1 GHSA-1"));
+  assert.notEqual(fp("old"), fp("new"));
+});
+
 test("messages from the site stay on one line each", () => {
   const s = sarif(report([{ id: "legal/imprint", rule: rule("LEG-DE-IMP-001"), status: "fail", message: "bad\nline", details: ["x\ny"] }]));
   assert.equal(s.runs[0].results[0].message.text, "bad line\n- x y");

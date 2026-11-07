@@ -78,15 +78,18 @@ test("report-visibility auto shows only counts for a public repository or an eve
   }
 });
 
-test("report-visibility full and none override the repository's visibility", () => {
-  const pub = { repository: { private: false } };
-  assert.match(onGitHub(pub, "--report-visibility", "full").log, /config\.js/);
-  const none = onGitHub(pub, "--report-visibility", "none");
-  assert.equal(none.summary, "");
-  assert.doesNotMatch(none.log, /fail|config\.js/);
-  assert.match(none.log, /report-visibility: none/);
-  assert.deepEqual(none.files, []);
-  assert.match(onGitHub({ repository: { private: true } }, "--report-visibility", "counts").summary, /Details hidden by report-visibility: counts/);
+test("report-visibility full overrides the repository's visibility", () => {
+  assert.match(onGitHub({ repository: { private: false } }, "--report-visibility", "full").log, /config\.js/);
+});
+
+test("the removed values counts and none work like auto, with a warning", () => {
+  for (const value of ["counts", "none"]) {
+    const pub = onGitHub({ repository: { private: false } }, "--report-visibility", value);
+    assert.match(pub.log, new RegExp(`::warning::report-visibility: ${value} was removed`));
+    assert.match(pub.summary, /_Details hidden: on a public repository/);
+    assert.deepEqual(pub.files, []);
+    assert.match(onGitHub({ repository: { private: true } }, "--report-visibility", value).log, /config\.js/);
+  }
 });
 
 test("sarif writes the findings with places even when report-visibility hides them", () => {
@@ -102,4 +105,14 @@ test("sarif writes the findings with places even when report-visibility hides th
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("empty inputs use their defaults, as on schedule and push runs without the dialog", () => {
+  // Every option the action passes, empty. The vulnerability lookup is on by default, so it tries the network,
+  // and the report is in German, the default language (an empty language used to give an English report).
+  const empty = ["language", "report-language", "subscriptions", "sales", "fail-on", "max-pages", "vulnerabilities",
+    "green-hosting", "require-sandbox", "report-visibility", "sarif"].flatMap((o) => [`--${o}`, ""]);
+  const result = run(...empty);
+  assert.equal(result.status, "warn");
+  assert.match(result.message, /^OSV-Abfrage fehlgeschlagen: .*network used/);
 });

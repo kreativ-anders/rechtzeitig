@@ -1,41 +1,12 @@
-# Copy to .github/workflows/rechtzeitig.yml in your repository.
-# Then: Actions → rechtzeitig → Run workflow.
-# Docs: https://rechtzeitig.dev/
+# Copy to .github/workflows/rechtzeitig.yml in your repository and set url. It then runs every Monday.
+# To run it now: Actions → rechtzeitig → Run workflow.
+# Docs: https://rechtzeitig.dev/workflow.html
 name: rechtzeitig
 
 on:
+  schedule:
+    - cron: "17 5 * * 1" # Mondays, 05:17 UTC. A minute other than :00 avoids GitHub's busiest time.
   workflow_dispatch:
-    inputs:
-      url:
-        description: URL of the start page (empty = repository only)
-        type: string
-      language:
-        description: Language of the site
-        type: choice
-        default: de
-        options: [de, en, all]
-      subscriptions:
-        description: Visitors can sign up for subscriptions
-        type: boolean
-        default: false
-      sales:
-        description: Consumers buy or sign contracts on the site
-        type: boolean
-        default: false
-      fail-on:
-        description: Fail the job on
-        type: choice
-        default: never
-        options: [never, fail, warn]
-      report-visibility:
-        description: Report on the run page (auto = full if private, counts if public)
-        type: choice
-        default: auto
-        options: [auto, full, counts, none]
-      sarif-upload:
-        description: Also send findings to the Security tab (SARIF, write access only)
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -43,10 +14,12 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    # security-events: write lets sarif-upload add alerts to the Security tab; unused when it is off.
     permissions:
       contents: read
+      # Findings as alerts in the Security tab (sarif-upload: auto). Where GitHub does not allow it,
+      # for example in private repositories without GitHub Code Security, the upload is skipped with a notice.
       security-events: write
+      actions: read # needed by the upload in private repositories
     timeout-minutes: 20
     steps:
       # Lets rechtzeitig read lockfiles, licenses and secrets. Remove to scan the website only.
@@ -56,27 +29,35 @@ jobs:
       # Pinned to a release. Dependabot can move the pin: https://rechtzeitig.dev/#updates
       - uses: kreativ-anders/rechtzeitig@3b54fb9f40f19eaf5be7e5f846c0bd6dc811cc6e # v0.3.0
         with:
-          url: ${{ inputs.url }}
-          language: ${{ inputs.language }}
-          subscriptions: ${{ inputs.subscriptions }}
-          sales: ${{ inputs.sales }}
-          fail-on: ${{ inputs.fail-on }}
-          report-visibility: ${{ inputs.report-visibility }}
-          sarif-upload: ${{ inputs.sarif-upload }}
+          # Start page of your site. Without url only the repository is checked.
+          # url: https://www.example.de/
+          # Language of the site: de, en, a list such as de,en, or all.
+          language: de
+          # true if consumers buy or sign contracts on the site (shop checks).
+          sales: false
+          # true if visitors can sign up for subscriptions (cancellation button, § 312k BGB).
+          subscriptions: false
+          # The job fails when a check fails, so GitHub emails you about new findings of a scheduled run.
+          # never = report only, warn = also on warnings.
+          fail-on: fail
           # Opt-in: the third-country check runs only with the secret IPINFO_TOKEN (free at ipinfo.io).
           # Without the secret it is skipped and nothing is sent to IPinfo.
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
-          # Optional: only these check groups (legal, privacy, security, sustainability, accessibility, repo). Empty = all.
+          # Optional, shown with their defaults:
+          # How much of the report the run shows. auto = full if private, counts if public.
+          # full = everything, also on a public repository, where anyone can read it.
+          # report-visibility: auto
+          # Security tab upload: auto = where GitHub allows it, false = never.
+          # sarif-upload: auto
+          # Only these check groups (legal, privacy, security, sustainability, accessibility, repo). Empty = all.
           # modules: ""
-          # Optional: language of the report (de or en). Empty = language of the site.
+          # Language of the report (de or en). Empty = language of the site.
           # report-language: ""
-          # Optional: pages to visit at most.
+          # Pages to visit at most.
           # max-pages: "10"
-          # Optional: false sends no component list to api.osv.dev and skips the vulnerability rule.
+          # false sends no component list to api.osv.dev and skips the vulnerability rule.
           # vulnerabilities: "true"
-          # Optional: false sends no host name to api.thegreenwebfoundation.org and skips the green hosting rule.
+          # false sends no host name to api.thegreenwebfoundation.org and skips the green hosting rule.
           # green-hosting: "true"
-          # Optional: false scans without Chrome's sandbox where the runner has none. Only for sites you trust.
+          # false scans without Chrome's sandbox where the runner has none. Only for sites you trust.
           # require-sandbox: "true"
-          # Optional: days to keep the report artifact. On public repositories anyone signed in can download it.
-          # retention-days: "7"

@@ -74,7 +74,7 @@
           "name": "Läuft es auch nach Zeitplan oder bei jedem Push?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Ja. Der Beispiel-Workflow startet von Hand, rechtzeitig funktioniert aber mit jedem Trigger außer pull_request_target. Ein geplanter Lauf hat kein Formular, deshalb steht die URL in der Workflow-Datei: Zeitplan einrichten."
+            "text": "Ja. Der Beispiel-Workflow läuft jeden Montag und lässt sich auch von Hand starten. rechtzeitig funktioniert mit jedem Trigger außer pull_request_target; die URL steht in der Workflow-Datei: Zeitplan einrichten."
           }
         },
         {
@@ -98,7 +98,7 @@
           "name": "Wer kann den Bericht sehen?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "In einem öffentlichen Repository zeigt er standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten oder sarif-upload einschalten: Dann stehen die Befunde im Security-Tab, den nur Personen mit Schreibrechten sehen. Mehr unter Der Bericht."
+            "text": "In einem öffentlichen Repository zeigt die Seite des Laufs standardmäßig nur die Zahlen, weil jeder sie lesen kann; die Befunde gehen in den Security-Tab, den nur Personen mit Schreibrechten sehen. Für den vollständigen Bericht auf der Seite des Laufs rechtzeitig aus einem privaten Repository starten oder ihn mit report-visibility: full veröffentlichen. Mehr unter Der Bericht."
           }
         },
         {
@@ -144,7 +144,7 @@
   <ul class="covers">
     <li><h3>Repository und Live-Website</h3><p>Im Repository steht, was Besucher nie sehen: Lockfiles, Workflows, Schlüssel, Datenbankregeln. Die Website zeigt, was bei ihnen ankommt: HTML, Skripte, Cookies, Header, TLS und DNS. rechtzeitig prüft beides in einem Lauf und einem Bericht. Prüfungen, die beides direkt vergleichen, sind <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/dev/roadmap.md" hreflang="en">geplant</a>.</p></li>
     <li><h3>Jede Woche, nicht einmal</h3><p>Nach Zeitplan oder bei jedem Push laufen lassen. Ein Tracker, der mit einer neuen Einbettung kam, ein Zertifikat kurz vor Ablauf oder eine neue Schwachstelle in einem genutzten Paket fällt beim nächsten Lauf auf. Siehe <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>.</p></li>
-    <li><h3>Befunde bleiben privat</h3><p>In einem privaten Repository zeigt die Seite des Laufs den vollständigen Bericht. In einem öffentlichen zeigt sie standardmäßig nur die Zahlen, weil jeder die Seite des Laufs öffnen kann. Mit <code>sarif-upload</code> landen die Befunde im <a href="../workflow.html#security-tab" hreflang="en">Security-Tab</a>, den nur Personen mit Schreibrechten sehen.</p></li>
+    <li><h3>Befunde bleiben privat</h3><p>In einem privaten Repository zeigt die Seite des Laufs den vollständigen Bericht. In einem öffentlichen zeigt sie standardmäßig nur die Zahlen, weil jeder die Seite des Laufs öffnen kann. Die Befunde landen im <a href="../workflow.html#security-tab" hreflang="en">Security-Tab</a>, den nur Personen mit Schreibrechten sehen, sofern GitHub den Upload erlaubt.</p></li>
     <li><h3>Ein Hinweis, kein Urteil</h3><p>Jeder Befund nennt Fundstelle und Prüfung. Die Prüfung nennt ihre Rechtsgrundlage, wo es eine gibt, und verlinkt eine Primärquelle, damit Sie wissen, wo Sie zuerst nachsehen. Es ist ein technischer Risikohinweis, keine Rechtsberatung.</p></li>
   </ul>
 
@@ -256,10 +256,10 @@
   <h2 id="start">In zwei Minuten starten</h2>
   <ol class="steps">
     <li><span><a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> nach <code>.github/workflows/rechtzeitig.yml</code> im eigenen Repository kopieren.</span></li>
-    <li><span><span class="ui">Actions → rechtzeitig → Run workflow</span> öffnen, URL eintragen und die Sprache wählen.</span></li>
-    <li><span>Den Bericht auf der Zusammenfassung des Laufs lesen.</span></li>
+    <li><span>In der Datei <code>url</code> und die Sprache eintragen.</span></li>
+    <li><span>Bis Montag warten oder <span class="ui">Actions → rechtzeitig → Run workflow</span> öffnen, dann den Bericht auf der Zusammenfassung des Laufs lesen.</span></li>
   </ol>
-  <p>Das Beispiel startet von Hand. Gedacht ist rechtzeitig für regelmäßige Läufe: Soll es jede Woche oder bei jedem Push laufen, einen Trigger ergänzen, wie unter <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a> gezeigt. Inputs, Secrets und Berichtsdateien beschreibt <a href="../workflow.html" hreflang="en">Der Workflow</a> (Englisch).</p>
+  <p>Das Beispiel läuft jede Woche und schlägt fehl, wenn eine Prüfung fehlschlägt, sodass GitHub Sie benachrichtigt, siehe <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>. Inputs, Secrets und Berichtsdateien beschreibt <a href="../workflow.html" hreflang="en">Der Workflow</a> (Englisch).</p>
 
   <section id="about" aria-labelledby="about-title">
     <h2 id="about-title">Wer dahintersteht</h2>
@@ -284,7 +284,7 @@ updates:
     </details>
     <details id="schedule">
       <summary>Läuft es auch nach Zeitplan oder bei jedem Push?</summary>
-      <p>Ja. Der Beispiel-Workflow startet von Hand, rechtzeitig funktioniert aber mit jedem Trigger außer <code>pull_request_target</code>. Ein geplanter Lauf hat kein Formular, deshalb steht die URL in der Workflow-Datei: <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>.</p>
+      <p>Ja. Der Beispiel-Workflow läuft jeden Montag und lässt sich auch von Hand starten. rechtzeitig funktioniert mit jedem Trigger außer <code>pull_request_target</code>; die URL steht in der Workflow-Datei: <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>.</p>
     </details>
     <details id="advice">
       <summary>Ist das Rechtsberatung?</summary>
@@ -296,7 +296,7 @@ updates:
     </details>
     <details id="visibility">
       <summary>Wer kann den Bericht sehen?</summary>
-      <p>In einem öffentlichen Repository zeigt er standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten oder <code>sarif-upload</code> einschalten: Dann stehen die Befunde im Security-Tab, den nur Personen mit Schreibrechten sehen. Mehr unter <a href="../workflow.html#report" hreflang="en">Der Bericht</a>.</p>
+      <p>In einem öffentlichen Repository zeigt die Seite des Laufs standardmäßig nur die Zahlen, weil jeder sie lesen kann; die Befunde gehen in den Security-Tab, den nur Personen mit Schreibrechten sehen. Für den vollständigen Bericht auf der Seite des Laufs rechtzeitig aus einem privaten Repository starten oder ihn mit <code>report-visibility: full</code> veröffentlichen. Mehr unter <a href="../workflow.html#report" hreflang="en">Der Bericht</a>.</p>
     </details>
     <details id="current">
       <summary>Wie bleiben die Prüfungen aktuell?</summary>

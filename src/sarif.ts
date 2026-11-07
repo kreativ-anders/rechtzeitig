@@ -63,7 +63,7 @@ function results(o: Outcome, r: Report, base: string, anchor?: string) {
   const fileResults = inFiles.map(({ d, text }) => {
     const uri = base ? `${base}/${d.file}` : d.file!;
     // The fingerprint leaves out the line, so an alert stays the same alert when code moves.
-    const key = hash(o.rule.id, uri, d.key, JSON.stringify(d.params ?? d.text ?? ""));
+    const key = hash(o.rule.id, uri, d.key, d.fingerprint ?? JSON.stringify(d.params ?? d.text ?? ""));
     const n = (seen.get(key) ?? 0) + 1;
     seen.set(key, n);
     return {
