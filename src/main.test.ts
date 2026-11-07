@@ -103,3 +103,13 @@ test("sarif writes the findings with places even when report-visibility hides th
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("empty inputs use their defaults, as on schedule and push runs without the dialog", () => {
+  // Every option the action passes, empty. The vulnerability lookup is on by default, so it tries the network,
+  // and the report is in German, the default language (an empty language used to give an English report).
+  const empty = ["language", "report-language", "subscriptions", "sales", "fail-on", "max-pages", "vulnerabilities",
+    "green-hosting", "require-sandbox", "report-visibility", "sarif"].flatMap((o) => [`--${o}`, ""]);
+  const result = run(...empty);
+  assert.equal(result.status, "warn");
+  assert.match(result.message, /^OSV-Abfrage fehlgeschlagen: .*network used/);
+});

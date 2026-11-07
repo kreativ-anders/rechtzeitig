@@ -71,7 +71,7 @@
           "name": "Läuft es auch nach Zeitplan oder bei jedem Push?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Ja. Der Beispiel-Workflow startet von Hand, rechtzeitig funktioniert aber mit jedem Trigger außer pull_request_target. Ein geplanter Lauf hat kein Formular, deshalb steht die URL in der Workflow-Datei: Zeitplan einrichten."
+            "text": "Ja. Der Beispiel-Workflow läuft jeden Montag und lässt sich auch von Hand starten. rechtzeitig funktioniert mit jedem Trigger außer pull_request_target; die URL steht in der Workflow-Datei: Zeitplan einrichten."
           }
         },
         {
@@ -245,10 +245,10 @@
   <h2 id="start">In zwei Minuten starten</h2>
   <ol class="steps">
     <li><span><a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> nach <code>.github/workflows/rechtzeitig.yml</code> im eigenen Repository kopieren.</span></li>
-    <li><span><span class="ui">Actions → rechtzeitig → Run workflow</span> öffnen, URL eintragen und die Sprache wählen.</span></li>
-    <li><span>Den Bericht auf der Zusammenfassung des Laufs lesen.</span></li>
+    <li><span>In der Datei <code>url</code> und die Sprache eintragen.</span></li>
+    <li><span>Bis Montag warten oder <span class="ui">Actions → rechtzeitig → Run workflow</span> öffnen, dann den Bericht auf der Zusammenfassung des Laufs lesen.</span></li>
   </ol>
-  <p>Das Beispiel startet von Hand. Soll es jede Woche oder bei jedem Push laufen, einen Trigger ergänzen, wie unter <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a> gezeigt. Inputs, Secrets und Berichtsdateien beschreibt <a href="../workflow.html" hreflang="en">Der Workflow</a> (Englisch).</p>
+  <p>Das Beispiel läuft jede Woche und schlägt fehl, wenn eine Prüfung fehlschlägt, sodass GitHub Sie benachrichtigt, siehe <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>. Inputs, Secrets und Berichtsdateien beschreibt <a href="../workflow.html" hreflang="en">Der Workflow</a> (Englisch).</p>
 
   <section id="about" aria-labelledby="about-title">
     <h2 id="about-title">Wer dahintersteht</h2>
@@ -273,7 +273,7 @@ updates:
     </details>
     <details id="schedule">
       <summary>Läuft es auch nach Zeitplan oder bei jedem Push?</summary>
-      <p>Ja. Der Beispiel-Workflow startet von Hand, rechtzeitig funktioniert aber mit jedem Trigger außer <code>pull_request_target</code>. Ein geplanter Lauf hat kein Formular, deshalb steht die URL in der Workflow-Datei: <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>.</p>
+      <p>Ja. Der Beispiel-Workflow läuft jeden Montag und lässt sich auch von Hand starten. rechtzeitig funktioniert mit jedem Trigger außer <code>pull_request_target</code>; die URL steht in der Workflow-Datei: <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>.</p>
     </details>
     <details id="advice">
       <summary>Ist das Rechtsberatung?</summary>

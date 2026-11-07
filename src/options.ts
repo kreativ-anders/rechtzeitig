@@ -1,4 +1,5 @@
 // Options of the command line entry (src/main.ts). Kept apart so tests can compare them with action.yml.
+// An empty value counts as the default (src/main.ts), because runs without the Run workflow dialog pass "".
 
 export const CLI_OPTIONS = {
   url: { type: "string" },

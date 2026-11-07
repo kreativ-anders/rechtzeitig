@@ -1,7 +1,7 @@
 // Every input of the action is documented: in docs/workflow.html and in the example workflow users copy.
 // Every switch in src/rules.ts is an input, so "what runs when" never names something that cannot be set.
-// action.yml, src/options.ts and the docs agree on names and defaults, and every input is either offered
-// in the Run workflow dialog or named in FILE_ONLY, so adding an input forces that decision.
+// action.yml, src/options.ts and the docs agree on names and defaults, and every input is either set in the
+// example's with: block or named in FILE_ONLY, so adding an input forces that decision.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -58,6 +58,11 @@ test("every input that reaches the scan becomes an option or an environment vari
   assert.deepEqual(broken, []);
 });
 
+test("only the code scanning check gets the job's token, never the scan step", () => {
+  const withToken = action.runs.steps.filter((s) => JSON.stringify(s.env ?? {}).includes("github.token")).map((s) => s.id);
+  assert.deepEqual(withToken, ["sarif"]);
+});
+
 test("the action passes every command line option", () => {
   assert.deepEqual(Object.keys(options).filter((o) => !scanRun.includes(`--${o} `)), []);
 });
@@ -84,50 +89,74 @@ test("docs/workflow.html shows the default of action.yml", () => {
   assert.deepEqual(differ, []);
 });
 
-// ---------- the Run workflow dialog
+// ---------- the example workflow and this repository's workflow
 
 /**
- * Inputs set in the workflow file, not in the Run workflow dialog, and why. A new input goes either into
- * the dialog of the example workflow or here.
+ * Inputs the example workflow does not set in its with: block, and why. The example names them in a comment
+ * with their default ("repository" at the checkout step). A new input goes either into the with: block of
+ * the example or here.
  */
 const FILE_ONLY: Record<string, string> = {
+  url: "each user sets their own site; the example shows it as a comment",
   repository: "follows the checkout step",
-  "ipinfo-token": "a secret",
-  modules: "rarely changes between runs",
-  "report-language": "rarely changes between runs",
-  "max-pages": "rarely changes between runs",
-  vulnerabilities: "data protection setting of the repository, not of a run",
-  "green-hosting": "data protection setting of the repository, not of a run",
-  "require-sandbox": "safety setting, should not be one click away",
-  "retention-days": "setting of the repository, not of a run",
+  "report-visibility": "the default auto keeps findings off public run pages",
+  "sarif-upload": "the default auto uploads where GitHub allows it",
+  modules: "the default runs all checks",
+  "report-language": "the default follows language",
+  "max-pages": "rarely changes",
+  vulnerabilities: "data protection setting, on by default",
+  "green-hosting": "data protection setting, on by default",
+  "require-sandbox": "safety setting, should stay on",
+  "retention-days": "setting of the repository",
 };
 
-type Workflow = { on: { workflow_dispatch?: { inputs?: Record<string, { default?: unknown }> } }; jobs: Record<string, { steps: Step[] }> };
-const dialog = (path: string) => {
+type Workflow = {
+  on: { schedule?: { cron: string }[]; workflow_dispatch?: { inputs?: Record<string, unknown> } | null };
+  jobs: Record<string, { permissions?: Record<string, string>; steps: Step[] }>;
+};
+const isRechtzeitig = (s: Step) => /rechtzeitig@|^\.\/$/.test(s.uses ?? "");
+const workflow = (path: string) => {
   const wf = loadYaml<Workflow>(path);
-  const step = Object.values(wf.jobs).flatMap((j) => j.steps).find((s) => /rechtzeitig@|^\.\/$/.test(s.uses ?? ""));
-  assert.ok(step, `${path} has no rechtzeitig step`);
-  return { inputs: wf.on.workflow_dispatch?.inputs ?? {}, with: step.with ?? {} };
+  const job = Object.values(wf.jobs).find((j) => j.steps.some(isRechtzeitig));
+  assert.ok(job, `${path} has no rechtzeitig step`);
+  const step = job.steps.find(isRechtzeitig)!;
+  return { on: wf.on, permissions: job.permissions ?? {}, with: step.with ?? {} };
 };
-const example = dialog("examples/workflows/rechtzeitig.yml");
-const own = dialog(".github/workflows/rechtzeitig.yml");
+const example = workflow("examples/workflows/rechtzeitig.yml");
+const own = workflow(".github/workflows/rechtzeitig.yml");
 
-test("every input is in the Run workflow dialog of the example or in FILE_ONLY", () => {
-  const offered = Object.keys(example.inputs);
-  assert.deepEqual(inputs.filter((i) => !offered.includes(i) && !(i in FILE_ONLY)), [], "add it to the dialog or to FILE_ONLY");
-  assert.deepEqual(offered.filter((i) => i in FILE_ONLY), [], "both in the dialog and in FILE_ONLY");
+test("every input is set in the example's with: block or in FILE_ONLY", () => {
+  const set = Object.keys(example.with);
+  assert.deepEqual(inputs.filter((i) => !set.includes(i) && !(i in FILE_ONLY)), [], "set it in the example or add it to FILE_ONLY");
+  assert.deepEqual(set.filter((i) => i in FILE_ONLY), [], "both set in the example and in FILE_ONLY");
   assert.deepEqual(Object.keys(FILE_ONLY).filter((i) => !inputs.includes(i)), [], "FILE_ONLY names an input that does not exist");
 });
 
-test("the dialog passes each choice to the action, with the action's default", () => {
-  for (const [name, spec] of Object.entries(example.inputs)) {
-    assert.equal(example.with[name], `\${{ inputs.${name} }}`, `${name} is not passed to the action`);
-    const want = action.inputs[name]?.default;
-    if (spec.default !== undefined && want !== undefined) assert.equal(String(spec.default), want, `${name}: default in the dialog`);
+test("the example names each input it does not set with the default of action.yml", () => {
+  const text = read("examples/workflows/rechtzeitig.yml");
+  const differ = Object.keys(FILE_ONLY).flatMap((i) => {
+    const comment = new RegExp(`^\\s*#\\s*${i}:\\s*(.*)$`, "m").exec(text)?.[1].replace(/^"(.*)"$/, "$1");
+    const want = action.inputs[i].default ?? "";
+    // url shows an example site, not the default.
+    if (comment === undefined || i === "url" || isExpression(want)) return [];
+    return comment === want ? [] : [`${i}: "${comment}" in the example, "${want}" in action.yml`];
+  });
+  assert.deepEqual(differ, []);
+});
+
+test("both workflows run on a schedule and by hand, without a Run workflow dialog", () => {
+  for (const [name, wf] of [["example", example], ["own", own]] as const) {
+    assert.ok(wf.on.schedule?.length, `${name}: no schedule`);
+    assert.ok("workflow_dispatch" in wf.on, `${name}: no workflow_dispatch`);
+    assert.equal(wf.on.workflow_dispatch?.inputs, undefined, `${name}: has a Run workflow dialog`);
+    // Nothing reads inputs.*, which is empty on scheduled runs.
+    assert.deepEqual(Object.entries(wf.with).filter(([, v]) => String(v).includes("inputs.")).map(([k]) => k), [], `${name}: uses inputs.*`);
   }
 });
 
-test("this repository's workflow offers the same dialog as the example", () => {
-  assert.deepEqual(Object.keys(own.inputs), Object.keys(example.inputs));
-  for (const name of Object.keys(own.inputs)) assert.equal(own.with[name], `\${{ inputs.${name} }}`, `${name} is not passed`);
+test("this repository's workflow has the same job permissions as the example", () => {
+  assert.deepEqual(own.permissions, example.permissions);
+  // The SARIF upload needs security-events: write, in private repositories also actions: read.
+  assert.equal(example.permissions["security-events"], "write");
+  assert.equal(example.permissions.actions, "read");
 });

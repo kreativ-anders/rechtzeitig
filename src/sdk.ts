@@ -35,6 +35,11 @@ export interface Finding {
   params?: Params;
   /** A value shown as it is: a URL, a host, a cookie name. */
   text?: string;
+  /**
+   * What makes this finding the same finding in the next run, for code scanning alerts (src/sarif.ts).
+   * Default: key and params. Set it when params carry data that can change for the same finding.
+   */
+  fingerprint?: string;
 }
 
 export interface Result {

@@ -28,7 +28,7 @@
 <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="site.js" defer></script>
 <script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="w5NWUb6qKUHLnm9YxdgaEAxd7PflSnf6"></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/workflow.html#webpage", "url": "https://rechtzeitig.dev/workflow.html", "name": "Workflow setup: inputs, schedule, SBOM", "description": "Inputs, secrets, fail-on, scheduled runs, SARIF upload and the CycloneDX SBOM of the rechtzeitig GitHub Action, and which data leaves the runner.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/workflow.html#breadcrumb"}, "headline": "Workflow setup: inputs, schedule, SBOM", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-04"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/workflow.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Workflow", "item": "https://rechtzeitig.dev/workflow.html"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/workflow.html#webpage", "url": "https://rechtzeitig.dev/workflow.html", "name": "Workflow setup: inputs, schedule, SBOM", "description": "Inputs, secrets, fail-on, scheduled runs, SARIF upload and the CycloneDX SBOM of the rechtzeitig GitHub Action, and which data leaves the runner.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/workflow.html#breadcrumb"}, "headline": "Workflow setup: inputs, schedule, SBOM", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-07"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/workflow.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Workflow", "item": "https://rechtzeitig.dev/workflow.html"}]}]}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
@@ -63,6 +63,7 @@
     <div>
       <section id="inputs">
         <h2><span class="par">§ 1</span>Inputs</h2>
+        <p>Every input is optional. An input you leave out, or set to an empty value, uses its default. This also holds for <code>${{ inputs.x }}</code> on a scheduled run, where it is empty. The <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> sets <code>url</code>, <code>language</code>, <code>sales</code>, <code>subscriptions</code> and <code>fail-on</code>, and lists the rest with their defaults, see <a href="#schedule">Run on a schedule</a>.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Input</th><th scope="col">Default</th><th scope="col">Meaning</th></tr></thead>
           <tbody>
@@ -80,7 +81,7 @@
             <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the host runs on green energy (sends the host name). <code>false</code> skips the <a href="checks.html#SUS-HOST-001">check</a> and sends nothing.</td></tr>
             <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>Stops the scan when Chrome cannot start with its sandbox. <code>false</code> scans without it, see <a href="#safe">Safe use</a>.</td></tr>
             <tr><td><code>report-visibility</code></td><td><code>auto</code></td><td>How much the run shows: <code>auto</code>, <code>full</code>, <code>counts</code> or <code>none</code>, see <a href="#report">The report</a>.</td></tr>
-            <tr><td><code>sarif-upload</code></td><td><code>false</code></td><td>Opt-in. <code>true</code> also shows the findings in the Security tab, see <a href="#security-tab">Security tab</a>.</td></tr>
+            <tr><td><code>sarif-upload</code></td><td><code>auto</code></td><td>Shows the findings in the Security tab where GitHub allows it. <code>auto</code> skips with a notice otherwise, <code>true</code> warns, <code>false</code> never uploads, see <a href="#security-tab">Security tab</a>.</td></tr>
             <tr><td><code>retention-days</code></td><td><code>7</code></td><td>Days GitHub keeps the report artifact, see <a href="#report">The report</a>.</td></tr>
           </tbody>
         </table></div>
@@ -160,11 +161,19 @@
         </table></div>
         <p class="note">On a public repository the run page is public, so <code>auto</code> shows only counts there. With <code>full</code>, anyone can read the findings and download the artifact (secret values are redacted, their file and line are not). GitHub deletes the artifact after <code>retention-days</code>, the log after 90 days by default. To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout.</p>
         <h3 id="security-tab">Security tab</h3>
-        <p>With <code>sarif-upload: true</code>, findings show as code scanning alerts in the repository's <span class="ui">Security</span> tab, which only people with write access see, even on a public repository. Website findings point to the workflow file and name the page. The job needs:</p>
+        <p>By default (<code>sarif-upload: auto</code>), findings also show as code scanning alerts in the repository's <span class="ui">Security</span> tab, which only people with write access see, even on a public repository. Website findings point to the workflow file and name the page. Each finding keeps its alert from run to run: a weekly run updates the alerts and closes fixed ones instead of adding new ones. The job needs:</p>
         <pre><code>permissions:
   contents: read
-  security-events: write</code></pre>
-        <p>Free on public repositories; private ones need GitHub Code Security. A failed upload does not fail the job.</p>
+  security-events: write
+  actions: read # private repositories only</code></pre>
+        <p>Before the scan, rechtzeitig asks GitHub once whether code scanning is available. It skips the upload with a notice when:</p>
+        <ul>
+          <li>the repository is private or internal without GitHub Code Security (a paid license for organizations on GitHub Team or Enterprise). On GitHub Free and Pro, private repositories have no code scanning at all.</li>
+          <li>the run is a pull request from a fork or was started by Dependabot. Their token is read-only.</li>
+          <li>the job lacks <code>security-events: write</code>.</li>
+        </ul>
+        <p>Public repositories have code scanning for free. The upload never fails the job: with <code>auto</code> a skip or a failed upload is a notice, with <code>true</code> a warning. <code>false</code> writes no SARIF file and asks GitHub nothing.</p>
+        <p class="note">GitHub Enterprise Server is not tested; it may work where a site admin has turned on code scanning. Treat it as best effort.</p>
       </section>
 
       <section id="visit">
@@ -175,7 +184,7 @@
 
       <section id="data">
         <h2><span class="par">§ 7</span>Data that leaves the runner</h2>
-        <p>Besides visiting your website, rechtzeitig sends data only to these services, and with <code>sarif-upload: true</code> to your own repository's code scanning.</p>
+        <p>Besides visiting your website, rechtzeitig sends data only to these services, and to the GitHub API of your own repository: one request to see whether code scanning is available, then the SARIF upload. Turn that off with <code>sarif-upload: false</code>.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>
@@ -203,17 +212,18 @@
       <section id="questions">
         <h2><span class="par">§ 10</span>Questions</h2>
         <h3 id="schedule">Run on a schedule or on push</h3>
-        <p>The example workflow starts by hand (<code>workflow_dispatch</code>). Add <code>schedule</code> or <code>push</code> next to it. Those runs have no form, so every <code>inputs</code> value is empty: give <code>url</code> and <code>language</code> a fallback. The other inputs then use their defaults.</p>
+        <p>The example workflow runs every Monday and has a <span class="ui">Run workflow</span> button without a form. Copy it and set <code>url</code>:</p>
         <pre><code>on:
-  workflow_dispatch:
-    # inputs as in the example
   schedule:
-    - cron: "0 6 * * 1" # Mondays, 06:00 UTC</code></pre>
-        <p>In the rechtzeitig step:</p>
-        <pre><code>url: ${{ inputs.url || 'https://www.example.de/' }}
-language: ${{ inputs.language || 'de' }}
-fail-on: ${{ inputs.fail-on || 'fail' }} # red when a check fails</code></pre>
-        <p>Never use <code>pull_request_target</code>, see <a href="#safe">Safe use</a>.</p>
+    - cron: "17 5 * * 1" # Mondays, 05:17 UTC
+  workflow_dispatch:</code></pre>
+        <pre><code>url: https://www.example.de/
+language: de
+sales: false
+subscriptions: false
+fail-on: fail # red when a check fails</code></pre>
+        <p>With <code>fail-on: fail</code>, a run with a failing check turns red, and GitHub notifies the person who last changed the <code>cron</code> line. Runs stay red while a check fails, so the first run often is; until the findings are fixed, set <code>fail-on: never</code> if you prefer quiet runs. A minute other than <code>:00</code> avoids the start of the hour, when GitHub delays scheduled runs. Scheduled runs use the default branch only. In a public repository, GitHub turns the schedule off after 60 days without activity in the repository.</p>
+        <p>To also run on each push, add <code>push: branches: [main]</code>. Limit it to the default branch: pushes by Dependabot get a read-only token. Never use <code>pull_request_target</code>, see <a href="#safe">Safe use</a>.</p>
         <h3 id="no-issues">Why does rechtzeitig not open issues?</h3>
         <p>Issues stay, notify people and are found by search engines, so on a public repository they would point everyone to a weakness of your site. They would also need <code>issues: write</code>. If you want one anyway, add a step after rechtzeitig that reads <code>rechtzeitig-report.json</code> and runs <code>gh issue create</code>, and give that step the permission.</p>
         <p class="note">A secret found in a public repository is already public. Revoke it first, then remove it from the code.</p>

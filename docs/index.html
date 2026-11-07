@@ -90,7 +90,7 @@
       "@id": "https://rechtzeitig.dev/#faq",
       "mainEntity": [
         {"@type": "Question", "name": "How do I get the latest version?", "acceptedAnswer": {"@type": "Answer", "text": "The workflow pins a release by its commit SHA. Add .github/dependabot.yml to your repository: version: 2 updates: - package-ecosystem: github-actions directory: / schedule: interval: weekly Dependabot then opens a pull request whenever a new rechtzeitig release is out. Merge it and you have the new version."}},
-        {"@type": "Question", "name": "Can it run on a schedule or on every push?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The example workflow starts by hand, but rechtzeitig works with any trigger except pull_request_target. A scheduled run has no form, so the URL goes into the workflow file: Run on a schedule."}},
+        {"@type": "Question", "name": "Can it run on a schedule or on every push?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The example workflow runs every Monday and can also be started by hand. rechtzeitig works with any trigger except pull_request_target; the URL goes into the workflow file: Run on a schedule."}},
         {"@type": "Question", "name": "Is this legal advice?", "acceptedAnswer": {"@type": "Answer", "text": "No. A finding is a technical hint with the place and the law it relates to, so you know where to look first. A clean report means these checks found nothing, not that the site is compliant."}},
         {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default the names and versions of your locked packages go to osv.dev (vulnerabilities: false turns it off) and your host name to the Green Web Foundation (green-hosting: false). The full list is under Data that leaves the runner."}},
         {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. More in The report."}},
@@ -233,10 +233,10 @@
   <h2 id="start">Start in two minutes</h2>
   <ol class="steps">
     <li><span>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository.</span></li>
-    <li><span>Open <span class="ui">Actions → rechtzeitig → Run workflow</span>, enter your URL and pick the language.</span></li>
-    <li><span>Read the report on the run's summary page.</span></li>
+    <li><span>Set <code>url</code> and the language in the file.</span></li>
+    <li><span>Wait for Monday or open <span class="ui">Actions → rechtzeitig → Run workflow</span>, then read the report on the run's summary page.</span></li>
   </ol>
-  <p>You start the example by hand. To check every week or on every push, add a trigger as shown in <a href="workflow.html#schedule">Run on a schedule</a>. Inputs, secrets and report files are described in <a href="workflow.html">The workflow</a>.</p>
+  <p>The example runs every week and fails when a check fails, so GitHub notifies you, see <a href="workflow.html#schedule">Run on a schedule</a>. Inputs, secrets and report files are described in <a href="workflow.html">The workflow</a>.</p>
 
   <section id="about" aria-labelledby="about-title">
     <h2 id="about-title">Who maintains it</h2>
@@ -261,7 +261,7 @@ updates:
     </details>
     <details id="schedule">
       <summary>Can it run on a schedule or on every push?</summary>
-      <p>Yes. The example workflow starts by hand, but rechtzeitig works with any trigger except <code>pull_request_target</code>. A scheduled run has no form, so the URL goes into the workflow file: <a href="workflow.html#schedule">Run on a schedule</a>.</p>
+      <p>Yes. The example workflow runs every Monday and can also be started by hand. rechtzeitig works with any trigger except <code>pull_request_target</code>; the URL goes into the workflow file: <a href="workflow.html#schedule">Run on a schedule</a>.</p>
     </details>
     <details id="advice">
       <summary>Is this legal advice?</summary>

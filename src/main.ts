@@ -27,6 +27,12 @@ const { values, positionals } = parseArgs({
   allowPositionals: true,
   options: CLI_OPTIONS,
 });
+// Runs without the Run workflow dialog (schedule, push) pass every `inputs.*` as "", so empty means the default.
+// url and repo have no default: empty there means "do not scan the site" or "no checkout".
+for (const [name, spec] of Object.entries(CLI_OPTIONS)) {
+  const key = name as keyof typeof values;
+  if ("default" in spec && typeof values[key] === "string" && !(values[key] as string).trim()) (values as Record<string, unknown>)[key] = spec.default;
+}
 
 let url = (values.url || positionals[0] || "").trim();
 if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;

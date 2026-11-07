@@ -36,10 +36,10 @@ Every check names its legal basis and links a primary source. Your code stays on
 ## Quick start
 
 1. Copy [`examples/workflows/rechtzeitig.yml`](examples/workflows/rechtzeitig.yml) to `.github/workflows/rechtzeitig.yml`.
-2. Open **Actions → rechtzeitig → Run workflow** and enter your URL.
-3. Read the report on the run's summary page.
+2. Set `url` (and `language`, `sales`, `subscriptions`) in the file.
+3. Wait for Monday or open **Actions → rechtzeitig → Run workflow**, then read the report on the run's summary page.
 
-No secret needed. Optional switches (`sales`, `subscriptions`, `sarif-upload`, `IPINFO_TOKEN`) are listed in [What runs when](https://rechtzeitig.dev/workflow.html#scope). To get new releases, let Dependabot update the pin: [How do I get the latest version?](https://rechtzeitig.dev/#updates).
+No secret needed. The example runs weekly and fails when a check fails, so GitHub notifies you. Findings also go to the [Security tab](https://rechtzeitig.dev/workflow.html#security-tab) where GitHub allows it. Optional switches (`sales`, `subscriptions`, `IPINFO_TOKEN`) are listed in [What runs when](https://rechtzeitig.dev/workflow.html#scope). To get new releases, let Dependabot update the pin: [How do I get the latest version?](https://rechtzeitig.dev/#updates).
 
 ## Develop
 
