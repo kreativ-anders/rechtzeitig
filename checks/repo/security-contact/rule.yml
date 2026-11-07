@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "CRA Anhang I Teil II Nr. 5 und 6, Kontaktadresse und Offenlegung von Schwachstellen (ab 11.12.2027)"
   en: "CRA Annex I Part II(5) and (6), contact address and vulnerability disclosure (from 11 Dec 2027)"
-how: "Looks for `SECURITY.md` in the root, `.github/` or `docs/` and for `.well-known/security.txt` anywhere, whose `Contact` and `Expires` fields it reads; skips repositories without a manifest."
+how: "Looks for `SECURITY.md` in the root, `.github/` or `docs/` and for `.well-known/security.txt` anywhere outside test fixtures, whose `Contact` and `Expires` fields it reads; skips repositories without a package manifest in any folder outside fixtures."
 fix_hint:
   de: "SECURITY.md mit Meldeweg (E-Mail oder GitHub Private Vulnerability Reporting) und Antwortzeit anlegen. Eine SECURITY.md im .github-Repository der Organisation gilt auch, ist hier aber nicht sichtbar."
   en: "Add SECURITY.md with a reporting channel (email or GitHub private vulnerability reporting) and a response time. A SECURITY.md in the organization's .github repository counts too, but is not visible here."

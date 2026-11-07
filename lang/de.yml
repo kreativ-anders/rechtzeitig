@@ -820,7 +820,7 @@ messages:
       one: "{count} Datei nicht gelesen: binär, zu groß oder nur ein Git-LFS-Pointer."
       other: "{count} Dateien nicht gelesen: binär, zu groß oder nur ein Git-LFS-Pointer."
   repo/security-contact:
-    no_project: "Kein Paketmanifest im Hauptverzeichnis, also kein Softwareprojekt, für das Lücken gemeldet würden."
+    no_project: "Kein Paketmanifest im Repository (Fixtures nicht mitgezählt), also kein Softwareprojekt, für das Lücken gemeldet würden."
     missing: "Keine SECURITY.md und keine security.txt. Ohne Kontakt werden Lücken öffentlich gemeldet oder gar nicht."
     txt_no_contact: "security.txt hat kein Contact-Feld."
     txt_expired: "security.txt ist am {date} abgelaufen."

@@ -779,7 +779,7 @@ messages:
       one: "{count} file not read: binary, too large or only a Git LFS pointer."
       other: "{count} files not read: binary, too large or only a Git LFS pointer."
   repo/security-contact:
-    no_project: "No package manifest in the root, so no software project to report vulnerabilities for."
+    no_project: "No package manifest in the repository (fixtures not counted), so no software project to report vulnerabilities for."
     missing: "No SECURITY.md and no security.txt. Without a contact, vulnerabilities are reported publicly or not at all."
     txt_no_contact: "security.txt has no Contact field."
     txt_expired: "security.txt expired on {date}."

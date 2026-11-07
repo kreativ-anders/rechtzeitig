@@ -909,7 +909,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-SECRETS-002" data-module="repo" data-severity="high" data-search="sec-secrets-002 repo/env-files .env files stay out of git .env-dateien bleiben außerhalb von git art. 32 gdpr lists committed `.env*` files, also with several suffixes like `.env.production.local` (templates and fixtures excluded), and checks that `.gitignore` ignores `.env`.">
+<details class="rule" id="SEC-SECRETS-002" data-module="repo" data-severity="high" data-search="sec-secrets-002 repo/env-files .env files stay out of git .env-dateien bleiben außerhalb von git art. 32 gdpr lists committed `.env*` files, also with several suffixes like `.env.production.local` (templates and fixtures excluded), and checks that `.gitignore` ignores `.env`; a missing rule is a warning with an `.env` template, a note when a package manifest lies in any folder.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SECRETS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">.env files stay out of git</span>
@@ -918,7 +918,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files, also with several suffixes like <code>.env.production.local</code> (templates and fixtures excluded), and checks that <code>.gitignore</code> ignores <code>.env</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files, also with several suffixes like <code>.env.production.local</code> (templates and fixtures excluded), and checks that <code>.gitignore</code> ignores <code>.env</code>; a missing rule is a warning with an <code>.env</code> template, a note when a package manifest lies in any folder.</dd></div>
 <div><dt>How to fix</dt><dd>Add .env to .gitignore; revoke committed values and remove them from the history.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/env-files"><code>checks/repo/env-files</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
@@ -973,7 +973,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-CVD-001" data-module="repo" data-severity="low" data-search="sec-cvd-001 repo/security-contact the project names a contact for vulnerabilities das projekt nennt einen kontakt für sicherheitslücken cra annex i part ii(5) and (6), contact address and vulnerability disclosure (from 11 dec 2027) looks for `security.md` in the root, `.github/` or `docs/` and for `.well-known/security.txt` anywhere, whose `contact` and `expires` fields it reads; skips repositories without a manifest.">
+<details class="rule" id="SEC-CVD-001" data-module="repo" data-severity="low" data-search="sec-cvd-001 repo/security-contact the project names a contact for vulnerabilities das projekt nennt einen kontakt für sicherheitslücken cra annex i part ii(5) and (6), contact address and vulnerability disclosure (from 11 dec 2027) looks for `security.md` in the root, `.github/` or `docs/` and for `.well-known/security.txt` anywhere outside test fixtures, whose `contact` and `expires` fields it reads; skips repositories without a package manifest in any folder outside fixtures.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-CVD-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
 <span class="rule-title">The project names a contact for vulnerabilities</span>
@@ -982,7 +982,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Looks for <code>SECURITY.md</code> in the root, <code>.github/</code> or <code>docs/</code> and for <code>.well-known/security.txt</code> anywhere, whose <code>Contact</code> and <code>Expires</code> fields it reads; skips repositories without a manifest.</dd></div>
+<div><dt>How it is checked</dt><dd>Looks for <code>SECURITY.md</code> in the root, <code>.github/</code> or <code>docs/</code> and for <code>.well-known/security.txt</code> anywhere outside test fixtures, whose <code>Contact</code> and <code>Expires</code> fields it reads; skips repositories without a package manifest in any folder outside fixtures.</dd></div>
 <div><dt>How to fix</dt><dd>Add SECURITY.md with a reporting channel (email or GitHub private vulnerability reporting) and a response time. A SECURITY.md in the organization's .github repository counts too, but is not visible here.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/security-contact"><code>checks/repo/security-contact</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/add-security-policy">docs.github.com</a>, <a href="https://www.rfc-editor.org/rfc/rfc9116.html">rfc-editor.org</a></dd></div>
