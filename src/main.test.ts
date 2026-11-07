@@ -20,7 +20,7 @@ function run(...args: string[]) {
     execFileSync(process.execPath, ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts",
       "--repo", repo, "--modules", "repo", "--out", out, ...args], { stdio: "pipe", env: { ...process.env, GITHUB_ACTIONS: "", GITHUB_STEP_SUMMARY: "", GITHUB_OUTPUT: "" } });
     const findings = JSON.parse(readFileSync(`${out}.json`, "utf8"));
-    return findings.results.find((r: { check: string }) => r.check === "repo/vulnerabilities");
+    return findings.results.find((r: { check: string }) => r.check === "security/vulnerabilities");
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { SEVERITIES, switchSpec, type Switch } from "./rules.ts";
-import { loadChecks, moduleOf, type LoadedCheck } from "./runner.ts";
+import { loadChecks, moduleOf, scopeOf, type LoadedCheck } from "./runner.ts";
 
 const CHECKS_PAGE = new URL("../docs/checks.html", import.meta.url);
 const WORKFLOW_PAGE = new URL("../docs/workflow.html", import.meta.url);
@@ -24,7 +24,6 @@ const MODULES: Record<string, string> = {
   security: "Security",
   sustainability: "Sustainability",
   accessibility: "Accessibility",
-  repo: "Repository",
 };
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -61,7 +60,7 @@ export function switchesHtml(checks: LoadedCheck[]): string {
     `<tbody>`,
     `<tr><td>All website checks</td><td>Only with a <code>url</code>.</td></tr>`,
     `<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before rechtzeitig (folder: input <code>repository</code>).</td></tr>`,
-    `<tr><td>A group of checks</td><td><code>modules</code> picks groups: ${Object.keys(MODULES).join(", ")}. Empty runs all.</td></tr>`,
+    `<tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (${Object.keys(MODULES).join(", ")}) or scopes (website, repository; <code>repo</code> still works). Empty runs all.</td></tr>`,
     ...rows,
     `</tbody></table></div>`,
   ].join("\n");
@@ -171,7 +170,7 @@ export function topicRulesHtml(checks: LoadedCheck[], lang: Lang = "en"): string
 }
 
 /** The rules on docs/security.html: every website check in checks/security/. */
-export const securityChecks = (checks: LoadedCheck[]) => checks.filter((c) => moduleOf(c.id) === "security");
+export const securityChecks = (checks: LoadedCheck[]) => checks.filter((c) => moduleOf(c.id) === "security" && scopeOf(c.check) === "website");
 /** The rules on docs/de/kuendigungsbutton.html, in the order of SHOP_RULES. */
 export const shopChecks = (checks: LoadedCheck[]) => SHOP_RULES.map((id) => {
   const c = checks.find((x) => x.rule.id === id);

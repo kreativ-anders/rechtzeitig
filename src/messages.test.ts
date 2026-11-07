@@ -12,5 +12,5 @@ test("a localized parameter, like a vendor's advice, follows the report language
 });
 
 test("a missing key names the language file and the key", () => {
-  assert.throws(() => render({ key: "nope" }, "repo/secrets", "de"), /lang\/de\.yml: messages\.repo\/secrets\.nope is missing/);
+  assert.throws(() => render({ key: "nope" }, "security/secrets", "de"), /lang\/de\.yml: messages\.security\/secrets\.nope is missing/);
 });

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { loadChecks, runChecks, selectModules } from "./runner.ts";
+import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
 import { LANGUAGES, SWITCHES, validateRule, type Rule, type Switch } from "./rules.ts";
 import { checksHtml, heroChecksHtml, reviewedHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
@@ -38,14 +38,31 @@ test("rule.yml how names every data file its check.ts loads", async () => {
   assert.deepEqual(missing, []);
 });
 
-test("repository checks live in checks/repo/ and website checks elsewhere", async () => {
-  const wrong = (await loadChecks()).filter((c) => c.id.startsWith("repo/") !== !!c.check.repo).map((c) => c.id);
-  assert.deepEqual(wrong, []);
+test("the scope follows the check type: defineCheck reads the website, defineRepoCheck the repository", async () => {
+  assert.equal(scopeOf(defineCheck({ run: () => pass({ key: "x" }) })), "website");
+  assert.equal(scopeOf(defineRepoCheck({ run: () => pass({ key: "x" }) })), "repository");
+  const checks = await loadChecks();
+  assert.deepEqual(checks.filter((c) => (scopeOf(c.check) === "repository") !== !!c.check.repo).map((c) => c.id), []);
 });
 
-test("modules select checks by folder", async () => {
-  const ids = selectModules(await loadChecks(), ["legal"]).map((c) => c.id);
-  assert.ok(ids.length > 0 && ids.every((id) => id.startsWith("legal/")));
+test("groups are legal or topic areas, not scan targets: no checks/repo/ folder", async () => {
+  const groups = new Set((await loadChecks()).map((c) => moduleOf(c.id)));
+  assert.deepEqual([...groups].filter((g) => (SCOPES as readonly string[]).includes(g) || g === "repo"), []);
+});
+
+test("modules select checks by group or by scope; repo still means all repository checks", async () => {
+  const checks = await loadChecks();
+  const ids = (modules: string[]) => selectModules(checks, modules).map((c) => c.id);
+  const legal = ids(["legal"]);
+  assert.ok(legal.length > 0 && legal.every((id) => id.startsWith("legal/")));
+  const repository = checks.filter((c) => c.check.repo).map((c) => c.id);
+  assert.ok(repository.length > 0);
+  assert.deepEqual(ids(["repo"]), repository);
+  assert.deepEqual(ids(["repository"]), repository);
+  assert.deepEqual(ids(["website"]), checks.filter((c) => !c.check.repo).map((c) => c.id));
+  // Union: a check runs when its group or its scope is listed.
+  assert.deepEqual(ids(["legal", "repo"]), checks.filter((c) => c.id.startsWith("legal/") || c.check.repo).map((c) => c.id));
+  assert.ok(ids(["security"]).some((id) => checks.find((c) => c.id === id)!.check.repo), "security includes repository checks");
 });
 
 test("the generated parts of docs/ are up to date (npm run docs)", async () => {
@@ -105,6 +122,9 @@ test("a check without its target or outside modules is a skip that says why, in 
   assert.deepEqual(nothing[0].because, { kind: "target", missing: "url" });
   const filtered = await runChecks([web, repo], { web: fakeContext({}) }, [], ["repo"]);
   assert.deepEqual(filtered[0].because, { kind: "module", modules: ["repo"] });
+  assert.match(render(filtered[0].message, filtered[0].id, "en"), /group legal nor its scope website/);
+  const byScope = await runChecks([web, repo], { web: fakeContext({}) }, [], ["website"]);
+  assert.deepEqual(byScope.map((o) => o.because?.kind), [undefined, "module"]);
   for (const o of [onlyWeb[1], nothing[0], filtered[0]]) for (const lang of LANGUAGES) assert.ok(render(o.message, o.id, lang).length > 10);
   const [own] = await runChecks([empty], { repo: {} as never });
   assert.deepEqual(own.because, { kind: "data" });
