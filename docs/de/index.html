@@ -79,7 +79,7 @@
           "name": "Ist das Rechtsberatung?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Nein. Ein Befund ist ein technischer Hinweis mit Fundstelle und dem Gesetz, auf das er sich bezieht, damit klar ist, wo zuerst hinzusehen ist. Ein Bericht ohne Befunde heißt, dass diese Prüfungen nichts gefunden haben, nicht, dass die Website rechtskonform ist."
+            "text": "Nein. Ein Befund ist ein technischer Hinweis mit Fundstelle und dem Gesetz, auf das er sich bezieht, damit Sie wissen, wo Sie zuerst nachsehen. Ein Bericht ohne Befunde heißt, dass diese Prüfungen nichts gefunden haben, nicht, dass die Website rechtskonform ist."
           }
         },
         {
@@ -87,7 +87,7 @@
           "name": "Verlassen Daten den Runner?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Der Quellcode nicht. Standardmäßig gehen Namen und Versionen der Pakete aus den Lockfiles an osv.dev (vulnerabilities: false schaltet das ab) und der Hostname an die Green Web Foundation (green-hosting: false). Die vollständige Liste: Daten, die den Runner verlassen."
+            "text": "Der Quellcode nicht. Standardmäßig gehen Namen und Versionen der Pakete aus den Lockfiles an osv.dev (vulnerabilities: false schaltet das ab) und der Hostname an die Green Web Foundation (green-hosting: false). Die vollständige Liste steht unter Daten, die den Runner verlassen."
           }
         },
         {
@@ -95,7 +95,7 @@
           "name": "Wer kann den Bericht sehen?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "In einem öffentlichen Repository standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten. Siehe Der Bericht."
+            "text": "In einem öffentlichen Repository zeigt er standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten. Mehr unter Der Bericht."
           }
         },
         {
@@ -125,32 +125,32 @@
   <div class="hero">
     <div>
       <h1>Impressum, Cookie-Einwilligung und Sicherheit prüfen, als GitHub Action</h1>
-      <p class="lead">rechtzeitig ist ein DSGVO-Check als GitHub Action: Die Action prüft Website und Repository auf deutsche und EU-rechtliche Grundlagen, Security-Header, TLS und Lizenzen und schreibt eine CycloneDX-SBOM. Heraus kommt eine Liste von Stellen zum Beheben, jede mit dem Gesetz, auf das sie sich bezieht.</p>
+      <p class="lead">rechtzeitig ist ein DSGVO-Check als GitHub Action. Er prüft Website und Repository auf deutsche und EU-rechtliche Grundlagen, Security-Header, TLS und Lizenzen und schreibt eine CycloneDX-SBOM. Am Ende steht eine Liste der Stellen, die zu beheben sind, jede mit dem Gesetz, auf das sie sich bezieht.</p>
       <div class="actions">
         <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Workflow kopieren</a>
 <!-- hero-checks:start -->
 <a class="button secondary" href="../checks.html" hreflang="en">Alle 56 Prüfungen ansehen</a>
 <!-- hero-checks:end -->
       </div>
-      <p class="hero-note">Kostenlos und Open Source. Kein Konto, kein Secret, der Code bleibt auf dem Runner.</p>
+      <p class="hero-note">Kostenlos und Open Source. Es braucht weder Konto noch Secret, und der Code bleibt auf dem Runner.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>geprüft<span class="mark">§</span>rechtzeitig</span></div>
   </div>
 
   <h2 id="covers">Was geprüft wird</h2>
-  <p>Wie eine DSGVO-Checkliste für Webentwickler, nur arbeitet sie der Workflow ab: Jeder Punkt ist eine Prüfung mit fester ID, Fundstelle und Rechtsgrundlage. Der Impressum-Checker und alle anderen Prüfungen sind Open Source.</p>
+  <p>Die Prüfungen sind eine DSGVO-Checkliste für Webentwickler, die der Workflow selbst abarbeitet. Jeder Punkt hat eine feste ID, eine Fundstelle und eine Rechtsgrundlage. Der Impressum-Checker ist wie alle anderen Prüfungen Open Source.</p>
   <ul class="covers">
     <li><h3><a href="../checks.html#legal" hreflang="en">Rechtstexte</a></h3><p>Das Impressum nach § 5 DDG und die Datenschutzerklärung nach DSGVO: verlinkt, erreichbar, vollständig</p></li>
     <li><h3><a href="../checks.html#privacy" hreflang="en">Cookie-Einwilligung</a></h3><p>Tracking und Cookies vor der Einwilligung nach § 25 TDDDG, Google Fonts und andere fremde Server, das Banner, Übermittlungen außerhalb der EU</p></li>
     <li><h3><a href="kuendigungsbutton.html">Shop- und Vertragsbuttons</a></h3><p>Kündigungsbutton nach § 312k BGB, Widerrufsbutton, „zahlungspflichtig bestellen“ und Preise mit Grundpreis nach PAngV</p></li>
-    <li><h3><a href="../security.html" hreflang="en">Security-Header und TLS</a></h3><p>Security-Header-Check automatisch bei jedem Lauf: HTTPS, Zertifikate, offene <code>.env</code>- und <code>.git</code>-Dateien, Fehlerseiten, SPF und DMARC</p></li>
+    <li><h3><a href="../security.html" hreflang="en">Security-Header und TLS</a></h3><p>Security-Header-Check bei jedem Lauf, dazu HTTPS, Zertifikate, offene <code>.env</code>- und <code>.git</code>-Dateien, Fehlerseiten, SPF und DMARC</p></li>
     <li><h3><a href="../checks.html#repo" hreflang="en">Repository und SBOM</a></h3><p>CycloneDX-SBOM, bekannte Schwachstellen aus osv.dev, Lizenzkonflikte, Geheimnisse im Code wie API-Keys unter öffentlichen Präfixen, die ins Frontend-Bundle gelangen, Supabase-Tabellen ohne Row Level Security, Workflow-Risiken</p></li>
     <li><h3><a href="../checks.html#sustainability" hreflang="en">Nachhaltigkeit</a> und <a href="../checks.html#accessibility" hreflang="en">Barrierefreiheit</a></h3><p>Kompression, Caching, Bildformate, grünes Hosting, Seitensprache, Autoplay</p></li>
   </ul>
 
   <section id="example" aria-labelledby="example-title">
     <h2 id="example-title">So sieht ein Bericht aus</h2>
-    <p>Der Bericht steht auf der Zusammenfassung des Laufs. Jede Zeile nennt die Prüfung, ihre Regel-ID, das Gesetz, auf das sie sich bezieht, und den Befund; eine Warnung kommt mit einem Hinweis zur Behebung.</p>
+    <p>Der Bericht steht auf der Zusammenfassung des Laufs. Jede Zeile nennt die Prüfung, ihre Regel-ID, das Gesetz, auf das sie sich bezieht, und den Befund. Bei einer Warnung steht auch, wie sie sich beheben lässt.</p>
     <figure class="report">
       <div class="report-head">
         <p class="report-target">rechtzeitig: https://rechtzeitig.dev/ + repository rechtzeitig</p>
@@ -215,7 +215,7 @@
           <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>mittel</span></span>
           <div class="report-result">
             <p>Keine Konflikte mit Apache-2.0 in 26 lizenzierten Komponenten.</p>
-            <p class="report-note">Unsere Anmerkung: in der CycloneDX-1.6-SBOM dieses Laufs: 23 Apache-2.0, 2 MIT, 1 ISC.</p>
+            <p class="report-note">Unsere Anmerkung: Die CycloneDX-1.6-SBOM dieses Laufs führt 23 Komponenten unter Apache-2.0, 2 unter MIT und 1 unter ISC.</p>
           </div>
         </li>
         <li class="report-row">
@@ -238,7 +238,7 @@
         </li>
       </ol>
       <p class="report-scan">Scan: 5 Seiten. Besucher: frischer Browser, keine Klicks, keine Einwilligung, GitHub-Runner (Rechenzentrum in den USA). Repository: 311 Dateien, 26 Komponenten aus 1 Lockfile(s).</p>
-      <figcaption>Auszug aus zwei echten Läufen auf rechtzeitig.dev am 4. November 2026, Ergebnisse so, wie rechtzeitig sie mit <code>report-language: de</code> schreibt. Zahlen, Scan-Zeile und die unmarkierten Zeilen (7 von 35) stammen aus dem späteren Lauf. Die Zeile „früherer Lauf“ stammt aus einem Lauf 20 Minuten davor, als die Domain noch keinen SPF- und DMARC-Eintrag hatte. Zeilen mit „aktuelle Website“ zeigen, was die Prüfungen für die Website ausgeben, wie sie jetzt veröffentlicht ist, mit der Besucherstatistik von Pirsch; sie sind in den Zahlen nicht enthalten. Mit „Unsere Anmerkung“ markierte Hinweise sind für diese Seite ergänzt.</figcaption>
+      <figcaption>Auszug aus zwei echten Läufen auf rechtzeitig.dev am 4. November 2026, Ergebnisse so, wie rechtzeitig sie mit <code>report-language: de</code> schreibt. Zahlen, Scan-Zeile und die unmarkierten Zeilen (7 von 35) stammen aus dem späteren Lauf. Die Zeile „früherer Lauf“ stammt aus einem Lauf 20 Minuten davor, als die Domain noch keinen SPF- und DMARC-Eintrag hatte. Zeilen mit „aktuelle Website“ zeigen die Ausgabe für die Website, wie sie jetzt veröffentlicht ist, mit der Besucherstatistik von Pirsch, und zählen nicht zu den Zahlen. Hinweise mit „Unsere Anmerkung“ haben wir für diese Seite ergänzt.</figcaption>
     </figure>
   </section>
 
@@ -248,11 +248,11 @@
     <li><span><span class="ui">Actions → rechtzeitig → Run workflow</span> öffnen, URL eintragen und die Sprache wählen.</span></li>
     <li><span>Den Bericht auf der Zusammenfassung des Laufs lesen.</span></li>
   </ol>
-  <p>Das Beispiel startet von Hand. Für einen Lauf jede Woche oder bei jedem Push einen Trigger ergänzen: <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>. Inputs, Secrets und Berichtsdateien: <a href="../workflow.html" hreflang="en">Der Workflow</a> (Englisch).</p>
+  <p>Das Beispiel startet von Hand. Soll es jede Woche oder bei jedem Push laufen, einen Trigger ergänzen, wie unter <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a> gezeigt. Inputs, Secrets und Berichtsdateien beschreibt <a href="../workflow.html" hreflang="en">Der Workflow</a> (Englisch).</p>
 
   <section id="about" aria-labelledby="about-title">
     <h2 id="about-title">Wer dahintersteht</h2>
-    <p>rechtzeitig wird von Manuel Steinberg (<a href="https://kreativ-anders.de">kreativ-anders</a>) in Deutschland entwickelt und gepflegt, als Open Source unter Apache-2.0. Jedes <a href="https://github.com/kreativ-anders/rechtzeitig/releases">Release</a> nennt, was sich geändert hat.</p>
+    <p>Manuel Steinberg (<a href="https://kreativ-anders.de">kreativ-anders</a>) entwickelt und pflegt rechtzeitig in Deutschland. Der Code ist Open Source unter Apache-2.0. Jedes <a href="https://github.com/kreativ-anders/rechtzeitig/releases">Release</a> nennt, was sich geändert hat.</p>
 <!-- reviewed:start -->
 <p class="reviewed">Alle 56 Prüfungen wurden zuletzt zwischen dem <time datetime="2026-11-03">3. November 2026</time> und dem <time datetime="2026-11-04">4. November 2026</time> mit ihren Quellen abgeglichen. Eine Prüfung, die ein Jahr lang nicht abgeglichen wurde, lässt die Tests des Projekts scheitern.</p>
 <!-- reviewed:end -->
@@ -277,15 +277,15 @@ updates:
     </details>
     <details id="advice">
       <summary>Ist das Rechtsberatung?</summary>
-      <p>Nein. Ein Befund ist ein technischer Hinweis mit Fundstelle und dem Gesetz, auf das er sich bezieht, damit klar ist, wo zuerst hinzusehen ist. Ein Bericht ohne Befunde heißt, dass diese Prüfungen nichts gefunden haben, nicht, dass die Website rechtskonform ist.</p>
+      <p>Nein. Ein Befund ist ein technischer Hinweis mit Fundstelle und dem Gesetz, auf das er sich bezieht, damit Sie wissen, wo Sie zuerst nachsehen. Ein Bericht ohne Befunde heißt, dass diese Prüfungen nichts gefunden haben, nicht, dass die Website rechtskonform ist.</p>
     </details>
     <details id="data">
       <summary>Verlassen Daten den Runner?</summary>
-      <p>Der Quellcode nicht. Standardmäßig gehen Namen und Versionen der Pakete aus den Lockfiles an <a href="https://osv.dev">osv.dev</a> (<code>vulnerabilities: false</code> schaltet das ab) und der Hostname an die Green Web Foundation (<code>green-hosting: false</code>). Die vollständige Liste: <a href="../workflow.html#data" hreflang="en">Daten, die den Runner verlassen</a>.</p>
+      <p>Der Quellcode nicht. Standardmäßig gehen Namen und Versionen der Pakete aus den Lockfiles an <a href="https://osv.dev">osv.dev</a> (<code>vulnerabilities: false</code> schaltet das ab) und der Hostname an die Green Web Foundation (<code>green-hosting: false</code>). Die vollständige Liste steht unter <a href="../workflow.html#data" hreflang="en">Daten, die den Runner verlassen</a>.</p>
     </details>
     <details id="visibility">
       <summary>Wer kann den Bericht sehen?</summary>
-      <p>In einem öffentlichen Repository standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten. Siehe <a href="../workflow.html#report" hreflang="en">Der Bericht</a>.</p>
+      <p>In einem öffentlichen Repository zeigt er standardmäßig nur die Zahlen, weil die Seite des Laufs öffentlich ist. Für den vollständigen Bericht rechtzeitig aus einem privaten Repository starten. Mehr unter <a href="../workflow.html#report" hreflang="en">Der Bericht</a>.</p>
     </details>
     <details id="current">
       <summary>Wie bleiben die Prüfungen aktuell?</summary>

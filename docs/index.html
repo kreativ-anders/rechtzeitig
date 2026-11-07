@@ -92,8 +92,8 @@
         {"@type": "Question", "name": "How do I get the latest version?", "acceptedAnswer": {"@type": "Answer", "text": "The workflow pins a release by its commit SHA. Add .github/dependabot.yml to your repository: version: 2 updates: - package-ecosystem: github-actions directory: / schedule: interval: weekly Dependabot then opens a pull request whenever a new rechtzeitig release is out. Merge it and you have the new version."}},
         {"@type": "Question", "name": "Can it run on a schedule or on every push?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The example workflow starts by hand, but rechtzeitig works with any trigger except pull_request_target. A scheduled run has no form, so the URL goes into the workflow file: Run on a schedule."}},
         {"@type": "Question", "name": "Is this legal advice?", "acceptedAnswer": {"@type": "Answer", "text": "No. A finding is a technical hint with the place and the law it relates to, so you know where to look first. A clean report means these checks found nothing, not that the site is compliant."}},
-        {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default the names and versions of your locked packages go to osv.dev (vulnerabilities: false turns it off) and your host name to the Green Web Foundation (green-hosting: false). The full list: Data that leaves the runner."}},
-        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository, only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. See The report."}},
+        {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default the names and versions of your locked packages go to osv.dev (vulnerabilities: false turns it off) and your host name to the Green Web Foundation (green-hosting: false). The full list is under Data that leaves the runner."}},
+        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. More in The report."}},
         {"@type": "Question", "name": "How are the checks kept current?", "acceptedAnswer": {"@type": "Answer", "text": "Every check cites primary sources: laws, courts, authorities or standards, never blogs. Each records when its sources were last reviewed, and a check not reviewed for a year fails the project's tests, so it cannot be released. The releases list what changed."}}
       ]
     }
@@ -121,7 +121,7 @@
 <a class="button secondary" href="checks.html">See all 56 checks</a>
 <!-- hero-checks:end -->
       </div>
-      <p class="hero-note">Free and open source. No account, no secret, your code stays on the runner.</p>
+      <p class="hero-note">Free and open source. It needs no account and no secret, and your code stays on the runner.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<span class="mark">§</span>in time</span></div>
   </div>
@@ -138,7 +138,7 @@
 
   <section id="example" aria-labelledby="example-title">
     <h2 id="example-title">What a report looks like</h2>
-    <p>The report lands on the run's summary page. Each row names the check, its rule id, the law it relates to and what was found; a warning comes with how to fix it.</p>
+    <p>The report appears on the run's summary page. Each row names the check, its rule id, the law it relates to and what was found. A warning also says how to fix it.</p>
     <figure class="report">
       <div class="report-head">
         <p class="report-target">rechtzeitig: https://rechtzeitig.dev/ + repository rechtzeitig</p>
@@ -203,7 +203,7 @@
           <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>medium</span></span>
           <div class="report-result">
             <p>No conflicts with Apache-2.0 in 26 licensed components.</p>
-            <p class="report-note">Our note: in the CycloneDX 1.6 SBOM of this run: 23 Apache-2.0, 2 MIT, 1 ISC.</p>
+            <p class="report-note">Our note: the CycloneDX 1.6 SBOM of this run lists 23 components under Apache-2.0, 2 under MIT and 1 under ISC.</p>
           </div>
         </li>
         <li class="report-row">
@@ -226,7 +226,7 @@
         </li>
       </ol>
       <p class="report-scan">Scan: 5 pages in a fresh browser, no clicks, no consent given, GitHub-hosted runner (US data center). Repository: 311 files, 26 components from 1 lockfile.</p>
-      <figcaption>Excerpt from two real runs on rechtzeitig.dev on 4 November 2026, results as written by rechtzeitig. Counts, scan line and unmarked rows (7 of 35) are from the later run. The row marked "earlier run" is from a run 20 minutes before it, when the domain had no SPF or DMARC record yet; that run wrote its report in German, shown here in English. Rows marked "current site" show what the checks output for the site as published now, with Pirsch statistics; they are not in the counts. Notes marked "Our note" are added for this page.</figcaption>
+      <figcaption>Excerpt from two real runs on rechtzeitig.dev on 4 November 2026, results as written by rechtzeitig. Counts, scan line and unmarked rows (7 of 35) are from the later run. The row marked "earlier run" is from a run 20 minutes before it, when the domain had no SPF or DMARC record yet; that run wrote its report in German, shown here in English. Rows marked "current site" show the output for the site as it is published now, with Pirsch statistics, and are not in the counts. Notes marked "Our note" were added for this page.</figcaption>
     </figure>
   </section>
 
@@ -236,11 +236,11 @@
     <li><span>Open <span class="ui">Actions → rechtzeitig → Run workflow</span>, enter your URL and pick the language.</span></li>
     <li><span>Read the report on the run's summary page.</span></li>
   </ol>
-  <p>You start the example by hand. To check every week or on every push, add a trigger: <a href="workflow.html#schedule">Run on a schedule</a>. Inputs, secrets and report files: <a href="workflow.html">The workflow</a>.</p>
+  <p>You start the example by hand. To check every week or on every push, add a trigger as shown in <a href="workflow.html#schedule">Run on a schedule</a>. Inputs, secrets and report files are described in <a href="workflow.html">The workflow</a>.</p>
 
   <section id="about" aria-labelledby="about-title">
     <h2 id="about-title">Who maintains it</h2>
-    <p>rechtzeitig is made and maintained by Manuel Steinberg (<a href="https://kreativ-anders.de">kreativ-anders</a>) in Germany, as open source under Apache-2.0. Each <a href="https://github.com/kreativ-anders/rechtzeitig/releases">release</a> lists what changed.</p>
+    <p>Manuel Steinberg (<a href="https://kreativ-anders.de">kreativ-anders</a>) writes and maintains rechtzeitig in Germany. It is open source under Apache-2.0. Each <a href="https://github.com/kreativ-anders/rechtzeitig/releases">release</a> lists what changed.</p>
 <!-- reviewed:start -->
 <p class="reviewed">All 56 checks were last reviewed against their sources between <time datetime="2026-11-03">3 November 2026</time> and <time datetime="2026-11-04">4 November 2026</time>. A check not reviewed for a year fails the project's tests.</p>
 <!-- reviewed:end -->
@@ -269,11 +269,11 @@ updates:
     </details>
     <details id="data">
       <summary>Does any data leave the runner?</summary>
-      <p>Your source code does not. By default the names and versions of your locked packages go to <a href="https://osv.dev">osv.dev</a> (<code>vulnerabilities: false</code> turns it off) and your host name to the Green Web Foundation (<code>green-hosting: false</code>). The full list: <a href="workflow.html#data">Data that leaves the runner</a>.</p>
+      <p>Your source code does not. By default the names and versions of your locked packages go to <a href="https://osv.dev">osv.dev</a> (<code>vulnerabilities: false</code> turns it off) and your host name to the Green Web Foundation (<code>green-hosting: false</code>). The full list is under <a href="workflow.html#data">Data that leaves the runner</a>.</p>
     </details>
     <details id="visibility">
       <summary>Who can see the report?</summary>
-      <p>On a public repository, only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. See <a href="workflow.html#report">The report</a>.</p>
+      <p>On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. More in <a href="workflow.html#report">The report</a>.</p>
     </details>
     <details id="current">
       <summary>How are the checks kept current?</summary>
