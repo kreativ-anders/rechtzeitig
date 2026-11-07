@@ -306,8 +306,9 @@ footer a:hover { color: var(--ink); }
 }
 .report-row > .status { justify-self: start; }
 .report-check { display: grid; gap: 0.15rem; }
-.report-check a { font: 600 1rem/1.3 var(--serif); color: var(--ink); text-decoration-color: var(--line); }
-.report-check a:hover { color: var(--seal); text-decoration-color: currentColor; }
+.report-title { font: 600 1rem/1.3 var(--serif); color: var(--ink); }
+.report-law a.rule-id { color: var(--muted); text-decoration-color: var(--line); }
+.report-law a.rule-id:hover { color: var(--seal); text-decoration-color: currentColor; }
 .report-law { font-size: 0.85rem; color: var(--seal); font-family: var(--serif); }
 .report-law .rule-id { font-size: 0.74rem; }
 .report-row .sev { padding-top: 0.3rem; }

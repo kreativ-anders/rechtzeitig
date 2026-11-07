@@ -28,7 +28,7 @@
 <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="site.js" defer></script>
 <script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="w5NWUb6qKUHLnm9YxdgaEAxd7PflSnf6"></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/security.html#webpage", "url": "https://rechtzeitig.dev/security.html", "name": "Security headers, TLS and exposed files in CI", "description": "GitHub Action that checks security headers, TLS certificate expiry, SPF and DMARC and exposed .env and .git files on every run. No API key, open source.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/security.html#breadcrumb"}, "headline": "Security headers, TLS and exposed files in CI", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-04"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/security.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Security checks", "item": "https://rechtzeitig.dev/security.html"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/security.html#webpage", "url": "https://rechtzeitig.dev/security.html", "name": "Security headers, TLS and exposed files in CI", "description": "GitHub Action that checks security headers, TLS certificate expiry, SPF and DMARC and exposed .env and .git files on every run. No API key, open source.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/security.html#breadcrumb"}, "headline": "Security headers, TLS and exposed files in CI", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-07"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/security.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Security checks", "item": "https://rechtzeitig.dev/security.html"}]}]}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
@@ -41,7 +41,7 @@
 
 <main id="content" class="narrow">
   <h1>Security headers, TLS and exposed files, checked in CI</h1>
-  <p class="lead">rechtzeitig is a GitHub Action that checks your site's security headers, HTTPS and TLS certificate expiry, SPF and DMARC, and looks for exposed <code>.env</code> and <code>.git</code> files on every run. No API key and no account: the checks talk only to your site and its DNS.</p>
+  <p class="lead">rechtzeitig is a GitHub Action that checks your site's security headers, HTTPS and TLS certificate expiry, SPF and DMARC, and looks for exposed <code>.env</code> and <code>.git</code> files on every run. No API key and no account: these checks talk only to your site and its DNS.</p>
 
   <h2 id="checked">What is checked</h2>
   <p>These are the website checks of the <code>security</code> group. Each links to its card on the <a href="checks.html#security">checks page</a> with its sources. The list is generated from the rules, so it matches what runs. Committed secrets and open database rules are checked in the <a href="checks.html#repo">repository group</a>.</p>
@@ -135,17 +135,17 @@
       <ol class="report-rows">
         <li class="report-row">
           <span class="status s-warn">warn</span>
-          <div class="report-check"><a href="checks.html#SEC-HDR-001">Security headers are set</a><span class="report-law"><span class="rule-id">SEC-HDR-001</span> · Art. 32 GDPR</span></div>
+          <div class="report-check"><span class="report-title">Security headers are set</span><span class="report-law"><a class="rule-id" href="checks.html#SEC-HDR-001">SEC-HDR-001</a> · Art. 32 GDPR</span></div>
           <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>low</span></span>
           <div class="report-result">
             <p>2 security headers missing.</p>
-            <ul><li><code>X-Content-Type-Options: nosniff</code></li><li><code>X-Frame-Options</code> or CSP <code>frame-ancestors</code></li></ul>
+            <ul><li><code>X-Content-Type-Options: nosniff</code></li><li><code>X-Frame-Options</code> or CSP <code>frame-ancestors</code></li><li>Set as &lt;meta&gt;: content-security-policy, referrer-policy</li><li>No Strict-Transport-Security header, but .dev is on the browsers' HSTS preload list. Sites under it load over HTTPS only anyway.</li></ul>
             <p class="report-fix"><span class="report-label">Fix</span> Set the missing headers in the web server or hosting. CSP and Referrer-Policy also work as &lt;meta&gt; tags; frame-ancestors and nosniff only work as headers.</p>
-            <p class="report-note">Our note: still open, because GitHub Pages, which hosts this site, cannot set response headers.</p>
+            <p class="report-note">Our note: still open, because GitHub Pages, which hosts this site, does not let sites set their own response headers.</p>
           </div>
         </li>
       </ol>
-      <figcaption>One row from a real run on rechtzeitig.dev, 4 November 2026. The full example is on the <a href="./#example">start page</a>.</figcaption>
+      <figcaption>One row from a real run on rechtzeitig.dev, 4 November 2026, as written by rechtzeitig; the note marked "Our note" is added for this page. The full example is on the <a href="./#example">start page</a>.</figcaption>
     </figure>
   </section>
 

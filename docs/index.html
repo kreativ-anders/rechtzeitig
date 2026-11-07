@@ -128,7 +128,7 @@
 
   <h2 id="covers">What it checks</h2>
   <ul class="covers">
-    <li><h3><a href="checks.html#legal">Imprint and privacy policy</a></h3><p>The German imprint (<span lang="de">Impressum</span>) under § 5 DDG and the privacy policy under the GDPR: linked, reachable, complete</p></li>
+    <li><h3><a href="checks.html#legal">Legal pages</a></h3><p>The German imprint (<span lang="de">Impressum</span>) under § 5 DDG and the privacy policy under the GDPR: linked, reachable, complete</p></li>
     <li><h3><a href="checks.html#privacy">Cookie consent</a></h3><p>Third-party requests and cookies before consent, the banner, transfers outside the EU, § 25 TDDDG</p></li>
     <li><h3><a href="checks.html?q=BGB">Shop and contract buttons</a></h3><p>Cancellation, withdrawal and order buttons under the BGB, and <a href="checks.html#LEG-DE-PRICE-001">prices under the PAngV</a>. In German: <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton prüfen</a></p></li>
     <li><h3><a href="security.html">Security headers and TLS</a></h3><p>HTTPS, certificates, headers, exposed <code>.env</code> and <code>.git</code> files, error pages, SPF and DMARC</p></li>
@@ -147,17 +147,17 @@
       <ol class="report-rows">
         <li class="report-row">
           <span class="status s-warn">warn</span>
-          <div class="report-check"><a href="checks.html#LEG-EU-CNS-001">No third-party servers before consent</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-001</span> · Art. 6(1) GDPR, § 25 TDDDG, LG München I 3 O 17493/20 (Google Fonts)</span><span class="report-tag">current site</span></div>
+          <div class="report-check"><span class="report-title">No third-party servers before consent</span><span class="report-law"><a class="rule-id" href="checks.html#LEG-EU-CNS-001">LEG-EU-CNS-001</a> · Art. 6(1) GDPR, § 25 TDDDG, LG München I 3 O 17493/20 (Google Fonts)</span><span class="report-tag">current site</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
           <div class="report-result">
             <p>Contacted before consent: Pirsch. Check the legal basis and name them in the privacy policy.</p>
-            <ul><li>Pirsch (api.pirsch.io) on /, /imprint.html, /privacy.html, /workflow.html, /checks.html, /checks.html?q=BGB.</li></ul>
+            <ul><li>Pirsch (api.pirsch.io) on /, /imprint.html, /privacy.html, /workflow.html, /checks.html, /de/, /checks.html?q=BGB, /de/kuendigungsbutton.html, /security.html.</li></ul>
             <p class="report-fix"><span class="report-label">Fix</span> Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent.</p>
           </div>
         </li>
         <li class="report-row">
           <span class="status s-warn">warn</span>
-          <div class="report-check"><a href="checks.html#SEC-DNS-001">Domain is protected against email spoofing</a><span class="report-law"><span class="rule-id">SEC-DNS-001</span> · Art. 32 GDPR</span><span class="report-tag">earlier run</span></div>
+          <div class="report-check"><span class="report-title">Domain is protected against email spoofing</span><span class="report-law"><a class="rule-id" href="checks.html#SEC-DNS-001">SEC-DNS-001</a> · Art. 32 GDPR</span><span class="report-tag">earlier run</span></div>
           <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>medium</span></span>
           <div class="report-result">
             <p>Others can send email in the name of rechtzeitig.dev.</p>
@@ -167,66 +167,66 @@
         </li>
         <li class="report-row">
           <span class="status s-warn">warn</span>
-          <div class="report-check"><a href="checks.html#SEC-HDR-001">Security headers are set</a><span class="report-law"><span class="rule-id">SEC-HDR-001</span> · Art. 32 GDPR</span></div>
+          <div class="report-check"><span class="report-title">Security headers are set</span><span class="report-law"><a class="rule-id" href="checks.html#SEC-HDR-001">SEC-HDR-001</a> · Art. 32 GDPR</span></div>
           <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>low</span></span>
           <div class="report-result">
             <p>2 security headers missing.</p>
-            <ul><li><code>X-Content-Type-Options: nosniff</code></li><li><code>X-Frame-Options</code> or CSP <code>frame-ancestors</code></li></ul>
+            <ul><li><code>X-Content-Type-Options: nosniff</code></li><li><code>X-Frame-Options</code> or CSP <code>frame-ancestors</code></li><li>Set as &lt;meta&gt;: content-security-policy, referrer-policy</li><li>No Strict-Transport-Security header, but .dev is on the browsers' HSTS preload list. Sites under it load over HTTPS only anyway.</li></ul>
             <p class="report-fix"><span class="report-label">Fix</span> Set the missing headers in the web server or hosting. CSP and Referrer-Policy also work as &lt;meta&gt; tags; frame-ancestors and nosniff only work as headers.</p>
-            <p class="report-note">Our note: still open, because GitHub Pages, which hosts this site, cannot set response headers.</p>
+            <p class="report-note">Our note: still open, because GitHub Pages, which hosts this site, does not let sites set their own response headers.</p>
           </div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="checks.html#SEC-TLS-002">TLS certificate is valid and current</a><span class="report-law"><span class="rule-id">SEC-TLS-002</span> · Art. 32 GDPR</span></div>
+          <div class="report-check"><span class="report-title">TLS certificate is valid and current</span><span class="report-law"><a class="rule-id" href="checks.html#SEC-TLS-002">SEC-TLS-002</a> · Art. 32 GDPR</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
           <div class="report-result"><p>TLSv1.3, certificate valid until 2027-02-02.</p></div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="checks.html#LEG-DE-IMP-002">Imprint contains the required details</a><span class="report-law"><span class="rule-id">LEG-DE-IMP-002</span> · § 5(1) DDG</span></div>
+          <div class="report-check"><span class="report-title">Imprint contains the required details</span><span class="report-law"><a class="rule-id" href="checks.html#LEG-DE-IMP-002">LEG-DE-IMP-002</a> · § 5(1) DDG</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
           <div class="report-result">
             <p>Address, email and a second way of contact found in the imprint.</p>
-            <ul><li>No VAT ID (<span lang="de">USt-IdNr.</span>) found. Required if you have one (Nr. 6).</li></ul>
+            <ul><li>No VAT ID (<span lang="de">USt-IdNr.</span>) found. Required if you have one (Nr. 6).</li><li>No register entry (HRB, VR, ...) found. Required if registered (Nr. 4).</li></ul>
           </div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="checks.html#LEG-EU-CNS-002">No cookies before consent</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-002</span> · § 25 TDDDG, BGH I ZR 7/16 (<span lang="de">Cookie-Einwilligung II</span>)</span></div>
+          <div class="report-check"><span class="report-title">No cookies before consent</span><span class="report-law"><a class="rule-id" href="checks.html#LEG-EU-CNS-002">LEG-EU-CNS-002</a> · § 25 TDDDG (German Telecommunications Digital Services Data Protection Act), BGH I ZR 7/16 (<span lang="de">Cookie-Einwilligung II</span>)</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
           <div class="report-result"><p>No cookies or local storage before consent.</p></div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="checks.html#LEG-DE-LIC-001">Dependency licenses fit the project</a><span class="report-law"><span class="rule-id">LEG-DE-LIC-001</span> · §§ 31, 69c UrhG</span></div>
+          <div class="report-check"><span class="report-title">Dependency licenses fit the project</span><span class="report-law"><a class="rule-id" href="checks.html#LEG-DE-LIC-001">LEG-DE-LIC-001</a> · §§ 31, 69c UrhG (German Copyright Act)</span></div>
           <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>medium</span></span>
           <div class="report-result">
             <p>No conflicts with Apache-2.0 in 26 licensed components.</p>
-            <p class="report-note">In the CycloneDX 1.6 SBOM of this run: 23 Apache-2.0, 2 MIT, 1 ISC.</p>
+            <p class="report-note">Our note: in the CycloneDX 1.6 SBOM of this run: 23 Apache-2.0, 2 MIT, 1 ISC.</p>
           </div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="checks.html#SUS-JS-002">Start page shows content without JavaScript</a><span class="report-law"><span class="rule-id">SUS-JS-002</span> · Technical, no single law</span></div>
+          <div class="report-check"><span class="report-title">Start page shows content without JavaScript</span><span class="report-law"><a class="rule-id" href="checks.html#SUS-JS-002">SUS-JS-002</a></span></div>
           <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>low</span></span>
           <div class="report-result"><p>Without JavaScript the start page shows 2568 of 2568 characters.</p></div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><span class="report-law"><span class="rule-id">SUS-HOST-001</span> · Technical, no single law</span><span class="report-tag">current site</span></div>
+          <div class="report-check"><span class="report-title">Site runs on green hosting</span><span class="report-law"><a class="rule-id" href="checks.html#SUS-HOST-001">SUS-HOST-001</a></span><span class="report-tag">current site</span></div>
           <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>low</span></span>
           <div class="report-result"><p>The Green Web Foundation lists rechtzeitig.dev as green hosting, hosted by Fastly.</p></div>
         </li>
         <li class="report-row">
           <span class="status s-skip">skip</span>
-          <div class="report-check"><a href="checks.html#LEG-EU-CNS-003">Consent banner can be rejected on the first layer</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-003</span> · § 25 TDDDG, Art. 7(3) GDPR</span></div>
+          <div class="report-check"><span class="report-title">Consent banner can be rejected on the first layer</span><span class="report-law"><a class="rule-id" href="checks.html#LEG-EU-CNS-003">LEG-EU-CNS-003</a> · § 25 TDDDG, Art. 7(3) GDPR</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
           <div class="report-result"><p>No consent banner found on the start page.</p></div>
         </li>
       </ol>
       <p class="report-scan">Scan: 5 pages in a fresh browser, no clicks, no consent given, GitHub-hosted runner (US data center). Repository: 311 files, 26 components from 1 lockfile.</p>
-      <figcaption>Excerpt from real runs on rechtzeitig.dev on 4 November 2026, results as written by rechtzeitig. Counts, scan line and unmarked rows (7 of 35) are from the later run. The row marked "earlier run" is from a run that morning. Rows marked "current site" show the result for the site as published now, with Pirsch statistics. Notes marked "Our note" are added for this page.</figcaption>
+      <figcaption>Excerpt from two real runs on rechtzeitig.dev on 4 November 2026, results as written by rechtzeitig. Counts, scan line and unmarked rows (7 of 35) are from the later run. The row marked "earlier run" is from a run 20 minutes before it, when the domain had no SPF or DMARC record yet; that run wrote its report in German, shown here in English. Rows marked "current site" show what the checks output for the site as published now, with Pirsch statistics; they are not in the counts. Notes marked "Our note" are added for this page.</figcaption>
     </figure>
   </section>
 

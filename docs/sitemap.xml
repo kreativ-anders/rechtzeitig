@@ -2,32 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://rechtzeitig.dev/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://rechtzeitig.dev/"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://rechtzeitig.dev/de/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://rechtzeitig.dev/"/>
   </url>
   <url>
     <loc>https://rechtzeitig.dev/de/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://rechtzeitig.dev/"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://rechtzeitig.dev/de/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://rechtzeitig.dev/"/>
   </url>
   <url><loc>https://rechtzeitig.dev/workflow.html</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://rechtzeitig.dev/checks.html</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://rechtzeitig.dev/security.html</loc><lastmod>2026-11-04</lastmod></url>
+  <url><loc>https://rechtzeitig.dev/security.html</loc><lastmod>2026-11-07</lastmod></url>
   <url><loc>https://rechtzeitig.dev/de/kuendigungsbutton.html</loc><lastmod>2026-11-04</lastmod></url>
   <url>
     <loc>https://rechtzeitig.dev/privacy.html</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://rechtzeitig.dev/privacy.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://rechtzeitig.dev/de/datenschutz.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://rechtzeitig.dev/privacy.html"/>
   </url>
   <url>
     <loc>https://rechtzeitig.dev/de/datenschutz.html</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://rechtzeitig.dev/privacy.html"/>
     <xhtml:link rel="alternate" hreflang="de" href="https://rechtzeitig.dev/de/datenschutz.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://rechtzeitig.dev/privacy.html"/>

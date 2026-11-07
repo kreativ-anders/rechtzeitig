@@ -159,17 +159,17 @@
       <ol class="report-rows">
         <li class="report-row">
           <span class="status s-warn">warn</span>
-          <div class="report-check"><a href="../checks.html#LEG-EU-CNS-001" hreflang="en">Keine fremden Server vor Einwilligung</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-001</span> · Art. 6 Abs. 1 DSGVO, § 25 TDDDG, LG München I 3 O 17493/20 (Google Fonts)</span><span class="report-tag">aktuelle Website</span></div>
+          <div class="report-check"><span class="report-title">Keine fremden Server vor Einwilligung</span><span class="report-law"><a class="rule-id" href="../checks.html#LEG-EU-CNS-001" hreflang="en">LEG-EU-CNS-001</a> · Art. 6 Abs. 1 DSGVO, § 25 TDDDG, LG München I 3 O 17493/20 (Google Fonts)</span><span class="report-tag">aktuelle Website</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
           <div class="report-result">
             <p>Vor der Einwilligung kontaktiert: Pirsch. Rechtsgrundlage prüfen und in der Datenschutzerklärung nennen.</p>
-            <ul><li>Pirsch (api.pirsch.io) auf /, /imprint.html, /privacy.html, /workflow.html, /checks.html, /checks.html?q=BGB.</li></ul>
+            <ul><li>Pirsch (api.pirsch.io) auf /, /imprint.html, /privacy.html, /workflow.html, /checks.html, /de/, /checks.html?q=BGB, /de/kuendigungsbutton.html, /security.html.</li></ul>
             <p class="report-fix"><span class="report-label">Behebung</span> Schriften, Skripte und Bibliotheken selbst hosten; Einbettungen (Videos, Karten) erst nach Klick oder Einwilligung laden.</p>
           </div>
         </li>
         <li class="report-row">
           <span class="status s-warn">warn</span>
-          <div class="report-check"><a href="../checks.html#SEC-DNS-001" hreflang="en">Domain ist gegen E-Mail-Spoofing geschützt</a><span class="report-law"><span class="rule-id">SEC-DNS-001</span> · Art. 32 DSGVO</span><span class="report-tag">früherer Lauf</span></div>
+          <div class="report-check"><span class="report-title">Domain ist gegen E-Mail-Spoofing geschützt</span><span class="report-law"><a class="rule-id" href="../checks.html#SEC-DNS-001" hreflang="en">SEC-DNS-001</a> · Art. 32 DSGVO</span><span class="report-tag">früherer Lauf</span></div>
           <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>mittel</span></span>
           <div class="report-result">
             <p>Andere können E-Mails im Namen von rechtzeitig.dev versenden.</p>
@@ -179,66 +179,66 @@
         </li>
         <li class="report-row">
           <span class="status s-warn">warn</span>
-          <div class="report-check"><a href="../checks.html#SEC-HDR-001" hreflang="en">Sicherheits-Header sind gesetzt</a><span class="report-law"><span class="rule-id">SEC-HDR-001</span> · Art. 32 DSGVO</span></div>
+          <div class="report-check"><span class="report-title">Sicherheits-Header sind gesetzt</span><span class="report-law"><a class="rule-id" href="../checks.html#SEC-HDR-001" hreflang="en">SEC-HDR-001</a> · Art. 32 DSGVO</span></div>
           <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>niedrig</span></span>
           <div class="report-result">
             <p>2 Sicherheits-Header fehlen.</p>
-            <ul><li><code>X-Content-Type-Options: nosniff</code></li><li><code>X-Frame-Options</code> oder CSP <code>frame-ancestors</code></li></ul>
+            <ul><li><code>X-Content-Type-Options: nosniff</code></li><li><code>X-Frame-Options</code> oder CSP <code>frame-ancestors</code></li><li>Als &lt;meta&gt; gesetzt: content-security-policy, referrer-policy</li><li>Kein Strict-Transport-Security-Header, aber .dev steht auf der HSTS-Preload-Liste der Browser. Seiten darunter laden ohnehin nur über HTTPS.</li></ul>
             <p class="report-fix"><span class="report-label">Behebung</span> Fehlende Header im Webserver oder Hosting setzen. CSP und Referrer-Policy gehen notfalls auch als &lt;meta&gt;, frame-ancestors und nosniff nur als Header.</p>
-            <p class="report-note">Unsere Anmerkung: noch offen, weil GitHub Pages, das diese Website ausliefert, keine Response-Header setzen kann.</p>
+            <p class="report-note">Unsere Anmerkung: noch offen, weil GitHub Pages, das diese Website ausliefert, keine eigenen Response-Header zulässt.</p>
           </div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="../checks.html#SEC-TLS-002" hreflang="en">TLS-Zertifikat ist gültig und aktuell</a><span class="report-law"><span class="rule-id">SEC-TLS-002</span> · Art. 32 DSGVO</span></div>
+          <div class="report-check"><span class="report-title">TLS-Zertifikat ist gültig und aktuell</span><span class="report-law"><a class="rule-id" href="../checks.html#SEC-TLS-002" hreflang="en">SEC-TLS-002</a> · Art. 32 DSGVO</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
           <div class="report-result"><p>TLSv1.3, Zertifikat gültig bis 2027-02-02.</p></div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="../checks.html#LEG-DE-IMP-002" hreflang="en">Impressum enthält die Pflichtangaben</a><span class="report-law"><span class="rule-id">LEG-DE-IMP-002</span> · § 5 Abs. 1 DDG</span></div>
+          <div class="report-check"><span class="report-title">Impressum enthält die Pflichtangaben</span><span class="report-law"><a class="rule-id" href="../checks.html#LEG-DE-IMP-002" hreflang="en">LEG-DE-IMP-002</a> · § 5 Abs. 1 DDG</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
           <div class="report-result">
             <p>Anschrift, E-Mail und ein zweiter Kontaktweg im Impressum gefunden.</p>
-            <ul><li>Keine USt-IdNr. gefunden. Pflicht, falls vorhanden (Nr. 6).</li></ul>
+            <ul><li>Keine USt-IdNr. gefunden. Pflicht, falls vorhanden (Nr. 6).</li><li>Kein Registereintrag (HRB, VR, ...) gefunden. Pflicht bei Eintragung (Nr. 4).</li></ul>
           </div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="../checks.html#LEG-EU-CNS-002" hreflang="en">Keine Cookies vor Einwilligung</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-002</span> · § 25 TDDDG, BGH I ZR 7/16 (Cookie-Einwilligung II)</span></div>
+          <div class="report-check"><span class="report-title">Keine Cookies vor Einwilligung</span><span class="report-law"><a class="rule-id" href="../checks.html#LEG-EU-CNS-002" hreflang="en">LEG-EU-CNS-002</a> · § 25 TDDDG, BGH I ZR 7/16 (Cookie-Einwilligung II)</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
           <div class="report-result"><p>Keine Cookies und kein lokaler Speicher vor der Einwilligung.</p></div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="../checks.html#LEG-DE-LIC-001" hreflang="en">Lizenzen der Abhängigkeiten passen zum Projekt</a><span class="report-law"><span class="rule-id">LEG-DE-LIC-001</span> · §§ 31, 69c UrhG</span></div>
+          <div class="report-check"><span class="report-title">Lizenzen der Abhängigkeiten passen zum Projekt</span><span class="report-law"><a class="rule-id" href="../checks.html#LEG-DE-LIC-001" hreflang="en">LEG-DE-LIC-001</a> · §§ 31, 69c UrhG</span></div>
           <span class="sev" data-level="3"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>mittel</span></span>
           <div class="report-result">
             <p>Keine Konflikte mit Apache-2.0 in 26 lizenzierten Komponenten.</p>
-            <p class="report-note">In der CycloneDX-1.6-SBOM dieses Laufs: 23 Apache-2.0, 2 MIT, 1 ISC.</p>
+            <p class="report-note">Unsere Anmerkung: in der CycloneDX-1.6-SBOM dieses Laufs: 23 Apache-2.0, 2 MIT, 1 ISC.</p>
           </div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="../checks.html#SUS-JS-002" hreflang="en">Startseite zeigt Inhalt ohne JavaScript</a><span class="report-law"><span class="rule-id">SUS-JS-002</span> · Technisch, kein einzelnes Gesetz</span></div>
+          <div class="report-check"><span class="report-title">Startseite zeigt Inhalt ohne JavaScript</span><span class="report-law"><a class="rule-id" href="../checks.html#SUS-JS-002" hreflang="en">SUS-JS-002</a></span></div>
           <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>niedrig</span></span>
           <div class="report-result"><p>Ohne JavaScript zeigt die Startseite 2568 von 2568 Zeichen.</p></div>
         </li>
         <li class="report-row">
           <span class="status s-pass">pass</span>
-          <div class="report-check"><a href="../checks.html#SUS-HOST-001" hreflang="en">Website läuft bei einem grünen Hoster</a><span class="report-law"><span class="rule-id">SUS-HOST-001</span> · Technisch, kein einzelnes Gesetz</span><span class="report-tag">aktuelle Website</span></div>
+          <div class="report-check"><span class="report-title">Website läuft bei einem grünen Hoster</span><span class="report-law"><a class="rule-id" href="../checks.html#SUS-HOST-001" hreflang="en">SUS-HOST-001</a></span><span class="report-tag">aktuelle Website</span></div>
           <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>niedrig</span></span>
           <div class="report-result"><p>Die Green Web Foundation führt rechtzeitig.dev als grünes Hosting, gehostet bei Fastly.</p></div>
         </li>
         <li class="report-row">
           <span class="status s-skip">skip</span>
-          <div class="report-check"><a href="../checks.html#LEG-EU-CNS-003" hreflang="en">Consent-Banner lässt sich auf der ersten Ebene ablehnen</a><span class="report-law"><span class="rule-id">LEG-EU-CNS-003</span> · § 25 TDDDG, Art. 7 Abs. 3 DSGVO</span></div>
+          <div class="report-check"><span class="report-title">Consent-Banner lässt sich auf der ersten Ebene ablehnen</span><span class="report-law"><a class="rule-id" href="../checks.html#LEG-EU-CNS-003" hreflang="en">LEG-EU-CNS-003</a> · § 25 TDDDG, Art. 7 Abs. 3 DSGVO</span></div>
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
           <div class="report-result"><p>Kein Consent-Banner auf der Startseite gefunden.</p></div>
         </li>
       </ol>
       <p class="report-scan">Scan: 5 Seiten. Besucher: frischer Browser, keine Klicks, keine Einwilligung, GitHub-Runner (Rechenzentrum in den USA). Repository: 311 Dateien, 26 Komponenten aus 1 Lockfile(s).</p>
-      <figcaption>Auszug aus echten Läufen auf rechtzeitig.dev am 4. November 2026, Ergebnisse so, wie rechtzeitig sie mit <code>report-language: de</code> schreibt. Zahlen, Scan-Zeile und die unmarkierten Zeilen (7 von 35) stammen aus dem späteren Lauf. Die Zeile „früherer Lauf“ stammt aus einem Lauf am Morgen desselben Tages. Zeilen mit „aktuelle Website“ zeigen das Ergebnis für die Website, wie sie jetzt veröffentlicht ist, mit der Besucherstatistik von Pirsch. Mit „Unsere Anmerkung“ markierte Hinweise sind für diese Seite ergänzt.</figcaption>
+      <figcaption>Auszug aus zwei echten Läufen auf rechtzeitig.dev am 4. November 2026, Ergebnisse so, wie rechtzeitig sie mit <code>report-language: de</code> schreibt. Zahlen, Scan-Zeile und die unmarkierten Zeilen (7 von 35) stammen aus dem späteren Lauf. Die Zeile „früherer Lauf“ stammt aus einem Lauf 20 Minuten davor, als die Domain noch keinen SPF- und DMARC-Eintrag hatte. Zeilen mit „aktuelle Website“ zeigen, was die Prüfungen für die Website ausgeben, wie sie jetzt veröffentlicht ist, mit der Besucherstatistik von Pirsch; sie sind in den Zahlen nicht enthalten. Mit „Unsere Anmerkung“ markierte Hinweise sind für diese Seite ergänzt.</figcaption>
     </figure>
   </section>
 
