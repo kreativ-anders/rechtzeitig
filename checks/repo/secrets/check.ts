@@ -25,8 +25,13 @@ function claims(part: string | undefined, expected: Record<string, string>): boo
 export default defineRepoCheck({
   run(repo) {
     const found: Array<Finding & { severity: "fail" | "warn" }> = [];
-    for (const file of repo.files.filter((f) => !SKIP.test(f))) {
+    const lfs = new Set(repo.coverage.lfs);
+    const scanned = repo.files.filter((f) => !SKIP.test(f));
+    // Binary, too large, or only a Git LFS pointer: not looked at, so the result says how many.
+    let unread = 0;
+    for (const file of scanned) {
       const text = repo.read(file);
+      if (text === undefined || lfs.has(file)) unread++;
       if (!text) continue;
       text.split("\n").forEach((line, i) => {
         for (const rule of RULES) {
@@ -36,9 +41,10 @@ export default defineRepoCheck({
         }
       });
     }
-    const details = found.map(({ severity, ...f }) => f);
+    const note: Finding[] = unread ? [{ key: "unread", params: { count: unread } }] : [];
+    const details = [...found.map(({ severity, ...f }) => f), ...note];
     if (found.some((f) => f.severity === "fail")) return fail(msg("secrets", { count: found.length }), details);
     if (found.length) return warn(msg("public_keys", { count: found.length }), details);
-    return pass(msg("none"));
+    return pass(msg("none", { count: scanned.length - unread }), note);
   },
 });

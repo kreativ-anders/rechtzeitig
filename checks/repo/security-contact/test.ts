@@ -26,6 +26,18 @@ test("notes a project without a security contact", async () => {
   assert.equal((await runRepoCheck(here, { ...project, "README.md": "x" })).status, "info");
 });
 
-test("skips a repository without a manifest", async () => {
+test("skips a repository without a manifest, also when only fixtures have one", async () => {
   assert.equal((await runRepoCheck(here, { "README.md": "x" })).status, "skip");
+  assert.equal((await runRepoCheck(here, { "test/fixtures/app/package.json": "{}" })).status, "skip");
+});
+
+test("counts a monorepo with manifests only in subfolders as a software project", async () => {
+  assert.equal((await runRepoCheck(here, { "services/api/go.mod": "module api\n", "web/package.json": "{}" })).status, "info");
+});
+
+test("ignores an expired security.txt in test fixtures", async () => {
+  const txt = "Contact: mailto:security@example.de\nExpires: 2020-01-01T00:00:00Z\n";
+  const result = await runRepoCheck(here, { ...project, "SECURITY.md": "x", "checks/x/fixtures/expired/.well-known/security.txt": txt });
+  assert.equal(result.status, "pass");
+  assert.deepEqual(result.details, ["SECURITY.md"]);
 });

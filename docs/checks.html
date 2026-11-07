@@ -912,7 +912,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-SECRETS-002" data-module="repo" data-severity="high" data-search="sec-secrets-002 repo/env-files .env files stay out of git .env-dateien bleiben außerhalb von git art. 32 gdpr lists committed `.env*` files, also with several suffixes like `.env.production.local` (templates and fixtures excluded), and checks that `.gitignore` ignores `.env`.">
+<details class="rule" id="SEC-SECRETS-002" data-module="repo" data-severity="high" data-search="sec-secrets-002 repo/env-files .env files stay out of git .env-dateien bleiben außerhalb von git art. 32 gdpr lists committed `.env*` files, also with several suffixes like `.env.production.local` (templates and fixtures excluded), and checks that `.gitignore` ignores `.env`; a missing rule is a warning with an `.env` template, a note when a package manifest lies in any folder.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SECRETS-002</span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">.env files stay out of git</span>
@@ -921,14 +921,14 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files, also with several suffixes like <code>.env.production.local</code> (templates and fixtures excluded), and checks that <code>.gitignore</code> ignores <code>.env</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files, also with several suffixes like <code>.env.production.local</code> (templates and fixtures excluded), and checks that <code>.gitignore</code> ignores <code>.env</code>; a missing rule is a warning with an <code>.env</code> template, a note when a package manifest lies in any folder.</dd></div>
 <div><dt>How to fix</dt><dd>Add .env to .gitignore; revoke committed values and remove them from the history.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/env-files"><code>checks/repo/env-files</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-LIC-001" data-module="repo" data-severity="medium" data-search="leg-de-lic-001 repo/licenses dependency licenses fit the project lizenzen der abhängigkeiten passen zum projekt §§ 31, 69c urhg (german copyright act) compares licenses from npm and composer lockfiles with the project license (package.json, composer.json or license) using the groups in `data/licenses.yml`; an spdx `or` with a non-copyleft choice is not flagged.">
+<details class="rule" id="LEG-DE-LIC-001" data-module="repo" data-severity="medium" data-search="leg-de-lic-001 repo/licenses dependency licenses fit the project lizenzen der abhängigkeiten passen zum projekt §§ 31, 69c urhg (german copyright act) compares licenses from the lockfiles that carry them (`licenses_in_lockfile` in `data/ecosystems.yml`, today npm and composer) with the project license (package.json, composer.json or license) using the groups in `data/licenses.yml`; an spdx `or` with a non-copyleft choice is not flagged, other ecosystems are named as not checked, and without a single license read the rule is skipped.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-LIC-001</span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Dependency licenses fit the project</span>
@@ -937,14 +937,14 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Compares licenses from npm and Composer lockfiles with the project license (package.json, composer.json or LICENSE) using the groups in <code>data/licenses.yml</code>; an SPDX <code>OR</code> with a non-copyleft choice is not flagged.</dd></div>
+<div><dt>How it is checked</dt><dd>Compares licenses from the lockfiles that carry them (<code>licenses_in_lockfile</code> in <code>data/ecosystems.yml</code>, today npm and Composer) with the project license (package.json, composer.json or LICENSE) using the groups in <code>data/licenses.yml</code>; an SPDX <code>OR</code> with a non-copyleft choice is not flagged, other ecosystems are named as not checked, and without a single license read the rule is skipped.</dd></div>
 <div><dt>How to fix</dt><dd>Review the license of each flagged dependency; replace it, buy a license or license the project to match.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/licenses"><code>checks/repo/licenses</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DEPS-002" data-module="repo" data-severity="low" data-search="sec-deps-002 repo/sbom dependencies are locked and listed in an sbom abhängigkeiten sind gesperrt und in einer sbom erfasst cra annex i part ii(1) (from 11 dec 2027) reads all lockfiles (`src/repo/lockfiles.ts`) for the sbom the report writes to `rechtzeitig-sbom.cdx.json`, and lists manifests without a lockfile in their folder or a parent folder.">
+<details class="rule" id="SEC-DEPS-002" data-module="repo" data-severity="low" data-search="sec-deps-002 repo/sbom dependencies are locked and listed in an sbom abhängigkeiten sind gesperrt und in einer sbom erfasst cra annex i part ii(1) (from 11 dec 2027) reads all lockfiles (`src/repo/lockfiles.ts`, up to the `repo` limit in `data/thresholds.yml`) for the sbom the report writes to `rechtzeitig-sbom.cdx.json`, lists manifests without a lockfile in their folder or a parent folder, and never passes when a lockfile gave nothing (too large, git lfs pointer, invalid), when package files have no parser (`data/ecosystems.yml`) or when no component was found.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-002</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
 <span class="rule-title">Dependencies are locked and listed in an SBOM</span>
@@ -953,14 +953,14 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads all lockfiles (<code>src/repo/lockfiles.ts</code>) for the SBOM the report writes to <code>rechtzeitig-sbom.cdx.json</code>, and lists manifests without a lockfile in their folder or a parent folder.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads all lockfiles (<code>src/repo/lockfiles.ts</code>, up to the <code>repo</code> limit in <code>data/thresholds.yml</code>) for the SBOM the report writes to <code>rechtzeitig-sbom.cdx.json</code>, lists manifests without a lockfile in their folder or a parent folder, and never passes when a lockfile gave nothing (too large, Git LFS pointer, invalid), when package files have no parser (<code>data/ecosystems.yml</code>) or when no component was found.</dd></div>
 <div><dt>How to fix</dt><dd>Commit a lockfile for every manifest; keep the SBOM with each release. The CRA covers products with digital elements made available in the EU, usually not pure web services.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/sbom"><code>checks/repo/sbom</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-SECRETS-001" data-module="repo" data-severity="critical" data-search="sec-secrets-001 repo/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files line by line against `data/secrets.yml`, decoding jwt payloads where a pattern names claims (supabase `service_role` keys); shows only the first 4 characters and the length of each find.">
+<details class="rule" id="SEC-SECRETS-001" data-module="repo" data-severity="critical" data-search="sec-secrets-001 repo/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files, including checked-out submodules, line by line against `data/secrets.yml`, decoding jwt payloads where a pattern names claims (supabase `service_role` keys); shows only the first 4 characters and the length of each find, and counts the files it could not read (binary, over the `repo` limit in `data/thresholds.yml`, git lfs pointers).">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SECRETS-001</span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">critical</span></span></span>
 <span class="rule-title">No secrets in the repository</span>
@@ -969,14 +969,14 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Matches tracked files line by line against <code>data/secrets.yml</code>, decoding JWT payloads where a pattern names claims (Supabase <code>service_role</code> keys); shows only the first 4 characters and the length of each find.</dd></div>
+<div><dt>How it is checked</dt><dd>Matches tracked files, including checked-out submodules, line by line against <code>data/secrets.yml</code>, decoding JWT payloads where a pattern names claims (Supabase <code>service_role</code> keys); shows only the first 4 characters and the length of each find, and counts the files it could not read (binary, over the <code>repo</code> limit in <code>data/thresholds.yml</code>, Git LFS pointers).</dd></div>
 <div><dt>How to fix</dt><dd>Revoke found keys right away, then remove them from code and git history and store them as secrets or environment variables.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/secrets"><code>checks/repo/secrets</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-CVD-001" data-module="repo" data-severity="low" data-search="sec-cvd-001 repo/security-contact the project names a contact for vulnerabilities das projekt nennt einen kontakt für sicherheitslücken cra annex i part ii(5) and (6), contact address and vulnerability disclosure (from 11 dec 2027) looks for `security.md` in the root, `.github/` or `docs/` and for `.well-known/security.txt` anywhere, whose `contact` and `expires` fields it reads; skips repositories without a manifest.">
+<details class="rule" id="SEC-CVD-001" data-module="repo" data-severity="low" data-search="sec-cvd-001 repo/security-contact the project names a contact for vulnerabilities das projekt nennt einen kontakt für sicherheitslücken cra annex i part ii(5) and (6), contact address and vulnerability disclosure (from 11 dec 2027) looks for `security.md` in the root, `.github/` or `docs/` and for `.well-known/security.txt` anywhere outside test fixtures, whose `contact` and `expires` fields it reads; skips repositories without a package manifest in any folder outside fixtures.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-CVD-001</span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
 <span class="rule-title">The project names a contact for vulnerabilities</span>
@@ -985,7 +985,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Looks for <code>SECURITY.md</code> in the root, <code>.github/</code> or <code>docs/</code> and for <code>.well-known/security.txt</code> anywhere, whose <code>Contact</code> and <code>Expires</code> fields it reads; skips repositories without a manifest.</dd></div>
+<div><dt>How it is checked</dt><dd>Looks for <code>SECURITY.md</code> in the root, <code>.github/</code> or <code>docs/</code> and for <code>.well-known/security.txt</code> anywhere outside test fixtures, whose <code>Contact</code> and <code>Expires</code> fields it reads; skips repositories without a package manifest in any folder outside fixtures.</dd></div>
 <div><dt>How to fix</dt><dd>Add SECURITY.md with a reporting channel (email or GitHub private vulnerability reporting) and a response time. A SECURITY.md in the organization's .github repository counts too, but is not visible here.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/repo/security-contact"><code>checks/repo/security-contact</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/add-security-policy">docs.github.com</a>, <a href="https://www.rfc-editor.org/rfc/rfc9116.html">rfc-editor.org</a></dd></div>

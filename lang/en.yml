@@ -164,6 +164,9 @@ messages:
     switch_green-hosting: "Green hosting lookup is turned off (input green-hosting: false). Nothing was sent to the Green Web Foundation."
     no_page: "No {page} to read (see {check})."
     found: "Found the {page} at {where}."
+    not_run_url: "Not run: needs a website. Set the input url."
+    not_run_repository: "Not run: needs the repository. Run actions/checkout before rechtzeitig."
+    not_run_module: "Not run: the group {module} is not in modules ({modules}). Empty modules runs all groups."
   report:
     check: "Check"
     severity: "Severity"
@@ -185,6 +188,58 @@ messages:
     visitor: "Visitor: fresh browser, no clicks, no consent given"
     runner: "GitHub-hosted runner (US data center)"
     repository: "Repository: {files} files, {components} components from {lockfiles} lockfile(s), OSV: {osv}"
+    not_run: "Not run ({count})"
+    not_run_url:
+      one: "{count} website check: no url. Set the input url to run it."
+      other: "{count} website checks: no url. Set the input url to run them."
+    not_run_repository:
+      one: "{count} repository check: no checkout. Run actions/checkout before rechtzeitig."
+      other: "{count} repository checks: no checkout. Run actions/checkout before rechtzeitig."
+    not_run_module:
+      one: "{count} check outside modules: {modules}. Empty modules runs all groups."
+      other: "{count} checks outside modules: {modules}. Empty modules runs all groups."
+    not_run_switch:
+      one: "{count} check: {hint}"
+      other: "{count} checks: {hint}"
+    not_run_data:
+      one: "{count} check ran but found nothing it could read."
+      other: "{count} checks ran but found nothing they could read."
+    and_more: " and {count} more"
+    cov_walk: "File list from a folder walk ({why}): .gitignore was not applied."
+    cov_submodules_missing:
+      one: "{count} submodule not checked out, its files were not scanned: {names}. Check out with submodules: recursive."
+      other: "{count} submodules not checked out, their files were not scanned: {names}. Check out with submodules: recursive."
+    cov_submodules:
+      one: "{count} submodule scanned: {names}"
+      other: "{count} submodules scanned: {names}"
+    cov_lfs:
+      one: "{count} Git LFS pointer instead of the file: {names}. Check out with lfs: true."
+      other: "{count} Git LFS pointers instead of the files: {names}. Check out with lfs: true."
+    cov_lockfiles_failed:
+      one: "{count} lockfile gave no components: {names}"
+      other: "{count} lockfiles gave no components: {names}"
+    cov_lockfiles_empty:
+      one: "{count} lockfile without components: {names}"
+      other: "{count} lockfiles without components: {names}"
+    cov_unsupported:
+      one: "{count} package file without a parser, not in the SBOM: {names}"
+      other: "{count} package files without a parser, not in the SBOM: {names}"
+    cov_large:
+      one: "{count} file over {limit} MB not read: {names}"
+      other: "{count} files over {limit} MB not read: {names}"
+    cov_binary:
+      one: "{count} binary file not read."
+      other: "{count} binary files not read."
+    cov_private:
+      one: "{count} private package source, named only, never contacted: {names}"
+      other: "{count} private package sources, named only, never contacted: {names}"
+    reason_large: "too large"
+    reason_lfs: "Git LFS pointer"
+    reason_binary: "binary"
+    reason_invalid: "not readable"
+    source_registry: "registry"
+    source_git: "git"
+    source_replace: "replace"
     disclaimer: "Technical risk hints with the place they were found and the legal basis they relate to. Not legal advice."
     made_by: "by {maker}"
     severity_info: "info"
@@ -680,8 +735,26 @@ messages:
     counted:
       one: " in {count} licensed component"
       other: " in {count} licensed components"
+    unchecked:
+      one: "{count} production dependency not checked: lockfiles of {ecosystems} name no licenses."
+      other: "{count} production dependencies not checked: lockfiles of {ecosystems} name no licenses."
+    no_components: "No locked dependencies whose licenses could be compared."
+    no_licenses: "No lockfile names licenses ({ecosystems}), so nothing was compared."
   repo/sbom:
     no_manifests: "No package manifests in the repository."
+    failed:
+      one: "{count} lockfile could not be read, its components are missing from the SBOM."
+      other: "{count} lockfiles could not be read, their components are missing from the SBOM."
+    failed_file: "not read: {reason}"
+    reason_large: "too large"
+    reason_lfs: "Git LFS pointer, check out with lfs: true"
+    reason_binary: "binary"
+    reason_invalid: "not in the expected format"
+    unsupported:
+      one: "SBOM incomplete: rechtzeitig cannot read {count} package file ({ecosystems}) yet."
+      other: "SBOM incomplete: rechtzeitig cannot read {count} package files ({ecosystems}) yet."
+    unsupported_file: "{ecosystem}: no parser, not in the SBOM"
+    no_components: "No components in {lockfiles}: the SBOM is empty."
     unlocked:
       one: "{count} manifest without a lockfile. Installed versions can change between builds."
       other: "{count} manifests without a lockfile. Installed versions can change between builds."
@@ -699,9 +772,14 @@ messages:
     public_keys:
       one: "{count} key found that may be public by design. Check that it is restricted."
       other: "{count} keys found that may be public by design. Check that each is restricted."
-    none: "No secrets found in tracked files."
+    none:
+      one: "No secrets found in {count} file read."
+      other: "No secrets found in {count} files read."
+    unread:
+      one: "{count} file not read: binary, too large or only a Git LFS pointer."
+      other: "{count} files not read: binary, too large or only a Git LFS pointer."
   repo/security-contact:
-    no_project: "No package manifest in the root, so no software project to report vulnerabilities for."
+    no_project: "No package manifest in the repository (fixtures not counted), so no software project to report vulnerabilities for."
     missing: "No SECURITY.md and no security.txt. Without a contact, vulnerabilities are reported publicly or not at all."
     txt_no_contact: "security.txt has no Contact field."
     txt_expired: "security.txt expired on {date}."

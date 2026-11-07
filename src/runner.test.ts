@@ -5,7 +5,7 @@ import { loadChecks, runChecks, selectModules } from "./runner.ts";
 import { LANGUAGES, SWITCHES, validateRule, type Rule, type Switch } from "./rules.ts";
 import { checksHtml, heroChecksHtml, reviewedHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
-import { defineCheck, pass } from "./sdk.ts";
+import { defineCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
 import { render } from "./messages.ts";
 
 const rule = { id: "SEC-TEST-001", severity: "low", title: { de: "t", en: "t" }, how: "Reads something and compares it.", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: ["https://www.w3.org/TR/WCAG22/"] } } as Rule;
@@ -93,6 +93,21 @@ test("asking for an unknown concept is an error, not a silent pass", async () =>
   const [outcome] = await runChecks(checks, { web: fakeContext({}) });
   assert.equal(outcome.status, "error");
   assert.match(String(outcome.message), /Unknown concept "imprnt"/);
+});
+
+test("a check without its target or outside modules is a skip that says why, in every language", async () => {
+  const web = { id: "legal/web", rule, check: defineCheck({ run: () => pass({ key: "ran" }) }) };
+  const repo = { id: "repo/files", rule, check: defineRepoCheck({ run: () => pass({ key: "ran" }) }) };
+  const empty = { id: "repo/empty", rule, check: defineRepoCheck({ run: () => skip({ key: "nothing" }) }) };
+  const onlyWeb = await runChecks([web, repo], { web: fakeContext({}) });
+  assert.deepEqual(onlyWeb.map((o) => [o.status, o.because]), [["pass", undefined], ["skip", { kind: "target", missing: "repository" }]]);
+  const nothing = await runChecks([web], {});
+  assert.deepEqual(nothing[0].because, { kind: "target", missing: "url" });
+  const filtered = await runChecks([web, repo], { web: fakeContext({}) }, [], ["repo"]);
+  assert.deepEqual(filtered[0].because, { kind: "module", modules: ["repo"] });
+  for (const o of [onlyWeb[1], nothing[0], filtered[0]]) for (const lang of LANGUAGES) assert.ok(render(o.message, o.id, lang).length > 10);
+  const [own] = await runChecks([empty], { repo: {} as never });
+  assert.deepEqual(own.because, { kind: "data" });
 });
 
 test("every switch skips its rules when off, with a message in every language", async () => {
