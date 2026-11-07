@@ -69,7 +69,7 @@ test("findings are single, capped lines", () => {
 
 test("annotations escape file names, titles and text, so nothing becomes a second command", () => {
   const r: Report = {
-    outcomes: [{ id: "repo/secrets", rule, status: "fail", message: { key: "secrets", params: { count: 1 } }, details: [
+    outcomes: [{ id: "security/secrets", rule, status: "fail", message: { key: "secrets", params: { count: 1 } }, details: [
       { file: "a,b:c\n::error::x%", line: 3, key: "secret", params: { name: "Token\n::warning::y", start: "ghp_", length: 40 } },
       "no file, no annotation",
     ] }],
@@ -81,7 +81,7 @@ test("annotations escape file names, titles and text, so nothing becomes a secon
 });
 
 test("messages are rendered in the report language, with plural forms", () => {
-  const outcome = (count: number) => ({ id: "repo/secrets", rule, status: "fail" as const, message: { key: "secrets", params: { count } }, details: [] });
+  const outcome = (count: number) => ({ id: "security/secrets", rule, status: "fail" as const, message: { key: "secrets", params: { count } }, details: [] });
   const de = (count: number) => toText({ outcomes: [outcome(count)], version: "0", startedAt: "now", onGitHub: false, language: "de" });
   assert.match(de(1), /1 Secret gefunden\./);
   assert.match(de(3), /3 Secrets gefunden\./);
@@ -110,18 +110,18 @@ test("skipped checks show grouped by reason under Not run, also in counts mode, 
   const r: Report = {
     ...report("m", []),
     outcomes: [
-      { id: "repo/secrets", rule, status: "pass", message: "fine", details: [] },
+      { id: "security/secrets", rule, status: "pass", message: "fine", details: [] },
       skipped("legal/imprint", { kind: "target", missing: "url" }, { key: "not_run_url" }),
       skipped("legal/privacy-policy", { kind: "target", missing: "url" }, { key: "not_run_url" }),
       skipped("legal/order-button", { kind: "switch", input: "sales" }, { key: "switch_sales" }),
-      skipped("repo/actions-pinning", { kind: "data" }, { key: "no_workflows" }),
+      skipped("security/actions-pinning", { kind: "data" }, { key: "no_workflows" }),
     ],
   };
   const summary = toMarkdown(r, { findingsOnly: true });
   assert.match(summary, /<details><summary>⏭️ Not run \(4\)<\/summary>/);
   assert.match(summary, /- 2 website checks: no url\. Set the input url to run them\./);
   assert.match(summary, /- 1 check: Only needed when consumers buy .*sales: true/);
-  assert.match(summary, /- 1 check ran but found nothing it could read\.\n {2}- t \(REPO\/ACTIONS-PINNING\): No GitHub workflows\./);
+  assert.match(summary, /- 1 check ran but found nothing it could read\.\n {2}- t \(SECURITY\/ACTIONS-PINNING\): No GitHub workflows\./);
   assert.doesNotMatch(toMarkdown(r), /LEGAL\/IMPRINT/, "checks without a target are not listed one by one");
   const counts = toCounts(r, "md");
   assert.match(counts, /Not run \(4\)[\s\S]*2 website checks: no url/);

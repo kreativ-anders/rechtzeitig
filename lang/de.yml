@@ -207,7 +207,7 @@ messages:
     found: "{page} gefunden: {where}."
     not_run_url: "Nicht gelaufen: braucht eine Website. Input url setzen."
     not_run_repository: "Nicht gelaufen: braucht das Repository. actions/checkout vor rechtzeitig ausführen."
-    not_run_module: "Nicht gelaufen: Die Gruppe {module} steht nicht in modules ({modules}). Leeres modules startet alle Gruppen."
+    not_run_module: "Nicht gelaufen: Weder die Gruppe {module} noch der Bereich {scope} steht in modules ({modules}). Leeres modules startet alle Prüfungen."
   report:
     check: "Prüfung"
     severity: "Schwere"
@@ -235,8 +235,8 @@ messages:
       one: "{count} Repository-Prüfung: kein Checkout. actions/checkout vor rechtzeitig ausführen."
       other: "{count} Repository-Prüfungen: kein Checkout. actions/checkout vor rechtzeitig ausführen."
     not_run_module:
-      one: "{count} Prüfung außerhalb von modules: {modules}. Leeres modules startet alle Gruppen."
-      other: "{count} Prüfungen außerhalb von modules: {modules}. Leeres modules startet alle Gruppen."
+      one: "{count} Prüfung außerhalb von modules: {modules}. Leeres modules startet alle Prüfungen."
+      other: "{count} Prüfungen außerhalb von modules: {modules}. Leeres modules startet alle Prüfungen."
     not_run_switch:
       one: "{count} Prüfung: {hint}"
       other: "{count} Prüfungen: {hint}"
@@ -719,13 +719,13 @@ messages:
     more:
       one: "und {count} weitere Datei"
       other: "und {count} weitere Dateien"
-  repo/actions-pinning:
+  security/actions-pinning:
     no_workflows: "Keine GitHub-Workflows."
     unpinned:
       one: "{count} Action nutzt ein Tag statt eines Commit-SHA. Ein verschobenes Tag kann den ausgeführten Code ändern."
       other: "{count} Actions nutzen ein Tag statt eines Commit-SHA. Ein verschobenes Tag kann den ausgeführten Code ändern."
     pinned: "Alle Actions sind auf einen Commit-SHA festgelegt."
-  repo/database-rules:
+  security/database-rules:
     nothing: "Keine Supabase-Migrationen oder Firebase-Regeln im Repository."
     no_rls: "Supabase-Tabelle „{table}“ hat keine Row Level Security."
     open_rules: "Erlaubt allen den Zugriff („if true“)."
@@ -740,7 +740,7 @@ messages:
     rule_files:
       one: ", {count} Firebase-Regeldatei ohne offenen Zugriff"
       other: ", {count} Firebase-Regeldateien ohne offenen Zugriff"
-  repo/dependency-updates:
+  security/dependency-updates:
     no_components: "Keine Abhängigkeiten mit Lockfile."
     renovate: "Renovate hält die Abhängigkeiten aktuell."
     dependabot: "Dependabot deckt {ecosystems} ab."
@@ -749,13 +749,13 @@ messages:
     scan_only: "Schwachstellen werden gescannt, aber kein Werkzeug öffnet Update-Pull-Requests."
     unwatched: "Nichts überwacht die Abhängigkeiten auf neue Schwachstellen. Dependabot oder Renovate einrichten."
     add_dependabot: ".github/dependabot.yml mit einem Eintrag je Ökosystem anlegen: {entries}."
-  repo/env-files:
+  security/env-files:
     committed:
       one: "{count} .env-Datei ist eingecheckt. Ihre Werte stehen in der Git-Historie."
       other: "{count} .env-Dateien sind eingecheckt. Ihre Werte stehen in der Git-Historie."
     not_ignored: ".gitignore ignoriert .env nicht. „.env“ ergänzen, damit lokale Secrets nicht versehentlich eingecheckt werden."
     none: "Keine .env-Datei eingecheckt."
-  repo/licenses:
+  legal/licenses:
     commons_clause: "Projekt: {project}. GPL-3.0 § 7 erlaubt Empfängern, „weitere Beschränkungen“ zu entfernen; die Commons Clause greift daher womöglich nicht."
     restricted: "{name}@{version}: {license}. Schränkt die Nutzung ein, oft die kommerzielle."
     agpl: "{name}@{version}: {license}. Die AGPL gilt auch, wenn die Software nur über ein Netzwerk angeboten wird."
@@ -779,7 +779,7 @@ messages:
       other: "{count} Produktionsabhängigkeiten nicht geprüft: Lockfiles von {ecosystems} nennen keine Lizenzen."
     no_components: "Keine gesperrten Abhängigkeiten, deren Lizenzen sich vergleichen ließen."
     no_licenses: "Kein Lockfile nennt Lizenzen ({ecosystems}), daher wurde nichts verglichen."
-  repo/sbom:
+  security/sbom:
     no_manifests: "Keine Paket-Manifeste im Repository."
     failed:
       one: "{count} Lockfile ließ sich nicht lesen, seine Komponenten fehlen in der SBOM."
@@ -803,7 +803,7 @@ messages:
     lockfiles:
       one: "{count} Lockfile"
       other: "{count} Lockfiles"
-  repo/secrets:
+  security/secrets:
     secret: "{name} ({start}… ({length} Zeichen))"
     secrets:
       one: "{count} Secret gefunden. Sperren, dann aus Code und Git-Historie entfernen."
@@ -817,13 +817,13 @@ messages:
     unread:
       one: "{count} Datei nicht gelesen: binär, zu groß oder nur ein Git-LFS-Pointer."
       other: "{count} Dateien nicht gelesen: binär, zu groß oder nur ein Git-LFS-Pointer."
-  repo/security-contact:
+  security/security-contact:
     no_project: "Kein Paketmanifest im Repository (Fixtures nicht mitgezählt), also kein Softwareprojekt, für das Lücken gemeldet würden."
     missing: "Keine SECURITY.md und keine security.txt. Ohne Kontakt werden Lücken öffentlich gemeldet oder gar nicht."
     txt_no_contact: "security.txt hat kein Contact-Feld."
     txt_expired: "security.txt ist am {date} abgelaufen."
     found: "Ein Kontakt für Sicherheitslücken ist genannt."
-  repo/vulnerabilities:
+  security/vulnerabilities:
     no_components: "Keine Abhängigkeiten mit Lockfile zu prüfen."
     osv_error: "OSV-Abfrage fehlgeschlagen: {error}"
     none:
@@ -838,7 +838,7 @@ messages:
     partial:
       one: " OSV lieferte Details zu {got} von {count} Schwachstelle; die übrigen haben hier keinen Schweregrad."
       other: " OSV lieferte Details zu {got} von {count} Schwachstellen; die übrigen haben hier keinen Schweregrad."
-  repo/workflow-risks:
+  security/workflow-risks:
     no_workflows: "Keine GitHub-Workflows."
     risky:
       one: "{count} riskante Stelle in den GitHub-Workflows."

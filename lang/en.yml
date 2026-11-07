@@ -166,7 +166,7 @@ messages:
     found: "Found the {page} at {where}."
     not_run_url: "Not run: needs a website. Set the input url."
     not_run_repository: "Not run: needs the repository. Run actions/checkout before rechtzeitig."
-    not_run_module: "Not run: the group {module} is not in modules ({modules}). Empty modules runs all groups."
+    not_run_module: "Not run: neither its group {module} nor its scope {scope} is in modules ({modules}). Empty modules runs all checks."
   report:
     check: "Check"
     severity: "Severity"
@@ -194,8 +194,8 @@ messages:
       one: "{count} repository check: no checkout. Run actions/checkout before rechtzeitig."
       other: "{count} repository checks: no checkout. Run actions/checkout before rechtzeitig."
     not_run_module:
-      one: "{count} check outside modules: {modules}. Empty modules runs all groups."
-      other: "{count} checks outside modules: {modules}. Empty modules runs all groups."
+      one: "{count} check outside modules: {modules}. Empty modules runs all checks."
+      other: "{count} checks outside modules: {modules}. Empty modules runs all checks."
     not_run_switch:
       one: "{count} check: {hint}"
       other: "{count} checks: {hint}"
@@ -678,13 +678,13 @@ messages:
     more:
       one: "and {count} more file"
       other: "and {count} more files"
-  repo/actions-pinning:
+  security/actions-pinning:
     no_workflows: "No GitHub workflows."
     unpinned:
       one: "{count} action uses a tag instead of a commit SHA. A moved tag can change the code that runs."
       other: "{count} actions use a tag instead of a commit SHA. A moved tag can change the code that runs."
     pinned: "All actions are pinned to a commit SHA."
-  repo/database-rules:
+  security/database-rules:
     nothing: "No Supabase migrations or Firebase rules in the repository."
     no_rls: 'Supabase table "{table}" has no row level security.'
     open_rules: 'Allows access for everyone ("if true").'
@@ -699,7 +699,7 @@ messages:
     rule_files:
       one: ", {count} Firebase rule file without open access"
       other: ", {count} Firebase rule files without open access"
-  repo/dependency-updates:
+  security/dependency-updates:
     no_components: "No locked dependencies."
     renovate: "Renovate keeps dependencies up to date."
     dependabot: "Dependabot covers {ecosystems}."
@@ -708,13 +708,13 @@ messages:
     scan_only: "Vulnerabilities are scanned, but no tool opens update pull requests."
     unwatched: "Nothing watches the dependencies for new vulnerabilities. Add Dependabot or Renovate."
     add_dependabot: "Add .github/dependabot.yml with one entry per ecosystem: {entries}."
-  repo/env-files:
+  security/env-files:
     committed:
       one: "{count} .env file is committed. Its values are in the git history."
       other: "{count} .env files are committed. Their values are in the git history."
     not_ignored: '.gitignore does not ignore .env. Add ".env" so local secrets are not committed by accident.'
     none: "No .env file is committed."
-  repo/licenses:
+  legal/licenses:
     commons_clause: 'Project: {project}. GPL-3.0 § 7 lets recipients remove "further restrictions", so the Commons Clause may not hold.'
     restricted: "{name}@{version}: {license}. Restricts use, often commercial use."
     agpl: "{name}@{version}: {license}. AGPL also applies when you only offer the software over a network."
@@ -738,7 +738,7 @@ messages:
       other: "{count} production dependencies not checked: lockfiles of {ecosystems} name no licenses."
     no_components: "No locked dependencies whose licenses could be compared."
     no_licenses: "No lockfile names licenses ({ecosystems}), so nothing was compared."
-  repo/sbom:
+  security/sbom:
     no_manifests: "No package manifests in the repository."
     failed:
       one: "{count} lockfile could not be read, its components are missing from the SBOM."
@@ -762,7 +762,7 @@ messages:
     lockfiles:
       one: "{count} lockfile"
       other: "{count} lockfiles"
-  repo/secrets:
+  security/secrets:
     secret: "{name} ({start}… ({length} chars))"
     secrets:
       one: "{count} secret found. Revoke it, then remove it from the code and the git history."
@@ -776,13 +776,13 @@ messages:
     unread:
       one: "{count} file not read: binary, too large or only a Git LFS pointer."
       other: "{count} files not read: binary, too large or only a Git LFS pointer."
-  repo/security-contact:
+  security/security-contact:
     no_project: "No package manifest in the repository (fixtures not counted), so no software project to report vulnerabilities for."
     missing: "No SECURITY.md and no security.txt. Without a contact, vulnerabilities are reported publicly or not at all."
     txt_no_contact: "security.txt has no Contact field."
     txt_expired: "security.txt expired on {date}."
     found: "A contact for vulnerabilities is named."
-  repo/vulnerabilities:
+  security/vulnerabilities:
     no_components: "No locked dependencies to check."
     osv_error: "Could not query OSV: {error}"
     none:
@@ -797,7 +797,7 @@ messages:
     partial:
       one: " OSV sent details for {got} of {count} issue; the others have no severity here."
       other: " OSV sent details for {got} of {count} issues; the others have no severity here."
-  repo/workflow-risks:
+  security/workflow-risks:
     no_workflows: "No GitHub workflows."
     risky:
       one: "{count} risky spot in the GitHub workflows."

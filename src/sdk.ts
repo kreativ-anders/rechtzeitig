@@ -58,7 +58,7 @@ export interface Check {
   run(ctx: ScanContext): Result | Promise<Result>;
 }
 
-/** Checks the repository the workflow runs in. Lives in checks/repo/<name>/check.ts. */
+/** Checks the repository the workflow runs in. Lives in checks/<group>/<name>/check.ts, the group of its legal basis. */
 export interface RepoCheck {
   repo: true;
   run(repo: RepoContext): Result | Promise<Result>;

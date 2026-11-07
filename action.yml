@@ -19,7 +19,7 @@ inputs:
     description: true if consumers buy or sign contracts on the site (turns on the shop checks for withdrawal, order button, prices and T&Cs).
     default: "false"
   modules:
-    description: Comma list of check groups to run (legal, privacy, security, sustainability, accessibility, repo). Empty = all.
+    description: Comma list of check groups (legal, privacy, security, sustainability, accessibility) or scopes (website, repository; repo is the same as repository) to run. A check runs when its group or its scope is listed. Empty = all.
     default: ""
   report-language:
     description: Language of the report (de or en). Empty = same as language.

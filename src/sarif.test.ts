@@ -48,7 +48,7 @@ test("fingerprints ignore the line and stay apart for repeated findings", () => 
 });
 
 test("a finding's own fingerprint keeps the alert when its parameters change", () => {
-  const fp = (summary: string, fingerprint?: string) => sarif(report([{ id: "repo/vulnerabilities", rule: rule("SEC-DEPS-001"), status: "warn", message: "m",
+  const fp = (summary: string, fingerprint?: string) => sarif(report([{ id: "security/vulnerabilities", rule: rule("SEC-DEPS-001"), status: "warn", message: "m",
     details: [{ file: "package-lock.json", key: "issue", params: { summary }, ...(fingerprint ? { fingerprint } : {}) }] }])).runs[0].results[0].partialFingerprints["rechtzeitig/v1"];
   assert.equal(fp("old", "pkg:npm/a@1 GHSA-1"), fp("new, fixed in 2", "pkg:npm/a@1 GHSA-1"));
   assert.notEqual(fp("old"), fp("new"));

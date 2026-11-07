@@ -10,7 +10,7 @@ Checks that every rule in `checks/<module>/<name>/rule.yml` still cites correct,
 ## Scope
 
 - No argument: all rules, oldest `meta.last_reviewed` first.
-- A rule id, folder or module (`legal`, `privacy`, `repo`, ...): only those.
+- A rule id, folder or module (`legal`, `privacy`, `security`, ...): only those.
 
 List the rules with their review date:
 
