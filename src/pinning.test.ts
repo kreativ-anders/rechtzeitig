@@ -1,4 +1,4 @@
-// rechtzeitig asks other repositories to pin actions to a commit SHA (repo/actions-pinning), so it does the same.
+// rechtzeitig asks other repositories to pin actions to a commit SHA (security/actions-pinning), so it does the same.
 // Dependabot updates the pins in action.yml and .github/workflows/, but not in examples/. This test catches the drift.
 
 import { test } from "node:test";

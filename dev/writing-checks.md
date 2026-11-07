@@ -2,7 +2,7 @@
 
 ## A new check
 
-1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. Repository checks go in `checks/repo/`.
+1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/licenses`. Whether it reads the website or the repository follows from `defineCheck` or `defineRepoCheck` (its scope, shown on `docs/checks.html`).
 2. Add `rule.yml` with the metadata. Titles, legal basis and fix hint in German and English; the report shows them in the chosen language.
 
    ```yaml

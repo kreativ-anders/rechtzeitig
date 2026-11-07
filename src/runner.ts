@@ -41,8 +41,26 @@ export interface Outcome {
   because?: Because;
 }
 
-/** Module of a check id: "legal/imprint" → "legal". */
+/** Module (group) of a check id: "legal/imprint" → "legal". A group is a legal or topic area, never a scan target. */
 export const moduleOf = (id: string) => id.split("/")[0];
+
+/**
+ * What a check reads: the website (defineCheck), the repository (defineRepoCheck), or both (a check type that
+ * reads both does not exist yet). Derived from the check type, so it cannot drift from the code.
+ */
+export const SCOPES = ["website", "repository", "both"] as const;
+export type Scope = (typeof SCOPES)[number];
+export const scopeOf = (check: Check | RepoCheck): Scope => (check.repo ? "repository" : "website");
+/** Values of `modules` that pick a scope instead of a group. `repo` is the old name of the repository group. */
+const SCOPE_MODULES: Record<string, Scope> = { website: "website", repository: "repository", repo: "repository" };
+/** Whether `modules` picks a check, by its group or its scope. Empty = all. A "both" check counts for either scope. */
+const picked = (c: Pick<LoadedCheck, "id" | "check">, modules: string[]) =>
+  !modules.length || modules.some((m) => {
+    const scope = SCOPE_MODULES[m];
+    if (!scope) return m === moduleOf(c.id);
+    const own = scopeOf(c.check);
+    return own === scope || own === "both";
+  });
 
 /** Imports a check.ts and makes sure it exports a check. */
 export async function importCheck<T extends Check | RepoCheck = Check | RepoCheck>(file: string): Promise<T> {
@@ -67,16 +85,19 @@ export async function loadChecks(dir = CHECKS_DIR): Promise<LoadedCheck[]> {
   return checks;
 }
 
-/** Keeps only checks of the given modules ("legal", "privacy", "security", "repo", ...). Empty = all. */
-export const selectModules = (checks: LoadedCheck[], modules: string[]) =>
-  modules.length ? checks.filter((c) => modules.includes(moduleOf(c.id))) : checks;
+/**
+ * Keeps only checks picked by `modules`: a group ("legal", "privacy", "security", ...) or a scope ("website",
+ * "repository", and "repo" as before). Empty = all.
+ */
+export const selectModules = (checks: LoadedCheck[], modules: string[]) => checks.filter((c) => picked(c, modules));
 
 type Targets = { web?: ScanContext; repo?: RepoContext };
 
 /** Why a check cannot start, with its skip message from `messages.common`; undefined when it can. */
 function cannotRun(id: string, rule: Rule, check: Check | RepoCheck, targets: Targets, enabled: readonly Switch[], modules: string[]): { because: Because; message: Msg } | undefined {
-  if (modules.length && !modules.includes(moduleOf(id))) {
-    return { because: { kind: "module", modules }, message: { key: "not_run_module", params: { module: moduleOf(id), modules: modules.join(", ") } } };
+  if (!picked({ id, check }, modules)) {
+    const params = { module: moduleOf(id), scope: scopeOf(check), modules: modules.join(", ") };
+    return { because: { kind: "module", modules }, message: { key: "not_run_module", params } };
   }
   if (check.repo && !targets.repo) return { because: { kind: "target", missing: "repository" }, message: { key: "not_run_repository" } };
   if (!check.repo && !targets.web) return { because: { kind: "target", missing: "url" }, message: { key: "not_run_url" } };

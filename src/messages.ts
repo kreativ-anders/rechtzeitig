@@ -3,7 +3,7 @@
 //   messages:
 //     common:            shared by several checks (src/sdk.ts helpers)
 //       no_link: "No link to the {page} on the start page."
-//     repo/secrets:      one group per check id
+//     security/secrets:  one group per check id
 //       found: { one: "{count} secret found.", other: "{count} secrets found." }
 // A value with `one`/`other` is chosen by the `count` parameter (Intl.PluralRules).
 

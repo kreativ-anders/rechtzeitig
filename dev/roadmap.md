@@ -11,7 +11,7 @@ Open points from the audit of 2026-11-03, after the fixes.
 1. `step-security/harden-runner` with an egress allowlist in `test.yml`. No workflow uses it yet.
 2. Pins in `examples/workflows/` moved automatically. Dependabot's `github-actions` ecosystem reads only `.github/workflows/` and `action.yml`; the release workflow moves the rechtzeitig pin there, and `src/pinning.test.ts` fails when another pin drifts from `action.yml` and `.github/workflows/`.
 3. Require signed commits on `main`. The ruleset on `main` already requires pull requests and the `test` and `drift` checks and blocks force pushes; the release workflow does not push to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
-4. The backtracking tests (`src/patterns.test.ts`, `repo/actions-pinning`, `repo/database-rules`) measure CPU time instead of wall time (`Date.now()` today), so they no longer fail when the machine sleeps during the run. The deadline tests in `capture.test.ts` and `probe.test.ts` measure a wall-clock timeout and keep wall time.
+4. The backtracking tests (`src/patterns.test.ts`, `security/actions-pinning`, `security/database-rules`) measure CPU time instead of wall time (`Date.now()` today), so they no longer fail when the machine sleeps during the run. The deadline tests in `capture.test.ts` and `probe.test.ts` measure a wall-clock timeout and keep wall time.
 
 ## Next: repository
 
@@ -22,7 +22,7 @@ Ordered by value per effort. The first seven need only a new `data/*.yml` and th
 3. Unverifiable install sources: `http://` or missing `integrity` in lockfiles, git dependencies without a commit, `--extra-index-url`, `strict-ssl=false` (CRA Annex I Part I).
 4. Third-party SDKs in the lockfiles (`@sentry/*`, `posthog-js`, `firebase`, `openai`, ...) as info with vendor and country, via a `packages:` field in `data/third-parties.yml` (Art. 13, 28, 44 DSGVO).
 5. Dockerfile and Compose: no `USER` or `USER root`, `:latest` base images, secrets in `ENV`/`ARG`, `privileged: true`, the Docker socket mounted, database ports published.
-6. CRA for repositories that are products (library, CLI, firmware): support period in `SECURITY.md` (Art. 13 Abs. 8 CRA) and releases with provenance or a signature. `repo/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
+6. CRA for repositories that are products (library, CLI, firmware): support period in `SECURITY.md` (Art. 13 Abs. 8 CRA) and releases with provenance or a signature. `security/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
 7. More patterns in `workflow-risks`: secrets echoed into logs, `secrets: inherit` to external workflows, self-hosted runners on pull requests.
 8. Runtimes past their end of life (`engines.node`, `.nvmrc`, `FROM php:7.4`, `requires-python`), dates in a data file.
 9. In code: `cors` with `origin: *` and credentials, in JS and header config files. `security/cors` checks only the headers the site sends.

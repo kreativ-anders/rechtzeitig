@@ -144,7 +144,7 @@ export async function repoFromFiles(files: Record<string, string>): Promise<Repo
   return repo;
 }
 
-/** Runs checks/repo/<name>/check.ts in `checkDir` against a repository made of `files`. */
+/** Runs the repository check (defineRepoCheck) in `checkDir` against a repository made of `files`. */
 export async function runRepoCheck(checkDir: string, files: Record<string, string>, extra: Partial<RepoContext> = {}): Promise<Rendered> {
   const check = await importCheck<RepoCheck>(join(checkDir, "check.ts"));
   return rendered(checkDir, await check.run({ ...(await repoFromFiles(files)), ...extra }));

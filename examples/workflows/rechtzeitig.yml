@@ -49,7 +49,8 @@ jobs:
           # report-visibility: auto
           # Security tab upload: auto = where GitHub allows it, false = never.
           # sarif-upload: auto
-          # Only these check groups (legal, privacy, security, sustainability, accessibility, repo). Empty = all.
+          # Only these check groups (legal, privacy, security, sustainability, accessibility)
+          # or scopes (website, repository; repo = repository). Empty = all.
           # modules: ""
           # Language of the report (de or en). Empty = language of the site.
           # report-language: ""
