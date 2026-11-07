@@ -12,4 +12,4 @@ meta:
   last_reviewed: "2026-11-04"
   sources:
   - https://www.w3.org/TR/web-sustainability-guidelines/#server-side-compression
-  - https://www.rfc-editor.org/rfc/rfc9110#section-8.4
+  - https://www.rfc-editor.org/rfc/rfc9110.html#section-8.4

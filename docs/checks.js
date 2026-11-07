@@ -27,6 +27,7 @@
   const moduleChips = [];
   const pickModule = (value) => (b) => {
     state.module = value;
+    window.track?.("Checks filter", { filter: "group", value });
     moduleChips.forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
   };
   moduleChips.push(chip(moduleBox, "All", rules.length, pickModule("all")));
@@ -44,6 +45,7 @@
       const on = !state.severity.has(s);
       on ? state.severity.add(s) : state.severity.delete(s);
       b.setAttribute("aria-pressed", String(on));
+      window.track?.("Checks filter", { filter: "severity", value: s, on: String(on) });
     });
   }
 
@@ -61,14 +63,41 @@
     for (const m of modules) m.hidden = !m.querySelector(".rule:not([hidden])");
     count.textContent = shown === rules.length ? `${rules.length} checks` : `${shown} of ${rules.length} checks`;
     empty.hidden = shown > 0;
+    return shown;
   }
 
-  q.addEventListener("input", update);
+  // Search statistics: one event 1.5 s after the last keystroke, from 3 characters on,
+  // with the query cut to 40 characters and the number of results. Never per keystroke.
+  let timer;
+  let sent = "";
+  q.addEventListener("input", () => {
+    const shown = update();
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      const query = q.value.trim().toLowerCase().slice(0, 40);
+      if (query.length < 3 || query === sent) return;
+      sent = query;
+      window.track?.("Checks search", { query, results: String(shown) });
+    }, 1500);
+  });
   document.getElementById("toolbar").hidden = false;
 
-  // Open the card a link points to, e.g. checks.html#LEG-DE-IMP-001
-  const open = () => { const t = location.hash && document.getElementById(location.hash.slice(1)); if (t?.tagName === "DETAILS") t.open = true; };
+  // Open the card a link points to, e.g. checks.html#LEG-DE-IMP-001. A link to a group,
+  // e.g. checks.html#privacy, picks that group's chip. Neither counts as a filter event.
+  const open = () => {
+    const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (t?.tagName === "DETAILS") t.open = true;
+    const i = modules.indexOf(t);
+    if (i >= 0) {
+      state.module = t.dataset.module;
+      moduleChips.forEach((c, n) => c.setAttribute("aria-pressed", String(n === i + 1)));
+      update();
+    }
+  };
   addEventListener("hashchange", open);
+  // A search from the address, e.g. checks.html?q=BGB
+  const preset = new URLSearchParams(location.search).get("q");
+  if (preset) q.value = preset.slice(0, 40);
   open();
   update();
 })();

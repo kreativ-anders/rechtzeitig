@@ -24,7 +24,7 @@ Only primary sources from `data/source-domains.yml`: laws and official journals,
 
 - Never cite blogs, law firm articles, news sites, private websites or AI summaries. They may help to find a primary source, nothing more.
 - If an official source is on a domain that is missing from the list, propose adding the domain and say why. Do not add it silently.
-- Prefer the most stable official URL: ELI or CELEX links on EUR-Lex, `curia.europa.eu/juris/liste.jsf?num=<case>`, `gesetze-im-internet.de/<law>/__<section>.html`, press releases or decisions on the court's own site.
+- Prefer the most stable official URL that does not redirect: ELI or CELEX links on EUR-Lex (EU court judgments as `?uri=CELEX:6<year>CJ<number>`, `TJ` for the General Court; `curia.europa.eu/juris/liste.jsf` now redirects), `gesetze-im-internet.de/<law>/__<section>.html`, press releases or decisions on the court's own site.
 
 ## For each rule
 

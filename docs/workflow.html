@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q='; style-src 'self'; img-src 'self' data:; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q=' https://api.pirsch.io; style-src 'self'; img-src 'self' data:; connect-src https://api.pirsch.io; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>The workflow · rechtzeitig</title>
-<meta name="description" content="Inputs, secrets, fail-on and report files of the rechtzeitig GitHub Action.">
+<title>Workflow setup: inputs, schedule, SBOM · rechtzeitig</title>
+<meta name="description" content="Inputs, secrets, fail-on, scheduled runs, SARIF upload and the CycloneDX SBOM of the rechtzeitig GitHub Action, and which data leaves the runner.">
 <link rel="canonical" href="https://rechtzeitig.dev/workflow.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="rechtzeitig">
-<meta property="og:title" content="The workflow · rechtzeitig">
-<meta property="og:description" content="Inputs, secrets, fail-on and report files of the rechtzeitig GitHub Action.">
+<meta property="og:title" content="Workflow setup: inputs, schedule, SBOM · rechtzeitig">
+<meta property="og:description" content="Inputs, secrets, fail-on, scheduled runs, SARIF upload and the CycloneDX SBOM of the rechtzeitig GitHub Action, and which data leaves the runner.">
 <meta property="og:url" content="https://rechtzeitig.dev/workflow.html">
 <meta property="og:locale" content="en_GB">
 <meta property="og:image" content="https://rechtzeitig.dev/og.png">
@@ -27,17 +27,20 @@
 <link rel="stylesheet" href="style.css">
 <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="site.js" defer></script>
+<script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="w5NWUb6qKUHLnm9YxdgaEAxd7PflSnf6"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/workflow.html#webpage", "url": "https://rechtzeitig.dev/workflow.html", "name": "Workflow setup: inputs, schedule, SBOM", "description": "Inputs, secrets, fail-on, scheduled runs, SARIF upload and the CycloneDX SBOM of the rechtzeitig GitHub Action, and which data leaves the runner.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/workflow.html#breadcrumb"}, "headline": "Workflow setup: inputs, schedule, SBOM", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-04"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/workflow.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Workflow", "item": "https://rechtzeitig.dev/workflow.html"}]}]}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="top"><div class="top-inner">
   <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig</a>
   <nav class="nav" aria-label="Main"><ul><li><a href="workflow.html" aria-current="page">Workflow</a></li><li><a href="checks.html">Checks</a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
+  <nav class="langs" aria-label="Language"><a href="workflow.html" hreflang="en" lang="en" aria-current="page"><span aria-hidden="true">EN</span><span class="visually-hidden">English</span></a><a href="de/" hreflang="de" lang="de"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch</span></a></nav>
   <fieldset class="theme" hidden><legend>Colour theme</legend><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Light"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Light</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dark</span></label></fieldset>
 </div></header>
 
 <main id="content">
-  <h1>The workflow</h1>
+  <h1>Set up the rechtzeitig GitHub Action</h1>
   <p class="lead">Everything you can set when you run rechtzeitig, and what you get back.</p>
 
   <div class="doc">
@@ -130,7 +133,7 @@
             <tr><td><code>IPINFO_TOKEN</code></td><td><code>ipinfo-token</code></td><td><a href="checks.html#LEG-EU-DSE-005">Transfers outside the EU</a> (LEG-EU-DSE-005)</td><td><a href="https://ipinfo.io">ipinfo.io</a>, the free plan is enough</td></tr>
           </tbody>
         </table></div>
-        <p>Add it under <b>Settings → Secrets and variables → Actions → New repository secret</b>. The example workflow already passes it on.</p>
+        <p>Add it under <span class="ui">Settings → Secrets and variables → Actions → New repository secret</span>. The example workflow already passes it on.</p>
         <p class="note">rechtzeitig sends only the IP addresses of third-party servers to IPinfo, never data about your visitors.</p>
       </section>
 
@@ -157,7 +160,7 @@
         </table></div>
         <p class="note">On a public repository the run page is public, so <code>auto</code> shows only counts there. With <code>full</code>, anyone can read the findings and download the artifact (secret values are redacted, their file and line are not). GitHub deletes the artifact after <code>retention-days</code>, the log after 90 days by default. To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout.</p>
         <h3 id="security-tab">Security tab</h3>
-        <p>With <code>sarif-upload: true</code>, findings show as code scanning alerts in the repository's <b>Security</b> tab, which only people with write access see, even on a public repository. Website findings point to the workflow file and name the page. The job needs:</p>
+        <p>With <code>sarif-upload: true</code>, findings show as code scanning alerts in the repository's <span class="ui">Security</span> tab, which only people with write access see, even on a public repository. Website findings point to the workflow file and name the page. The job needs:</p>
         <pre><code>permissions:
   contents: read
   security-events: write</code></pre>
@@ -199,6 +202,18 @@
 
       <section id="questions">
         <h2><span class="par">§ 10</span>Questions</h2>
+        <h3 id="schedule">Run on a schedule or on push</h3>
+        <p>The example workflow starts by hand (<code>workflow_dispatch</code>). Add <code>schedule</code> or <code>push</code> next to it. Those runs have no form, so every <code>inputs</code> value is empty: give <code>url</code> and <code>language</code> a fallback. The other inputs then use their defaults.</p>
+        <pre><code>on:
+  workflow_dispatch:
+    # inputs as in the example
+  schedule:
+    - cron: "0 6 * * 1" # Mondays, 06:00 UTC</code></pre>
+        <p>In the rechtzeitig step:</p>
+        <pre><code>url: ${{ inputs.url || 'https://www.example.de/' }}
+language: ${{ inputs.language || 'de' }}
+fail-on: ${{ inputs.fail-on || 'fail' }} # red when a check fails</code></pre>
+        <p>Never use <code>pull_request_target</code>, see <a href="#safe">Safe use</a>.</p>
         <h3 id="no-issues">Why does rechtzeitig not open issues?</h3>
         <p>Issues stay, notify people and are found by search engines, so on a public repository they would point everyone to a weakness of your site. They would also need <code>issues: write</code>. If you want one anyway, add a step after rechtzeitig that reads <code>rechtzeitig-report.json</code> and runs <code>gh issue create</code>, and give that step the permission.</p>
         <p class="note">A secret found in a public repository is already public. Revoke it first, then remove it from the code.</p>
