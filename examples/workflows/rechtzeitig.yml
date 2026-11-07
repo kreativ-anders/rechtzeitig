@@ -45,6 +45,7 @@ jobs:
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
           # Optional, shown with their defaults:
           # How much of the report the run shows. auto = full if private, counts if public.
+          # full = everything, also on a public repository, where anyone can read it.
           # report-visibility: auto
           # Security tab upload: auto = where GitHub allows it, false = never.
           # sarif-upload: auto
@@ -60,5 +61,3 @@ jobs:
           # green-hosting: "true"
           # false scans without Chrome's sandbox where the runner has none. Only for sites you trust.
           # require-sandbox: "true"
-          # Days to keep the report artifact. On public repositories anyone signed in can download it.
-          # retention-days: "7"

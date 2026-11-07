@@ -93,7 +93,7 @@
         {"@type": "Question", "name": "Can it run on a schedule or on every push?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The example workflow runs every Monday and can also be started by hand. rechtzeitig works with any trigger except pull_request_target; the URL goes into the workflow file: Run on a schedule."}},
         {"@type": "Question", "name": "Is this legal advice?", "acceptedAnswer": {"@type": "Answer", "text": "No. A finding is a technical hint with the place and the law it relates to, so you know where to look first. A clean report means these checks found nothing, not that the site is compliant."}},
         {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default the names and versions of your locked packages go to osv.dev (vulnerabilities: false turns it off) and your host name to the Green Web Foundation (green-hosting: false). The full list is under Data that leaves the runner."}},
-        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. More in The report."}},
+        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository the run page shows only counts by default, because anyone can read it; the findings go to the Security tab, which only people with write access see. For the full report on the run page, run rechtzeitig from a private repository, or set report-visibility: full to publish it. More in The report."}},
         {"@type": "Question", "name": "How are the checks kept current?", "acceptedAnswer": {"@type": "Answer", "text": "Every check cites primary sources: laws, courts, authorities or standards, never blogs. Each records when its sources were last reviewed, and a check not reviewed for a year fails the project's tests, so it cannot be released. The releases list what changed."}}
       ]
     }
@@ -273,7 +273,7 @@ updates:
     </details>
     <details id="visibility">
       <summary>Who can see the report?</summary>
-      <p>On a public repository it shows only counts by default, because the run page is public. For the full report, run rechtzeitig from a private repository. More in <a href="workflow.html#report">The report</a>.</p>
+      <p>On a public repository the run page shows only counts by default, because anyone can read it; the findings go to the Security tab, which only people with write access see. For the full report on the run page, run rechtzeitig from a private repository, or set report-visibility: full to publish it. More in <a href="workflow.html#report">The report</a>.</p>
     </details>
     <details id="current">
       <summary>How are the checks kept current?</summary>

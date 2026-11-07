@@ -107,7 +107,6 @@ const FILE_ONLY: Record<string, string> = {
   vulnerabilities: "data protection setting, on by default",
   "green-hosting": "data protection setting, on by default",
   "require-sandbox": "safety setting, should stay on",
-  "retention-days": "setting of the repository",
 };
 
 type Workflow = {

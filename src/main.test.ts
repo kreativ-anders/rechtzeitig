@@ -78,15 +78,18 @@ test("report-visibility auto shows only counts for a public repository or an eve
   }
 });
 
-test("report-visibility full and none override the repository's visibility", () => {
-  const pub = { repository: { private: false } };
-  assert.match(onGitHub(pub, "--report-visibility", "full").log, /config\.js/);
-  const none = onGitHub(pub, "--report-visibility", "none");
-  assert.equal(none.summary, "");
-  assert.doesNotMatch(none.log, /fail|config\.js/);
-  assert.match(none.log, /report-visibility: none/);
-  assert.deepEqual(none.files, []);
-  assert.match(onGitHub({ repository: { private: true } }, "--report-visibility", "counts").summary, /Details hidden by report-visibility: counts/);
+test("report-visibility full overrides the repository's visibility", () => {
+  assert.match(onGitHub({ repository: { private: false } }, "--report-visibility", "full").log, /config\.js/);
+});
+
+test("the removed values counts and none work like auto, with a warning", () => {
+  for (const value of ["counts", "none"]) {
+    const pub = onGitHub({ repository: { private: false } }, "--report-visibility", value);
+    assert.match(pub.log, new RegExp(`::warning::report-visibility: ${value} was removed`));
+    assert.match(pub.summary, /_Details hidden: on a public repository/);
+    assert.deepEqual(pub.files, []);
+    assert.match(onGitHub({ repository: { private: true } }, "--report-visibility", value).log, /config\.js/);
+  }
 });
 
 test("sarif writes the findings with places even when report-visibility hides them", () => {

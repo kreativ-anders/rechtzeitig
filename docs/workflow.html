@@ -80,9 +80,8 @@
             <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> skips the check and sends nothing.</td></tr>
             <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the host runs on green energy (sends the host name). <code>false</code> skips the <a href="checks.html#SUS-HOST-001">check</a> and sends nothing.</td></tr>
             <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>Stops the scan when Chrome cannot start with its sandbox. <code>false</code> scans without it, see <a href="#safe">Safe use</a>.</td></tr>
-            <tr><td><code>report-visibility</code></td><td><code>auto</code></td><td>How much the run shows: <code>auto</code>, <code>full</code>, <code>counts</code> or <code>none</code>, see <a href="#report">The report</a>.</td></tr>
+            <tr><td><code>report-visibility</code></td><td><code>auto</code></td><td>How much the run shows: <code>auto</code> or <code>full</code>, see <a href="#report">The report</a>.</td></tr>
             <tr><td><code>sarif-upload</code></td><td><code>auto</code></td><td>Shows the findings in the Security tab where GitHub allows it. <code>auto</code> skips with a notice otherwise, <code>true</code> warns, <code>false</code> never uploads, see <a href="#security-tab">Security tab</a>.</td></tr>
-            <tr><td><code>retention-days</code></td><td><code>7</code></td><td>Days GitHub keeps the report artifact, see <a href="#report">The report</a>.</td></tr>
           </tbody>
         </table></div>
         <p>The output <code>result</code> is <code>pass</code>, <code>warn</code> or <code>fail</code>.</p>
@@ -144,12 +143,11 @@
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Value</th><th scope="col">Shows</th></tr></thead>
           <tbody>
-            <tr><td><code>auto</code></td><td><code>full</code> for private and internal repositories, <code>counts</code> for public ones. A run whose event does not say counts as public.</td></tr>
-            <tr><td><code>full</code></td><td>Summary with findings, log, annotations and the artifact.</td></tr>
-            <tr><td><code>counts</code></td><td>Only how many checks ended in each status. No details, annotations or artifact.</td></tr>
-            <tr><td><code>none</code></td><td>Nothing but the output <code>result</code> and, with <code>fail-on</code>, the job status.</td></tr>
+            <tr><td><code>auto</code></td><td>Everything for private and internal repositories. For public ones only how many checks ended in each status, with no details, annotations or artifact; the details go to the <a href="#security-tab">Security tab</a> where GitHub allows the upload. A run whose event does not say counts as public.</td></tr>
+            <tr><td><code>full</code></td><td>Summary with findings, log, annotations and the artifact, also on a public repository, where anyone can read them. For deliberate transparency.</td></tr>
           </tbody>
         </table></div>
+        <p class="note">The values <code>counts</code> and <code>none</code> and the input <code>retention-days</code> were removed. <code>counts</code> and <code>none</code> work like <code>auto</code> for one more version and print a warning. GitHub warns about <code>retention-days</code> as an unexpected input, the run goes on.</p>
         <p>The summary shows all findings; passed and skipped checks are only in the artifact. Findings in a repository file also show as annotations (GitHub shows at most 10 errors and 10 warnings). The artifact <code>rechtzeitig-report</code> contains:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">File</th><th scope="col">Content</th></tr></thead>
@@ -159,7 +157,7 @@
             <tr><td><code>rechtzeitig-sbom.cdx.json</code></td><td>SBOM in CycloneDX 1.6 format, with vulnerabilities. Keep it with each release</td></tr>
           </tbody>
         </table></div>
-        <p class="note">On a public repository the run page is public, so <code>auto</code> shows only counts there. With <code>full</code>, anyone can read the findings and download the artifact (secret values are redacted, their file and line are not). GitHub deletes the artifact after <code>retention-days</code>, the log after 90 days by default. To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout.</p>
+        <p class="note">On a public repository the run page is public, so <code>auto</code> shows only counts there. With <code>full</code>, anyone can read the findings and download the artifact (secret values are redacted, their file and line are not). GitHub deletes the artifact after 7 days, the log after 90 days by default. To keep the report private, run rechtzeitig from a private repository; a website-only scan needs no checkout.</p>
         <h3 id="security-tab">Security tab</h3>
         <p>By default (<code>sarif-upload: auto</code>), findings also show as code scanning alerts in the repository's <span class="ui">Security</span> tab, which only people with write access see, even on a public repository. Website findings point to the workflow file and name the page. Each finding keeps its alert from run to run: a weekly run updates the alerts and closes fixed ones instead of adding new ones. The job needs:</p>
         <pre><code>permissions:

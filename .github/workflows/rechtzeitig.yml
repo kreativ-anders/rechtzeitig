@@ -15,7 +15,7 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    # Same as the example. security-events and actions are unused while sarif-upload is false.
+    # Same as the example: the findings go to the Security tab, the run page shows counts.
     permissions:
       contents: read
       security-events: write
@@ -30,8 +30,6 @@ jobs:
         with:
           url: https://rechtzeitig.dev
           language: en
-          # The results are read on the run page for now, not in the Security tab.
-          sarif-upload: false
           # Report only: the summary is read after each run.
           fail-on: never
           # Opt-in: the third-country check runs only with the secret IPINFO_TOKEN (free at ipinfo.io).
