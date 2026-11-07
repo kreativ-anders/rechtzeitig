@@ -7,6 +7,7 @@ export { loadYaml } from "./data.ts";
 import { loadYaml } from "./data.ts";
 export { isWebUrl } from "./text.ts";
 export { MANIFESTS } from "./repo/lockfiles.ts";
+import { MANIFESTS } from "./repo/lockfiles.ts";
 
 export const STATUSES = ["pass", "warn", "fail", "info", "skip"] as const;
 export type Status = (typeof STATUSES)[number];
@@ -72,6 +73,13 @@ export const warn = (message: Msg, details?: Details): Result => ({ status: "war
 export const fail = (message: Msg, details?: Details): Result => ({ status: "fail", message, details });
 export const info = (message: Msg, details?: Details): Result => ({ status: "info", message, details });
 export const skip = (message: Msg, details?: Details): Result => ({ status: "skip", message, details });
+
+/** Test fixtures: example files, not the project's own. */
+export const FIXTURES = /(^|\/)fixtures?\//;
+
+/** true when a package manifest lies anywhere outside fixtures, so the repository is a software project. */
+export const isSoftwareProject = (repo: RepoContext) =>
+  repo.files.some((f) => !FIXTURES.test(f) && Object.hasOwn(MANIFESTS, f.split("/").pop() ?? ""));
 
 /** GitHub Actions workflow files, for `repo.find(WORKFLOWS)`. */
 export const WORKFLOWS = /^\.github\/workflows\/.*\.ya?ml$/;
@@ -496,12 +504,46 @@ export interface Vulnerability {
   fixed?: string;
 }
 
+/** Why a lockfile gave no components: too large, a Git LFS pointer, binary, or not in the expected format. */
+export type UnreadReason = "large" | "lfs" | "binary" | "invalid";
+
+/**
+ * What the repository scan could not see or read. The report lists it under the scan line and in
+ * rechtzeitig-report.json, so a gap never looks like a clean result.
+ */
+export interface RepoCoverage {
+  /** "git": git ls-files with submodules. "walk": a plain folder walk that ignores .gitignore. */
+  listing: "git" | "walk";
+  /** Why the folder was walked, when it was. */
+  walked?: string;
+  /** Submodules from every .gitmodules and gitlink. Not checked out means their files were not scanned. */
+  submodules: Array<{ path: string; checkedOut: boolean }>;
+  /** Git LFS pointer files: the file itself was not checked out (actions/checkout `lfs: true`). */
+  lfs: string[];
+  /** Files not read because they are larger than the limit in data/thresholds.yml `repo`. */
+  large: string[];
+  /** Files not read because they are binary. */
+  binary: string[];
+  lockfiles: {
+    /** Read, with at least one component. */
+    parsed: string[];
+    /** Read, but without a single component. */
+    empty: string[];
+    /** Known lockfile names that could not be read. */
+    failed: Array<{ file: string; reason: UnreadReason }>;
+  };
+  /** Package files without a parser yet (data/ecosystems.yml `unsupported`). */
+  unsupported: Array<{ file: string; ecosystem: string }>;
+  /** Package sources outside the public registries: only named, never contacted. */
+  private: Array<{ file: string; kind: "registry" | "git" | "replace"; source: string }>;
+}
+
 export interface RepoContext {
   /** Absolute path of the repository. */
   root: string;
-  /** Tracked files, relative paths with "/". */
+  /** Tracked files, relative paths with "/", including those of checked-out submodules. */
   files: string[];
-  /** Text content of a file, or undefined for missing, binary or very large files. */
+  /** Text content of a file, or undefined for missing, binary or too large files (data/thresholds.yml `repo`). */
   read(path: string): string | undefined;
   /** Tracked files whose path matches. */
   find(pattern: RegExp): string[];
@@ -510,8 +552,10 @@ export interface RepoContext {
   /** Project license as found in package.json, composer.json or LICENSE. */
   license: string;
   components: Component[];
-  /** Lockfiles that were read. */
+  /** Lockfiles that were read, with or without components. */
   lockfiles: string[];
+  /** What the scan could not see or read. */
+  coverage: RepoCoverage;
   /** Known vulnerabilities from OSV. */
   vulnerabilities: Vulnerability[];
   /** "ok", "ok (details for N of M)" when OSV sent details for only some issues, "skipped" (no network, tests) or an error message. */

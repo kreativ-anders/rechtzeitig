@@ -64,7 +64,8 @@ const isOn = (input: Switch): boolean => {
 };
 const enabled = (Object.keys(SWITCHES) as Switch[]).filter(isOn);
 const warnings: string[] = [];
-const checks = selectModules(await loadChecks(), modules);
+const allChecks = await loadChecks();
+const checks = selectModules(allChecks, modules);
 const wantsRepo = checks.some((c) => c.check.repo);
 // vulnerabilities=false sends nothing to api.osv.dev; the vulnerabilities rule then skips.
 const osv = enabled.includes("vulnerabilities");
@@ -89,7 +90,8 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
   exit(`Could not load ${url}: ${web.start.js.error ?? web.start.noJs.error ?? "unknown error"}`);
 }
 
-const outcomes = await runChecks(checks, { web, repo }, enabled);
+// Every check gets an outcome; those that cannot run are skips that say why.
+const outcomes = await runChecks(allChecks, { web, repo }, enabled, modules);
 const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub, language, warnings };
 const log = (text: string) => console.log(onGitHub ? withoutCommands(text) : text);
 // Scanned repository's folder relative to the workspace, for annotations and SARIF.
@@ -101,7 +103,7 @@ if (values.sarif) {
 }
 let summary: string | undefined;
 if (visibility === "full") {
-  const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) } }, language);
+  const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) }, ...(repo && { coverage: repo.coverage }) }, language);
   writeFileSync(`${values.out}.md`, toMarkdown(report));
   writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
   if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));

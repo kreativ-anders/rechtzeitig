@@ -1,8 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { toAnnotations, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
+import { toAnnotations, toCounts, toFindings, toMarkdown, toText, withoutCommands, type Report } from "./report.ts";
 import { oneLine } from "./text.ts";
 import type { Rule } from "./rules.ts";
+import type { Outcome } from "./runner.ts";
+import type { RepoContext, RepoCoverage } from "./sdk.ts";
 
 const rule = { id: "SEC-TEST-001", severity: "high", title: { de: "t", en: "t" }, how: "h", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: [] } } as Rule;
 const report = (message: string, details: string[]): Report => ({
@@ -101,6 +103,55 @@ test("the step summary's own wording follows the report language", () => {
   assert.match(de, /\| \| Prüfung \| Schwere \| Ergebnis \|/);
   assert.match(de, /_Technische Risikohinweise .* Keine Rechtsberatung\._/);
   assert.match(toMarkdown(report("m", [])), /\| \| Check \| Severity \| Result \|/);
+});
+
+test("skipped checks show grouped by reason under Not run, also in counts mode, and carry because in the JSON", () => {
+  const skipped = (id: string, because: Outcome["because"], message: Outcome["message"]) => ({ id, rule: { ...rule, id: id.toUpperCase() }, status: "skip" as const, message, details: [], because });
+  const r: Report = {
+    ...report("m", []),
+    outcomes: [
+      { id: "repo/secrets", rule, status: "pass", message: "fine", details: [] },
+      skipped("legal/imprint", { kind: "target", missing: "url" }, { key: "not_run_url" }),
+      skipped("legal/privacy-policy", { kind: "target", missing: "url" }, { key: "not_run_url" }),
+      skipped("legal/order-button", { kind: "switch", input: "sales" }, { key: "switch_sales" }),
+      skipped("repo/actions-pinning", { kind: "data" }, { key: "no_workflows" }),
+    ],
+  };
+  const summary = toMarkdown(r, { findingsOnly: true });
+  assert.match(summary, /<details><summary>⏭️ Not run \(4\)<\/summary>/);
+  assert.match(summary, /- 2 website checks: no url\. Set the input url to run them\./);
+  assert.match(summary, /- 1 check: Only needed when consumers buy .*sales: true/);
+  assert.match(summary, /- 1 check ran but found nothing it could read\.\n {2}- t \(REPO\/ACTIONS-PINNING\): No GitHub workflows\./);
+  assert.doesNotMatch(toMarkdown(r), /LEGAL\/IMPRINT/, "checks without a target are not listed one by one");
+  const counts = toCounts(r, "md");
+  assert.match(counts, /Not run \(4\)[\s\S]*2 website checks: no url/);
+  assert.doesNotMatch(counts, /ACTIONS-PINNING|No GitHub workflows/, "counts mode names no check");
+  assert.match(toText(r), /^ {2}2 website checks: no url/m);
+  const results = toFindings(r.outcomes, { version: "0", startedAt: "now", target: {} }).results;
+  assert.deepEqual(results.map((x) => x.because?.kind), [undefined, "target", "target", "switch", "data"]);
+});
+
+test("the scan line lists what the repository scan could not see or read", () => {
+  const coverage: RepoCoverage = {
+    listing: "git",
+    submodules: [{ path: "vendor/lib", checkedOut: false }, { path: "ui", checkedOut: true }],
+    lfs: ["data/big.csv"],
+    large: ["dump.sql"],
+    binary: ["logo.png"],
+    lockfiles: { parsed: ["package-lock.json"], empty: [], failed: [{ file: "web/package-lock.json", reason: "lfs" }] },
+    unsupported: [{ file: "java/pom.xml", ecosystem: "Maven" }],
+    private: [{ file: ".npmrc", kind: "registry", source: "npm.corp.example" }],
+  };
+  const repo = { root: "/x", files: ["a"], components: [], lockfiles: ["package-lock.json"], osv: "ok", coverage } as unknown as RepoContext;
+  const md = toMarkdown({ ...report("m", []), repo }, { findingsOnly: true });
+  assert.match(md, / {2}- ⚠️ 1 submodule not checked out, its files were not scanned: vendor\/lib\. Check out with submodules: recursive\./);
+  assert.match(md, / {2}- 1 submodule scanned: ui/);
+  assert.match(md, /⚠️ 1 Git LFS pointer instead of the file: data\/big\.csv/);
+  assert.match(md, /⚠️ 1 lockfile gave no components: web\/package-lock\.json \(Git LFS pointer\)/);
+  assert.match(md, /⚠️ 1 package file without a parser, not in the SBOM: java\/pom\.xml \(Maven\)/);
+  assert.match(md, /1 file over 1 MB not read: dump\.sql/);
+  assert.match(md, /1 private package source, named only, never contacted: registry npm\.corp\.example \(\.npmrc\)/);
+  assert.match(toText({ ...report("m", []), repo }), /^Warning: 1 submodule not checked out/m);
 });
 
 test("severities are shown in the report language", () => {

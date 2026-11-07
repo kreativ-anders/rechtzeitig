@@ -1,9 +1,17 @@
-# Numbers checks decide by, in one place. One section per check (its path under checks/), plus `common`.
+# Numbers checks decide by, in one place. One section per check (its path under checks/), plus `common`
+# and `repo` (reading the repository).
 # Changing a value changes results: mention it in the commit message.
 
 common:
   # Longest list of items in one finding; the rest is counted as "and N more" (capped() in src/sdk.ts).
   max_listed: 20
+
+# Reading the repository (src/repo/scan.ts). Files above a limit are not read; the report names them.
+repo:
+  # Largest file any repository check reads, in bytes, for example repo/secrets.
+  max_file_bytes: 1000000
+  # Largest lockfile read (names in src/repo/lockfiles.ts). Lockfiles of large projects pass 1 MB.
+  max_lockfile_bytes: 50000000
 
 # Reject button less prominent than the accept button. The authorities set no fixed numbers
 # (DSK OH Telemedien Rn. 125, EDPB Cookie Banner Taskforce Rn. 17), so these only flag clear cases.

@@ -13,6 +13,13 @@ test("passes for clean code", async () => {
   assert.equal((await runRepoCheck(here, { "src/app.ts": "const key = process.env.STRIPE_KEY;" })).status, "pass");
 });
 
+test("counts the files it could not read", async () => {
+  const result = await runRepoCheck(here, { "src/app.ts": "ok", "logo.png": "PNG\u0000\u0000", "dump.sql": "x".repeat(1_100_000) });
+  assert.equal(result.status, "pass");
+  assert.equal(result.message, "No secrets found in 1 file read.");
+  assert.deepEqual(result.details, ["2 files not read: binary, too large or only a Git LFS pointer."]);
+});
+
 test("fails for a live Stripe key and shows only its start and length", async () => {
   const result = await runRepoCheck(here, { "src/pay.ts": `const key = "${stripe}";` });
   assert.equal(result.status, "fail");

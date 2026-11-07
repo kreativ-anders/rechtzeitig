@@ -29,6 +29,11 @@ test("warns when .gitignore misses .env and the project has an .env template", a
   assert.equal((await runRepoCheck(here, { ".gitignore": "node_modules\n", ".env.example": "KEY=" })).status, "warn");
 });
 
+test("notes a missing .env rule in a monorepo without a root manifest", async () => {
+  assert.equal((await runRepoCheck(here, { ".gitignore": "bin\n", "apps/web/package.json": "{}" })).status, "info");
+  assert.equal((await runRepoCheck(here, { ".gitignore": "bin\n", "test/fixtures/package.json": "{}" })).status, "pass");
+});
+
 test("only notes a missing .env rule when no .env is expected", async () => {
   assert.equal((await runRepoCheck(here, { ".gitignore": "node_modules\n", "package.json": "{}" })).status, "info");
 });

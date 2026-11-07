@@ -16,6 +16,7 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | Lists for single checks (countries, cookie names, error traces, closed services) | `data/*.yml` |
 | Thresholds and list caps of all checks | `data/thresholds.yml` |
 | Lockfile parsers | `src/repo/lockfiles.ts` |
+| Package files without a parser, registries, ecosystems with license data | `data/ecosystems.yml` |
 | Allowed source domains for `meta.sources` | `data/source-domains.yml` |
 | Periodic review of rule sources | `.claude/skills/review-sources/` |
 | Check that rule docs and sources match the code | `.claude/skills/check-rule-docs/` |

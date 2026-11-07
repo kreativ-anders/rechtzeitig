@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q=' https://api.pirsch.io; style-src 'self'; img-src 'self' data:; connect-src https://api.pirsch.io; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>rechtzeitig: Impressum- und DSGVO-Check als GitHub Action</title>
-<meta name="description" content="Open-Source-GitHub-Action, die Website und Repository prüft: Impressum, Cookies vor Einwilligung nach § 25 TDDDG, Security-Header, Lizenzen und SBOM.">
+<title>rechtzeitig: Vibe-Code-Check für Impressum, DSGVO und Sicherheit</title>
+<meta name="description" content="DSGVO-Check als Open-Source-GitHub-Action für Code, der schnell oder mit KI entsteht: fehlendes Impressum, Tracking vor Einwilligung, Secrets, Security-Header.">
 <link rel="canonical" href="https://rechtzeitig.dev/de/">
 <link rel="alternate" hreflang="en" href="https://rechtzeitig.dev/">
 <link rel="alternate" hreflang="de" href="https://rechtzeitig.dev/de/">
 <link rel="alternate" hreflang="x-default" href="https://rechtzeitig.dev/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="rechtzeitig">
-<meta property="og:title" content="rechtzeitig: Impressum- und DSGVO-Check als GitHub Action">
-<meta property="og:description" content="Open-Source-GitHub-Action, die Website und Repository prüft: Impressum, Cookies vor Einwilligung nach § 25 TDDDG, Security-Header, Lizenzen und SBOM.">
+<meta property="og:title" content="rechtzeitig: Vibe-Code-Check für Impressum, DSGVO und Sicherheit">
+<meta property="og:description" content="DSGVO-Check als Open-Source-GitHub-Action für Code, der schnell oder mit KI entsteht: fehlendes Impressum, Tracking vor Einwilligung, Secrets, Security-Header.">
 <meta property="og:url" content="https://rechtzeitig.dev/de/">
 <meta property="og:locale" content="de_DE">
 <meta property="og:locale:alternate" content="en_GB">
@@ -27,7 +27,10 @@
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="../style.css">
 <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="../site.js" defer></script>
@@ -40,8 +43,8 @@
       "@type": "WebPage",
       "@id": "https://rechtzeitig.dev/de/#webpage",
       "url": "https://rechtzeitig.dev/de/",
-      "name": "rechtzeitig: Impressum- und DSGVO-Check als GitHub Action",
-      "description": "Open-Source-GitHub-Action, die Website und Repository prüft: Impressum, Cookies vor Einwilligung nach § 25 TDDDG, Security-Header, Lizenzen und SBOM.",
+      "name": "rechtzeitig: Vibe-Code-Check für Impressum, DSGVO und Sicherheit",
+      "description": "DSGVO-Check als Open-Source-GitHub-Action für Code, der schnell oder mit KI entsteht: fehlendes Impressum, Tracking vor Einwilligung, Secrets, Security-Header.",
       "inLanguage": "de",
       "isPartOf": {
         "@id": "https://rechtzeitig.dev/#website"
@@ -115,30 +118,38 @@
 <body>
 <a class="skip" href="#content">Zum Inhalt springen</a>
 <header class="top"><div class="top-inner">
-  <a class="brand" href="./" aria-current="page"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig</a>
+  <a class="brand" href="./" aria-current="page"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig<span class="visually-hidden"> Startseite</span></a>
   <nav class="nav" aria-label="Hauptmenü"><ul><li><a href="../workflow.html" hreflang="en">Workflow<span class="nav-lang" aria-hidden="true">EN</span><span class="visually-hidden"> (Englisch)</span></a></li><li><a href="../checks.html" hreflang="en">Checks<span class="nav-lang" aria-hidden="true">EN</span><span class="visually-hidden"> (Englisch)</span></a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
-  <nav class="langs" aria-label="Sprache"><a href="../" hreflang="en" lang="en"><span aria-hidden="true">EN</span><span class="visually-hidden">English</span></a><a href="./" hreflang="de" lang="de" aria-current="page"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch</span></a></nav>
+  <nav class="langs" aria-label="Sprache"><a href="../" hreflang="en" lang="en"><span aria-hidden="true">EN</span><span class="visually-hidden">English: Home</span></a><a href="./" hreflang="de" lang="de" aria-current="page"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch: Startseite</span></a></nav>
   <fieldset class="theme" hidden><legend>Farbschema</legend><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Hell"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Hell</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dunkel"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dunkel</span></label></fieldset>
 </div></header>
 
 <main id="content">
   <div class="hero">
     <div>
-      <h1>Impressum, Cookie-Einwilligung und Sicherheit prüfen, als GitHub Action</h1>
-      <p class="lead">rechtzeitig ist ein DSGVO-Check als GitHub Action. Er prüft Website und Repository auf deutsche und EU-rechtliche Grundlagen, Security-Header, TLS und Lizenzen und schreibt eine CycloneDX-SBOM. Am Ende steht eine Liste der Stellen, die zu beheben sind, jede mit dem Gesetz, auf das sie sich bezieht.</p>
+      <h1>Rechts- und Sicherheitslücken finden, die beim Coden mit KI durchrutschen</h1>
+      <p class="lead">Immer mehr Code entsteht mit KI, und dieselben Dinge rutschen immer wieder durch: kein Impressum, Tracking vor der Einwilligung, API-Keys im Repository, fehlende Security-Header, veraltete Pakete. rechtzeitig ist eine GitHub Action, die Ihr Repository prüft und, wenn Sie eine URL angeben, auch die Live-Website. Am Ende steht eine Liste der Stellen, die zu beheben sind, die meisten mit dem Gesetz, auf das sie sich beziehen.</p>
       <div class="actions">
         <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Workflow kopieren</a>
 <!-- hero-checks:start -->
 <a class="button secondary" href="../checks.html" hreflang="en">Alle 56 Prüfungen ansehen</a>
 <!-- hero-checks:end -->
       </div>
-      <p class="hero-note">Kostenlos und Open Source. Es braucht weder Konto noch Secret, und der Code bleibt auf dem Runner.</p>
+      <p class="hero-note">Kostenlos und Open Source. Es läuft in Ihrer eigenen CI, braucht weder Konto noch Secret, und der Code bleibt auf dem Runner.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>geprüft<span class="mark">§</span>rechtzeitig</span></div>
   </div>
 
-  <h2 id="covers">Was geprüft wird</h2>
-  <p>Die Prüfungen sind eine DSGVO-Checkliste für Webentwickler, die der Workflow selbst abarbeitet. Jeder Punkt hat eine feste ID, eine Fundstelle und eine Rechtsgrundlage. Der Impressum-Checker ist wie alle anderen Prüfungen Open Source.</p>
+  <h2 id="how">So funktioniert es</h2>
+  <ul class="covers">
+    <li><h3>Repository und Live-Website</h3><p>Im Repository steht, was Besucher nie sehen: Lockfiles, Workflows, Schlüssel, Datenbankregeln. Die Website zeigt, was bei ihnen ankommt: HTML, Skripte, Cookies, Header, TLS und DNS. rechtzeitig prüft beides in einem Lauf und einem Bericht. Prüfungen, die beides direkt vergleichen, sind <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/dev/roadmap.md" hreflang="en">geplant</a>.</p></li>
+    <li><h3>Jede Woche, nicht einmal</h3><p>Nach Zeitplan oder bei jedem Push laufen lassen. Ein Tracker, der mit einer neuen Einbettung kam, ein Zertifikat kurz vor Ablauf oder eine neue Schwachstelle in einem genutzten Paket fällt beim nächsten Lauf auf. Siehe <a href="../workflow.html#schedule" hreflang="en">Zeitplan einrichten</a>.</p></li>
+    <li><h3>Befunde bleiben privat</h3><p>In einem privaten Repository zeigt die Seite des Laufs den vollständigen Bericht. In einem öffentlichen zeigt sie standardmäßig nur die Zahlen, weil jeder die Seite des Laufs öffnen kann. Die Befunde landen im <a href="../workflow.html#security-tab" hreflang="en">Security-Tab</a>, den nur Personen mit Schreibrechten sehen, sofern GitHub den Upload erlaubt.</p></li>
+    <li><h3>Ein Hinweis, kein Urteil</h3><p>Jeder Befund nennt Fundstelle und Prüfung. Die Prüfung nennt ihre Rechtsgrundlage, wo es eine gibt, und verlinkt eine Primärquelle, damit Sie wissen, wo Sie zuerst nachsehen. Es ist ein technischer Risikohinweis, keine Rechtsberatung.</p></li>
+  </ul>
+
+  <h2 id="covers">Typische Stolperfallen, die geprüft werden</h2>
+  <p>Diese Lücken tauchen immer wieder auf, wenn eine Website schnell entsteht, von Hand oder mit KI. Die Prüfungen sind eine DSGVO-Checkliste für Webentwickler, die der Workflow selbst abarbeitet. Jeder Punkt hat eine feste ID und eine Fundstelle. Der Impressum-Checker ist wie alle anderen Prüfungen Open Source.</p>
   <ul class="covers">
     <li><h3><a href="../checks.html#legal" hreflang="en">Rechtstexte</a></h3><p>Das Impressum nach § 5 DDG und die Datenschutzerklärung nach DSGVO: verlinkt, erreichbar, vollständig</p></li>
     <li><h3><a href="../checks.html#privacy" hreflang="en">Cookie-Einwilligung</a></h3><p>Tracking und Cookies vor der Einwilligung nach § 25 TDDDG, Google Fonts und andere fremde Server, das Banner, Übermittlungen außerhalb der EU</p></li>

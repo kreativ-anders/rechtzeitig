@@ -1,4 +1,4 @@
-import { defineRepoCheck, info, loadYaml, msg, pass, warn, type Component, type Finding } from "../../../src/sdk.ts";
+import { defineRepoCheck, info, loadYaml, msg, pass, skip, warn, type Component, type Finding } from "../../../src/sdk.ts";
 
 const groups = loadYaml<Record<"agpl" | "gpl" | "restricted" | "permissive", string[]>>("data/licenses.yml");
 const group = (name: keyof typeof groups) => new RegExp(groups[name].join("|"), "i");
@@ -26,20 +26,31 @@ function dependencyIssues(components: Component[], project: string): Finding[] {
   });
 }
 
+/** Ecosystems whose lockfiles name a license per package; the others cannot be checked here. */
+const LICENSED = loadYaml<{ licenses_in_lockfile: string[] }>("data/ecosystems.yml").licenses_in_lockfile;
+
 export default defineRepoCheck({
   run(repo) {
     const project = repo.license;
     const production = repo.components.filter((c) => !c.dev);
     const issues = [...projectIssues(project), ...dependencyIssues(production.filter((c) => c.license), project)];
-    const unknown = production.filter((c) => !c.license && (c.ecosystem === "npm" || c.ecosystem === "composer"));
+    const unknown = production.filter((c) => !c.license && LICENSED.includes(c.ecosystem));
     const names = `${unknown.slice(0, 10).map((c) => c.name).join(", ")}${unknown.length > 10 ? ", ..." : ""}`;
+    // Lockfiles of these ecosystems carry no licenses: say so instead of counting them as clean.
+    const blind = production.filter((c) => !LICENSED.includes(c.ecosystem));
+    const ecosystems = [...new Set(blind.map((c) => c.ecosystem))].join(", ");
     const notes: Finding[] = [
       ...(project ? [] : [{ key: "no_project_license" }]),
       ...(unknown.length ? [{ key: "unknown", params: { count: unknown.length, names } }] : []),
+      ...(blind.length ? [{ key: "unchecked", params: { count: blind.length, ecosystems } }] : []),
     ];
     if (issues.length) return warn(msg("questions", { count: issues.length }), [...issues, ...notes]);
-    if (!project || unknown.length) return info(msg("unknown_licenses", { with: project ? msg("with_project", { project }) : "" }), notes);
     const counted = repo.components.filter((c) => c.license).length;
-    return pass(msg("no_conflicts", { project, counted: counted ? msg("counted", { count: counted }) : "" }), PERMISSIVE.test(project) ? [] : notes);
+    // No ✅ without basis: a pass needs at least one component whose license was read.
+    if (!repo.components.length) return skip(msg("no_components"), notes);
+    if (!counted) return skip(msg("no_licenses", { ecosystems: ecosystems || "?" }), notes);
+    if (!project || unknown.length) return info(msg("unknown_licenses", { with: project ? msg("with_project", { project }) : "" }), notes);
+    const shown = PERMISSIVE.test(project) ? notes.filter((n) => n.key === "unchecked") : notes;
+    return pass(msg("no_conflicts", { project, counted: msg("counted", { count: counted }) }), shown);
   },
 });

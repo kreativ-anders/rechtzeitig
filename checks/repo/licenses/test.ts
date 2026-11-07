@@ -40,6 +40,21 @@ test("warns for AGPL even in a GPL project", async () => {
   assert.equal((await runRepoCheck(here, { "package.json": '{"license":"GPL-3.0"}', "package-lock.json": lock("AGPL-3.0") })).status, "warn");
 });
 
+const cargo = `[[package]]\nname = "serde"\nversion = "1.0.0"\nsource = "registry+https://github.com/rust-lang/crates.io-index"\n`;
+
+test("skips instead of passing when no lockfile names a license", async () => {
+  const result = await runRepoCheck(here, { "package.json": '{"license":"MIT"}', "Cargo.toml": "", "Cargo.lock": cargo });
+  assert.equal(result.status, "skip");
+  assert.match(result.message, /No lockfile names licenses \(cargo\)/);
+  assert.equal((await runRepoCheck(here, { "package.json": '{"license":"MIT"}' })).status, "skip");
+});
+
+test("names the ecosystems it could not check next to a pass", async () => {
+  const result = await runRepoCheck(here, { "package.json": '{"license":"MIT"}', "package-lock.json": lock("MIT"), "Cargo.lock": cargo });
+  assert.equal(result.status, "pass");
+  assert.deepEqual(result.details, ["1 production dependency not checked: lockfiles of cargo name no licenses."]);
+});
+
 test("flags GPL with Commons Clause", async () => {
   const result = await runRepoCheck(here, { LICENSE: "GNU GENERAL PUBLIC LICENSE\nVersion 3\n\nCommons Clause License Condition v1.0" });
   assert.equal(result.status, "warn");

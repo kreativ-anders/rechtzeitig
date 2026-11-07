@@ -23,7 +23,10 @@
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="style.css">
 <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="site.js" defer></script>
@@ -33,9 +36,9 @@
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="top"><div class="top-inner">
-  <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig</a>
+  <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><text x="16" y="16" dy="0.36em" text-anchor="middle">§</text></svg>rechtzeitig<span class="visually-hidden"> home</span></a>
   <nav class="nav" aria-label="Main"><ul><li><a href="workflow.html" aria-current="page">Workflow</a></li><li><a href="checks.html">Checks</a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
-  <nav class="langs" aria-label="Language"><a href="workflow.html" hreflang="en" lang="en" aria-current="page"><span aria-hidden="true">EN</span><span class="visually-hidden">English</span></a><a href="de/" hreflang="de" lang="de"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch</span></a></nav>
+  <nav class="langs" aria-label="Language"><a href="workflow.html" hreflang="en" lang="en" aria-current="page"><span aria-hidden="true">EN</span><span class="visually-hidden">English: Workflow</span></a><a href="de/" hreflang="de" lang="de"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch: Startseite</span></a></nav>
   <fieldset class="theme" hidden><legend>Colour theme</legend><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Light"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Light</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dark</span></label></fieldset>
 </div></header>
 
@@ -89,7 +92,7 @@
 
       <section id="scope">
         <h2><span class="par">§ 2</span>What runs when</h2>
-        <p>Most checks always run. These need a setting; when off, they show as <span class="status s-skip">skip</span> with the setting that turns them on.</p>
+        <p>Every check shows up in the report. Most always run. These need a setting; when it is off, they show as <span class="status s-skip">skip</span> with the reason and the setting that turns them on. The summary groups them under <span class="ui">Not run</span>, and <code>rechtzeitig-report.json</code> gives the reason as <code>because</code>: <code>target</code> (no <code>url</code> or no checkout), <code>module</code>, <code>switch</code>, or <code>data</code> (the check ran but found nothing it could read).</p>
 <!-- switches:start -->
 <div class="table-wrap"><table>
 <thead><tr><th>Check</th><th>Runs when</th></tr></thead>
@@ -108,6 +111,16 @@
 <tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
 </tbody></table></div>
 <!-- switches:end -->
+        <h3 id="checkout">Repository checkout</h3>
+        <p>The repository checks read what <code>actions/checkout</code> leaves in the folder. By default that is the current commit without submodules and with Git LFS pointers instead of LFS files. To scan those too:</p>
+        <pre><code>- uses: actions/checkout@&lt;sha&gt;
+  with:
+    persist-credentials: false
+    submodules: recursive # files of submodules
+    lfs: true             # LFS files instead of pointers
+    # token: ${{ secrets.SUBMODULES_TOKEN }} # only for private submodules</code></pre>
+        <p>The default <code>GITHUB_TOKEN</code> reads only this repository. Private submodules need a token with <code>contents: read</code> on them, for example a fine-grained personal access token or a GitHub App token, stored as a secret. Keep <code>persist-credentials: false</code>, so the token is not left in the checkout.</p>
+        <p class="note">Only the checked-out files are read, never the git history: a secret that was removed in an earlier commit is not found. Files over 1 MB (lockfiles over 50 MB) and binary files are not read, and lockfiles of some ecosystems have no parser yet. The summary lists all of this under <span class="ui">Scan</span>, the JSON under <code>coverage</code>.</p>
       </section>
 
       <section id="fail-on">
@@ -148,12 +161,12 @@
           </tbody>
         </table></div>
         <p class="note">The values <code>counts</code> and <code>none</code> and the input <code>retention-days</code> were removed. <code>counts</code> and <code>none</code> work like <code>auto</code> for one more version and print a warning. GitHub warns about <code>retention-days</code> as an unexpected input, the run goes on.</p>
-        <p>The summary shows all findings; passed and skipped checks are only in the artifact. Findings in a repository file also show as annotations (GitHub shows at most 10 errors and 10 warnings). The artifact <code>rechtzeitig-report</code> contains:</p>
+        <p>The summary shows all findings, a collapsed list of the checks that did not run with how to turn them on, and under <span class="ui">Scan</span> what the repository scan could not read (see <a href="#checkout">Repository checkout</a>). Passed checks are only in the artifact. Findings in a repository file also show as annotations (GitHub shows at most 10 errors and 10 warnings). The artifact <code>rechtzeitig-report</code> contains:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">File</th><th scope="col">Content</th></tr></thead>
           <tbody>
             <tr><td><code>rechtzeitig-report.md</code></td><td>The same report as Markdown</td></tr>
-            <tr><td><code>rechtzeitig-report.json</code></td><td>Findings with rule id, severity, status, message and locations. No page text or file contents</td></tr>
+            <tr><td><code>rechtzeitig-report.json</code></td><td>Findings with rule id, severity, status, message, locations and, for skips, <code>because</code>; <code>coverage</code> lists what the repository scan could not read. No page text or file contents</td></tr>
             <tr><td><code>rechtzeitig-sbom.cdx.json</code></td><td>SBOM in CycloneDX 1.6 format, with vulnerabilities. Keep it with each release</td></tr>
           </tbody>
         </table></div>
@@ -186,7 +199,7 @@
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>
-            <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Package URLs (name and version) of all locked components, for example <code>pkg:npm/lodash@4.17.21</code></td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
+            <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Package URLs (name and version) of all locked components, for example <code>pkg:npm/lodash@4.17.21</code>. This includes the names of internal packages from a private registry or a git source; the report names such sources but rechtzeitig never contacts them</td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
             <tr><td><a class="sends" href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of third-party servers that rechtzeitig does not know</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
             <tr><td><a class="sends" href="https://www.thegreenwebfoundation.org">api.thegreenwebfoundation.org</a></td><td>Host name of the start page, for example <code>www.example.de</code></td><td>By default, when a website is scanned. Turn it off with <code>green-hosting: false</code></td></tr>
           </tbody>

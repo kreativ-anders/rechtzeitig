@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { basename } from "node:path";
-import { OUTCOMES, type Outcome, type OutcomeStatus } from "./runner.ts";
+import { OUTCOMES, type Because, type Outcome, type OutcomeStatus } from "./runner.ts";
 import { SEVERITIES, type UiLanguage } from "./rules.ts";
-import type { Params, RepoContext, ScanContext } from "./sdk.ts";
+import { loadYaml } from "./data.ts";
+import type { Params, RepoContext, RepoCoverage, ScanContext } from "./sdk.ts";
 import { oneLine } from "./text.ts";
 import { render, renderFinding } from "./messages.ts";
 
@@ -24,6 +25,8 @@ export interface Findings {
   version: string;
   startedAt: string;
   target: { url?: string; repository?: string };
+  /** What the repository scan could not see or read: submodules, LFS pointers, unread files, lockfiles, private sources. */
+  coverage?: RepoCoverage;
   results: Array<{
     rule: string;
     check: string;
@@ -36,6 +39,8 @@ export interface Findings {
     params?: Params;
     /** Pages, files with line numbers, hosts. Secrets are already redacted by the checks. */
     locations: string[];
+    /** Why a check was skipped: target (no url or checkout), module, switch, or data (nothing to read). */
+    because?: Because;
   }>;
 }
 
@@ -65,6 +70,7 @@ export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">,
       message: oneLine(say(o, lang)),
       ...(typeof o.message === "string" ? {} : { key: o.message.key, params: cleanParams(o.message.params) }),
       locations: where(o, lang).map((d) => oneLine(d)),
+      ...(o.because && { because: o.because }),
     })),
   };
 }
@@ -110,15 +116,90 @@ const sorted = (outcomes: Outcome[]) =>
     (a, b) => OUTCOMES.indexOf(a.status) - OUTCOMES.indexOf(b.status) || SEVERITY_ORDER.indexOf(a.rule.severity) - SEVERITY_ORDER.indexOf(b.rule.severity),
   );
 const open = (o: Outcome) => o.status === "fail" || o.status === "warn" || o.status === "info";
+/** Skipped before it started: no target or left out by `modules`. Listed once per reason, not per check. */
+const notStarted = (o: Outcome) => o.because?.kind === "target" || o.because?.kind === "module";
+
+const MAX_LISTED = loadYaml<{ common: { max_listed: number } }>("data/thresholds.yml").common.max_listed;
+const MAX_FILE_MB = loadYaml<{ repo: { max_file_bytes: number } }>("data/thresholds.yml").repo.max_file_bytes / 1_000_000;
+
+interface NotRunGroup {
+  /** One line in the report language with the count and how to turn the checks on. */
+  line: string;
+  outcomes: Outcome[];
+  /** Under the line: each check by title (switches), with its own message (nothing to read), or not at all. */
+  listed: "title" | "message" | "none";
+}
+
+/** Skipped checks grouped by reason: no url, no checkout, modules, each switch, nothing to read. */
+function notRun(r: Report): NotRunGroup[] {
+  const t = ui(r.language);
+  const groups = new Map<string, Outcome[]>();
+  for (const o of r.outcomes) {
+    const b = o.because;
+    if (o.status !== "skip" || !b) continue;
+    const key = b.kind === "target" ? b.missing : b.kind === "switch" ? `switch_${b.input}` : b.kind;
+    groups.set(key, [...(groups.get(key) ?? []), o]);
+  }
+  const order = (key: string) => ["url", "repository", "module"].indexOf(key) + 1 || (key === "data" ? 9 : 5);
+  return [...groups.entries()].sort(([a], [b]) => order(a) - order(b)).map(([key, outcomes]) => {
+    const count = outcomes.length;
+    const b = outcomes[0].because!;
+    if (b.kind === "switch") return { line: t("not_run_switch", { count, hint: say(outcomes[0], r.language) }), outcomes, listed: "title" };
+    if (b.kind === "module") return { line: t("not_run_module", { count, modules: b.modules.join(", ") }), outcomes, listed: "none" };
+    return { line: t(`not_run_${key}`, { count }), outcomes, listed: key === "data" ? "message" : "none" };
+  });
+}
+
+/** The "Not run" block: collapsed in Markdown, one line per reason. `names` lists the checks (not in counts mode). */
+function notRunLines(r: Report, format: "md" | "text", names: boolean): string[] {
+  const groups = notRun(r);
+  if (!groups.length) return [];
+  const t = ui(r.language);
+  const total = groups.reduce((n, g) => n + g.outcomes.length, 0);
+  const item = (o: Outcome, withMessage: boolean) => {
+    const name = format === "md" ? `${cell(o.rule.title[r.language])} (${o.rule.id})` : o.id;
+    return withMessage ? `${name}: ${(format === "md" ? md : plain)(say(o, r.language))}` : name;
+  };
+  const lines = groups.flatMap((g) => [
+    format === "md" ? `- ${g.line}` : `  ${g.line}`,
+    ...(names && g.listed !== "none" ? g.outcomes.map((o) => `${format === "md" ? "  - " : "    - "}${item(o, g.listed === "message")}`) : []),
+  ]);
+  if (format === "text") return [`${t("not_run", { count: total })}:`, ...lines];
+  return [`<details><summary>${ICONS.skip} ${t("not_run", { count: total })}</summary>`, "", ...lines, "", "</details>", ""];
+}
+
+/** What the repository scan could not see or read, one line each; `warn` marks gaps the workflow can close. */
+export function coverageLines(c: RepoCoverage, lang: UiLanguage, esc: (s: string) => string): Array<{ warn: boolean; text: string }> {
+  const t = ui(lang);
+  const names = (items: string[]) =>
+    items.slice(0, MAX_LISTED).join(", ") + (items.length > MAX_LISTED ? t("and_more", { count: items.length - MAX_LISTED }) : "");
+  const line = (warn: boolean, key: string, items: string[], params: Params = {}) =>
+    items.length ? [{ warn, text: t(key, { count: items.length, names: names(items), ...params }) }] : [];
+  const missing = c.submodules.filter((s) => !s.checkedOut).map((s) => esc(s.path));
+  const scanned = c.submodules.filter((s) => s.checkedOut).map((s) => esc(s.path));
+  return [
+    ...(c.listing === "walk" ? [{ warn: true, text: t("cov_walk", { why: esc(c.walked ?? "") }) }] : []),
+    ...line(true, "cov_submodules_missing", missing),
+    ...line(false, "cov_submodules", scanned),
+    ...line(true, "cov_lfs", c.lfs.map(esc)),
+    ...line(true, "cov_lockfiles_failed", c.lockfiles.failed.map((f) => `${esc(f.file)} (${t(`reason_${f.reason}`)})`)),
+    ...line(false, "cov_lockfiles_empty", c.lockfiles.empty.map(esc)),
+    ...line(true, "cov_unsupported", c.unsupported.map((u) => `${esc(u.file)} (${esc(u.ecosystem)})`)),
+    ...line(false, "cov_large", c.large.map(esc), { limit: MAX_FILE_MB }),
+    ...(c.binary.length ? [{ warn: false, text: t("cov_binary", { count: c.binary.length }) }] : []),
+    ...line(false, "cov_private", c.private.map((p) => `${t(`source_${p.kind}`)} ${esc(p.source)} (${esc(p.file)})`)),
+  ];
+}
 
 /**
  * The report as Markdown. With `findingsOnly` (the step summary) passed and skipped checks are left out
- * and a line points to the artifact, which keeps the full report.
+ * and a line points to the artifact, which keeps the full report. Both end with a collapsed "Not run" block
+ * that groups skipped checks by reason, and list what the repository scan could not read under the scan line.
  */
 export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
   const t = ui(r.language);
   const lang = r.language;
-  const list = sorted(r.outcomes).filter((o) => !findingsOnly || (o.status !== "pass" && o.status !== "skip"));
+  const list = sorted(r.outcomes).filter((o) => !notStarted(o) && (!findingsOnly || (o.status !== "pass" && o.status !== "skip")));
   const lines = [`## rechtzeitig: ${md(title(r))}`, "", summaryLine(r, true), ""];
   if (findingsOnly) lines.push(`_${t(list.length ? "findings_only" : "no_findings")}_`, "");
   if (list.length) {
@@ -140,7 +221,7 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
       lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...fix, ...where(o, lang).map((d) => `- ${md(d)}`), "", "</details>", "");
     }
   }
-  lines.push(`### ${t("scan")}`, "");
+  lines.push(...notRunLines(r, "md", true), `### ${t("scan")}`, "");
   if (r.web) {
     const w = r.web;
     lines.push(
@@ -149,7 +230,10 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
       `- ${t("visitor")}${r.onGitHub ? `, ${t("runner")}` : ""}`,
     );
   }
-  if (r.repo) lines.push(`- ${t("repository", { files: r.repo.files.length, components: r.repo.components.length, lockfiles: r.repo.lockfiles.length, osv: md(r.repo.osv) })}`);
+  if (r.repo) {
+    lines.push(`- ${t("repository", { files: r.repo.files.length, components: r.repo.components.length, lockfiles: r.repo.lockfiles.length, osv: md(r.repo.osv) })}`);
+    for (const c of coverageLines(r.repo.coverage, lang, md)) lines.push(`  - ${c.warn ? "⚠️ " : ""}${c.text}`);
+  }
   for (const w of r.warnings ?? []) lines.push(`- ⚠️ ${md(w)}`);
   lines.push(`- [rechtzeitig](${HOMEPAGE}) ${r.version} · ${t("made_by", { maker: `[kreativ-anders](${MAKER})` })} · ${r.startedAt}`, "", `_${t("disclaimer")}_`, "");
   return lines.join("\n");
@@ -157,11 +241,13 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
 
 export function toText(r: Report): string {
   const lines = [`rechtzeitig: ${plain(title(r))}`, ""];
-  for (const o of r.outcomes) {
+  for (const o of r.outcomes.filter((o) => !notStarted(o))) {
     lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${plain(say(o, r.language))}`);
     for (const d of where(o, r.language)) lines.push(`      - ${plain(d)}`);
   }
-  lines.push("", ...(r.warnings ?? []).map((w) => `Warning: ${plain(w)}`), summaryLine(r, false));
+  const notStartedOnly = { ...r, outcomes: r.outcomes.filter(notStarted) };
+  const coverage = r.repo ? coverageLines(r.repo.coverage, r.language, plain).map((c) => `${c.warn ? "Warning" : "Coverage"}: ${c.text}`) : [];
+  lines.push("", ...notRunLines(notStartedOnly, "text", false), ...coverage, ...(r.warnings ?? []).map((w) => `Warning: ${plain(w)}`), summaryLine(r, false));
   return lines.join("\n");
 }
 
@@ -179,11 +265,12 @@ export type Visibility = "full" | "counts";
 export function toCounts(r: Report, format: "md" | "text"): string {
   const t = ui(r.language);
   const note = t("hidden_public");
+  // The reasons name inputs, never a check or a place, so they may show here.
   if (format === "text") {
-    return [`rechtzeitig: ${plain(title(r))}`, "", ...(r.warnings ?? []).map((w) => `Warning: ${plain(w)}`), summaryLine(r, false), note].join("\n");
+    return [`rechtzeitig: ${plain(title(r))}`, "", ...notRunLines(r, "text", false), ...(r.warnings ?? []).map((w) => `Warning: ${plain(w)}`), summaryLine(r, false), note].join("\n");
   }
   const warnings = (r.warnings ?? []).map((w) => `- ⚠️ ${md(w)}`);
-  return [`## rechtzeitig: ${md(title(r))}`, "", summaryLine(r, true), "", `_${note}_`, "", ...warnings, ...(warnings.length ? [""] : []),
+  return [`## rechtzeitig: ${md(title(r))}`, "", summaryLine(r, true), "", `_${note}_`, "", ...notRunLines(r, "md", false), ...warnings, ...(warnings.length ? [""] : []),
     `- [rechtzeitig](${HOMEPAGE}) ${r.version} · ${r.startedAt}`, ""].join("\n");
 }
 

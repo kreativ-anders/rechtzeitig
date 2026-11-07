@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "CRA Anhang I Teil II Nr. 1 (ab 11.12.2027)"
   en: "CRA Annex I Part II(1) (from 11 Dec 2027)"
-how: "Reads all lockfiles (`src/repo/lockfiles.ts`) for the SBOM the report writes to `rechtzeitig-sbom.cdx.json`, and lists manifests without a lockfile in their folder or a parent folder."
+how: "Reads all lockfiles (`src/repo/lockfiles.ts`, up to the `repo` limit in `data/thresholds.yml`) for the SBOM the report writes to `rechtzeitig-sbom.cdx.json`, lists manifests without a lockfile in their folder or a parent folder, and never passes when a lockfile gave nothing (too large, Git LFS pointer, invalid), when package files have no parser (`data/ecosystems.yml`) or when no component was found."
 fix_hint:
   de: "Für jedes Manifest ein Lockfile committen; die SBOM mit jedem Release aufbewahren. Der CRA gilt für Produkte mit digitalen Elementen, die in der EU bereitgestellt werden, reine Webdienste meist nicht."
   en: "Commit a lockfile for every manifest; keep the SBOM with each release. The CRA covers products with digital elements made available in the EU, usually not pure web services."
