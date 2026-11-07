@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
 import { LANGUAGES, SWITCHES, validateRule, type Rule, type Switch } from "./rules.ts";
-import { checksHtml, heroChecksHtml, reviewedHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
+import { checksHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
 import { render } from "./messages.ts";
@@ -43,11 +43,21 @@ test("the scope follows the check type: defineCheck reads the website, defineRep
   assert.equal(scopeOf(defineRepoCheck({ run: () => pass({ key: "x" }) })), "repository");
   const checks = await loadChecks();
   assert.deepEqual(checks.filter((c) => (scopeOf(c.check) === "repository") !== !!c.check.repo).map((c) => c.id), []);
+  for (const scope of SCOPES) assert.ok(SCOPE_LABELS[scope], `label for scope ${scope}`);
 });
 
 test("groups are legal or topic areas, not scan targets: no checks/repo/ folder", async () => {
   const groups = new Set((await loadChecks()).map((c) => moduleOf(c.id)));
   assert.deepEqual([...groups].filter((g) => (SCOPES as readonly string[]).includes(g) || g === "repo"), []);
+});
+
+test("each card on checks.html carries the scope of its check", async () => {
+  const checks = await loadChecks();
+  const html = checksHtml(checks);
+  for (const c of checks) {
+    const scope = scopeOf(c.check);
+    assert.ok(html.includes(`id="${c.rule.id}" data-module="${moduleOf(c.id)}" data-scope="${scope}"`), `${c.id}: data-scope="${scope}"`);
+  }
 });
 
 test("modules select checks by group or by scope; repo still means all repository checks", async () => {

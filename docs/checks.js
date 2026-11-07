@@ -5,7 +5,7 @@
   const q = document.getElementById("q");
   const count = document.getElementById("count");
   const empty = document.getElementById("empty");
-  const state = { module: "all", severity: new Set() };
+  const state = { module: "all", scope: "all", severity: new Set() };
 
   const tally = (key, value) => rules.filter((r) => r.dataset[key] === value).length;
 
@@ -37,6 +37,21 @@
   }
   moduleChips[0].setAttribute("aria-pressed", "true");
 
+  // Scope: what a check reads. A chip only for scopes with rules, so "Both" shows once such a check exists.
+  const scopeBox = document.getElementById("scopes");
+  const scopeChips = new Map();
+  const pickScope = (value) => (b) => {
+    state.scope = value;
+    window.track?.("Checks filter", { filter: "scope", value });
+    scopeChips.forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+  };
+  scopeChips.set("all", chip(scopeBox, "All", rules.length, pickScope("all")));
+  for (const [value, label] of [["website", "Website"], ["repository", "Repository"], ["both", "Both"]]) {
+    const n = tally("scope", value);
+    if (n) scopeChips.set(value, chip(scopeBox, label, n, pickScope(value)));
+  }
+  scopeChips.get("all").setAttribute("aria-pressed", "true");
+
   const sevBox = document.getElementById("severities");
   for (const s of ["critical", "high", "medium", "low", "info"]) {
     const n = tally("severity", s);
@@ -55,6 +70,7 @@
     for (const r of rules) {
       const ok =
         (state.module === "all" || r.dataset.module === state.module) &&
+        (state.scope === "all" || r.dataset.scope === state.scope) &&
         (!state.severity.size || state.severity.has(r.dataset.severity)) &&
         words.every((w) => r.dataset.search.includes(w));
       r.hidden = !ok;
@@ -83,9 +99,18 @@
   document.getElementById("toolbar").hidden = false;
 
   // Open the card a link points to, e.g. checks.html#LEG-DE-IMP-001. A link to a group,
-  // e.g. checks.html#privacy, picks that group's chip. Neither counts as a filter event.
+  // e.g. checks.html#privacy, picks that group's chip, a link to a scope, e.g. checks.html#repository,
+  // that scope's chip (#repo was the old repository group). None counts as a filter event.
   const open = () => {
-    const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const hash = decodeURIComponent(location.hash.slice(1));
+    const value = hash === "repo" ? "repository" : hash;
+    if (value !== "all" && scopeChips.has(value)) {
+      state.scope = value;
+      scopeChips.forEach((c, v) => c.setAttribute("aria-pressed", String(v === value)));
+      update();
+      return;
+    }
+    const t = hash && document.getElementById(hash);
     if (t?.tagName === "DETAILS") t.open = true;
     const i = modules.indexOf(t);
     if (i >= 0) {

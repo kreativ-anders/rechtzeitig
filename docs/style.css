@@ -553,6 +553,7 @@ a.sends:hover { border-style: solid; }
 .rule summary::-webkit-details-marker { display: none; }
 .rule-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
 .rule-id { font: 600 0.78rem var(--mono); letter-spacing: 0.03em; color: var(--muted); }
+.rule-scope { font: 0.72rem var(--sans); letter-spacing: 0.06em; text-transform: uppercase; margin-left: 0.6em; padding-left: 0.6em; border-left: 1px solid var(--line); }
 .rule-title { font: 600 1.06rem/1.3 var(--serif); }
 .rule-title-de { font: italic 0.88rem/1.3 var(--serif); color: var(--muted); margin-top: -0.3rem; }
 .rule-law { font-size: 0.88rem; color: var(--seal); font-family: var(--serif); }

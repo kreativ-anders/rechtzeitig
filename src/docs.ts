@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { SEVERITIES, switchSpec, type Switch } from "./rules.ts";
-import { loadChecks, moduleOf, scopeOf, type LoadedCheck } from "./runner.ts";
+import { loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } from "./runner.ts";
 
 const CHECKS_PAGE = new URL("../docs/checks.html", import.meta.url);
 const WORKFLOW_PAGE = new URL("../docs/workflow.html", import.meta.url);
@@ -24,6 +24,14 @@ const MODULES: Record<string, string> = {
   security: "Security",
   sustainability: "Sustainability",
   accessibility: "Accessibility",
+};
+
+/** What a check reads (scopeOf in src/runner.ts): the filter row "Scope" on checks.html and the label on each card. */
+export const SCOPE_LABELS: Record<Scope, string> = { website: "Website", repository: "Repository", both: "Both" };
+const SCOPE_NEEDS: Record<Scope, string> = {
+  website: "runs with a <code>url</code>.",
+  repository: "runs when <code>actions/checkout</code> runs before rechtzeitig.",
+  both: "runs with a <code>url</code> and a checkout.",
 };
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -71,12 +79,13 @@ function card(c: LoadedCheck, module: string): string {
   const level = SEVERITIES.indexOf(r.severity) + 1;
   const law = r.legal_basis?.en;
   const needs = (r.requires ?? []).map(runsWhen);
+  const scope = scopeOf(c.check);
   const search = [r.id, c.id, r.title.en, r.title.de, law ?? "", r.how, ...(r.requires ?? [])].join(" ").toLowerCase();
   const sources = r.meta.sources.map((s) => `<a href="${esc(s)}">${esc(host(s))}</a>`).join(", ");
   return [
-    `<details class="rule" id="${r.id}" data-module="${module}" data-severity="${r.severity}" data-search="${esc(search)}">`,
+    `<details class="rule" id="${r.id}" data-module="${module}" data-scope="${scope}" data-severity="${r.severity}" data-search="${esc(search)}">`,
     `<summary>`,
-    `<span class="rule-head"><span class="rule-id">${r.id}</span><span class="sev" data-level="${level}" title="Severity: ${r.severity}">${"<i></i>".repeat(5)}<span class="sev-name">${r.severity}</span></span></span>`,
+    `<span class="rule-head"><span class="rule-id">${r.id}<span class="rule-scope" title="Scope: what the check reads">${SCOPE_LABELS[scope]}</span></span><span class="sev" data-level="${level}" title="Severity: ${r.severity}">${"<i></i>".repeat(5)}<span class="sev-name">${r.severity}</span></span></span>`,
     `<span class="rule-title">${text(r.title.en)}</span>`,
     `<span class="rule-title-de" lang="de">${text(r.title.de)}</span>`,
     ...(r.requires ?? []).map((input) => sendsBadge(input, false)).filter(Boolean),
@@ -85,6 +94,7 @@ function card(c: LoadedCheck, module: string): string {
     `</summary>`,
     `<div class="rule-body"><dl>`,
     `<div><dt>How it is checked</dt><dd>${text(r.how)}</dd></div>`,
+    `<div><dt>Scope</dt><dd>${SCOPE_LABELS[scope]}: ${SCOPE_NEEDS[scope]}</dd></div>`,
     needs.length ? `<div><dt>Runs when</dt><dd>${needs.join("<br>")}</dd></div>` : "",
     `<div><dt>How to fix</dt><dd>${text(r.fix_hint.en)}</dd></div>`,
     `<div><dt>Code</dt><dd><a href="${SOURCE}/${c.id}"><code>checks/${c.id}</code></a></dd></div>`,
