@@ -1,0 +1,39 @@
+# Package ecosystems as the repository scan (src/repo/scan.ts, src/repo/coverage.ts) sees them.
+# Changing a list changes results: mention it in the commit message.
+
+# Package files rechtzeitig recognizes but has no parser for yet (parsers: src/repo/lockfiles.ts).
+# File name (regular expression) → ecosystem. The report and repo/sbom name them, so a missing parser
+# never looks like "no dependencies".
+unsupported:
+  '^bun\.lockb?$': Bun
+  '^pdm\.lock$': PDM
+  '^Pipfile(\.lock)?$': Pipenv
+  '^Gemfile(\.lock)?$': Bundler (Ruby)
+  '^Podfile(\.lock)?$': CocoaPods
+  '^Package\.resolved$': Swift Package Manager
+  '^(packages\.lock\.json|packages\.config|.+\.(cs|fs|vb)proj)$': NuGet
+  '^(gradle\.lockfile|build\.gradle(\.kts)?)$': Gradle
+  '^pom\.xml$': Maven
+  '^mix\.lock$': Hex (Elixir)
+  '^\.terraform\.lock\.hcl$': Terraform
+  '^Chart\.lock$': Helm
+
+# Ecosystems whose lockfiles carry a license for each package (repo/licenses). For the others
+# the report says that their licenses were not checked.
+licenses_in_lockfile: [npm, composer]
+
+# Hosts of the public registries. Any other host in .npmrc, .yarnrc.yml, a lockfile or a requirements
+# file is named in the report as a private source. rechtzeitig never contacts it.
+public_registries:
+  - registry.npmjs.org
+  - registry.yarnpkg.com
+  - pypi.org
+  - pypi.python.org
+  - files.pythonhosted.org
+  - repo.packagist.org
+  - packagist.org
+  - pub.dev
+  - pub.dartlang.org
+  - crates.io
+  - index.crates.io
+  - proxy.golang.org
