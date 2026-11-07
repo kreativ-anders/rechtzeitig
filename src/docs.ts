@@ -39,7 +39,7 @@ const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 const text = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const host = (url: string) => new URL(url).hostname.replace(/^www\./, "");
 
-/** Badge for an input that sends data to an outside service; empty when it sends nothing. Links to § 7 of the workflow page. */
+/** Badge for an input that sends data to an outside service; empty when it sends nothing. Links to "Data that leaves the runner" on the workflow page. */
 export function sendsBadge(input: Switch, link = true): string {
   const s = switchSpec(input);
   if (!s.service) return "";
