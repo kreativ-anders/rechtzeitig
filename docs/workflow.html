@@ -108,6 +108,16 @@
 <tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
 </tbody></table></div>
 <!-- switches:end -->
+        <h3 id="checkout">Repository checkout</h3>
+        <p>The repository checks read what <code>actions/checkout</code> leaves in the folder. By default that is the current commit without submodules and with Git LFS pointers instead of LFS files. To scan those too:</p>
+        <pre><code>- uses: actions/checkout@&lt;sha&gt;
+  with:
+    persist-credentials: false
+    submodules: recursive # files of submodules
+    lfs: true             # LFS files instead of pointers
+    # token: ${{ secrets.SUBMODULES_TOKEN }} # only for private submodules</code></pre>
+        <p>The default <code>GITHUB_TOKEN</code> reads only this repository. Private submodules need a token with <code>contents: read</code> on them, for example a fine-grained personal access token or a GitHub App token, stored as a secret. Keep <code>persist-credentials: false</code>, so the token is not left in the checkout.</p>
+        <p class="note">Only the checked-out files are read, never the git history: a secret that was removed in an earlier commit is not found. Files over 1 MB (lockfiles over 50 MB) and binary files are not read, and lockfiles of some ecosystems have no parser yet. The summary lists all of this under <span class="ui">Scan</span>, the JSON under <code>coverage</code>.</p>
       </section>
 
       <section id="fail-on">
@@ -179,7 +189,7 @@
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>
-            <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Package URLs (name and version) of all locked components, for example <code>pkg:npm/lodash@4.17.21</code></td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
+            <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Package URLs (name and version) of all locked components, for example <code>pkg:npm/lodash@4.17.21</code>. This includes the names of internal packages from a private registry or a git source; the report names such sources but rechtzeitig never contacts them</td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
             <tr><td><a class="sends" href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of third-party servers that rechtzeitig does not know</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
             <tr><td><a class="sends" href="https://www.thegreenwebfoundation.org">api.thegreenwebfoundation.org</a></td><td>Host name of the start page, for example <code>www.example.de</code></td><td>By default, when a website is scanned. Turn it off with <code>green-hosting: false</code></td></tr>
           </tbody>
