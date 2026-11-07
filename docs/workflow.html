@@ -89,7 +89,7 @@
 
       <section id="scope">
         <h2><span class="par">§ 2</span>What runs when</h2>
-        <p>Most checks always run. These need a setting; when off, they show as <span class="status s-skip">skip</span> with the setting that turns them on.</p>
+        <p>Every check shows up in the report. Most always run. These need a setting; when it is off, they show as <span class="status s-skip">skip</span> with the reason and the setting that turns them on. The summary groups them under <span class="ui">Not run</span>, and <code>rechtzeitig-report.json</code> gives the reason as <code>because</code>: <code>target</code> (no <code>url</code> or no checkout), <code>module</code>, <code>switch</code>, or <code>data</code> (the check ran but found nothing it could read).</p>
 <!-- switches:start -->
 <div class="table-wrap"><table>
 <thead><tr><th>Check</th><th>Runs when</th></tr></thead>
@@ -149,12 +149,12 @@
             <tr><td><code>none</code></td><td>Nothing but the output <code>result</code> and, with <code>fail-on</code>, the job status.</td></tr>
           </tbody>
         </table></div>
-        <p>The summary shows all findings; passed and skipped checks are only in the artifact. Findings in a repository file also show as annotations (GitHub shows at most 10 errors and 10 warnings). The artifact <code>rechtzeitig-report</code> contains:</p>
+        <p>The summary shows all findings, a collapsed list of the checks that did not run with how to turn them on, and under <span class="ui">Scan</span> what the repository scan could not read (see <a href="#checkout">Repository checkout</a>). Passed checks are only in the artifact. Findings in a repository file also show as annotations (GitHub shows at most 10 errors and 10 warnings). The artifact <code>rechtzeitig-report</code> contains:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">File</th><th scope="col">Content</th></tr></thead>
           <tbody>
             <tr><td><code>rechtzeitig-report.md</code></td><td>The same report as Markdown</td></tr>
-            <tr><td><code>rechtzeitig-report.json</code></td><td>Findings with rule id, severity, status, message and locations. No page text or file contents</td></tr>
+            <tr><td><code>rechtzeitig-report.json</code></td><td>Findings with rule id, severity, status, message, locations and, for skips, <code>because</code>; <code>coverage</code> lists what the repository scan could not read. No page text or file contents</td></tr>
             <tr><td><code>rechtzeitig-sbom.cdx.json</code></td><td>SBOM in CycloneDX 1.6 format, with vulnerabilities. Keep it with each release</td></tr>
           </tbody>
         </table></div>

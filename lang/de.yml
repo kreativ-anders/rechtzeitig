@@ -205,6 +205,9 @@ messages:
     switch_green-hosting: "Abfrage zu grünem Hosting ist ausgeschaltet (Input green-hosting: false). Nichts wurde an die Green Web Foundation gesendet."
     no_page: "{page}: keine Seite zum Lesen (siehe {check})."
     found: "{page} gefunden: {where}."
+    not_run_url: "Nicht gelaufen: braucht eine Website. Input url setzen."
+    not_run_repository: "Nicht gelaufen: braucht das Repository. actions/checkout vor rechtzeitig ausführen."
+    not_run_module: "Nicht gelaufen: Die Gruppe {module} steht nicht in modules ({modules}). Leeres modules startet alle Gruppen."
   report:
     check: "Prüfung"
     severity: "Schwere"
@@ -226,6 +229,58 @@ messages:
     visitor: "Besucher: frischer Browser, keine Klicks, keine Einwilligung"
     runner: "GitHub-Runner (Rechenzentrum in den USA)"
     repository: "Repository: {files} Dateien, {components} Komponenten aus {lockfiles} Lockfile(s), OSV: {osv}"
+    not_run: "Nicht gelaufen ({count})"
+    not_run_url:
+      one: "{count} Website-Prüfung: kein url. Zum Prüfen den Input url setzen."
+      other: "{count} Website-Prüfungen: kein url. Zum Prüfen den Input url setzen."
+    not_run_repository:
+      one: "{count} Repository-Prüfung: kein Checkout. actions/checkout vor rechtzeitig ausführen."
+      other: "{count} Repository-Prüfungen: kein Checkout. actions/checkout vor rechtzeitig ausführen."
+    not_run_module:
+      one: "{count} Prüfung außerhalb von modules: {modules}. Leeres modules startet alle Gruppen."
+      other: "{count} Prüfungen außerhalb von modules: {modules}. Leeres modules startet alle Gruppen."
+    not_run_switch:
+      one: "{count} Prüfung: {hint}"
+      other: "{count} Prüfungen: {hint}"
+    not_run_data:
+      one: "{count} Prüfung lief, fand aber nichts zum Lesen."
+      other: "{count} Prüfungen liefen, fanden aber nichts zum Lesen."
+    and_more: " und {count} weitere"
+    cov_walk: "Dateiliste aus einem Ordnerdurchlauf ({why}): .gitignore wurde nicht beachtet."
+    cov_submodules_missing:
+      one: "{count} Submodul nicht ausgecheckt, seine Dateien wurden nicht gescannt: {names}. Mit submodules: recursive auschecken."
+      other: "{count} Submodule nicht ausgecheckt, ihre Dateien wurden nicht gescannt: {names}. Mit submodules: recursive auschecken."
+    cov_submodules:
+      one: "{count} Submodul gescannt: {names}"
+      other: "{count} Submodule gescannt: {names}"
+    cov_lfs:
+      one: "{count} Git-LFS-Pointer statt der Datei: {names}. Mit lfs: true auschecken."
+      other: "{count} Git-LFS-Pointer statt der Dateien: {names}. Mit lfs: true auschecken."
+    cov_lockfiles_failed:
+      one: "{count} Lockfile ergab keine Komponenten: {names}"
+      other: "{count} Lockfiles ergaben keine Komponenten: {names}"
+    cov_lockfiles_empty:
+      one: "{count} Lockfile ohne Komponenten: {names}"
+      other: "{count} Lockfiles ohne Komponenten: {names}"
+    cov_unsupported:
+      one: "{count} Paketdatei ohne Parser, nicht in der SBOM: {names}"
+      other: "{count} Paketdateien ohne Parser, nicht in der SBOM: {names}"
+    cov_large:
+      one: "{count} Datei über {limit} MB nicht gelesen: {names}"
+      other: "{count} Dateien über {limit} MB nicht gelesen: {names}"
+    cov_binary:
+      one: "{count} Binärdatei nicht gelesen."
+      other: "{count} Binärdateien nicht gelesen."
+    cov_private:
+      one: "{count} private Paketquelle, nur genannt, nie abgefragt: {names}"
+      other: "{count} private Paketquellen, nur genannt, nie abgefragt: {names}"
+    reason_large: "zu groß"
+    reason_lfs: "Git-LFS-Pointer"
+    reason_binary: "binär"
+    reason_invalid: "nicht lesbar"
+    source_registry: "Registry"
+    source_git: "git"
+    source_replace: "replace"
     disclaimer: "Technische Risikohinweise mit Fundstelle und Bezug zur Rechtsgrundlage. Keine Rechtsberatung."
     made_by: "von {maker}"
     severity_info: "info"
