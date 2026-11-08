@@ -44,19 +44,19 @@
 
 <main id="content" class="narrow">
   <h1>Kündigungsbutton, Widerrufsbutton und Bestellbutton prüfen</h1>
-  <p class="lead">rechtzeitig prüft als GitHub Action, ob eine Website den Kündigungsbutton nach § 312k BGB, den Widerrufsbutton nach § 356a BGB, den Button „zahlungspflichtig bestellen“ und Preise mit Grundpreis nach PAngV zeigt. Jeder Befund ist ein technischer Hinweis mit Fundstelle, keine Rechtsberatung.</p>
+  <p class="lead">rechtzeitig prüft als GitHub Action, ob eine Website den Kündigungsbutton nach § 312k BGB, den Widerrufsbutton nach § 356a BGB, den Button „zahlungspflichtig bestellen“ und Preise nach PAngV zeigt.</p>
 
   <h2 id="what">Wonach gesucht wird</h2>
   <ul>
-    <li>Für den Kündigungsbutton sucht rechtzeitig auf der Startseite einen Button oder Link „Verträge hier kündigen“. Eine ähnliche Beschriftung wie „Abo kündigen“ ergibt eine Warnung. rechtzeitig folgt dem Link und sucht auf der Zielseite den Button „jetzt kündigen“.</li>
-    <li>Beim Widerrufsbutton sind es „Vertrag widerrufen“ auf der Startseite und „Widerruf bestätigen“ auf der Zielseite. In der Widerrufsbelehrung sucht es außerdem das Muster-Widerrufsformular und den Hinweis, wo die Widerrufsfunktion zu finden ist.</li>
-    <li>Für den Bestellbutton liest es die Texte der Buttons auf Seiten mit Zahlungsart und Gesamtsumme und in Formularen mit Adressfeld. „zahlungspflichtig bestellen“ besteht, ein bloßes „Weiter“ ergibt eine Warnung.</li>
-    <li>Bei Preisen sucht es auf Seiten mit Preis und Warenkorb-Link den Hinweis auf Umsatzsteuer und Versandkosten, bei Mengenangaben den Grundpreis und bei durchgestrichenen Preisen den niedrigsten Preis der letzten 30 Tage.</li>
+    <li>Kündigungsbutton: „Verträge hier kündigen“ auf der Startseite, dahinter „jetzt kündigen“. Eine ähnliche Beschriftung wie „Abo kündigen“ ergibt eine Warnung.</li>
+    <li>Widerrufsbutton: „Vertrag widerrufen“ auf der Startseite, dahinter „Widerruf bestätigen“; in der Widerrufsbelehrung das Muster-Widerrufsformular.</li>
+    <li>Bestellbutton: „zahlungspflichtig bestellen“ auf Seiten mit Zahlungsart und Gesamtsumme. Ein bloßes „Weiter“ ergibt eine Warnung.</li>
+    <li>Preise: Hinweis auf Umsatzsteuer und Versandkosten, Grundpreis bei Mengenangaben, bei Rabatten der niedrigste Preis der letzten 30 Tage.</li>
   </ul>
-  <p>rechtzeitig klickt nicht und schließt keinen Vertrag ab. Der letzte Bestellschritt liegt meist hinter dem Warenkorb; um ihn zu prüfen, <code>url</code> auf die Bestellübersicht richten. Ob ein Button ständig verfügbar und gut lesbar ist, müssen Sie selbst prüfen.</p>
+  <p>Es wird nichts geklickt und kein Vertrag geschlossen. Um den letzten Bestellschritt zu prüfen, <code>url</code> auf die Bestellübersicht richten. Ob ein Button ständig verfügbar und gut lesbar ist, müssen Sie selbst prüfen.</p>
 
   <h2 id="rules">Die Regeln</h2>
-  <p>Die Liste wird aus den Regeln erzeugt und stimmt daher mit dem überein, was läuft. Jede Regel verlinkt auf ihre Karte auf der <a href="../checks.html?q=BGB" hreflang="en">Checks-Seite</a> (Englisch) mit den Quellen. Die Beschreibung, wie geprüft wird, gibt es nur auf Englisch.</p>
+  <p>Jede Regel verlinkt auf ihre Karte mit den Quellen auf der <a href="../checks.html?q=BGB" hreflang="en">Checks-Seite</a> (Englisch).</p>
 <!-- topic-rules:start -->
 <ul class="topic-rules">
 <li class="topic-rule" id="LEG-DE-BTN-001">
@@ -105,12 +105,12 @@
 <!-- topic-rules:end -->
 
   <h2 id="setup">Einschalten</h2>
-  <p>Diese Prüfungen laufen nur, wenn sie eingeschaltet sind. Im <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Beispiel-Workflow</a> sind das zwei Häkchen im Formular von <span class="ui">Run workflow</span>; in der Workflow-Datei sieht es so aus:</p>
-  <pre><code>url: ${{ inputs.url || 'https://www.example.de/' }}
+  <p>Diese Prüfungen laufen nur, wenn sie eingeschaltet sind. Im <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Beispiel-Workflow</a> unter <code>with:</code>:</p>
+  <pre><code>url: https://www.example.de/
 language: de
 subscriptions: true # Kündigungsbutton
 sales: true         # Widerruf, Bestellbutton, Preise, AGB</code></pre>
-  <p>Alle Inputs beschreibt <a href="../workflow.html#inputs" hreflang="en">Der Workflow</a> (Englisch). Was rechtzeitig sonst prüft, steht auf der <a href="./">Startseite</a>.</p>
+  <p>Alle Inputs stehen in der <a href="../workflow.html#inputs" hreflang="en">Konfiguration</a> (Englisch), alles Weitere auf der <a href="./">Startseite</a>.</p>
 </main>
 
 <footer><div class="inner">
