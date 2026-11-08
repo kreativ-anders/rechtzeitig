@@ -60,4 +60,6 @@ test("every page's header seal is the one in index.html, drawn as a path without
   assert.ok(first?.includes("<path ") && !first.includes("<text"), "index.html: the seal is a path");
   for (const f of pages) assert.equal(seal(f), first, f);
   assert.ok(!readFileSync(new URL("favicon.svg", DOCS), "utf8").includes("<text"), "favicon.svg has no <text>");
+  const path = first!.match(/<path d="[^"]+"\/>/)![0];
+  for (const f of ["index.html", "de/index.html"]) assert.ok(read(f).match(/<svg class="mark"[^>]*>(.*?)<\/svg>/)?.[1] === path, `${f}: the stamp's § is the seal's path`);
 });
