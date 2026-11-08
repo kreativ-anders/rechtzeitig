@@ -130,7 +130,7 @@ pre code { background: none; padding: 0; }
 }
 .brand svg { width: 1.9rem; height: 1.9rem; flex: none; transition: transform 0.4s ease; }
 .brand svg circle { fill: var(--seal); }
-.brand svg text { fill: var(--on-seal); font: 700 20px var(--serif); }
+.brand svg path { fill: var(--on-seal); }
 .brand:hover svg { transform: rotate(-14deg) scale(1.08); }
 .nav { margin-left: auto; }
 .nav ul { display: flex; gap: 1.25rem; list-style: none; margin: 0; padding: 0; font-size: 0.95rem; }
