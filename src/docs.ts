@@ -30,7 +30,7 @@ const MODULES: Record<string, string> = {
 export const SCOPE_LABELS: Record<Scope, string> = { website: "Website", repository: "Repository", both: "Both" };
 const SCOPE_NEEDS: Record<Scope, string> = {
   website: "runs with a <code>url</code>.",
-  repository: "runs when <code>actions/checkout</code> runs before rechtzeitig.",
+  repository: "runs when <code>actions/checkout</code> runs before <span class=\"wm\">rechtzeitig</span>.",
   both: "runs with a <code>url</code> and a checkout.",
 };
 
@@ -67,7 +67,7 @@ export function switchesHtml(checks: LoadedCheck[]): string {
     `<thead><tr><th>Check</th><th>Runs when</th></tr></thead>`,
     `<tbody>`,
     `<tr><td>All website checks</td><td>Only with a <code>url</code>.</td></tr>`,
-    `<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before rechtzeitig (folder: input <code>repository</code>).</td></tr>`,
+    `<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span> (folder: input <code>repository</code>).</td></tr>`,
     `<tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (${Object.keys(MODULES).join(", ")}) or scopes (website, repository; <code>repo</code> still works). Empty runs all.</td></tr>`,
     ...rows,
     `</tbody></table></div>`,

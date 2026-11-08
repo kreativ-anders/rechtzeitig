@@ -49,7 +49,7 @@
   <h2>Results</h2>
   <ul class="legend">
     <li><span class="status s-pass">pass</span><span>Nothing to do.</span></li>
-    <li><span class="status s-fail">fail</span><span>rechtzeitig is sure something is missing or wrong.</span></li>
+    <li><span class="status s-fail">fail</span><span><span class="wm">rechtzeitig</span> is sure something is missing or wrong.</span></li>
     <li><span class="status s-warn">warn</span><span>A pattern matched that a person should look at.</span></li>
     <li><span class="status s-info">info</span><span>A list of things to judge yourself.</span></li>
     <li><span class="status s-skip">skip</span><span>The check does not apply, for example no URL was given.</span></li>
@@ -65,7 +65,7 @@
 <thead><tr><th>Check</th><th>Runs when</th></tr></thead>
 <tbody>
 <tr><td>All website checks</td><td>Only with a <code>url</code>.</td></tr>
-<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before rechtzeitig (folder: input <code>repository</code>).</td></tr>
+<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span> (folder: input <code>repository</code>).</td></tr>
 <tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (legal, privacy, security, sustainability, accessibility) or scopes (website, repository; <code>repo</code> still works). Empty runs all.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-001">Cancellation button for subscriptions</a><br><small>LEG-DE-BTN-001</small></td><td>Opt-in: only with <code>subscriptions: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-003">Order button &quot;zahlungspflichtig bestellen&quot;</a><br><small>LEG-DE-BTN-003</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
@@ -173,7 +173,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Compares licenses from the lockfiles that carry them (<code>licenses_in_lockfile</code> in <code>data/ecosystems.yml</code>, today npm and Composer) with the project license (package.json, composer.json or LICENSE) using the groups in <code>data/licenses.yml</code>; an SPDX <code>OR</code> with a non-copyleft choice is not flagged, other ecosystems are named as not checked, and without a single license read the rule is skipped.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Review the license of each flagged dependency; replace it, buy a license or license the project to match.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/licenses"><code>checks/legal/licenses</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a></dd></div>
@@ -547,7 +547,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Reads <code>uses:</code> lines in <code>.github/workflows/*.yml</code> and lists actions not pinned to a 40-character commit SHA.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Use owner/action@&lt;commit-sha&gt; instead of a tag; Dependabot keeps the SHAs current.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/actions-pinning"><code>checks/security/actions-pinning</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
@@ -598,7 +598,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Splits <code>supabase/**/*.sql</code> into statements and compares <code>create table</code> in the public schema with <code>enable row level security</code>; looks for <code>if true</code> and test mode (<code>request.time &lt; timestamp.date(...)</code>) in Firebase rules.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Enable row level security on every table and replace &quot;if true&quot; and test-mode rules with checks on the signed-in user.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/database-rules"><code>checks/security/database-rules</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://supabase.com/docs/guides/database/postgres/row-level-security">supabase.com</a>, <a href="https://firebase.google.com/docs/rules/insecure-rules">firebase.google.com</a></dd></div>
@@ -615,7 +615,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Looks for <code>.github/dependabot.yml</code> (and which ecosystems it covers), Renovate config, or vulnerability scanners in workflows, as listed in <code>data/update-tools.yml</code>.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Set up Dependabot or Renovate for every ecosystem in use.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/dependency-updates"><code>checks/security/dependency-updates</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
@@ -649,7 +649,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files, also with several suffixes like <code>.env.production.local</code> (templates and fixtures excluded), and checks that <code>.gitignore</code> ignores <code>.env</code>; a missing rule is a warning with an <code>.env</code> template, a note when a package manifest lies in any folder.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Add .env to .gitignore; revoke committed values and remove them from the history.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/env-files"><code>checks/security/env-files</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
@@ -785,7 +785,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Reads all lockfiles (<code>src/repo/lockfiles.ts</code>, up to the <code>repo</code> limit in <code>data/thresholds.yml</code>) for the SBOM the report writes to <code>rechtzeitig-sbom.cdx.json</code>, lists manifests without a lockfile in their folder or a parent folder, and never passes when a lockfile gave nothing (too large, Git LFS pointer, invalid), when package files have no parser (<code>data/ecosystems.yml</code>) or when no component was found.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Commit a lockfile for every manifest; keep the SBOM with each release. The CRA covers products with digital elements made available in the EU, usually not pure web services.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/sbom"><code>checks/security/sbom</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
@@ -802,7 +802,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Matches tracked files, including checked-out submodules, line by line against <code>data/secrets.yml</code>, decoding JWT payloads where a pattern names claims (Supabase <code>service_role</code> keys); shows only the first 4 characters and the length of each find, and counts the files it could not read (binary, over the <code>repo</code> limit in <code>data/thresholds.yml</code>, Git LFS pointers).</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Revoke found keys right away, then remove them from code and git history and store them as secrets or environment variables.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/secrets"><code>checks/security/secrets</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
@@ -819,7 +819,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Looks for <code>SECURITY.md</code> in the root, <code>.github/</code> or <code>docs/</code> and for <code>.well-known/security.txt</code> anywhere outside test fixtures, whose <code>Contact</code> and <code>Expires</code> fields it reads; skips repositories without a package manifest in any folder outside fixtures.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Add SECURITY.md with a reporting channel (email or GitHub private vulnerability reporting) and a response time. A SECURITY.md in the organization's .github repository counts too, but is not visible here.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/security-contact"><code>checks/security/security-contact</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/add-security-policy">docs.github.com</a>, <a href="https://www.rfc-editor.org/rfc/rfc9116.html">rfc-editor.org</a></dd></div>
@@ -888,7 +888,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues; high and critical issues in production dependencies fail.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>Runs when</dt><dd>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Update the affected packages to at least the fixed version shown.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/vulnerabilities"><code>checks/security/vulnerabilities</code></a></dd></div>
@@ -906,7 +906,7 @@
 </summary>
 <div class="rule-body"><dl>
 <div><dt>How it is checked</dt><dd>Reads <code>.github/workflows/*.yml</code> and flags, with the patterns in <code>data/workflow-risks.yml</code>, a checkout of the pull request head under <code>pull_request_target</code> or <code>workflow_run</code>, outside-controlled <code>${{ }}</code> expressions in <code>run:</code> or <code>script:</code>, downloads piped into a shell, <code>write-all</code>, and workflows without <code>permissions</code>.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before rechtzeitig.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Pass values like github.event.issue.title to the script via env:; do not check out PR code under pull_request_target; set permissions: contents: read at the top of the workflow; download scripts, verify a checksum, then run them.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/workflow-risks"><code>checks/security/workflow-risks</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.github.com/en/actions/reference/security/secure-use">docs.github.com</a>, <a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions">docs.github.com</a></dd></div>

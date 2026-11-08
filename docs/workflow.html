@@ -43,8 +43,8 @@
 </div></header>
 
 <main id="content">
-  <h1>Set up the rechtzeitig GitHub Action</h1>
-  <p class="lead">Everything you can set when you run rechtzeitig, and what you get back.</p>
+  <h1>Set up the <span class="wm">rechtzeitig</span> GitHub Action</h1>
+  <p class="lead">Everything you can set when you run <span class="wm">rechtzeitig</span>, and what you get back.</p>
 
   <div class="doc">
     <nav class="toc" aria-labelledby="toc-title">
@@ -91,7 +91,7 @@ fail-on: fail # red when a check fails</code></pre>
             <tr><td><code>report-language</code></td><td><code>language</code></td><td><code>de</code> or <code>en</code>. Empty uses <code>language</code>; with <code>all</code> the report is in English.</td></tr>
             <tr><td><code>fail-on</code></td><td><code>never</code></td><td>When the run turns red, see <a href="#fail-on">fail-on</a>.</td></tr>
             <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Pages to visit at most.</td></tr>
-            <tr><td><code>repository</code></td><td>workspace</td><td>Folder with the checked-out repository (lockfiles, workflows, configs). Needs <code>actions/checkout</code> before rechtzeitig.</td></tr>
+            <tr><td><code>repository</code></td><td>workspace</td><td>Folder with the checked-out repository (lockfiles, workflows, configs). Needs <code>actions/checkout</code> before <span class="wm">rechtzeitig</span>.</td></tr>
             <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from the secret <code>IPINFO_TOKEN</code>. Turns on the <a href="checks.html#LEG-EU-DSE-005">third-country check</a>, see <a href="#secrets">Secrets</a>.</td></tr>
             <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> skips the check and sends nothing.</td></tr>
             <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the host runs on green energy (sends the host name). <code>false</code> skips the <a href="checks.html#SUS-HOST-001">check</a> and sends nothing.</td></tr>
@@ -111,7 +111,7 @@ fail-on: fail # red when a check fails</code></pre>
 <thead><tr><th>Check</th><th>Runs when</th></tr></thead>
 <tbody>
 <tr><td>All website checks</td><td>Only with a <code>url</code>.</td></tr>
-<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before rechtzeitig (folder: input <code>repository</code>).</td></tr>
+<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span> (folder: input <code>repository</code>).</td></tr>
 <tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (legal, privacy, security, sustainability, accessibility) or scopes (website, repository; <code>repo</code> still works). Empty runs all.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-001">Cancellation button for subscriptions</a><br><small>LEG-DE-BTN-001</small></td><td>Opt-in: only with <code>subscriptions: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-003">Order button &quot;zahlungspflichtig bestellen&quot;</a><br><small>LEG-DE-BTN-003</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
@@ -180,30 +180,30 @@ fail-on: fail # red when a check fails</code></pre>
             <tr><td><code>rechtzeitig-sbom.cdx.json</code></td><td>SBOM in CycloneDX 1.6 format, with vulnerabilities</td></tr>
           </tbody>
         </table></div>
-        <p class="note">Secret values are redacted, their file and line are not. GitHub deletes the artifact after 7 days. To keep the full report private, run rechtzeitig from a private repository; a website-only scan needs no checkout.</p>
+        <p class="note">Secret values are redacted, their file and line are not. GitHub deletes the artifact after 7 days. To keep the full report private, run <span class="wm">rechtzeitig</span> from a private repository; a website-only scan needs no checkout.</p>
         <h3 id="security-tab">Security tab</h3>
         <p>With <code>sarif-upload: auto</code>, findings also show as code scanning alerts in the <span class="ui">Security</span> tab, which only people with write access see. A weekly run updates the alerts and closes fixed ones. The job needs:</p>
         <pre><code>permissions:
   contents: read
   security-events: write
   actions: read # private repositories only</code></pre>
-        <p>Public repositories have code scanning for free. rechtzeitig skips the upload with a notice for private repositories without GitHub Code Security, for runs from forks or Dependabot, and without <code>security-events: write</code>. The upload never fails the job. <code>false</code> asks GitHub nothing.</p>
+        <p>Public repositories have code scanning for free. <span class="wm">rechtzeitig</span> skips the upload with a notice for private repositories without GitHub Code Security, for runs from forks or Dependabot, and without <code>security-events: write</code>. The upload never fails the job. <code>false</code> asks GitHub nothing.</p>
       </section>
 
       <section id="visit">
         <h2><span class="par">§ 7</span>How the website is visited</h2>
-        <p>Each page loads in a fresh Chromium, without and with JavaScript. Nothing is clicked and no consent is given, so every request and cookie in the report happened before consent. rechtzeitig opens the start page, the legal pages, a sample of other pages, and paths that must not be public (<code>/.env</code>, <code>/.git/config</code>).</p>
+        <p>Each page loads in a fresh Chromium, without and with JavaScript. Nothing is clicked and no consent is given, so every request and cookie in the report happened before consent. <span class="wm">rechtzeitig</span> opens the start page, the legal pages, a sample of other pages, and paths that must not be public (<code>/.env</code>, <code>/.git/config</code>).</p>
         <p class="note">GitHub's runners are in the US, so a banner shown only to EU visitors is missing. Pages behind a login are not checked.</p>
       </section>
 
       <section id="data">
         <h2><span class="par">§ 8</span>Data that leaves the runner</h2>
-        <p>Besides your website and the GitHub API of your repository (the Security tab upload, off with <code>sarif-upload: false</code>), rechtzeitig sends data only to:</p>
+        <p>Besides your website and the GitHub API of your repository (the Security tab upload, off with <code>sarif-upload: false</code>), <span class="wm">rechtzeitig</span> sends data only to:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>
             <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Name and version of all locked components, for example <code>pkg:npm/lodash@4.17.21</code>, including internal packages</td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
-            <tr><td><a class="sends" href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of third-party servers that rechtzeitig does not know</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
+            <tr><td><a class="sends" href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of third-party servers that <span class="wm">rechtzeitig</span> does not know</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
             <tr><td><a class="sends" href="https://www.thegreenwebfoundation.org">api.thegreenwebfoundation.org</a></td><td>Host name of the start page, for example <code>www.example.de</code></td><td>By default, when a website is scanned. Turn it off with <code>green-hosting: false</code></td></tr>
           </tbody>
         </table></div>
@@ -211,8 +211,8 @@ fail-on: fail # red when a check fails</code></pre>
 
       <section id="safe">
         <h2><span class="par">§ 9</span>Safe use</h2>
-        <p class="note">Never run rechtzeitig on <code>pull_request_target</code>: it gives code from a fork your secrets and a write token. Use <code>workflow_dispatch</code>, <code>schedule</code>, <code>push</code> or <code>pull_request</code>.</p>
-        <p>Check out with <code>persist-credentials: false</code>; rechtzeitig needs no token.</p>
+        <p class="note">Never run <span class="wm">rechtzeitig</span> on <code>pull_request_target</code>: it gives code from a fork your secrets and a write token. Use <code>workflow_dispatch</code>, <code>schedule</code>, <code>push</code> or <code>pull_request</code>.</p>
+        <p>Check out with <code>persist-credentials: false</code>; <span class="wm">rechtzeitig</span> needs no token.</p>
         <p>The scanned site is untrusted, so Chrome runs with its sandbox; without one the scan stops (<code>require-sandbox: false</code> scans anyway, only for sites you trust). No request reaches private addresses except the host of <code>url</code>.</p>
         <p>The action sets up Node 24, which stays on the <code>PATH</code>. Set up your own Node after it, or use a separate job.</p>
       </section>
@@ -223,7 +223,7 @@ fail-on: fail # red when a check fails</code></pre>
       </section>
 
       <section id="no-issues">
-        <h2><span class="par">§ 11</span>Why rechtzeitig opens no issues</h2>
+        <h2><span class="par">§ 11</span>Why <span class="wm">rechtzeitig</span> opens no issues</h2>
         <p>On a public repository, issues would point everyone to a weakness of your site. If you want one anyway, add a step that reads <code>rechtzeitig-report.json</code> and runs <code>gh issue create</code>.</p>
       </section>
     </div>
