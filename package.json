@@ -1,6 +1,6 @@
 {
   "name": "rechtzeitig",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "GitHub Action that checks a website and its repository for German legal basics (GDPR, DDG, TDDDG), security and an SBOM.",
   "type": "module",
