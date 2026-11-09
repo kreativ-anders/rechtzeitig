@@ -199,8 +199,11 @@ export const emptySnapshot = (finalUrl: string): Snapshot => ({
   status: 0, finalUrl, headers: {}, meta: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
 });
 
-/** Loads a URL once in the given browser context and records what a visitor gets without clicking anything. */
-export async function capture(context: BrowserContext, url: string, js: boolean, timeout: number): Promise<Snapshot> {
+/**
+ * Loads a URL once in the given browser context and records what a visitor gets without clicking anything.
+ * `idle` is the longest wait for the network to settle after load; tests shorten it to reach the deadline sooner.
+ */
+export async function capture(context: BrowserContext, url: string, js: boolean, timeout: number, idle = IDLE): Promise<Snapshot> {
   const page = await context.newPage();
   // With the cache off, every page answers with its own headers, and checks see each file as a first visit would.
   await context.newCDPSession(page).then((cdp) => cdp.send("Network.setCacheDisabled", { cacheDisabled: true })).catch(() => {});
@@ -229,7 +232,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
   const before = new Set((await context.cookies()).map(cookieKey));
   const load = async (): Promise<Snapshot> => {
     const response = await page.goto(url, { waitUntil: "load", timeout });
-    if (js) await page.waitForLoadState("networkidle", { timeout: IDLE }).catch(() => {});
+    if (js) await page.waitForLoadState("networkidle", { timeout: idle }).catch(() => {});
     const dom = await page.evaluate(readDom);
     const storage = js
       ? await page.evaluate(() => {
@@ -264,7 +267,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     };
   };
   // page.evaluate has no timeout: a page that never yields (while (true) {}) would block the scan forever.
-  const [deadline, stop] = timeoutAfter(2 * timeout + IDLE, "page did not finish loading in time");
+  const [deadline, stop] = timeoutAfter(2 * timeout + idle, "page did not finish loading in time");
   try {
     return await Promise.race([load(), deadline]);
   } catch (e) {
