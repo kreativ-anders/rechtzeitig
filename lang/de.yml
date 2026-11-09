@@ -796,6 +796,80 @@ messages:
       one: "{count} Action nutzt ein Tag statt eines Commit-SHA. Ein verschobenes Tag kann den ausgeführten Code ändern."
       other: "{count} Actions nutzen ein Tag statt eines Commit-SHA. Ein verschobenes Tag kann den ausgeführten Code ändern."
     pinned: "Alle Actions sind auf einen Commit-SHA festgelegt."
+  security/agent-config-hidden-unicode:
+    no_files: "Keine Agenten-Anweisungen und keine Quelldateien."
+    found:
+      one: "{count} Datei mit unsichtbaren Zeichen. Was Prüfende sehen, ist nicht, was Agent oder Compiler lesen."
+      other: "{count} Dateien mit unsichtbaren Zeichen. Was Prüfende sehen, ist nicht, was Agent oder Compiler lesen."
+    where_instructions: "Agenten-Anweisungen"
+    where_code: "Code"
+    class_bidi:
+      one: "{count} Steuerzeichen für die Schreibrichtung in {where}: Es kann die Anzeige des Textes umordnen (Trojan Source)."
+      other: "{count} Steuerzeichen für die Schreibrichtung in {where}: Sie können die Anzeige des Textes umordnen (Trojan Source)."
+    class_tags:
+      one: "{count} Unicode-Tag-Zeichen in {where}: unsichtbarer Text, den ein Modell trotzdem liest."
+      other: "{count} Unicode-Tag-Zeichen in {where}: unsichtbarer Text, den ein Modell trotzdem liest."
+    class_zero_width:
+      one: "{count} Zeichen ohne Breite in {where}."
+      other: "{count} Zeichen ohne Breite in {where}."
+    class_marks:
+      one: "{count} unsichtbare Richtungsmarke in {where}."
+      other: "{count} unsichtbare Richtungsmarken in {where}."
+    class_variation_selectors:
+      one: "{count} Variantenselektor in {where}: Er kann Bytes hinter einem sichtbaren Zeichen verstecken."
+      other: "{count} Variantenselektoren in {where}: Sie können Bytes hinter einem sichtbaren Zeichen verstecken."
+    more: "und {count} weitere"
+    none:
+      one: "Keine unsichtbaren Zeichen in {count} Datei."
+      other: "Keine unsichtbaren Zeichen in {count} Dateien."
+  security/agent-config-secrets:
+    no_files: "Keine Konfiguration für KI-Agenten oder MCP."
+    secret: "{name} ({length} Zeichen)"
+    literal: "{name} enthält einen festen Wert ({length} Zeichen) statt eines Verweises auf eine Umgebungsvariable."
+    flag: "Ein Zugangsschlüssel wird als Kommandozeilen-Argument übergeben ({length} Zeichen)."
+    found:
+      one: "{count} Zugangsschlüssel in der Konfiguration von KI-Agenten oder MCP. Widerrufen und durch einen Verweis auf eine Umgebungsvariable ersetzen."
+      other: "{count} Zugangsschlüssel in der Konfiguration von KI-Agenten oder MCP. Widerrufen und durch Verweise auf Umgebungsvariablen ersetzen."
+    public_keys:
+      one: "{count} Schlüssel in der Agenten-Konfiguration, der öffentlich gedacht sein kann. Prüfen, ob er eingeschränkt ist."
+      other: "{count} Schlüssel in der Agenten-Konfiguration, die öffentlich gedacht sein können. Prüfen, ob jeder eingeschränkt ist."
+    more: "und {count} weitere"
+    none:
+      one: "Keine Zugangsschlüssel in {count} Agenten-Datei."
+      other: "Keine Zugangsschlüssel in {count} Agenten-Dateien."
+  security/agent-permissions:
+    no_files: "Keine Agenten-Konfiguration, keine Skripte und keine Workflows."
+    allow_all: "{rule} erlaubt dem Agenten jeden Shell-Befehl ohne Rückfrage."
+    bypass_mode: "defaultMode {mode} überspringt jede Rückfrage."
+    all_mcp_servers: "enableAllProjectMcpServers startet jeden MCP-Server aus .mcp.json ohne Rückfrage, auch solche, die ein Pull Request hinzufügt."
+    codex_unsafe: "approval_policy „never“ mit Sandbox „danger-full-access“: Der Agent führt alles ohne Sandbox aus."
+    unpinned: "MCP-Server {server} startet {pkg} ohne feste Version: Jeder Start führt aus, was zuletzt veröffentlicht wurde."
+    http: "MCP-Server {server} wird über unverschlüsseltes http:// erreicht. Jeder im Netz kann lesen und ändern, was der Agent bekommt."
+    filesystem_root: "MCP-Server {server} bekommt {root}: die ganze Platte oder den Home-Ordner, mit Schlüsseln und anderen Projekten."
+    skip_flag: "{flag} schaltet jede Freigabe des Agenten ab."
+    found:
+      one: "{count} Blanko-Recht für einen KI-Agenten."
+      other: "{count} Blanko-Rechte für KI-Agenten."
+    more: "und {count} weitere"
+    none:
+      one: "{count} Agenten-Konfiguration oder Skript geprüft, kein Blanko-Recht."
+      other: "{count} Agenten-Konfigurationen und Skripte geprüft, kein Blanko-Recht."
+  security/agent-workflows:
+    no_workflows: "Keine GitHub-Workflows."
+    no_agents:
+      one: "{count} Workflow geprüft, kein KI-Agent darin."
+      other: "{count} Workflows geprüft, kein KI-Agent darin."
+    injection: "{agent} bekommt {expr} unter {trigger}. Wer diesen Text schreibt, kann dem Agenten sagen, was er mit seinen Secrets und dem Token tun soll."
+    injection_readonly: "{agent} bekommt {expr} unter {trigger}. Wer diesen Text schreibt, steuert den Agenten; Secrets oder Schreibrechte hat er hier nicht."
+    open_to_all: "{agent} hat {input}: „*“ unter {trigger}, also kann jeder ihn starten, und sein Token kann Code ändern."
+    open_to_all_limited: "{agent} hat {input}: „*“ unter {trigger}, also kann jeder ihn starten. Sein Token kann keinen Code ändern; die Werkzeuge so eng halten."
+    risky:
+      one: "{count} Schritt mit KI-Agent, der Text liest, den Außenstehende bestimmen."
+      other: "{count} Schritte mit KI-Agent, die Text lesen, den Außenstehende bestimmen."
+    more: "und {count} weitere"
+    none:
+      one: "{count} Schritt mit KI-Agent geprüft, keiner liest fremden Text mit Rechten."
+      other: "{count} Schritte mit KI-Agent geprüft, keiner liest fremden Text mit Rechten."
   security/database-rules:
     nothing: "Keine Supabase-Migrationen oder Firebase-Regeln im Repository."
     no_rls: "Supabase-Tabelle „{table}“ hat keine Row Level Security."
@@ -826,6 +900,30 @@ messages:
       other: "{count} .env-Dateien sind eingecheckt. Ihre Werte stehen in der Git-Historie."
     not_ignored: ".gitignore ignoriert .env nicht. „.env“ ergänzen, damit lokale Secrets nicht versehentlich eingecheckt werden."
     none: "Keine .env-Datei eingecheckt."
+  security/hallucinated-packages:
+    no_dependencies: "Kein Manifest deklariert Abhängigkeiten."
+    not_locked: "{name} fehlt in {lockfile}: nie installiert. Das Paket gibt es vielleicht nicht, oder das Lockfile ist veraltet."
+    typo: "{name} ist einen Buchstaben von {of} entfernt. Prüfen, ob es das gemeinte Paket ist."
+    scope: "{name} sieht aus wie eine Kopie von {of} ohne Scope."
+    found:
+      one: "{count} Abhängigkeit prüfen: womöglich erfunden, vertippt oder nie installiert."
+      other: "{count} Abhängigkeiten prüfen: womöglich erfunden, vertippt oder nie installiert."
+    more: "und {count} weitere"
+    none:
+      one: "{count} deklarierte Abhängigkeit mit {lockfiles} Lockfile(s) verglichen: keine fehlt, keine ähnelt einem verbreiteten Paket."
+      other: "{count} deklarierte Abhängigkeiten mit {lockfiles} Lockfile(s) verglichen: keine fehlt, keine ähnelt einem verbreiteten Paket."
+  security/lockfile-drift:
+    no_lockfiles: "Keine Lockfiles und keine Manifeste."
+    managers: "Lockfiles von {managers} nebeneinander ({files}). Jedes Werkzeug installiert andere Versionen."
+    package_manager: "packageManager nennt {manager}, das Lockfile hier ist aber {files}."
+    stale: "{name}: Das Manifest verlangt {spec}, {lockfile} hat {locked}. Neu installieren, damit das Lockfile passt."
+    found:
+      one: "{count} Stelle, an der Manifest und Lockfile nicht übereinstimmen."
+      other: "{count} Stellen, an denen Manifest und Lockfile nicht übereinstimmen."
+    more: "und {count} weitere"
+    none:
+      one: "{count} Manifest passt zu seinem Lockfile."
+      other: "{count} Manifeste passen zu ihren Lockfiles."
   legal/licenses:
     commons_clause: "Projekt: {project}. GPL-3.0 § 7 erlaubt Empfängern, „weitere Beschränkungen“ zu entfernen; die Commons Clause greift daher womöglich nicht."
     restricted: "{name}@{version}: {license}. Schränkt die Nutzung ein, oft die kommerzielle."

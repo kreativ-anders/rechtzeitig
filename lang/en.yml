@@ -752,6 +752,80 @@ messages:
       one: "{count} action uses a tag instead of a commit SHA. A moved tag can change the code that runs."
       other: "{count} actions use a tag instead of a commit SHA. A moved tag can change the code that runs."
     pinned: "All actions are pinned to a commit SHA."
+  security/agent-config-hidden-unicode:
+    no_files: "No agent instruction files or source files."
+    found:
+      one: "{count} file with hidden characters. What the reviewer sees is not what the agent or compiler reads."
+      other: "{count} files with hidden characters. What the reviewer sees is not what the agent or compiler reads."
+    where_instructions: "agent instructions"
+    where_code: "code"
+    class_bidi:
+      one: "{count} bidirectional control character in {where}: it can reorder how the text is shown (Trojan Source)."
+      other: "{count} bidirectional control characters in {where}: they can reorder how the text is shown (Trojan Source)."
+    class_tags:
+      one: "{count} Unicode tag character in {where}: invisible text that a model still reads."
+      other: "{count} Unicode tag characters in {where}: invisible text that a model still reads."
+    class_zero_width:
+      one: "{count} zero-width character in {where}."
+      other: "{count} zero-width characters in {where}."
+    class_marks:
+      one: "{count} invisible direction mark in {where}."
+      other: "{count} invisible direction marks in {where}."
+    class_variation_selectors:
+      one: "{count} variation selector in {where}: it can hide bytes behind a visible character."
+      other: "{count} variation selectors in {where}: they can hide bytes behind a visible character."
+    more: "and {count} more"
+    none:
+      one: "No hidden characters in {count} file."
+      other: "No hidden characters in {count} files."
+  security/agent-config-secrets:
+    no_files: "No AI agent or MCP config files."
+    secret: "{name} ({length} chars)"
+    literal: "{name} holds a literal value ({length} chars) instead of a reference to an environment variable."
+    flag: "A credential is passed as a command line argument ({length} chars)."
+    found:
+      one: "{count} credential in AI agent or MCP config. Revoke it and use an environment variable reference."
+      other: "{count} credentials in AI agent or MCP config. Revoke them and use environment variable references."
+    public_keys:
+      one: "{count} key in agent config that may be public by design. Check that it is restricted."
+      other: "{count} keys in agent config that may be public by design. Check that each is restricted."
+    more: "and {count} more"
+    none:
+      one: "No credentials in {count} agent file."
+      other: "No credentials in {count} agent files."
+  security/agent-permissions:
+    no_files: "No AI agent config, scripts or workflows."
+    allow_all: "{rule} allows the agent every shell command without asking."
+    bypass_mode: "defaultMode {mode} skips every permission prompt."
+    all_mcp_servers: "enableAllProjectMcpServers starts every MCP server in .mcp.json without asking, also ones a pull request adds."
+    codex_unsafe: 'approval_policy "never" with sandbox "danger-full-access": the agent runs anything without a sandbox.'
+    unpinned: "MCP server {server} starts {pkg} without a fixed version: each start runs whatever was published last."
+    http: "MCP server {server} is reached over plain http://. Anyone on the network can read and change what the agent gets."
+    filesystem_root: "MCP server {server} gets {root}: the whole disk or home folder, with keys and other projects."
+    skip_flag: "{flag} turns off every approval of the agent."
+    found:
+      one: "{count} blanket permission for an AI agent."
+      other: "{count} blanket permissions for AI agents."
+    more: "and {count} more"
+    none:
+      one: "{count} agent config or script checked, no blanket permission."
+      other: "{count} agent configs and scripts checked, no blanket permission."
+  security/agent-workflows:
+    no_workflows: "No GitHub workflows."
+    no_agents:
+      one: "{count} workflow checked, no AI agent in it."
+      other: "{count} workflows checked, no AI agent in them."
+    injection: "{agent} gets {expr} under {trigger}. Whoever writes that text can tell the agent what to do with its secrets and token."
+    injection_readonly: "{agent} gets {expr} under {trigger}. Whoever writes that text steers the agent; it has no secrets or write rights here."
+    open_to_all: '{agent} has {input}: "*" under {trigger}, so anyone can start it, and its token can change code.'
+    open_to_all_limited: '{agent} has {input}: "*" under {trigger}, so anyone can start it. Its token cannot change code; keep its tools that narrow.'
+    risky:
+      one: "{count} AI agent step that reads text an outsider controls."
+      other: "{count} AI agent steps that read text an outsider controls."
+    more: "and {count} more"
+    none:
+      one: "{count} AI agent step checked, none reads outside text with privileges."
+      other: "{count} AI agent steps checked, none reads outside text with privileges."
   security/database-rules:
     nothing: "No Supabase migrations or Firebase rules in the repository."
     no_rls: 'Supabase table "{table}" has no row level security.'
@@ -782,6 +856,30 @@ messages:
       other: "{count} .env files are committed. Their values are in the git history."
     not_ignored: '.gitignore does not ignore .env. Add ".env" so local secrets are not committed by accident.'
     none: "No .env file is committed."
+  security/hallucinated-packages:
+    no_dependencies: "No dependencies declared in a manifest."
+    not_locked: "{name} is not in {lockfile}: never installed. It may not exist, or the lockfile is stale."
+    typo: "{name} is one letter away from {of}. Check that it is the package you mean."
+    scope: "{name} looks like an unscoped copy of {of}."
+    found:
+      one: "{count} dependency to check: possibly made up, misspelled or never installed."
+      other: "{count} dependencies to check: possibly made up, misspelled or never installed."
+    more: "and {count} more"
+    none:
+      one: "{count} declared dependency checked against {lockfiles} lockfile(s): none missing, none like a typo of a popular package."
+      other: "{count} declared dependencies checked against {lockfiles} lockfile(s): none missing, none like a typo of a popular package."
+  security/lockfile-drift:
+    no_lockfiles: "No lockfiles or manifests."
+    managers: "Lockfiles of {managers} side by side ({files}). Each tool installs different versions."
+    package_manager: "packageManager names {manager}, but the lockfile here is {files}."
+    stale: "{name}: the manifest asks for {spec}, {lockfile} has {locked}. Install again to update the lockfile."
+    found:
+      one: "{count} place where manifest and lockfile disagree."
+      other: "{count} places where manifest and lockfile disagree."
+    more: "and {count} more"
+    none:
+      one: "{count} manifest matches its lockfile."
+      other: "{count} manifests match their lockfiles."
   legal/licenses:
     commons_clause: 'Project: {project}. GPL-3.0 § 7 lets recipients remove "further restrictions", so the Commons Clause may not hold.'
     restricted: "{name}@{version}: {license}. Restricts use, often commercial use."

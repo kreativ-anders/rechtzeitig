@@ -29,9 +29,11 @@ Ordered by value per effort. The first seven need only a new `data/*.yml` and th
 11. Third-party hosts in templates and styles without a website scan, as a warning. With a URL, `privacy/google-fonts-source` covers Google Fonts.
 12. SBOM fields as BSI TR-03183-2 asks: hashes, supplier, dependency graph (CRA Annex I Part II).
 13. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go). Needs a registry API, so a switch.
-14. Package names that look like typos of popular ones.
+14. Registry lookup for `security/hallucinated-packages`: ask each registry's official API (npm registry, PyPI JSON API, crates.io, Packagist, pub.dev) whether a declared name exists and when it was first published, so a made-up or days-old name is a finding even when it is locked. Only package names leave the runner. On by default with an opt-out input (`registry-lookups: false`), listed in `SWITCHES` and in "Data that leaves the runner". The offline part (names missing from the lockfile, look-alikes of popular names) is done.
 15. Infrastructure code: Terraform security groups open to `0.0.0.0/0`, public buckets, privileged Kubernetes pods.
 16. AI model files and references (weights, Hugging Face model IDs) with their licenses (Llama, OpenRAIL) in the license check.
+17. A parser for `bun.lock` (JSON with comments). Without it, `hallucinated-packages` and `lockfile-drift` skip folders with a Bun lockfile, which projects from AI app builders often have next to `package-lock.json`.
+18. MCP servers in Codex `config.toml` (`[mcp_servers.*]`) for `agent-permissions`; today only its approval and sandbox settings are read.
 
 ## Next: repository and website together
 

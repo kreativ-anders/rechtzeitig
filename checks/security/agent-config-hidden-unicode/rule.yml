@@ -1,0 +1,20 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-AGENT-002
+severity: high
+title:
+  de: "Keine unsichtbaren Zeichen in Agenten-Regeln und Quellcode"
+  en: "No hidden characters in agent rules and source code"
+legal_basis:
+  de: "CRA Art. 13 Abs. 1 i. V. m. Anhang I Teil I Nr. 2 Buchst. f, Integrität von Programmen und Konfiguration (ab 11.12.2027); Art. 32 DSGVO"
+  en: "CRA Art. 13(1) with Annex I Part I(2)(f), integrity of programs and configuration (from 11 Dec 2027); Art. 32 GDPR"
+how: "Reads agent instruction files (`data/agent-files.yml`) and source files and workflows (extensions in `data/hidden-unicode.yml`, test files left out) and flags, by the code point ranges in `data/hidden-unicode.yml`, bidirectional overrides and isolates (Trojan Source, CVE-2021-42574) and Unicode tag characters in both, and zero-width characters, directional marks and variation selector supplements in instruction files; a byte order mark at the start, a zero-width joiner between emoji and tags inside emoji flags are left out, and the hidden text is never shown."
+fix_hint:
+  de: "Die Datei in einem Editor öffnen, der unsichtbare Zeichen anzeigt, die Zeichen entfernen und prüfen, wer sie eingebracht hat; der Text kann versteckte Anweisungen an den Agenten oder umgedrehten Code enthalten."
+  en: "Open the file in an editor that shows invisible characters, remove them and check who added them; the text may hold hidden instructions for the agent or reordered code."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj
+  - https://nvd.nist.gov/vuln/detail/CVE-2021-42574
+  - https://www.unicode.org/reports/tr9/
+  - https://www.unicode.org/charts/PDF/UE0000.pdf

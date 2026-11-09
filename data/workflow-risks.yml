@@ -30,3 +30,26 @@ pr_head:
 
 # A download piped straight into a shell.
 pipe_to_shell: '\b(curl|wget)\b[^|\n]*\|\s*(sudo\s+)?(ba|z|da)?sh\b'
+
+# AI agents in workflows (security/agent-workflows). An agent that reads text an outsider wrote
+# can be told to do anything its token and secrets allow (prompt injection).
+# Actions that run an AI agent or model, matched on `uses:` before the "@", case-insensitive.
+ai_agent_actions:
+  - anthropics/claude-code-action
+  - anthropics/claude-code-base-action
+  - google-github-actions/run-gemini-cli
+  - openai/codex-action
+  - actions/ai-inference
+  - qodo-ai/pr-agent
+  - codium-ai/pr-agent
+# Agent command lines in run: steps.
+ai_agent_commands: '\b(claude\s+(-p|--print)\b|codex\s+exec\b|gemini\s+(-p|--prompt)\b|@anthropic-ai/claude-code\b|@openai/codex\b|@google/gemini-cli\b|aider\s+--message\b)'
+# Triggers anyone with a GitHub account can start, with secrets available.
+outsider_triggers: [issues, issue_comment, discussion, discussion_comment, pull_request_target, pull_request_review, pull_request_review_comment, workflow_run]
+# Action inputs that let users without write access start the agent; "*" means everyone.
+open_to_all: [allowed_non_write_users]
+# An `if:` that limits the job or step to members, so outsiders cannot start it.
+member_gate: 'author_association|github\.actor\s*==|github\.triggering_actor\s*==|\.user\.login\s*=='
+# Token scopes that let an agent change code, releases or cloud access. id-token: write lets
+# anthropics/claude-code-action authenticate as its GitHub App, which can write contents.
+code_write_scopes: [contents, pull-requests, actions, packages, deployments, id-token]
