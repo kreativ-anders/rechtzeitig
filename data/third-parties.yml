@@ -9,6 +9,10 @@
 # cookies: regular expressions for the vendor's cookie names
 # packages: npm packages of the vendor's SDK; a trailing * matches a prefix. Compared with the
 #          privacy policy by privacy/sdks-in-privacy-policy.
+# ids:     regular expressions for the vendor's account or tag ids in code; group 1 is the id.
+#          Compared with the site by privacy/tracking-ids-vs-consent.
+# forms:   regular expressions for code that sends a form to the vendor: endpoint URLs (with //, so a
+#          bare host in a list does not count), SDK imports (import, require), form attributes. Compared with the privacy policy by privacy/form-receiver.
 # advice:  shown in the report, one text per report language (de, en)
 
 - name: Google Fonts
@@ -45,6 +49,9 @@
   purpose: analytics
   consent: required
   country: US
+  ids:
+    - '(?<=["''`=/ ])(G-(?=[A-Z0-9]*\d)[A-Z0-9]{8,12})(?=["''`&\s;,)/]|$)'
+    - '(?<=["''`=/ ])(UA-\d{4,10}-\d{1,4})(?=["''`&\s;,)/]|$)'
   packages: [react-ga4, react-ga, vue-gtag, ga-4-react, '@analytics/google-analytics']
   cookies: ['^_ga', '^_gid$', '^_gat']
 
@@ -53,6 +60,8 @@
   purpose: tag manager
   consent: required
   country: US
+  ids:
+    - '(?<=["''`=/ ])(GTM-(?=[A-Z0-9]*\d)[A-Z0-9]{6,8})(?=["''`&\s;,)/]|$)'
   packages: [react-gtm-module, '@analytics/google-tag-manager', vue-gtm, '@gtm-support/*']
   names: [google tag manager, tag manager]
 
@@ -61,6 +70,8 @@
   purpose: advertising
   consent: required
   country: US
+  ids:
+    - '(?<=["''`=/ ])(AW-\d{9,11})(?=["''`&\s;,)/]|$)'
   names: [google ads, adsense, doubleclick]
   cookies: ['^_gcl_', '^IDE$', '^test_cookie$']
 
@@ -126,6 +137,8 @@
   purpose: advertising
   consent: required
   country: US
+  ids:
+    - 'fbq\(\s*["'']init["'']\s*,\s*["''](\d{15,16})["'']'
   packages: [react-facebook-pixel]
   names: [facebook, meta]
   cookies: ['^_fbp$', '^_fbc$', '^fr$']
@@ -135,6 +148,8 @@
   purpose: advertising
   consent: required
   country: US
+  ids:
+    - '_linkedin_partner_id\s*=\s*["'']?(\d{5,8})\b'
   names: [linkedin]
   cookies: ['^li_', '^bcookie$', '^lidc$', '^UserMatchHistory$']
 
@@ -150,6 +165,8 @@
   purpose: advertising
   consent: required
   country: CN
+  ids:
+    - 'ttq\.load\(\s*["'']([A-Z0-9]{20})["'']'
   names: [tiktok]
   cookies: ['^_ttp$']
 
@@ -166,6 +183,9 @@
   purpose: analytics
   consent: required
   country: US
+  ids:
+    - 'clarity\.ms/tag/["''+\s]*([a-z0-9]{8,12})\b'
+    - 'Clarity\.init\(\s*["'']([a-z0-9]{8,12})["'']'
   packages: ['@microsoft/clarity', react-microsoft-clarity]
   names: [clarity]
   cookies: ['^_clck$', '^_clsk$', '^CLID$']
@@ -175,6 +195,9 @@
   purpose: analytics
   consent: required
   country: MT
+  ids:
+    - '\bhjid\s*:\s*(\d{6,8})\b'
+    - 'Hotjar\.init\(\s*(\d{6,8})\b'
   packages: ['@hotjar/browser', react-hotjar]
   cookies: ['^_hj']
 
@@ -475,3 +498,84 @@
   country: FR
   names: [mistral]
   packages: ['@mistralai/mistralai', '@ai-sdk/mistral']
+
+- name: Formspree
+  hosts: [formspree.io]
+  purpose: form receiver
+  consent: check
+  country: US
+  forms: ['//formspree\.io/f/', '(from|import|require\()\s*["'']@formspree/(react|ajax)']
+
+- name: EmailJS
+  hosts: [emailjs.com]
+  purpose: form receiver
+  consent: check
+  forms: ['//api\.emailjs\.com/', '(from|import|require\()\s*["''](@emailjs/browser|emailjs-com)["'']']
+
+- name: Web3Forms
+  hosts: [web3forms.com]
+  purpose: form receiver
+  consent: check
+  forms: ['//api\.web3forms\.com/']
+
+- name: Getform
+  hosts: [getform.io]
+  purpose: form receiver
+  consent: check
+  forms: ['//getform\.io/f/']
+
+- name: Basin
+  hosts: [usebasin.com]
+  purpose: form receiver
+  consent: check
+  forms: ['//usebasin\.com/f/']
+
+- name: FormSubmit
+  hosts: [formsubmit.co]
+  purpose: form receiver
+  consent: check
+  forms: ['//formsubmit\.co/']
+
+- name: Netlify Forms
+  hosts: [api.netlify.com]
+  purpose: form receiver
+  consent: check
+  country: US
+  names: [netlify]
+  forms: ['<form\b[^>]{0,300}\s(data-)?netlify(=["'']?true["'']?)?[\s>/]']
+
+- name: HubSpot
+  hosts: [hsforms.com, hsforms.net, hubspot.com, hs-scripts.com, hscollectedforms.net]
+  purpose: forms and marketing
+  consent: required
+  country: US
+  forms: ['//[\w.-]*hsforms\.(com|net)/', 'hbspt\.forms\.create\(']
+
+- name: Typeform
+  hosts: [typeform.com]
+  purpose: form receiver
+  consent: required
+  country: ES
+  forms: ['//form\.typeform\.com/to/', '(from|import|require\()\s*["'']@typeform/embed']
+
+- name: Tally
+  hosts: [tally.so]
+  purpose: form receiver
+  consent: required
+  country: BE
+  forms: ['//tally\.so/(r|embed)/']
+
+- name: Jotform
+  hosts: [jotform.com]
+  purpose: form receiver
+  consent: required
+  country: US
+  forms: ['//form\.jotform\.com/', '//[\w.-]*jotform\.com/jsform/']
+
+- name: Google Forms
+  hosts: [forms.gle]
+  purpose: form receiver
+  consent: required
+  country: US
+  names: [google forms, google formulare]
+  forms: ['//docs\.google\.com/forms/', '//forms\.gle/']

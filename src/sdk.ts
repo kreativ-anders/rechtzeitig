@@ -563,6 +563,10 @@ export interface Vendor {
   advice?: Localized;
   /** npm packages of the vendor's SDK; a trailing * matches a prefix ("@sentry/*"). */
   packages?: string[];
+  /** Regular expressions for the vendor's account or tag ids in code (group 1 is the id, else the whole match). */
+  ids?: string[];
+  /** Regular expressions for code that sends a form to the vendor (endpoint URLs, SDK imports, form attributes). */
+  forms?: string[];
 }
 
 export interface ScanContext {
@@ -608,6 +612,8 @@ export interface ScanContext {
   links(concept: string, from: Snapshot | Link[]): Link[];
   /** true when the text contains a concept from lang/*.yml (`text`, or `links` if not found there). */
   says(concept: string, text: string): boolean;
+  /** What a concept from lang/*.yml matches in the text, normalized, once each (`text`, or `links` if not found there). */
+  matches(concept: string, text: string): string[];
   /** true when the text contains the phrase as whole words, both normalized. */
   mentions(text: string, phrase: string): boolean;
   /** Link on the start page for a concept, and the page it leads to (if it was visited). */
@@ -620,6 +626,8 @@ export interface ScanContext {
   trackingCookie(name: string): Vendor | undefined;
   /** Known vendor whose SDK has this npm package name (`packages` in data/third-parties.yml). */
   packageVendor(name: string): Vendor | undefined;
+  /** Every vendor in data/third-parties.yml, in file order. */
+  vendors: Vendor[];
   /** Short form of a URL for reports: path for the same site, full URL otherwise. */
   short(url: string): string;
 }
@@ -778,6 +786,72 @@ export function directPackages(repo: RepoContext): { packages: DirectPackage[]; 
 /** Files the project wrote itself and ships: tracked, without fixtures, tests, node_modules, lockfiles, minified and map files. */
 const NOT_OWN = /(^|\/)(fixtures?|__snapshots__|__tests__|node_modules|vendor)\/|(^|[\/.])(test|spec)\.[cm]?[jt]sx?$|\.lock$|-lock\.(json|yaml)$|\.min\.(js|css)$|\.map$/;
 export const ownFiles = (repo: RepoContext): string[] => repo.files.filter((f) => !NOT_OWN.test(f));
+
+/** A line of the project's own files that a pattern matched. */
+export interface CodeMatch {
+  file: string;
+  line: number;
+  match: RegExpExecArray;
+  /** Index of the pattern that matched. */
+  pattern: number;
+}
+
+/**
+ * Lines of the project's own files (`ownFiles`) whose path matches `files` and that one of the patterns matches,
+ * at most one match per pattern and line, and the files of that kind that could not be read (too large, Git LFS pointer),
+ * so a check can tell a clean result from one it could not see.
+ */
+export function grepFiles(repo: RepoContext, files: { test(path: string): boolean }, patterns: RegExp[]): { matches: CodeMatch[]; unread: string[] } {
+  const matches: CodeMatch[] = [];
+  const unread: string[] = [];
+  const res = patterns.map((re) => new RegExp(re.source, re.flags.replace("g", "")));
+  for (const file of ownFiles(repo).filter((f) => files.test(f))) {
+    const text = repo.read(file);
+    if (text === undefined) {
+      if (repo.coverage.large.includes(file) || repo.coverage.lfs.includes(file)) unread.push(file);
+      continue;
+    }
+    text.split("\n").forEach((line, i) => {
+      res.forEach((re, pattern) => {
+        const m = re.exec(line);
+        if (m) matches.push({ file, line: i + 1, match: m, pattern });
+      });
+    });
+  }
+  return { matches, unread };
+}
+
+/** A path regex for files with one of these extensions. */
+export const extensions = (list: string[]) => new RegExp(`\\.(${list.map((e) => e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})$`, "i");
+
+// ---------- Consent tools (data/consent-tools.yml)
+
+const CONSENT = loadYaml<{ packages: string[]; scripts: string[]; files: string[]; env: string }>("data/consent-tools.yml");
+const ENV_FILE = new RegExp(CONSENT.env);
+const CODE_EXT = extensions(CONSENT.files);
+/** Templates, code and config of the project that can load a script or hold a tag id, and tracked .env files. */
+export const CODE_FILES = { test: (f: string) => CODE_EXT.test(f) || ENV_FILE.test(f) };
+
+/** Consent tools the repository installs (package) or loads (script line of a hosted platform). */
+export interface ConsentInRepo {
+  packages: DirectPackage[];
+  scripts: CodeMatch[];
+  /** Code files that could not be read. */
+  unread: string[];
+}
+
+export function consentInRepo(repo: RepoContext): ConsentInRepo {
+  const packages = directPackages(repo).packages.filter((p) => CONSENT.packages.some((c) => packageMatches(p.name, c)));
+  const { matches, unread } = grepFiles(repo, CODE_FILES, CONSENT.scripts.map((s) => new RegExp(s, "i")));
+  return { packages, scripts: matches, unread };
+}
+
+/** What the live start page shows of consent: a banner with an accept button, and the consent platforms it contacted. */
+export function consentOnSite(ctx: ScanContext): { banner: boolean; platforms: string[] } {
+  const banner = ctx.links("consent_accept", startLinks(ctx).filter((l) => l.area === "banner")).length > 0;
+  const platforms = [...thirdPartyServices(ctx).values()].filter((s) => s.vendor?.purpose === "consent management").map((s) => s.name);
+  return { banner, platforms };
+}
 
 // ---------- Database rules (Supabase, Firebase)
 

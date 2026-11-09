@@ -1,6 +1,6 @@
 # Roadmap
 
-rechtzeitig is a CI tool for technical decision makers. The repository scan is the core; the website scan is an add-on that reads the start page, the legal pages and a small sample of other pages (`max-pages`), not the whole site. German comes first, but every word of a report comes from `lang/*.yml`, so a new language is one new file.
+rechtzeitig is a CI tool for technical decision makers. The core is the repository and the live website together: findings that only a scan of both can give, such as a tracking id in the code that loads before consent or a hosting provider the privacy policy does not name. Each side also has its own checks. The website scan reads the start page, the legal pages and a small sample of other pages (`max-pages`), not the whole site. German comes first, but every word of a report comes from `lang/*.yml`, so a new language is one new file.
 
 Items are listed in order of priority.
 
@@ -35,14 +35,15 @@ Ordered by value per effort. The first seven need only a new `data/*.yml` and th
 
 ## Next: repository and website together
 
-Findings that only a scan of both can give (`defineCrossCheck`). Seven exist: database rules of the project the site uses, secrets in the served JavaScript, SDKs in the code against the privacy policy, Google Fonts with their source in the repository, source maps that expose repository files, security headers from hosting configs, and the deployed `security.txt`.
+Findings that only a scan of both can give (`defineCrossCheck`). Thirteen exist: database rules of the project the site uses, secrets in the served JavaScript, SDKs in the code against the privacy policy, Google Fonts with their source in the repository, source maps that expose repository files, security headers from hosting configs, the deployed `security.txt`, template data in the legal texts, the hosting provider in the privacy policy, tracking ids from the code before consent, a consent tool in the repository that is not active on the site, form receivers in the privacy policy, and dev servers or debug builds in production.
 
 1. AI SDKs in the code compared with the AI labeling on the site (Art. 50 AI Act). Today `privacy/sdks-in-privacy-policy` only checks that the privacy policy names the AI provider; telling a chat feature from server-side use is not precise enough yet.
-2. Imprint and privacy texts in the repository compared with the rendered pages.
+2. Imprint and privacy texts in the repository compared with the rendered pages, beyond the template data `legal/placeholder-legal-texts` finds.
 3. Security headers from `next.config` `headers()`, nginx and helmet. `security/headers-deployed` reads `vercel.json`, `firebase.json`, `netlify.toml`, `_headers` and `.htaccess`.
 4. SDK packages of other ecosystems (Composer, PyPI) in `data/third-parties.yml`; today only npm.
 5. Third-party hosts in templates other than Google Fonts (maps, video embeds, CDNs), with the repository line, like `privacy/google-fonts-source`.
 6. Client-side JS libraries in the served bundle compared with the lockfile, to tell an old deployed build from the repository.
+7. Error monitoring and session replay configured in the code (Sentry `sendDefaultPii`, replay sample rates, LogRocket, FullStory) against consent and the privacy policy (Art. 5, 13, 25 DSGVO, § 25 TDDDG). Needs telling browser from server config apart.
 
 ## Next: website
 
@@ -52,7 +53,7 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 2. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
 3. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
 4. The accessibility information for shops (BFSG, § 14 and Anlage 3) or the accessibility statement with feedback contact for public bodies (BITV 2.0 § 7). Selected axe-core rules run since the accessibility checks `alt-text`, `form-labels`, `control-names` and `contrast`; more rules only when they are as unambiguous.
-5. Forms that send to another site: receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO).
+5. Forms that send to another site the repository does not name (a CMS, a plugin): receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO). `privacy/form-receiver` covers receivers the repository names.
 6. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
 7. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.
 8. A named natural person as editorially responsible when the site has journalistic content, blog, news or podcast (§ 18 Abs. 2 MStV).

@@ -39,6 +39,12 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
       const t = normalize(text);
       return patternsFor(lang, group, concept).some((re) => re.test(t));
     },
+    matches: (concept, text) => {
+      const group = lang.text[concept] ? "text" : "links";
+      const t = normalize(text);
+      const found = patternsFor(lang, group, concept).flatMap((re) => [...t.matchAll(new RegExp(re.source, "gi"))].map((m) => m[0].trim()));
+      return [...new Set(found.filter(Boolean))];
+    },
     // Whole words only: "meta" is not in "metadaten".
     mentions: (text, phrase) => {
       const p = normalize(phrase).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -54,6 +60,7 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
     vendor: (host) => registry.vendor(host),
     trackingCookie: (name) => registry.trackingCookie(name),
     packageVendor: (name) => registry.packageVendor(name),
+    vendors: registry.vendors,
     short: (u) => {
       try {
         const parsed = new URL(u);

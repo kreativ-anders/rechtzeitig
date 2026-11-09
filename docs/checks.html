@@ -93,7 +93,7 @@
   <div id="list">
 <!-- checks:start -->
 <section class="module" id="legal" data-module="legal">
-<h3>Legal <small>15 rules</small></h3>
+<h3>Legal <small>16 rules</small></h3>
 <div class="rules">
 <details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a button labeled &quot;verträge hier kündigen&quot; on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and &quot;jetzt kündigen&quot; (`cancel_confirm`) on its target page; info when it cannot be followed. subscriptions">
 <summary>
@@ -250,6 +250,23 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-DE-IMP-004" data-module="legal" data-scope="both" data-severity="high" data-search="leg-de-imp-004 legal/placeholder-legal-texts imprint and privacy policy without template data impressum und datenschutzerklärung ohne vorlagendaten § 5(1) ddg (german digital services act); art. 13(1)(a) gdpr looks for template data (`placeholder` in `lang/*.yml`: max mustermann, musterstraße, lorem ipsum, [firmenname], example.com addresses, +49 123 456…, de123456789) line by line in the live imprint and privacy policy and in the repository's legal page files (extensions and paths in `data/legal-texts.yml`); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-IMP-004<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">Imprint and privacy policy without template data</span>
+<span class="rule-title-de" lang="de">Impressum und Datenschutzerklärung ohne Vorlagendaten</span>
+<span class="rule-law">§ 5(1) DDG (German Digital Services Act); Art. 13(1)(a) GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Looks for template data (<code>placeholder</code> in <code>lang/*.yml</code>: Max Mustermann, Musterstraße, Lorem ipsum, [Firmenname], example.com addresses, +49 123 456…, DE123456789) line by line in the live imprint and privacy policy and in the repository's legal page files (extensions and paths in <code>data/legal-texts.yml</code>); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Replace the template data with the provider's real details (name, postal address, email, phone, register, VAT ID) and deploy again.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/placeholder-legal-texts"><code>checks/legal/placeholder-legal-texts</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-DE-PRICE-001" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-de-price-001 legal/price-details prices with vat, shipping, base price and 30-day price preisangaben mit mwst., versand, grundpreis und 30-tage-preis §§ 3, 4, 6 and 11 pangv (german price indication ordinance) on every visited own page, legal and shipping pages left out, that shows a price (`price` in `data/shop.yml`) and a cart or buy link (`shop` in `lang/*.yml`), warns without `vat_included` and `shipping_costs`, for a `quantity` without `unit_price` or `base_price`, and for a struck-through price without `lowest_price` unless `rrp` is named. sales">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-PRICE-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
@@ -359,7 +376,7 @@
 </div>
 </section>
 <section class="module" id="privacy" data-module="privacy">
-<h3>Privacy and consent <small>12 rules</small></h3>
+<h3>Privacy and consent <small>16 rules</small></h3>
 <div class="rules">
 <details class="rule" id="LEG-EU-CNS-007" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-007 privacy/consent-equal-choice rejecting is as visible as accepting in the consent banner ablehnen ist im consent-banner so sichtbar wie zustimmen § 25 tdddg, art. 4(11) and art. 7 gdpr in the start page's banner with javascript, compares the largest accept button (`consent_accept`) with the largest reject button (`consent_reject`) and warns when reject has under half the area, under 80 % of the font size, or a wcag contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/thresholds.yml`), or when a banner button uses shaming words (`consent_shaming`).">
 <summary>
@@ -410,6 +427,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-reject"><code>checks/privacy/consent-reject</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-CNS-010" data-module="privacy" data-scope="both" data-severity="high" data-search="leg-eu-cns-010 privacy/consent-tool-not-active consent tool from the repository is active on the site consent-tool aus dem repository ist auf der website aktiv § 25(1) tdddg; art. 6(1)(a), art. 7 gdpr finds a consent tool in the repository (`packages` and loader `scripts` in `data/consent-tools.yml`) and, when the start page shows no banner with an accept button while services with `consent: required` in `data/third-parties.yml` load: fails when the repository loads a hosted platform the site never contacted, warns when the platform loaded or for a self-hosted library.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-010<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">Consent tool from the repository is active on the site</span>
+<span class="rule-title-de" lang="de">Consent-Tool aus dem Repository ist auf der Website aktiv</span>
+<span class="rule-law">§ 25(1) TDDDG; Art. 6(1)(a), Art. 7 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds a consent tool in the repository (<code>packages</code> and loader <code>scripts</code> in <code>data/consent-tools.yml</code>) and, when the start page shows no banner with an accept button while services with <code>consent: required</code> in <code>data/third-parties.yml</code> load: fails when the repository loads a hosted platform the site never contacted, warns when the platform loaded or for a self-hosted library.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Check that the consent tool is part of the deployed build (right environment, domain enabled at the provider, script before the trackers) and that it blocks the trackers until consent.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-tool-not-active"><code>checks/privacy/consent-tool-not-active</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.datenschutzkonferenz-online.de/media/oh/OH_Digitale_Dienste.pdf">datenschutzkonferenz-online.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="LEG-EU-CNS-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-005 privacy/consent-withdraw-link consent can be changed or withdrawn later einwilligung lässt sich später ändern oder widerrufen art. 7(3) gdpr, § 25 tdddg when the start page has a consent banner (`consent_accept` in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (`consent_settings`, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.">
@@ -463,6 +497,23 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-EU-DSE-008" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-008 privacy/form-receiver privacy policy names where forms send their data datenschutzerklärung nennt die empfänger der formulare art. 13(1)(e) and (f), art. 28, art. 44 gdpr finds form backends in the repository's templates, code and config (`forms` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and forms on the visited pages whose action host the repository names, then looks for each receiver's `names` as whole words in the privacy policy; a receiver outside the eea (`data/countries.yml`) without third-country wording gives info.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-DSE-008<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Privacy policy names where forms send their data</span>
+<span class="rule-title-de" lang="de">Datenschutzerklärung nennt die Empfänger der Formulare</span>
+<span class="rule-law">Art. 13(1)(e) and (f), Art. 28, Art. 44 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds form backends in the repository's templates, code and config (<code>forms</code> in <code>data/third-parties.yml</code>, files in <code>data/consent-tools.yml</code>) and forms on the visited pages whose action host the repository names, then looks for each receiver's <code>names</code> as whole words in the privacy policy; a receiver outside the EEA (<code>data/countries.yml</code>) without third-country wording gives info.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Name the form service as recipient (processor) with purpose, legal basis, storage period and country, for a provider outside the EU with the basis of the transfer. Or send the form to your own server.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/form-receiver"><code>checks/privacy/form-receiver</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-EU-CNS-006" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-006 privacy/google-consent-mode google tags report no consent before a choice google-tags melden vor der einwilligung keine zustimmung § 25 tdddg, art. 7 gdpr; google consent mode is no legal requirement but a technical signal reads the consent parameters of requests to google measurement and ads endpoints (`data/google-tags.yml`) made before any click: a `gcs` state with ad or analytics storage granted or a tcf string in `gdpr_consent` fails, no readable `gcs` warns, only denied passes; `gcd` is ignored, because google sends it with or without consent mode.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-006<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
@@ -495,6 +546,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/google-fonts-source"><code>checks/privacy/google-fonts-source</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-bayern.de/Content/Document/Y-300-Z-BECKRS-B-2022-N-612">gesetze-bayern.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-DSE-007" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-007 privacy/hosting-in-policy privacy policy names the hosting provider datenschutzerklärung nennt den hoster art. 13(1)(e) and (f), art. 28, art. 44 gdpr finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy; outside the eea (`data/countries.yml`) without third-country wording gives info, one side alone is a skip.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-DSE-007<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Privacy policy names the hosting provider</span>
+<span class="rule-title-de" lang="de">Datenschutzerklärung nennt den Hoster</span>
+<span class="rule-law">Art. 13(1)(e) and (f), Art. 28, Art. 44 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds the hosting provider when a deploy file in the repository (<code>files</code>, <code>contains</code> in <code>data/hosting.yml</code>) and a response header of the live start page (<code>headers</code> there) agree, then looks for its <code>names</code> as whole words in the privacy policy; outside the EEA (<code>data/countries.yml</code>) without third-country wording gives info, one side alone is a skip.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Name the hosting provider as processor with address, purpose (serving the site, server logs) and legal basis; for a provider outside the EU, the basis of the transfer (for example the Data Privacy Framework or standard contractual clauses).</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/hosting-in-policy"><code>checks/privacy/hosting-in-policy</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="LEG-EU-DSE-006" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-006 privacy/sdks-in-privacy-policy privacy policy names the services in the code datenschutzerklärung nennt die dienste aus dem code art. 13(1)(e) gdpr maps the runtime dependencies of every `package.json` (not devdependencies) to services by `packages` in `data/third-parties.yml`, leaves out those the visited pages contacted (`privacy/vendors-in-privacy-policy` covers them), and looks for the rest by `names` as whole words in the privacy policy; an unreadable `package.json` gives info, never a pass.">
@@ -550,6 +618,23 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-EU-CNS-009" data-module="privacy" data-scope="both" data-severity="high" data-search="leg-eu-cns-009 privacy/tracking-ids-vs-consent tracking ids from the code do not load before consent tracking-ids aus dem code laden nicht vor der einwilligung § 25(1) tdddg; art. 6(1)(a) gdpr finds tag and account ids of tracking services in the repository's templates, code, config and tracked .env files (`ids` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and looks for each in the urls the visited pages requested without a click, or in their served code while the vendor was contacted: loaded fails with the line, an id not loaded warns only when neither the site (banner, consent platform) nor the repository (packages, loader scripts in `data/consent-tools.yml`) has a consent tool.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-CNS-009<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">Tracking ids from the code do not load before consent</span>
+<span class="rule-title-de" lang="de">Tracking-IDs aus dem Code laden nicht vor der Einwilligung</span>
+<span class="rule-law">§ 25(1) TDDDG; Art. 6(1)(a) GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds tag and account ids of tracking services in the repository's templates, code, config and tracked .env files (<code>ids</code> in <code>data/third-parties.yml</code>, files in <code>data/consent-tools.yml</code>) and looks for each in the URLs the visited pages requested without a click, or in their served code while the vendor was contacted: loaded fails with the line, an id not loaded warns only when neither the site (banner, consent platform) nor the repository (packages, loader scripts in <code>data/consent-tools.yml</code>) has a consent tool.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Load the tag only after consent, for example through the consent tool (script blocking) or Google Consent Mode with default &quot;denied&quot; and no cookies before.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/tracking-ids-vs-consent"><code>checks/privacy/tracking-ids-vs-consent</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.datenschutzkonferenz-online.de/media/oh/OH_Digitale_Dienste.pdf">datenschutzkonferenz-online.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-EU-DSE-004" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-004 privacy/vendors-in-privacy-policy privacy policy names the services the site uses datenschutzerklärung nennt die genutzten dienste art. 13(1)(e) gdpr for every contacted third-party service, looks for its name (`names` in `data/third-parties.yml`, else its domain) as a whole word in the privacy policy.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-004<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
@@ -570,7 +655,7 @@
 </div>
 </section>
 <section class="module" id="security" data-module="security">
-<h3>Security <small>27 rules</small></h3>
+<h3>Security <small>28 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-DEPS-005" data-module="security" data-scope="repository" data-severity="low" data-search="sec-deps-005 security/actions-pinning github actions are pinned to a commit github actions sind auf einen commit gepinnt cra art. 13(5), due diligence for third-party components (from 11 dec 2027) reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit sha.">
 <summary>
@@ -672,6 +757,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/dependency-updates"><code>checks/security/dependency-updates</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-EXP-004" data-module="security" data-scope="both" data-severity="high" data-search="sec-exp-004 security/dev-build-deployed no development server or debug build in production keine entwicklungs- oder debug-builds in produktion art. 32 gdpr looks for traces of a dev server or debug build (`live` in `data/dev-builds.yml`: vite client, next.js and webpack hmr, react and vue development builds, django debug page, werkzeug debugger), each only where and in the form the tool emits it (served scripts, html, request urls or error probes), and for dev start commands in deploy files and `package.json` start scripts and debug switches in settings files (`commands`, `settings` there): both sides fail, only the site warns, only a deploy file gives info.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-EXP-004<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">No development server or debug build in production</span>
+<span class="rule-title-de" lang="de">Keine Entwicklungs- oder Debug-Builds in Produktion</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Looks for traces of a dev server or debug build (<code>live</code> in <code>data/dev-builds.yml</code>: Vite client, Next.js and webpack HMR, React and Vue development builds, Django DEBUG page, Werkzeug debugger), each only where and in the form the tool emits it (served scripts, HTML, request URLs or error probes), and for dev start commands in deploy files and <code>package.json</code> start scripts and debug switches in settings files (<code>commands</code>, <code>settings</code> there): both sides fail, only the site warns, only a deploy file gives info.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Serve the production build (for example next build and next start, vite build with static hosting, gunicorn instead of runserver) and turn debug mode off (DEBUG=False, APP_DEBUG=false).</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/dev-build-deployed"><code>checks/security/dev-build-deployed</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Grundschutz/IT-GS-Kompendium_Einzel_PDFs_2023/06_APP_Anwendungen/APP_3_2_Webserver_Edition_2023.pdf?__blob=publicationFile&amp;v=3">bsi.bund.de</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-DNS-001" data-module="security" data-scope="website" data-severity="medium" data-search="sec-dns-001 security/email-dns domain is protected against email spoofing domain ist gegen e-mail-spoofing geschützt art. 32 gdpr reads the spf txt record of the registrable domain and the dmarc record at `_dmarc.`; flags missing ones, spf that allows every server (`+all`, `?all`) and dmarc `p=none`.">

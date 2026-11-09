@@ -1,0 +1,77 @@
+# Hosting providers, recognized from both sides (privacy/hosting-in-policy):
+# a deploy file in the repository and a response header of the live start page. One side alone is no finding.
+#
+# files:    regular expressions for repository paths that deploy to the provider
+# contains: optional regular expression the file must contain (for generic names like app.yaml or CNAME)
+# headers:  response header name → regular expression for its value, case-insensitive ('' = any value)
+# country:  ISO code of the group that processes the data, as in data/third-parties.yml
+# names:    how a privacy policy would name the provider, as whole words
+#
+# Every header was seen in a real response of a site on that provider (curl -sI, 2026-11-09); the site is named
+# per entry. A provider whose header could not be confirmed is not listed (AWS Amplify: CloudFront headers only).
+
+# Seen on https://vercel.com: server: Vercel, x-vercel-id: fra1::…
+- name: Vercel
+  files: ['(^|/)vercel\.json$']
+  headers: { x-vercel-id: '', server: '^vercel$' }
+  country: US
+  names: [vercel]
+
+# Seen on https://www.netlify.com: server: Netlify, x-nf-request-id: 01M…
+- name: Netlify
+  files: ['(^|/)netlify\.toml$']
+  headers: { x-nf-request-id: '', server: '^netlify' }
+  country: US
+  names: [netlify]
+
+# Seen on https://fly.io: server: Fly/366e4bf88 (2026-10-27), fly-request-id: 01M…-fra
+- name: Fly.io
+  files: ['(^|/)fly\.toml$']
+  headers: { fly-request-id: '', server: '^fly/' }
+  country: US
+  names: [fly.io]
+
+# Seen on https://render.com: rndr-id: 7b15…, x-render-origin-server: Render
+- name: Render
+  files: ['(^|/)render\.ya?ml$']
+  headers: { rndr-id: '', x-render-origin-server: '' }
+  country: US
+  names: [render.com, render services]
+
+# Seen on https://railway.com: server: railway-hikari, x-railway-request-id: 9rlT…, x-railway-edge: ber1
+- name: Railway
+  files: ['(^|/)railway\.(json|toml)$']
+  headers: { x-railway-request-id: '', server: '^railway' }
+  country: US
+  names: [railway]
+
+# Seen on https://www.cloudflare.com: server: cloudflare, cf-ray: a57d…-FRA
+- name: Cloudflare
+  files: ['(^|/)wrangler\.(toml|json|jsonc)$']
+  headers: { cf-ray: '', server: '^cloudflare$' }
+  country: US
+  names: [cloudflare]
+
+# Seen on https://python-getting-started.herokuapp.com: server: Heroku, via: 2.0 heroku-router
+- name: Heroku
+  files: ['^Procfile$', '(^|/)app\.json$']
+  contains: 'heroku|^web:'
+  headers: { via: 'vegur|heroku-router', server: '^heroku$' }
+  country: US
+  names: [heroku, salesforce]
+
+# Seen on https://golang-org.appspot.com: server: Google Frontend
+- name: Google Cloud
+  files: ['(^|/)app\.ya?ml$']
+  contains: '^runtime:'
+  headers: { server: '^google frontend$' }
+  country: US
+  names: [google cloud, app engine]
+
+# Seen on https://pages.github.com: server: GitHub.com, x-github-request-id: 0FB8:…
+- name: GitHub Pages
+  files: ['(^|/)CNAME$', '^\.github/workflows/.*\.ya?ml$']
+  contains: '^[a-z0-9.-]+\.[a-z]{2,}\s*$|actions/deploy-pages@'
+  headers: { x-github-request-id: '', server: '^github\.com$' }
+  country: US
+  names: [github]

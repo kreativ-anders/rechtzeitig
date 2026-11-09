@@ -56,6 +56,7 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       third_country: ["Drittland", "Drittstaaten", "USA", "Vereinigte Staaten", "Data Privacy Framework", "Angemessenheitsbeschluss", "Standardvertragsklauseln"],
       consent_optional: ["Statistik", "Analyse", "Marketing", "Werbung", "Personalisierung", "Externe Medien", "Komfort"],
       consent_shaming: ["Nein, ich möchte keine besseren Angebote", "Ich möchte nicht sparen", "Ich zahle lieber den vollen Preis", "Ich bevorzuge eine schlechtere Website"],
+      placeholder: ["Max Mustermann", "Musterstraße 1", "12345 Musterstadt", "Musterfirma GmbH", "Lorem ipsum dolor sit amet", "[Firmenname]", "info@beispiel.de", "Telefon: +49 123 456789", "Tel. 0123 / 456 78", "Fax 01234-56789", "USt-IdNr.: DE 123 456 789"],
     },
   },
   en: {
@@ -104,6 +105,7 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       third_country: ["Third countries", "United States", "U.S.", "Data Privacy Framework", "Adequacy decision", "Standard contractual clauses"],
       consent_optional: ["Statistics", "Analytics", "Marketing", "Advertising", "Personalization", "External media"],
       consent_shaming: ["No, I don't want better offers", "I don't want to save", "I'd rather pay full price", "I prefer worse ads"],
+      placeholder: ["Lorem ipsum dolor sit amet", "John Doe", "Your Company Name", "123 Main Street", "[Company Name]", "hello@example.com", "(555) 123-4567", "555-0199"],
     },
   },
 };

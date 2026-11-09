@@ -1,0 +1,17 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-DSE-007
+severity: medium
+title:
+  de: "Datenschutzerklärung nennt den Hoster"
+  en: "Privacy policy names the hosting provider"
+legal_basis:
+  de: "Art. 13 Abs. 1 lit. e und f, Art. 28, Art. 44 DSGVO"
+  en: "Art. 13(1)(e) and (f), Art. 28, Art. 44 GDPR"
+how: "Finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy; outside the EEA (`data/countries.yml`) without third-country wording gives info, one side alone is a skip."
+fix_hint:
+  de: "Den Hoster als Auftragsverarbeiter mit Anschrift, Zweck (Bereitstellung der Website, Server-Logs) und Rechtsgrundlage nennen; bei einem Sitz außerhalb der EU die Grundlage der Übermittlung (z. B. Data Privacy Framework, Standardvertragsklauseln)."
+  en: "Name the hosting provider as processor with address, purpose (serving the site, server logs) and legal basis; for a provider outside the EU, the basis of the transfer (for example the Data Privacy Framework or standard contractual clauses)."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj

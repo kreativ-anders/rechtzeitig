@@ -23,6 +23,15 @@ const patterns: Array<[string, RegExp]> = [
     .flatMap(([group, list]) => list.map((p): [string, RegExp] => [`shop.yml ${group}`, new RegExp(p, "i")])),
   ["update-tools.yml renovate", new RegExp(loadYaml<{ renovate: string }>("data/update-tools.yml").renovate)],
   ...data("probes.yml").filter((p) => p.expect).map((p): [string, RegExp] => [`probes.yml ${p.path}`, new RegExp(p.expect, "m")]),
+  ...data("third-parties.yml").flatMap((v) => [...((v.ids ?? []) as unknown as string[]), ...((v.forms ?? []) as unknown as string[])])
+    .map((p): [string, RegExp] => [`third-parties.yml ${p}`, new RegExp(p, "i")]),
+  ...loadYaml<{ scripts: string[] }>("data/consent-tools.yml").scripts.map((p): [string, RegExp] => [`consent-tools.yml ${p}`, new RegExp(p, "i")]),
+  ...(() => {
+    const d = loadYaml<{ live: Array<{ pattern: string }>; commands: string[]; settings: string[] }>("data/dev-builds.yml");
+    return [...d.live.map((l) => l.pattern), ...d.commands, ...d.settings].map((p): [string, RegExp] => [`dev-builds.yml ${p}`, new RegExp(p)]);
+  })(),
+  ...data("hosting.yml").flatMap((h) => Object.values(h.headers as unknown as Record<string, string>))
+    .map((p): [string, RegExp] => [`hosting.yml ${p}`, new RegExp(p, "i")]),
   ...Object.entries({ ...all.links, ...all.text })
     .flatMap(([concept, res]) => res.map((re): [string, RegExp] => [`lang ${concept}`, re])),
 ];
