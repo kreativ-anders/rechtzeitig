@@ -84,6 +84,8 @@ export interface CodePattern {
   not_paths?: string;
   /** Not a find when the same line also matches this. */
   unless?: string;
+  /** Not a find when the file matches this anywhere (a setting elsewhere in the file that makes the line safe). */
+  unless_file?: string;
   /** Also in lines that are only a comment (data/code-paths.yml `comment`). */
   comments?: boolean;
   /** Matched on the whole file, so it may span lines, instead of line by line. */
@@ -99,6 +101,7 @@ interface Compiled extends CodePattern {
   pathRe?: RegExp;
   notRe?: RegExp;
   unlessRe?: RegExp;
+  unlessFileRe?: RegExp;
 }
 const compiled = new WeakMap<CodePattern[], Compiled[]>();
 function compile(list: CodePattern[]): Compiled[] {
@@ -110,6 +113,7 @@ function compile(list: CodePattern[]): Compiled[] {
       pathRe: p.paths ? new RegExp(p.paths) : undefined,
       notRe: p.not_paths ? new RegExp(p.not_paths) : undefined,
       unlessRe: p.unless ? new RegExp(p.unless, p.flags?.replace("g", "")) : undefined,
+      unlessFileRe: p.unless_file ? new RegExp(p.unless_file, p.flags?.replace("g", "")) : undefined,
     }));
     compiled.set(list, c);
   }
@@ -141,6 +145,7 @@ export function findInCode(repo: RepoContext, files: CodeFile[], set: PatternSet
     const text = repo.read(file);
     if (!text) continue;
     const lines = text.split("\n");
+    const active = patterns.filter((p) => !p.unlessFileRe?.test(text));
     const seen = new Set<string>();
     const add = (p: Compiled, i: number, m: RegExpMatchArray) => {
       const line = lines[i] ?? "";
@@ -153,7 +158,7 @@ export function findInCode(repo: RepoContext, files: CodeFile[], set: PatternSet
       const params: Params = m.groups?.name ? { name: m.groups.name } : {};
       finds.push({ file, line: i + 1, key: p.key, language, level: p.level ?? "fail", ...(Object.keys(params).length ? { params } : {}) });
     };
-    for (const p of patterns) {
+    for (const p of active) {
       if (p.whole) {
         for (const m of text.matchAll(p.re)) add(p, text.slice(0, m.index).split("\n").length - 1, m);
         continue;

@@ -1,0 +1,69 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/onurkanbakirci/promptmeter
+  commit: 44a2b3e406fa59df26c4c652740680b2f4fd5f87
+  license: MIT
+  copyright: "Copyright (c) 2025 onurkanbakirci"
+  paths:
+    ".github/workflows/ci.yml": ".github/workflows/ci.yml"
+label: >-
+  Type check and build block, but tests and lint end in `|| true` ("Continue even if no tests yet"), so they
+  never fail the run.
+expect: [quality/neutralized-ci]
+files:
+  ".github/workflows/ci.yml": |2
+    name: CI
+
+    on:
+      push:
+        branches: [main, master]
+      pull_request:
+        branches: [main, master]
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+
+        strategy:
+          matrix:
+            node-version: [18, 20, 22]
+
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+
+          - name: Setup Node.js ${{ matrix.node-version }}
+            uses: actions/setup-node@v4
+            with:
+              node-version: ${{ matrix.node-version }}
+              cache: 'npm'
+
+          - name: Install dependencies
+            run: npm ci
+
+          - name: Type check
+            run: npm run typecheck
+
+          - name: Build
+            run: npm run build
+
+          - name: Run tests
+            run: npm test || true  # Continue even if no tests yet
+
+      lint:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+
+          - name: Setup Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: '20'
+              cache: 'npm'
+
+          - name: Install dependencies
+            run: npm ci
+
+          - name: Lint
+            run: npm run lint || true  # Continue if no lint config

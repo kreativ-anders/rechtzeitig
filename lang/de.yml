@@ -169,6 +169,7 @@ text:
     - '\bdata privacy framework\b'
     - '\bangemessenheitsbeschluss'
     - '\bstandardvertragsklauseln\b'
+    - '\bausserhalb (der |des )?(eu|europaeischen union|europaeischen wirtschaftsraums?|ewr)\b'
   # Optional cookie categories in a consent banner.
   consent_optional:
     - '\bstatistik'
@@ -521,12 +522,17 @@ messages:
       one: "{count} Anfrage eines Google-Tags meldet Speicher als abgelehnt. Sie erreicht Google trotzdem vor der Einwilligung; siehe „Keine fremden Server vor Einwilligung“."
       other: "{count} Anfragen von Google-Tags melden Speicher als abgelehnt. Sie erreichen Google trotzdem vor der Einwilligung; siehe „Keine fremden Server vor Einwilligung“."
   privacy/third-country:
-    country_unknown: "Land unbekannt für {names}."
+    country_unknown: "Land unbekannt für {names}: nicht in data/third-parties.yml und kein Land per IP (diese Abfrage braucht ipinfo-token)."
     no_services: "Kein Drittanbieter-Dienst kontaktiert."
+    host: "Hoster {name}, Unternehmen mit Sitz in {country} (Antwort-Header {header})."
+    host_by_ip: "Der Server {host} steht laut IP-Adresse in {country} (IPinfo). Das kann ein Edge-Server sein; es zählt der Sitz des Anbieters."
+    host_unknown: "Hoster an den Antwort-Headern nicht erkannt (data/hosting.yml); sein Land wurde nicht geprüft."
+    host_not_covered: "Die Website liegt bei {name} ({country}), außerhalb von EU/EWR, aber die Datenschutzerklärung nennt keine Drittländer."
+    host_ip_outside: "Der Server {host} steht laut IP-Adresse in {country} und die Datenschutzerklärung nennt keine Drittländer; prüfen, wo der Hoster seinen Sitz hat."
     all_unknown:
       one: "Land des einzigen Drittanbieter-Dienstes unbekannt; Übermittlungen außerhalb von EU/EWR ließen sich nicht prüfen."
       other: "Land aller {count} Drittanbieter-Dienste unbekannt; Übermittlungen außerhalb von EU/EWR ließen sich nicht prüfen."
-    none_outside: "Kein Dienst außerhalb von EU/EWR erkannt."
+    none_outside: "Kein Hoster und kein Dienst außerhalb von EU/EWR erkannt."
     covered: "Die Datenschutzerklärung behandelt Übermittlungen außerhalb von EU/EWR."
     not_covered:
       one: "{count} Dienst außerhalb von EU/EWR, aber die Datenschutzerklärung nennt keine Drittländer."
@@ -1306,8 +1312,6 @@ messages:
     unconfirmed: "Deploy-Dateien für {names} im Repository, aber die Header der Startseite zeigen diesen Hoster nicht: ein CDN oder Proxy davor oder ein anderer Hoster."
     missing: "Die Website läuft bei {names} (Deploy-Datei und Antwort-Header stimmen überein), aber die Datenschutzerklärung nennt ihn nicht."
     not_named: "Deploy zu {name} ({country}), Header {header} auf der Website: nicht in der Datenschutzerklärung genannt."
-    no_transfer: "Die Datenschutzerklärung nennt {names}, sagt aber nichts zu Übermittlungen außerhalb der EU/des EWR."
-    third_country: "{name} sitzt in {country}, außerhalb der EU/des EWR."
     named: "Die Datenschutzerklärung nennt den Hoster: {names}."
   privacy/tracking-ids-vs-consent:
     no_ids: "Keine Tag- oder Konto-ID eines bekannten Tracking-Dienstes im Code des Repositorys."

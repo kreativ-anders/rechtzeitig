@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
 import { LANGUAGES, SWITCHES, validateRule, type Rule, type Switch } from "./rules.ts";
-import { checksHtml, crossChecksHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
+import { checksHtml, crossChecksHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, scopeCountHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, defineCrossCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
 import { render } from "./messages.ts";
@@ -113,8 +113,10 @@ test("the generated parts of docs/ are up to date (npm run docs)", async () => {
   const page = (name: string) => readFileSync(new URL(`../docs/${name}`, import.meta.url), "utf8");
   assert.ok(page("checks.html").includes(checksHtml(checks)), "run: npm run docs");
   for (const name of ["checks.html", "workflow.html"]) assert.ok(page(name).includes(switchesHtml(checks)), `run: npm run docs (${name})`);
-  for (const html of [heroChecksHtml(checks), reviewedHtml(checks), crossChecksHtml(checks)]) assert.ok(page("index.html").includes(html), "run: npm run docs (index.html)");
-  for (const html of [heroChecksHtml(checks, "de"), reviewedHtml(checks, "de"), crossChecksHtml(checks, "de")]) assert.ok(page("de/index.html").includes(html), "run: npm run docs (de/index.html)");
+  for (const [name, lang] of [["index.html", "en"], ["de/index.html", "de"]] as const) {
+    const parts = [heroChecksHtml(checks, lang), reviewedHtml(checks, lang), crossChecksHtml(checks, lang), ...SCOPES.map((s) => scopeCountHtml(checks, s, lang))];
+    for (const html of parts) assert.ok(page(name).includes(html), `run: npm run docs (${name})`);
+  }
   assert.ok(page("security.html").includes(topicRulesHtml(securityChecks(checks))), "run: npm run docs (security.html)");
   assert.ok(page("de/kuendigungsbutton.html").includes(topicRulesHtml(shopChecks(checks), "de")), "run: npm run docs (de/kuendigungsbutton.html)");
 });

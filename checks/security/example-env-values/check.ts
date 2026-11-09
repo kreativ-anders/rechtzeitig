@@ -2,7 +2,7 @@ import { FIXTURES, capped, defineRepoCheck, loadYaml, msg, pass, skip, warn, typ
 
 const DATA = loadYaml<Record<string, Record<string, string>>>("data/insecure-code.yml")["security/example-env-values"];
 const LIMITS = loadYaml<Record<string, { min_length: number; min_entropy: number }>>("data/thresholds.yml")["security/example-env-values"];
-const TEMPLATE = new RegExp(DATA.templates);
+const TEMPLATE = new RegExp(DATA.templates, "i");
 const SECRET = new RegExp(DATA.secret_names, "i");
 const PUBLIC = new RegExp(DATA.public_names, "i");
 const PLACEHOLDER = new RegExp(DATA.placeholders, "i");

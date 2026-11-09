@@ -44,21 +44,30 @@
       "@id": "https://rechtzeitig.dev/#website",
       "url": "https://rechtzeitig.dev/",
       "name": "rechtzeitig",
-      "inLanguage": ["en", "de"],
-      "publisher": {"@id": "https://kreativ-anders.de/#organization"}
+      "inLanguage": [
+        "en",
+        "de"
+      ],
+      "publisher": {
+        "@id": "https://kreativ-anders.de/#organization"
+      }
     },
     {
       "@type": "Organization",
       "@id": "https://kreativ-anders.de/#organization",
       "name": "kreativ-anders",
       "url": "https://kreativ-anders.de",
-      "founder": {"@id": "https://rechtzeitig.dev/#maintainer"}
+      "founder": {
+        "@id": "https://rechtzeitig.dev/#maintainer"
+      }
     },
     {
       "@type": "Person",
       "@id": "https://rechtzeitig.dev/#maintainer",
       "name": "Manuel Steinberg",
-      "worksFor": {"@id": "https://kreativ-anders.de/#organization"}
+      "worksFor": {
+        "@id": "https://kreativ-anders.de/#organization"
+      }
     },
     {
       "@type": "SoftwareApplication",
@@ -71,8 +80,17 @@
       "isAccessibleForFree": true,
       "license": "https://www.apache.org/licenses/LICENSE-2.0",
       "image": "https://rechtzeitig.dev/og.png",
-      "author": {"@id": "https://kreativ-anders.de/#organization"},
-      "publisher": {"@id": "https://kreativ-anders.de/#organization"}
+      "author": {
+        "@id": "https://kreativ-anders.de/#organization"
+      },
+      "publisher": {
+        "@id": "https://kreativ-anders.de/#organization"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
     },
     {
       "@type": "SoftwareSourceCode",
@@ -84,17 +102,60 @@
       "programmingLanguage": "TypeScript",
       "runtimePlatform": "Node.js",
       "license": "https://www.apache.org/licenses/LICENSE-2.0",
-      "author": {"@id": "https://kreativ-anders.de/#organization"},
-      "maintainer": {"@id": "https://rechtzeitig.dev/#maintainer"},
-      "targetProduct": {"@id": "https://rechtzeitig.dev/#app"}
+      "author": {
+        "@id": "https://kreativ-anders.de/#organization"
+      },
+      "maintainer": {
+        "@id": "https://rechtzeitig.dev/#maintainer"
+      },
+      "targetProduct": {
+        "@id": "https://rechtzeitig.dev/#app"
+      }
     },
     {
       "@type": "FAQPage",
       "@id": "https://rechtzeitig.dev/#faq",
       "mainEntity": [
-        {"@type": "Question", "name": "How do I get the latest version?", "acceptedAnswer": {"@type": "Answer", "text": "The workflow pins a release by its commit SHA. Add .github/dependabot.yml to your repository, and Dependabot opens a pull request for each new release: version: 2 updates: - package-ecosystem: github-actions directory: / schedule: interval: weekly"}},
-        {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default package names and versions go to osv.dev and your host name to the Green Web Foundation; both can be turned off. See Data that leaves the runner."}},
-        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository the run page shows only counts. The findings go to the Security tab, which only people with write access see. See The report."}}
+        {
+          "@type": "Question",
+          "name": "How do I get the latest version?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The workflow pins a release by its commit SHA. Add.github/dependabot.yml to your repository, and Dependabot opens a pull request for each new release: version: 2 updates: - package-ecosystem: github-actions directory: / schedule: interval: weekly"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which laws does it cover?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "German and EU law: GDPR, the German imprint and cookie rules (DDG, TDDDG), consumer rules for shops (BGB), accessibility (BFSG) and the Cyber Resilience Act. The security, license and code checks fit any project. Reports come in English or German. It runs on GitHub Actions; GitHub Enterprise Server is not tested."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will it bury me in warnings?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Each finding is fail for a clear gap, warn for a likely one, or info for something to look at. Checks that do not apply, such as shop rules on a site without a shop, are skipped and say why. The example workflow fails the run only on fail (fail-on)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does any data leave the runner?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your source code does not. By default package names and versions go to osv.dev and your host name to the Green Web Foundation; both can be turned off. See Data that leaves the runner."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who can see the report?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "On a public repository the run page shows only counts. The findings go to the Security tab, which only people with write access see. See The report."
+          }
+        }
       ]
     }
   ]
@@ -113,30 +174,38 @@
 <main id="content">
   <div class="hero">
     <div>
-      <h1>Find the legal and security pitfalls that slip into AI-written code</h1>
-      <p class="lead"><span class="wm">rechtzeitig</span> is a GitHub Action that checks your repository and your live website: imprint (<span lang="de">Impressum</span>), privacy policy, cookie consent, leaked keys, security headers, vulnerable packages. Each finding names the place and the law.</p>
+      <h1>Find the legal and security pitfalls in fast-built and AI-written code</h1>
+      <p class="lead"><span class="wm">rechtzeitig</span> is a vibe code checker for any web project, hand-written or AI-built: a GitHub Action that checks your repository and your live website against German and EU law (GDPR, imprint, cookie consent) and security basics such as leaked keys, headers and vulnerable packages. Each finding names the place and the law.</p>
       <div class="actions">
         <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Copy the workflow</a>
 <!-- hero-checks:start -->
 <a class="button secondary" href="checks.html">See all 94 checks</a>
 <!-- hero-checks:end -->
       </div>
-      <p class="hero-note">Free and open source by <a href="https://kreativ-anders.de">kreativ-anders</a>. No account; your code stays on your runner.</p>
+      <p class="hero-note">Free and open source (Apache-2.0), maintained by Manuel Steinberg at <a href="https://kreativ-anders.de">kreativ-anders</a> in Germany. No account; your code stays on your runner.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<svg class="mark" viewBox="11.3 6.5 9.4 19"><path d="M20.03 22.21C20.03 21.3 19.64 20.4 19 19.6C19.85 18.86 20.68 17.85 20.68 16.59C20.68 13.76 18.81 12.84 16.24 11.58C15.18 11.07 14.5 10.66 14.5 9.58C14.5 8.38 15.02 7.3 16.33 7.3C17.53 7.3 17.83 7.86 17.83 8.36C17.83 8.73 17.5 8.75 17.5 9.46C17.5 9.72 17.9 10.64 18.88 10.64C19.41 10.64 20.17 10.13 20.17 9.49C20.17 7.53 18.49 6.5 16.24 6.5C15.14 6.5 14.06 6.84 13.3 7.53C12.54 8.22 12.11 9.28 12.11 10.04C12.11 11 12.43 11.78 12.91 12.38C12.08 13.09 11.32 14.1 11.32 15.28C11.32 17.09 12.24 18.29 14.79 19.71C15.97 20.35 17.5 21.2 17.5 22.38C17.5 23.91 16.75 24.7 15.71 24.7C14.38 24.7 14.15 23.78 14.15 23.62C14.15 23.29 14.52 23.11 14.52 22.51C14.52 22.26 14.01 21.34 13.05 21.34C12.54 21.34 11.83 21.87 11.83 22.47C11.83 24.49 14.08 25.5 15.76 25.5C18.91 25.5 20.03 23.8 20.03 22.21ZM13.35 12.86C13.67 13.16 14.01 13.37 14.33 13.53C17.39 14.93 18.91 15.76 18.91 17.69C18.91 18.22 18.79 18.68 18.52 19.07C17.92 18.49 17.16 17.96 16.31 17.57C13.78 16.36 13.09 15.3 13.09 14.17C13.09 13.69 13.16 13.25 13.35 12.86Z"/></svg>in time</span></div>
   </div>
 
   <h2 id="start">Add it in one step</h2>
-  <p>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/</code> in your repository and set your <code>url</code>. It runs every Monday and GitHub emails you when a check fails. All options: <a href="workflow.html">Configuration</a>.</p>
+  <ol class="setup">
+    <li>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/</code> in your repository.</li>
+    <li>Set your start page in it. Without a <code>url</code> only the repository is checked.
+      <pre class="excerpt"><code>- uses: kreativ-anders/rechtzeitig@…
+  with:
+    url: https://www.example.com/</code></pre></li>
+    <li>Commit. It runs every Monday; start the first run under <span class="ui">Actions → rechtzeitig → Run workflow</span>. Findings show in the run summary and the Security tab, and GitHub emails you when a check fails.</li>
+  </ol>
+  <p>All options: <a href="workflow.html">Configuration</a>.</p>
 
   <section id="example" aria-labelledby="how">
     <h2 id="how">What it checks</h2>
-    <ul class="covers sides">
-      <li><h3><a href="checks.html#repository">Repository</a></h3><p>Committed keys, known vulnerabilities, licenses, risky workflows, open database rules. Plus a CycloneDX SBOM.</p></li>
-      <li><h3><a href="checks.html#website">Website</a></h3><p>Imprint, privacy policy, cookies before consent, <a href="security.html">security headers and TLS</a>, <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton</a>. Runs when you set a <code>url</code>.</p></li>
-      <li><h3>Both together</h3>
+    <div class="core">
+      <h3><a href="checks.html#both">Repository and website together</a> <span class="count"><!-- count-both:start -->
+13 checks
+<!-- count-both:end --></span></h3>
 <!-- cross-checks:start -->
-<p>13 checks read the repository and the website together. They find what a scan of one side cannot see:</p>
+<p>What a scan of one side cannot see: the code that ships, compared with what the website actually serves and says.</p>
 <ul class="cross-checks">
 <li><a href="checks.html#SEC-DBAI-002">The database the site uses is secured in the repository</a></li>
 <li><a href="checks.html#SEC-SECRETS-003">No secrets in the served JavaScript</a></li>
@@ -153,7 +222,14 @@
 <li><a href="checks.html#SEC-CVD-003">The repository's security.txt is live</a></li>
 </ul>
 <!-- cross-checks:end -->
-      </li>
+    </div>
+    <ul class="covers sides">
+      <li><h3><a href="checks.html#repository">Repository</a> <span class="count"><!-- count-repository:start -->
+31 checks
+<!-- count-repository:end --></span></h3><p>Committed keys, known vulnerabilities, license risks, risky workflows and AI agent settings, insecure shortcuts in code. Plus a CycloneDX SBOM.</p></li>
+      <li><h3><a href="checks.html#website">Website</a> <span class="count"><!-- count-website:start -->
+50 checks
+<!-- count-website:end --></span></h3><p>Imprint, privacy policy, cookies before consent, <a href="security.html">security headers and TLS</a>, accessibility basics, <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton</a>. Runs when you set a <code>url</code>.</p></li>
     </ul>
     <figure class="report">
       <div class="report-head">
@@ -186,7 +262,7 @@
 
   <section id="legal" aria-labelledby="legal-title">
     <h2 id="legal-title">Sources, not advice</h2>
-    <p>Each check names its legal basis and links primary sources: laws, courts, authorities.</p>
+    <p>Each check names its legal basis and links primary sources: laws, courts, authorities. The maintainer, a developer and not a lawyer, checks every rule against those sources; findings are risk hints, not legal advice.</p>
 <!-- reviewed:start -->
 <p class="reviewed">All 94 checks were last reviewed against their sources between <time datetime="2026-11-03">3 November 2026</time> and <time datetime="2026-11-09">9 November 2026</time>. A check not reviewed for a year fails the project's tests.</p>
 <!-- reviewed:end -->
@@ -203,6 +279,14 @@ updates:
     directory: /
     schedule:
       interval: weekly</code></pre>
+    </details>
+    <details id="laws">
+      <summary>Which laws does it cover?</summary>
+      <p>German and EU law: GDPR, the German imprint and cookie rules (DDG, TDDDG), consumer rules for shops (BGB), accessibility (BFSG) and the Cyber Resilience Act. The security, license and code checks fit any project. Reports come in English or German. It runs on GitHub Actions; GitHub Enterprise Server is not tested.</p>
+    </details>
+    <details id="noise">
+      <summary>Will it bury me in warnings?</summary>
+      <p>Each finding is <code>fail</code> for a clear gap, <code>warn</code> for a likely one, or <code>info</code> for something to look at. Checks that do not apply, such as shop rules on a site without a shop, are skipped and say why. The example workflow fails the run only on <code>fail</code> (<code>fail-on</code>).</p>
     </details>
     <details id="data">
       <summary>Does any data leave the runner?</summary>

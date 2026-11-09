@@ -128,7 +128,8 @@ const where = (el) => {
     }
     return "page";
   };
-  for (const code of document.querySelectorAll("pre > code")) {
+  // An excerpt (pre.excerpt) only shows where something goes; copying it would not work, so it gets no button.
+  for (const code of document.querySelectorAll("pre:not(.excerpt) > code")) {
     const pre = code.parentElement;
     const box = document.createElement("div");
     box.className = "codebox";

@@ -1,0 +1,33 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/mayooear/gpt-react-typescript-chrome-extension-starter
+  commit: 862ce005bb66f1f654c1b0b140f633fb94ca2623
+  license: MIT
+  copyright: "Copyright (c) 2023 Mayo"
+  paths:
+    "src/utils/openai.ts": "src/utils/openai.ts"
+    "vite.config.ts": "vite.config.ts"
+    ".env.example": ".env.example"
+label: >-
+  Starter template: the OpenAI client in the extension bundle reads `import.meta.env.VITE_OPENAI_API_KEY`, so
+  Vite inlines the key into code every user can read.
+expect: [security/llm-key-in-browser]
+files:
+  "src/utils/openai.ts": |2
+    import { Configuration, OpenAIApi } from "openai";
+
+    const configuration = new Configuration({
+      apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+    });
+    export const openai = new OpenAIApi(configuration);
+  "vite.config.ts": |2
+    import { defineConfig } from "vite";
+    import react from "@vitejs/plugin-react";
+    import { crx } from "@crxjs/vite-plugin";
+    import manifest from "./manifest.json";
+    // https://vitejs.dev/config/
+    export default defineConfig({
+      plugins: [react(), crx({ manifest })],
+    });
+  ".env.example": |2
+    VITE_Open_AI_Key = "Your API Key"

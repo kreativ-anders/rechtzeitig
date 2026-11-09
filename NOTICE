@@ -34,3 +34,37 @@ data/secrets.yml contains regular expressions adapted from the default configura
 The website scan injects axe-core (https://github.com/dequelabs/axe-core), Copyright (c) Deque Systems, Inc.,
 into the scanned pages. axe-core is an unmodified npm dependency licensed under the Mozilla Public License 2.0
 (https://www.mozilla.org/en-US/MPL/2.0/); its source is available at the URL above and in node_modules/axe-core.
+
+---
+
+test/benchmark/fixtures/real/ contains short, unmodified excerpts of the following projects (credentials replaced by
+generated values), used as test data only. Each is under the license named, whose text is in the project's repository;
+the MIT License text is above.
+
+  https://github.com/projectcalico/calico (Apache-2.0), Copyright (c) Tigera, Inc.
+  https://github.com/mayooear/gpt-react-typescript-chrome-extension-starter (MIT), Copyright (c) 2023 Mayo
+  https://github.com/onurkanbakirci/promptmeter (MIT), Copyright (c) 2025 onurkanbakirci
+  https://github.com/Darshan3690/The-Dev-Pocket (MIT), Copyright (c) 2025 Darshan Rajput
+  https://github.com/microsoft/Github-Copilot-SDK-Automation-Accelerator (MIT), Copyright (c) 2025
+  https://github.com/typpo/astrokit (MIT), Copyright (c) 2016 Ian Webster (http://www.ianww.com)
+  https://github.com/AmbitionEng/django-pghistory (BSD-3-Clause), Copyright (c) 2025, Ambition
+  https://github.com/restackio/boilerplate (Apache-2.0), Contributors of restackio/boilerplate
+  https://github.com/sbgumen/openai-translation-api (MIT), Copyright (c) 2025 阿泽
+  https://github.com/z3r0-g/Deckhand (Apache-2.0), Contributors of z3r0-g/Deckhand
+  https://github.com/tonmcg/US_County_Level_Election_Results_08-24 (MIT), Copyright (c) 2025 Tony McGovern
+  https://github.com/smaran9/softline-infotech.py (Apache-2.0), Contributors of smaran9/softline-infotech.py
+  https://github.com/glotzerlab/hoomd-blue (BSD-3-Clause), Copyright (c) 2009-2026 The Regents of the University of Michigan.
+  https://github.com/vale46n1/immich_duplicate_finder (Apache-2.0), Contributors of vale46n1/immich_duplicate_finder
+  https://github.com/Lemoncode/mongo-modeler (MIT), Copyright (c) 2023 Lemoncode
+  https://github.com/kubeedge/kubeedge (Apache-2.0), Contributors of kubeedge/kubeedge
+  https://github.com/resend/resend-mcp (MIT), Copyright 2026 Plus Five Five, Inc
+  https://github.com/commercetools/ui-kit (MIT), Copyright (c) 2019 commercetools GmbH
+  https://github.com/glovguy/obsidian-gpt-zettelkasten (MIT), Copyright (c) 2023 Karl Smith
+  https://github.com/uiters/office-supplies-backend (MIT), Copyright (c) Microsoft Corporation. All rights reserved.
+  https://github.com/aws/constructs (Apache-2.0), Amazon.com, Inc. or its affiliates
+  https://github.com/open-constructs/projen-pipelines (Apache-2.0), Contributors of open-constructs/projen-pipelines
+  https://github.com/nikovirtala/projen-vitest (MIT), Copyright (c) 2026 Niko Virtala
+  https://github.com/styfle/react-server-example-tsx (MIT), Copyright (c) 2016 Steven
+  https://github.com/TinuK/SolarManager (MIT), Copyright (c) 2025
+  https://github.com/Samiulla-S-AI/CanteenQ (Apache-2.0), Contributors of Samiulla-S-AI/CanteenQ
+  https://github.com/Drowh/FrontQuiz (MIT), Copyright (c) 2025 DrowDev

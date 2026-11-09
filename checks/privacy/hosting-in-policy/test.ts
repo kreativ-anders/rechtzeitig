@@ -20,9 +20,9 @@ test("passes when the policy names the host and third-country transfers", async 
   assert.equal(result.status, "pass");
 });
 
-test("gives info when the host is named but third countries are not", async () => {
+test("passes when the host is named, also without third-country wording: that is privacy/third-country's question", async () => {
   const result = await runCrossCheck(here, await site("Hosting bei Netlify.", { "x-nf-request-id": "01H" }), { "netlify.toml": "[build]\n  publish = \"dist\"\n" });
-  assert.equal(result.status, "info");
+  assert.equal(result.status, "pass");
 });
 
 test("skips when only one side shows the provider", async () => {

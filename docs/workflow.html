@@ -92,7 +92,7 @@ fail-on: fail # red when a check fails</code></pre>
             <tr><td><code>fail-on</code></td><td><code>never</code></td><td>When the run turns red, see <a href="#fail-on">fail-on</a>.</td></tr>
             <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Pages to visit at most.</td></tr>
             <tr><td><code>repository</code></td><td>workspace</td><td>Folder with the checked-out repository (lockfiles, workflows, configs). Needs <code>actions/checkout</code> before <span class="wm">rechtzeitig</span>.</td></tr>
-            <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from the secret <code>IPINFO_TOKEN</code>. Turns on the <a href="checks.html#LEG-EU-DSE-005">third-country check</a>, see <a href="#secrets">Secrets</a>.</td></tr>
+            <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from the secret <code>IPINFO_TOKEN</code>. The <a href="checks.html#LEG-EU-DSE-005">third-country check</a> runs without it, from the countries in <code>data/hosting.yml</code> and <code>data/third-parties.yml</code>; with it, it also looks up the IP country of servers that data does not know, see <a href="#secrets">Secrets</a>.</td></tr>
             <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> skips the check and sends nothing.</td></tr>
             <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the host runs on green energy (sends the host name). <code>false</code> skips the <a href="checks.html#SUS-HOST-001">check</a> and sends nothing.</td></tr>
             <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>Stops the scan when Chrome cannot start with its sandbox. <code>false</code> scans without it, see <a href="#safe">Safe use</a>.</td></tr>
@@ -120,7 +120,6 @@ fail-on: fail # red when a check fails</code></pre>
 <tr><td><a href="checks.html#LEG-DE-AGB-001">Terms and conditions are linked and reachable</a><br><small>LEG-DE-AGB-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-WDR-001">Withdrawal instructions with the model form and a pointer to the withdrawal function</a><br><small>LEG-DE-WDR-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
-<tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to ipinfo.io (opt-in)</a></td></tr>
 <tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
 <tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
 </tbody></table></div>
@@ -152,11 +151,11 @@ fail-on: fail # red when a check fails</code></pre>
 
       <section id="secrets">
         <h2><span class="par">§ 5</span>Secrets</h2>
-        <p>One check needs a token. Without the secret it is skipped and nothing is sent.</p>
+        <p>One lookup needs a token. Without the secret it does not run and nothing is sent; the check it serves still runs on its data.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Secret</th><th scope="col">Input</th><th scope="col">Turns on</th><th scope="col">Token from</th></tr></thead>
           <tbody>
-            <tr><td><code>IPINFO_TOKEN</code></td><td><code>ipinfo-token</code></td><td><a href="checks.html#LEG-EU-DSE-005">Transfers outside the EU</a> (LEG-EU-DSE-005)</td><td><a href="https://ipinfo.io">ipinfo.io</a>, the free plan is enough</td></tr>
+            <tr><td><code>IPINFO_TOKEN</code></td><td><code>ipinfo-token</code></td><td><a href="checks.html#LEG-EU-DSE-005">Transfers outside the EU</a> (LEG-EU-DSE-005): IP country for hosts not in the data</td><td><a href="https://ipinfo.io">ipinfo.io</a>, the free plan is enough</td></tr>
           </tbody>
         </table></div>
         <p>Add it under <span class="ui">Settings → Secrets and variables → Actions</span>. The example workflow already passes it on.</p>
@@ -204,7 +203,7 @@ fail-on: fail # red when a check fails</code></pre>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>
             <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Name and version of all locked components, for example <code>pkg:npm/lodash@4.17.21</code>, including internal packages</td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
-            <tr><td><a class="sends" href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of third-party servers that <span class="wm">rechtzeitig</span> does not know</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
+            <tr><td><a class="sends" href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of the site's own server and of the third-party servers it contacts</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
             <tr><td><a class="sends" href="https://www.thegreenwebfoundation.org">api.thegreenwebfoundation.org</a></td><td>Host name of the start page, for example <code>www.example.de</code></td><td>By default, when a website is scanned. Turn it off with <code>green-hosting: false</code></td></tr>
           </tbody>
         </table></div>

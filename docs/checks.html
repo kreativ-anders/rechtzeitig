@@ -74,7 +74,6 @@
 <tr><td><a href="checks.html#LEG-DE-AGB-001">Terms and conditions are linked and reachable</a><br><small>LEG-DE-AGB-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-WDR-001">Withdrawal instructions with the model form and a pointer to the withdrawal function</a><br><small>LEG-DE-WDR-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
-<tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to ipinfo.io (opt-in)</a></td></tr>
 <tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
 <tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
 </tbody></table></div>
@@ -143,7 +142,7 @@
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>If you ship the software (app, library, browser bundle, container image), the whole work must be under the GPL. Replace the dependency, buy a commercial license or put the project under a fitting GPL version. Software used only in-house is not distributed. A technical hint, not legal advice.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/copyleft-dependencies"><code>checks/legal/copyleft-dependencies</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/urhg/__31.html">gesetze-im-internet.de</a>, <a href="https://www.gnu.org/licenses/gpl-3.0.html">gnu.org</a>, <a href="https://www.gnu.org/licenses/license-list.html">gnu.org</a>, <a href="https://www.gnu.org/licenses/gpl-faq.html">gnu.org</a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/urhg/__31.html">gesetze-im-internet.de</a>, <a href="https://spdx.org/licenses/GPL-3.0-only.html">spdx.org</a>, <a href="https://www.gnu.org/licenses/license-list.html">gnu.org</a>, <a href="https://www.gnu.org/licenses/gpl-faq.html">gnu.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
@@ -228,7 +227,7 @@
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>With AGPL: if you modify the software and offer it to users over a network, you must offer them the source of your version (§ 13), for example with a link on the site. With EUPL, online access already counts as distribution. Libraries used unmodified usually do not trigger § 13; check whether you change them, else replace or license them commercially. A technical hint, not legal advice.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/network-copyleft"><code>checks/legal/network-copyleft</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a>, <a href="https://www.gnu.org/licenses/agpl-3.0.html">gnu.org</a>, <a href="https://eur-lex.europa.eu/eli/dec_impl/2017/863/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a>, <a href="https://spdx.org/licenses/AGPL-3.0-only.html">spdx.org</a>, <a href="https://eur-lex.europa.eu/eli/dec_impl/2017/863/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
@@ -650,18 +649,18 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-007" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-007 privacy/hosting-in-policy privacy policy names the hosting provider datenschutzerklärung nennt den hoster art. 13(1)(e) and (f), art. 28, art. 44 gdpr finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy; outside the eea (`data/countries.yml`) without third-country wording gives info, one side alone is a skip.">
+<details class="rule" id="LEG-EU-DSE-007" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-007 privacy/hosting-in-policy privacy policy names the hosting provider datenschutzerklärung nennt den hoster art. 13(1)(e), art. 28 gdpr finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy; one side alone is a skip. whether a transfer outside the eu/eea is covered is leg-eu-dse-005, which needs no repository.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-007<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names the hosting provider</span>
 <span class="rule-title-de" lang="de">Datenschutzerklärung nennt den Hoster</span>
-<span class="rule-law">Art. 13(1)(e) and (f), Art. 28, Art. 44 GDPR</span>
+<span class="rule-law">Art. 13(1)(e), Art. 28 GDPR</span>
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds the hosting provider when a deploy file in the repository (<code>files</code>, <code>contains</code> in <code>data/hosting.yml</code>) and a response header of the live start page (<code>headers</code> there) agree, then looks for its <code>names</code> as whole words in the privacy policy; outside the EEA (<code>data/countries.yml</code>) without third-country wording gives info, one side alone is a skip.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds the hosting provider when a deploy file in the repository (<code>files</code>, <code>contains</code> in <code>data/hosting.yml</code>) and a response header of the live start page (<code>headers</code> there) agree, then looks for its <code>names</code> as whole words in the privacy policy; one side alone is a skip. Whether a transfer outside the EU/EEA is covered is LEG-EU-DSE-005, which needs no repository.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
-<div><dt>How to fix</dt><dd>Name the hosting provider as processor with address, purpose (serving the site, server logs) and legal basis; for a provider outside the EU, the basis of the transfer (for example the Data Privacy Framework or standard contractual clauses).</dd></div>
+<div><dt>How to fix</dt><dd>Name the hosting provider as processor with address, purpose (serving the site, server logs) and legal basis.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/hosting-in-policy"><code>checks/privacy/hosting-in-policy</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
@@ -684,23 +683,21 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr, ecj c-311/18 (schrems ii) gets the country of each third-party service (`country` in `data/third-parties.yml`, else ipinfo) and, for countries outside the eea (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known. ipinfo-token">
+<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr, ecj c-311/18 (schrems ii) takes the company country of the site's own hosting provider from the start page's response headers (`headers`, `country` in `data/hosting.yml`) and of each third-party service (`country` in `data/third-parties.yml`), the ip country from ipinfo only with `ipinfo-token` for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the eea (`data/countries.yml`) looks for `third_country` wording in the privacy policy; whether the policy names the host at all is leg-eu-dse-007.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-005<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names transfers outside the EU</span>
 <span class="rule-title-de" lang="de">Datenschutzerklärung nennt Übermittlungen außerhalb der EU</span>
-<span class="sends" title="Data leaves the runner, see workflow.html#data">Sends data to ipinfo.io (opt-in)</span>
 <span class="rule-law">Art. 13(1)(f), Art. 44 ff. GDPR, ECJ C-311/18 (Schrems II)</span>
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Gets the country of each third-party service (<code>country</code> in <code>data/third-parties.yml</code>, else IPinfo) and, for countries outside the EEA (<code>data/countries.yml</code>), looks for <code>third_country</code> wording in the privacy policy; info when no country is known.</dd></div>
+<div><dt>How it is checked</dt><dd>Takes the company country of the site's own hosting provider from the start page's response headers (<code>headers</code>, <code>country</code> in <code>data/hosting.yml</code>) and of each third-party service (<code>country</code> in <code>data/third-parties.yml</code>), the IP country from IPinfo only with <code>ipinfo-token</code> for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the EEA (<code>data/countries.yml</code>) looks for <code>third_country</code> wording in the privacy policy; whether the policy names the host at all is LEG-EU-DSE-007.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
-<div><dt>Runs when</dt><dd>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.</dd></div>
-<div><dt>How to fix</dt><dd>Name the country and the safeguard for each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses).</dd></div>
+<div><dt>How to fix</dt><dd>Name the country and the safeguard for the hosting provider and each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses).</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-country"><code>checks/privacy/third-country</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62018CJ0311">eur-lex.europa.eu</a>, <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023D1795">eur-lex.europa.eu</a>, <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62023TJ0553">eur-lex.europa.eu</a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg, lg münchen i 3 o 17493/20 (google fonts) records every request to another site while loading pages without clicks, groups hosts by vendor from `data/third-parties.yml` (else by domain); `consent: required` vendors fail, others warn.">
@@ -929,7 +926,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-CRED-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-cred-001 security/default-credentials no default secrets or demo passwords in code keine standard-secrets und demo-passwörter im code art. 32 gdpr matches code (languages and left-out paths in `data/code-paths.yml`, tests excluded) against `data/insecure-code.yml`: a secret environment variable with a literal fallback (`process.env.jwt_secret ?? &quot;secret&quot;`, `os.getenv(&quot;secret_key&quot;, &quot;dev&quot;)`, `env('app_key', '...')`, `env.fetch`), django's `django-insecure-` key and literal jwt or session secrets fail; common demo passwords (`admin123`, `changeme`, ...) as password values warn. only the variable name is shown.">
+<details class="rule" id="SEC-CRED-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-cred-001 security/default-credentials no default secrets or demo passwords in code keine standard-secrets und demo-passwörter im code art. 32 gdpr matches code (languages and left-out paths in `data/code-paths.yml`, tests excluded) against `data/insecure-code.yml`: a secret environment variable with a literal fallback (`process.env.jwt_secret ?? &quot;secret&quot;`, `os.getenv(&quot;secret_key&quot;, &quot;dev&quot;)`, `env('app_key', '...')`, `env.fetch`), django's `django-insecure-` key and literal jwt or session secrets fail (a plain `secret:` whose value is the name of a secret variable, such as `secret: &quot;github_token&quot;`, is a reference and left out); common demo passwords (`admin123`, `changeme`, ...) as password values warn. only the variable name is shown.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-CRED-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">No default secrets or demo passwords in code</span>
@@ -938,7 +935,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Matches code (languages and left-out paths in <code>data/code-paths.yml</code>, tests excluded) against <code>data/insecure-code.yml</code>: a secret environment variable with a literal fallback (<code>process.env.JWT_SECRET ?? &quot;secret&quot;</code>, <code>os.getenv(&quot;SECRET_KEY&quot;, &quot;dev&quot;)</code>, <code>env('APP_KEY', '...')</code>, <code>ENV.fetch</code>), Django's <code>django-insecure-</code> key and literal JWT or session secrets fail; common demo passwords (<code>admin123</code>, <code>changeme</code>, ...) as password values warn. Only the variable name is shown.</dd></div>
+<div><dt>How it is checked</dt><dd>Matches code (languages and left-out paths in <code>data/code-paths.yml</code>, tests excluded) against <code>data/insecure-code.yml</code>: a secret environment variable with a literal fallback (<code>process.env.JWT_SECRET ?? &quot;secret&quot;</code>, <code>os.getenv(&quot;SECRET_KEY&quot;, &quot;dev&quot;)</code>, <code>env('APP_KEY', '...')</code>, <code>ENV.fetch</code>), Django's <code>django-insecure-</code> key and literal JWT or session secrets fail (a plain <code>secret:</code> whose value is the name of a secret variable, such as <code>secret: &quot;GITHUB_TOKEN&quot;</code>, is a reference and left out); common demo passwords (<code>admin123</code>, <code>changeme</code>, ...) as password values warn. Only the variable name is shown.</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Read secrets without a fallback and stop at startup when one is missing. Create demo accounts only in development seeds, with a random password.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/default-credentials"><code>checks/security/default-credentials</code></a></dd></div>
@@ -997,7 +994,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-SECRETS-002" data-module="security" data-scope="repository" data-severity="high" data-search="sec-secrets-002 security/env-files .env files stay out of git .env-dateien bleiben außerhalb von git art. 32 gdpr lists committed `.env*` files, also with several suffixes like `.env.production.local` (templates and fixtures excluded), and checks that `.gitignore` ignores `.env`; a missing rule is a warning with an `.env` template, a note when a package manifest lies in any folder.">
+<details class="rule" id="SEC-SECRETS-002" data-module="security" data-scope="repository" data-severity="high" data-search="sec-secrets-002 security/env-files .env files stay out of git .env-dateien bleiben außerhalb von git art. 32 gdpr lists committed `.env*` files, also with several suffixes like `.env.production.local` (templates in any letter case, such as `.env.example`, and fixtures excluded), and checks that `.gitignore` ignores `.env`; a missing rule is a warning with an `.env` template, a note when a package manifest lies in any folder.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SECRETS-002<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">.env files stay out of git</span>
@@ -1006,7 +1003,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files, also with several suffixes like <code>.env.production.local</code> (templates and fixtures excluded), and checks that <code>.gitignore</code> ignores <code>.env</code>; a missing rule is a warning with an <code>.env</code> template, a note when a package manifest lies in any folder.</dd></div>
+<div><dt>How it is checked</dt><dd>Lists committed <code>.env*</code> files, also with several suffixes like <code>.env.production.local</code> (templates in any letter case, such as <code>.env.Example</code>, and fixtures excluded), and checks that <code>.gitignore</code> ignores <code>.env</code>; a missing rule is a warning with an <code>.env</code> template, a note when a package manifest lies in any folder.</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Add .env to .gitignore; revoke committed values and remove them from the history.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/env-files"><code>checks/security/env-files</code></a></dd></div>
@@ -1031,7 +1028,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-ENVEX-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-envex-001 security/example-env-values .env templates hold no real values .env-vorlagen enthalten keine echten werte art. 32 gdpr reads committed `.env` templates (`.env.example`, `.env.sample`, ...; `templates` in `data/insecure-code.yml`) and warns for a secret-named variable whose value has letters and digits, no placeholder word and at least the length and shannon entropy in `data/thresholds.yml`, and for a connection url with a password to a host that is not local; shows only the variable name, never the value. known key formats are also found by `security/secrets`.">
+<details class="rule" id="SEC-ENVEX-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-envex-001 security/example-env-values .env templates hold no real values .env-vorlagen enthalten keine echten werte art. 32 gdpr reads committed `.env` templates (`.env.example`, `.env.sample`, ..., in any letter case; `templates` in `data/insecure-code.yml`) and warns for a secret-named variable whose value has letters and digits, no placeholder word and at least the length and shannon entropy in `data/thresholds.yml`, and for a connection url with a password to a host that is not local; shows only the variable name, never the value. known key formats are also found by `security/secrets`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-ENVEX-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">.env templates hold no real values</span>
@@ -1040,7 +1037,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads committed <code>.env</code> templates (<code>.env.example</code>, <code>.env.sample</code>, ...; <code>templates</code> in <code>data/insecure-code.yml</code>) and warns for a secret-named variable whose value has letters and digits, no placeholder word and at least the length and Shannon entropy in <code>data/thresholds.yml</code>, and for a connection URL with a password to a host that is not local; shows only the variable name, never the value. Known key formats are also found by <code>security/secrets</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads committed <code>.env</code> templates (<code>.env.example</code>, <code>.env.sample</code>, ..., in any letter case; <code>templates</code> in <code>data/insecure-code.yml</code>) and warns for a secret-named variable whose value has letters and digits, no placeholder word and at least the length and Shannon entropy in <code>data/thresholds.yml</code>, and for a connection URL with a password to a host that is not local; shows only the variable name, never the value. Known key formats are also found by <code>security/secrets</code>.</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Put only placeholders into templates (for example OPENAI_API_KEY=your-key-here). Revoke a real value right away and remove it from the git history.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/example-env-values"><code>checks/security/example-env-values</code></a></dd></div>
@@ -1371,7 +1368,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-TLSOFF-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-tlsoff-001 security/tls-verification-off code verifies tls certificates code prüft tls-zertifikate art. 32 gdpr; bsi tr-02102-2 (certificate validation) matches code, scripts, workflows, dockerfiles and `.env` files (languages and left-out paths in `data/code-paths.yml`, tests excluded) line by line against the patterns in `data/insecure-code.yml` that turn certificate checks off: `rejectunauthorized: false`, `node_tls_reject_unauthorized=0`, `verify=false`, `insecureskipverify: true`, `curlopt_ssl_verifypeer` off, `verify_none`, `curl -k`, `wget --no-check-certificate`.">
+<details class="rule" id="SEC-TLSOFF-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-tlsoff-001 security/tls-verification-off code verifies tls certificates code prüft tls-zertifikate art. 32 gdpr; bsi tr-02102-2 (certificate validation) matches code, scripts, workflows, dockerfiles and `.env` files (languages and left-out paths in `data/code-paths.yml`, tests excluded) line by line against the patterns in `data/insecure-code.yml` that turn certificate checks off: `rejectunauthorized: false`, `node_tls_reject_unauthorized=0`, `verify=false`, `insecureskipverify: true` (unless the file sets `verifypeercertificate` or `verifyconnection`, go's custom verification), `curlopt_ssl_verifypeer` off, `verify_none`, `curl -k`, `wget --no-check-certificate`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-TLSOFF-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Code verifies TLS certificates</span>
@@ -1380,7 +1377,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Matches code, scripts, workflows, Dockerfiles and <code>.env</code> files (languages and left-out paths in <code>data/code-paths.yml</code>, tests excluded) line by line against the patterns in <code>data/insecure-code.yml</code> that turn certificate checks off: <code>rejectUnauthorized: false</code>, <code>NODE_TLS_REJECT_UNAUTHORIZED=0</code>, <code>verify=False</code>, <code>InsecureSkipVerify: true</code>, <code>CURLOPT_SSL_VERIFYPEER</code> off, <code>VERIFY_NONE</code>, <code>curl -k</code>, <code>wget --no-check-certificate</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Matches code, scripts, workflows, Dockerfiles and <code>.env</code> files (languages and left-out paths in <code>data/code-paths.yml</code>, tests excluded) line by line against the patterns in <code>data/insecure-code.yml</code> that turn certificate checks off: <code>rejectUnauthorized: false</code>, <code>NODE_TLS_REJECT_UNAUTHORIZED=0</code>, <code>verify=False</code>, <code>InsecureSkipVerify: true</code> (unless the file sets <code>VerifyPeerCertificate</code> or <code>VerifyConnection</code>, Go's custom verification), <code>CURLOPT_SSL_VERIFYPEER</code> off, <code>VERIFY_NONE</code>, <code>curl -k</code>, <code>wget --no-check-certificate</code>.</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Keep certificate checks on. For own or internal certificates, add the CA (for example NODE_EXTRA_CA_CERTS, verify=&quot;/path/ca.pem&quot;) instead of turning the check off.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/tls-verification-off"><code>checks/security/tls-verification-off</code></a></dd></div>

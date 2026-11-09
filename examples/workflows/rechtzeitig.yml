@@ -40,8 +40,8 @@ jobs:
           # The job fails when a check fails, so GitHub emails you about new findings of a scheduled run.
           # never = report only, warn = also on warnings.
           fail-on: fail
-          # Opt-in: the third-country check runs only with the secret IPINFO_TOKEN (free at ipinfo.io).
-          # Without the secret it is skipped and nothing is sent to IPinfo.
+          # Opt-in: with the secret IPINFO_TOKEN (free at ipinfo.io) the third-country check also looks up IP countries.
+          # Without the secret it uses the countries in its data and nothing is sent to IPinfo.
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
           # Optional, shown with their defaults:
           # How much of the report the run shows. auto = full if private, counts if public.

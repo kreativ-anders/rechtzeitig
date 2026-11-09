@@ -33,9 +33,40 @@ It changes one thing at a time in what the rule decides by (a comparison, a stat
 
 ## Benchmark of the code checks
 
-`test/benchmark/` holds code as coding agents write it for everyday prompts, each case labelled with the rules that must report it, plus reviewed counterparts that must stay clean. `npm test` runs every repository check on every case and fails when a rule in `SCORED` (`test/benchmark/run.ts`) falls below `benchmark.min_precision` or `min_recall` in `data/thresholds.yml`. `npm run benchmark` prints the table.
+`test/benchmark/` holds two sets, scored separately:
 
-To add a case, create `test/benchmark/fixtures/<name>.yml`:
+- `fixtures/real/`: excerpts of public repositories (AI-built apps, starter templates, maintained reference projects). This is the evidence.
+- `fixtures/synthetic/`: code as coding agents write it for everyday prompts, written together with the patterns. Its score is an upper bound.
+
+`npm test` runs every repository check on every case and fails when a rule in `SCORED` (`test/benchmark/run.ts`) falls below `benchmark.min_precision` or `min_recall` in `data/thresholds.yml` on either set. A rule that cannot reach the minimum on the real set gets an entry in `benchmark.real_exceptions` with the value it reaches and why; the test fails once the rule reaches the minimum again, so the entry has to go. `npm run benchmark` prints both tables.
+
+### A real case
+
+1. Take the code from a public repository whose license allows copying an excerpt into this Apache-2.0 repository: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, CC0-1.0, 0BSD or Unlicense (`LICENSES` in `run.ts`). No license, NOASSERTION or copyleft: leave it.
+2. Pin the commit SHA and keep the original paths. Take the relevant file or lines plus the context a check needs (a `vite.config.ts` next to `src/`, the pytest config); record line ranges in `source.paths`.
+3. Label it by reading the code, before you run the checks, and write why in `label`. Label the risk, not what the rule happens to do. Do not drop a case after seeing the result.
+4. Never commit a credential: replace a real key with `{{key:<length>:<seed>}}` of the same length.
+5. Add the repository to the list in `NOTICE`.
+
+```yaml
+source:
+  repo: https://github.com/<owner>/<repo>
+  commit: <40 hex characters>
+  license: MIT
+  copyright: "Copyright (c) 2025 Jane Doe"     # as the license file names it
+  paths:
+    src/lib/openai.ts: "src/lib/openai.ts (lines 1-20)"
+label: >-
+  The OpenAI client in the Vite bundle reads VITE_OPENAI_API_KEY, so the key ships to every visitor.
+expect: [security/llm-key-in-browser]
+files:
+  src/lib/openai.ts: |2
+    ...
+```
+
+### A synthetic case
+
+Create `test/benchmark/fixtures/synthetic/<name>.yml`:
 
 ```yaml
 prompt: "Add a chat with OpenAI to my Vite app"   # what the agent was asked

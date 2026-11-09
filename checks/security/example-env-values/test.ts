@@ -17,6 +17,11 @@ test("warns for real-looking values in templates without showing them", async ()
   assert.ok(!result.details.join("\n").includes(value));
 });
 
+test("reads templates in any letter case", async () => {
+  const result = await runRepoCheck(here, { "apps/api/.env.Example": `PASSWORD_SALT=${random(43, 11)}\n` });
+  assert.equal(result.status, "warn");
+});
+
 test("passes for placeholders, local URLs and public names", async () => {
   const result = await runRepoCheck(here, {
     ".env.example": [

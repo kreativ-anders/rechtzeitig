@@ -1,0 +1,148 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/Samiulla-S-AI/CanteenQ
+  commit: 9c3563dbc1bc41708e91bf59a4a4def1b809ef2b
+  license: Apache-2.0
+  copyright: "Contributors of Samiulla-S-AI/CanteenQ"
+  paths:
+    "src/lib/supabase.ts": "src/lib/supabase.ts"
+    "vite.config.ts": "vite.config.ts"
+    ".env.example": ".env.example"
+label: >-
+  Vite app: src/lib/supabase.ts builds an admin client from `import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY`,
+  which bypasses Row Level Security and ships to the browser. The .env.example holds only placeholders.
+expect: [security/service-key-in-client]
+files:
+  "src/lib/supabase.ts": |2
+    import { createClient } from '@supabase/supabase-js';
+
+    const supabaseDirectUrl = import.meta.env.VITE_SUPABASE_URL; // e.g. https://hkdyivuauoxrmysowhvs.supabase.co
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseServiceKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+
+    // ─── Jio / ISP workaround ───
+    // Some Indian ISPs (Jio, BSNL, etc.) block direct connections to supabase.co.
+    // In production we route ALL Supabase traffic through a Netlify reverse proxy
+    // (/supabase/* → hkdyivuauoxrmysowhvs.supabase.co/*) so the browser only
+    // ever talks to canteenq.netlify.app, which ISPs do NOT block.
+    const isProduction = import.meta.env.PROD;
+
+    // In production: use the current origin + /supabase as the base URL
+    // In development: use the direct Supabase URL (no ISP issues on localhost)
+    const supabaseUrl = isProduction
+        ? `${window.location.origin}/supabase`
+        : supabaseDirectUrl;
+
+    // Standard client (subject to Row Level Security)
+    export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    // Admin client (bypasses Row Level Security) - exclusively for tables like Notifications
+    export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey);
+  "vite.config.ts": |2
+    import { defineConfig } from 'vite';
+    import react from '@vitejs/plugin-react';
+
+    import { VitePWA } from 'vite-plugin-pwa';
+
+    // https://vitejs.dev/config/
+    export default defineConfig({
+      plugins: [
+        react(),
+        VitePWA({
+          registerType: 'autoUpdate',
+          includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+          manifest: {
+            name: 'CanteenQ',
+            short_name: 'CanteenQ',
+            description: 'Campus Food Pre-ordering Application',
+            theme_color: '#F56028',
+            background_color: '#F56028',
+            display: 'standalone',
+            scope: '/',
+            start_url: '/',
+            orientation: 'portrait',
+            icons: [
+              {
+                src: 'pwa-64x64.png',
+                sizes: '64x64',
+                type: 'image/png'
+              },
+              {
+                src: 'pwa-192x192.png',
+                sizes: '192x192',
+                type: 'image/png'
+              },
+              {
+                src: 'pwa-512x512.png',
+                sizes: '512x512',
+                type: 'image/png',
+                purpose: 'any'
+              },
+              {
+                src: 'maskable-icon-512x512.png',
+                sizes: '512x512',
+                type: 'image/png',
+                purpose: 'maskable'
+              }
+            ]
+          },
+          strategies: 'injectManifest',
+          srcDir: 'src',
+          filename: 'sw.js',
+          injectManifest: {
+            maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
+            globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+            // Do NOT precache files that match these patterns
+            globIgnores: [
+              '**/node_modules/**',
+            ],
+          },
+          devOptions: {
+            enabled: true,
+            type: 'module',
+          },
+        }),
+      ],
+      optimizeDeps: {
+        exclude: ['lucide-react'],
+      },
+      server: {
+        host: true, // Listen on all addresses, including LAN and public addresses
+        proxy: {
+          // Proxy Netlify function paths to the local Express server API for seamless IP-based testing on mobile (e.g. Jio SIM networks)
+          '/.netlify/functions': {
+            target: 'http://127.0.0.1:5000',
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/\.netlify\/functions/, '/api')
+          },
+          // Also proxy standard /api paths just in case
+          '/api': {
+            target: 'http://127.0.0.1:5000',
+            changeOrigin: true
+          }
+        }
+      },
+    });
+  ".env.example": |2
+    # Razorpay Configuration
+    # Get these from https://dashboard.razorpay.com/app/keys
+    VITE_RAZORPAY_KEY_ID=rzp_test_your_key_id_here
+    VITE_RAZORPAY_KEY_SECRET=your_razorpay_secret_key_here
+
+    # Supabase Configuration
+    # Get these from your Supabase project settings
+    VITE_SUPABASE_URL=https://your-project-url.supabase.co
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+    # Clerk Authentication
+    # Get these from https://dashboard.clerk.com/
+    VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key_here
+
+    # IMPORTANT NOTES:
+    # 1. Copy this file to .env for local development
+    # 2. Never commit .env to git (it's in .gitignore)
+    # 3. For Netlify deployment, add these variables in:
+    #    Site Settings → Environment Variables
+    # 4. For production, use live keys instead of test keys:
+    #    - Razorpay: rzp_live_... instead of rzp_test_...
+    #    - Clerk: pk_live_... instead of pk_test_...

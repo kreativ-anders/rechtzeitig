@@ -1,0 +1,39 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/sbgumen/openai-translation-api
+  commit: 0190bb758098d6c406f15ed085f636ad4682bba2
+  license: MIT
+  copyright: "Copyright (c) 2025 阿泽"
+  paths:
+    "app.js": "app.js (lines 1-10, 36-50)"
+label: >-
+  express-session signs cookies with `process.env.JWT_SECRET || 'default_session_secret'`: without the variable
+  the app runs with a secret anyone can read. No TLS, debug or placeholder issue in the excerpt.
+expect: [security/default-credentials]
+files:
+  "app.js": |2
+    require('dotenv').config();
+    const express = require('express');
+    const bodyParser = require('body-parser');
+    const cors = require('cors');
+    const path = require('path');
+    const cookieParser = require('cookie-parser');
+    const session = require('express-session');
+    const fs = require('fs');
+    const { requestLogger } = require('./utils/logger');
+
+    }));
+    app.use(bodyParser.json({ limit: '10mb' }));
+    app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+    app.use(cookieParser());
+
+    // 使用更稳定的会话配置
+    app.use(session({
+      secret: process.env.JWT_SECRET || 'default_session_secret',
+      resave: true, // 改为true确保会话始终保存
+      saveUninitialized: true, // 改为true以便于保存新会话
+      cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 设置会话有效期为1天
+      }
+    }));

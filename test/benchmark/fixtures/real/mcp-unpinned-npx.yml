@@ -1,0 +1,35 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/commercetools/ui-kit
+  commit: 7927512d0e490edaed864dcedaf0c20adcc2bcfc
+  license: MIT
+  copyright: "Copyright (c) 2019 commercetools GmbH"
+  paths:
+    ".mcp.json": ".mcp.json"
+label: >-
+  Project MCP config starts servers with `npx -y @upstash/context7-mcp@latest` and `npx -y
+  @modelcontextprotocol/server-sequential-thinking`: the newest package version runs with the agent's rights on
+  every start.
+expect: [security/agent-permissions]
+files:
+  ".mcp.json": |2
+    {
+      "mcpServers": {
+        "commercetools-docs": {
+          "type": "http",
+          "url": "https://docs.commercetools.com/apis/mcp"
+        },
+        "context7": {
+          "command": "npx",
+          "args": ["-y", "@upstash/context7-mcp@latest"]
+        },
+        "playwright": {
+          "command": "npx",
+          "args": ["@playwright/mcp@latest"]
+        },
+        "sequential-thinking": {
+          "command": "npx",
+          "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+        }
+      }
+    }

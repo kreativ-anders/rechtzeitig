@@ -1,0 +1,53 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/microsoft/Github-Copilot-SDK-Automation-Accelerator
+  commit: 470a5cbb0f27074f87aa322d2406826193c59c5d
+  license: MIT
+  copyright: "Copyright (c) 2025"
+  paths:
+    "index.ts": "index.ts"
+label: >-
+  The weather tool returns random values under `// In a real app, you'd call a weather API here`: a placeholder
+  that looks finished.
+expect: [quality/placeholder-code]
+files:
+  "index.ts": |2
+    import { CopilotClient, defineTool } from "@github/copilot-sdk";
+
+    // Define a tool that Copilot can call
+    const getWeather = defineTool("get_weather", {
+        description: "Get the current weather for a city",
+        parameters: {
+            type: "object",
+            properties: {
+                city: { type: "string", description: "The city name" },
+            },
+            required: ["city"],
+        },
+        handler: async (args: { city: string }) => {
+            const { city } = args;
+            // In a real app, you'd call a weather API here
+            const conditions = ["sunny", "cloudy", "rainy", "partly cloudy"];
+            const temp = Math.floor(Math.random() * 30) + 50;
+            const condition = conditions[Math.floor(Math.random() * conditions.length)];
+            return { city, temperature: `${temp}°F`, condition };
+        },
+    });
+
+    const client = new CopilotClient();
+    const session = await client.createSession({
+        model: "gpt-4.1",
+        streaming: true,
+        tools: [getWeather],
+    });
+
+    session.on("assistant.message_delta", (event) => {
+        process.stdout.write(event.data.deltaContent);
+    });
+
+    await session.sendAndWait({
+        prompt: "What's the weather like in Seattle and Tokyo?",
+    });
+
+    await client.stop();
+    process.exit(0);

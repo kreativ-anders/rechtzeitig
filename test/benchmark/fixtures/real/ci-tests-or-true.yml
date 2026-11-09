@@ -1,0 +1,41 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/Darshan3690/The-Dev-Pocket
+  commit: 40db36c43d3ed31b72dd81b8f5418429d98fa04f
+  license: MIT
+  copyright: "Copyright (c) 2025 Darshan Rajput"
+  paths:
+    ".github/workflows/ci.yml": ".github/workflows/ci.yml"
+label: >-
+  The pull request workflow runs `npm run lint || true` and `npm test || true`: CI stays green whatever lint and
+  tests report.
+expect: [quality/neutralized-ci]
+files:
+  ".github/workflows/ci.yml": |2
+    name: CI
+
+    on:
+      pull_request:
+        branches: [ main ]
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout Code
+            uses: actions/checkout@v4
+
+          - name: Install Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: 20.9.0
+              cache: npm
+
+          - name: Install Dependencies
+            run: npm ci
+
+          - name: Run Lint
+            run: npm run lint || true
+
+          - name: Run Tests
+            run: npm test || true

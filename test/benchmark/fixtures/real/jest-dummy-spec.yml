@@ -1,0 +1,18 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/Lemoncode/mongo-modeler
+  commit: 45dde88c8fbb3222f4cfc4812ec517a9054fb7b1
+  license: MIT
+  copyright: "Copyright (c) 2023 Lemoncode"
+  paths:
+    "apps/web/src/dummy.spec.ts": "apps/web/src/dummy.spec.ts"
+label: >-
+  The test file's only test is `expect(true).toBe(true)`: a test that cannot fail.
+expect: [quality/hollow-tests]
+files:
+  "apps/web/src/dummy.spec.ts": |2
+    describe('Dummy test', () => {
+      it('should pass', () => {
+        expect(true).toBe(true);
+      });
+    });

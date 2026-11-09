@@ -1,0 +1,30 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/resend/resend-mcp
+  commit: 313a42ec324a039b7de5e06b0450ca5e8c3d2ff5
+  license: MIT
+  copyright: "Copyright 2026 Plus Five Five, Inc"
+  paths:
+    ".mcp.json": ".mcp.json"
+label: >-
+  MCP config runs the repository's own build (`node dist/index.js`) and passes the key as `${RESEND_API_KEY}`:
+  no unpinned download, no literal secret.
+expect: []
+files:
+  ".mcp.json": |2
+    {
+      "mcpServers": {
+        "resend": {
+          "command": "node",
+          "args": ["dist/index.js"],
+          "env": {
+            "RESEND_API_KEY": "${RESEND_API_KEY}"
+          }
+        },
+        "resend-dev": {
+          "command": "node",
+          "args": ["dist/index.js", "--key", "${RESEND_API_KEY}"],
+          "env": {}
+        }
+      }
+    }

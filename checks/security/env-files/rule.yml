@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Lists committed `.env*` files, also with several suffixes like `.env.production.local` (templates and fixtures excluded), and checks that `.gitignore` ignores `.env`; a missing rule is a warning with an `.env` template, a note when a package manifest lies in any folder."
+how: "Lists committed `.env*` files, also with several suffixes like `.env.production.local` (templates in any letter case, such as `.env.Example`, and fixtures excluded), and checks that `.gitignore` ignores `.env`; a missing rule is a warning with an `.env` template, a note when a package manifest lies in any folder."
 fix_hint:
   de: ".env in .gitignore eintragen; committete Werte widerrufen und aus der Historie entfernen."
   en: "Add .env to .gitignore; revoke committed values and remove them from the history."

@@ -127,10 +127,29 @@ quality/neutralized-ci:
   # ... and they are at least this share of the code files in that language.
   min_share: 0.1
 
-# Self-benchmark of the code checks (test/benchmark/). The test fails when a scored rule falls below these
-# on the labelled cases; raise them, never lower them to make a change pass.
+# Benchmark of the code checks (test/benchmark/), scored separately on real code (fixtures/real/) and on
+# cases written with the patterns (fixtures/synthetic/). The test fails when a scored rule falls below these on
+# either set; raise them, never lower them to make a change pass.
 benchmark:
   min_precision: 0.9
   min_recall: 0.9
-  # Fewest cases the benchmark must have.
+  # Fewest synthetic cases ...
   min_cases: 20
+  # ... and fewest real cases.
+  min_real_cases: 25
+  # Rules that stay below the minimums on the real set, each with the value it reaches (min_precision or
+  # min_recall) and why it cannot do better yet. A documented exception, not a lower threshold: the test fails
+  # when the rule reaches the minimum again, so the entry has to go.
+  real_exceptions:
+    security/debug-mode:
+      min_precision: 0.75
+      reason: "Root settings.py of a Django library that only its test suite uses (django-pghistory). Naming it in the pytest config is no signal: applications name their production settings there too (usaspending-api, cykel)."
+    security/default-credentials:
+      min_precision: 0.8
+      reason: "Same test-only settings.py of a Django library (django-pghistory) with a fixed SECRET_KEY; no general signal separates it from an application's settings yet."
+    security/llm-key-in-browser:
+      min_precision: 0.5
+      reason: "dangerouslyAllowBrowser in an Obsidian plugin where every key is the user's own (bring your own key); telling a user key from a bundled one needs data flow the line patterns do not have."
+    quality/hollow-tests:
+      min_precision: 0.5
+      reason: "`assert True` as the default body of an overridable hook in a pytest conftest (hoomd-blue), not a test case; line patterns do not see the enclosing function."

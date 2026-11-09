@@ -1,7 +1,7 @@
 import { FIXTURES, defineRepoCheck, fail, info, isSoftwareProject, msg, pass, warn } from "../../../src/sdk.ts";
 
 const ENV = /(^|\/)\.env(\.[\w-]+)*$/;
-const TEMPLATE = /\.(example|sample|template|dist|defaults)$/;
+const TEMPLATE = /\.(example|sample|template|dist|defaults)$/i;
 const IGNORES_ENV = /^\/?(\*\*\/)?\.env(\*|\.\*|\.local)?$|^\*\.env$/m;
 
 export default defineRepoCheck({

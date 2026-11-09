@@ -34,7 +34,7 @@ inputs:
     description: Folder to scan for lockfiles, licenses and secrets. Empty folder (no checkout) = skip.
     default: ${{ github.workspace }}
   ipinfo-token:
-    description: Optional IPinfo token (secret IPINFO_TOKEN). Opt-in for the third-country check (LEG-EU-DSE-005). Empty = the check is skipped and nothing is sent to IPinfo.
+    description: Optional IPinfo token (secret IPINFO_TOKEN). Opt-in IP country lookup for the third-country check (LEG-EU-DSE-005), for servers not in data/hosting.yml or data/third-parties.yml. Empty = the check uses that data only and nothing is sent to IPinfo.
     default: ""
   vulnerabilities:
     description: true to look up known vulnerabilities of locked components at api.osv.dev. false = send nothing, skip the rule.

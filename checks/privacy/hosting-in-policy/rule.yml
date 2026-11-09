@@ -5,12 +5,12 @@ title:
   de: "Datenschutzerklärung nennt den Hoster"
   en: "Privacy policy names the hosting provider"
 legal_basis:
-  de: "Art. 13 Abs. 1 lit. e und f, Art. 28, Art. 44 DSGVO"
-  en: "Art. 13(1)(e) and (f), Art. 28, Art. 44 GDPR"
-how: "Finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy; outside the EEA (`data/countries.yml`) without third-country wording gives info, one side alone is a skip."
+  de: "Art. 13 Abs. 1 lit. e, Art. 28 DSGVO"
+  en: "Art. 13(1)(e), Art. 28 GDPR"
+how: "Finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy; one side alone is a skip. Whether a transfer outside the EU/EEA is covered is LEG-EU-DSE-005, which needs no repository."
 fix_hint:
-  de: "Den Hoster als Auftragsverarbeiter mit Anschrift, Zweck (Bereitstellung der Website, Server-Logs) und Rechtsgrundlage nennen; bei einem Sitz außerhalb der EU die Grundlage der Übermittlung (z. B. Data Privacy Framework, Standardvertragsklauseln)."
-  en: "Name the hosting provider as processor with address, purpose (serving the site, server logs) and legal basis; for a provider outside the EU, the basis of the transfer (for example the Data Privacy Framework or standard contractual clauses)."
+  de: "Den Hoster als Auftragsverarbeiter mit Anschrift, Zweck (Bereitstellung der Website, Server-Logs) und Rechtsgrundlage nennen."
+  en: "Name the hosting provider as processor with address, purpose (serving the site, server logs) and legal basis."
 meta:
   last_reviewed: "2026-11-09"
   sources:

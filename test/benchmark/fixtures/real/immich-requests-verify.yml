@@ -1,0 +1,54 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/vale46n1/immich_duplicate_finder
+  commit: 1ea4b7105e0ead1f231e7ca43ee3287e8d2e22c8
+  license: Apache-2.0
+  copyright: "Contributors of vale46n1/immich_duplicate_finder"
+  paths:
+    "api.py": "api.py (lines 1-40)"
+label: >-
+  Streamlit tool sends the Immich API key with `requests.get(..., verify=False)`: TLS verification is off for a
+  request that carries a credential.
+expect: [security/tls-verification-off]
+files:
+  "api.py": |2
+    import requests, json
+    import streamlit as st
+    from PIL import Image, UnidentifiedImageError, ImageFile
+    from io import BytesIO
+    from db import bytes_to_megabytes
+    from pillow_heif import register_heif_opener
+    import os
+
+    @st.cache_data(show_spinner=True)
+    def fetchAssets(immich_server_url, api_key, timeout, type):
+        # Initialize messaging and progress
+        if 'fetch_message' not in st.session_state:
+            st.session_state['fetch_message'] = ""
+        message_placeholder = st.empty()
+
+        # Initialize assets to None or an empty list, depending on your usage expectation
+        assets = []
+
+        # Remove trailing slash from immich_server_url if present
+        base_url = immich_server_url.rstrip('/')
+        asset_info_url = f"{base_url}/api/asset/"
+
+        try:
+            with st.spinner('Fetching assets...'):
+                # Make the HTTP GET request
+                response = requests.get(asset_info_url, headers={'Accept': 'application/json', 'x-api-key': api_key}, verify=False, timeout=timeout)
+                response.raise_for_status()  # This will raise an exception for HTTP errors
+
+                content_type = response.headers.get('Content-Type', '')
+                if 'application/json' in content_type:
+                    if response.text:
+                        assets = response.json()  # Decode JSON response into a list of assets
+                        assets = [asset for asset in assets if asset.get("type") == type]
+                        st.session_state['fetch_message'] = 'Assets fetched successfully!'
+                    else:
+                        st.session_state['fetch_message'] = 'Received an empty response.'
+                        assets = []  # Set assets to empty list if response is empty
+                else:
+                    st.session_state['fetch_message'] = f'Unexpected Content-Type: {content_type}\nResponse content: {response.text}'
+                    assets = []  # Set assets to empty list if unexpected content type

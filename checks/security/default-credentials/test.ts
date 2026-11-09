@@ -29,6 +29,7 @@ test("passes for secrets without fallback, public keys, labels and tests", async
     "src/auth.ts": 'const secret = process.env.JWT_SECRET;\nif (!secret) throw new Error("JWT_SECRET missing");',
     "src/env.ts": 'const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "pk_test";\nconst ttl = process.env.TOKEN_TTL ?? "3600";',
     "src/i18n.ts": 'export const en = { password: "Password", email: "E-mail" };',
+    ".projenrc.ts": "autoApproveOptions: { allowedUsernames: ['bot'], secret: 'GITHUB_TOKEN' },",
     "src/auth.test.ts": 'const secret = process.env.JWT_SECRET ?? "test-secret";',
     "app/config.py": 'SECRET_KEY = os.environ["SECRET_KEY"]\nDB_PASSWORD = os.getenv("DB_PASSWORD", "")',
   });
