@@ -92,6 +92,21 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 26. With `sales: true`: price reductions shown other than as a struck-through price, such as "-20 %" labels, checked for the 30-day lowest price (§ 11 PAngV).
 27. Visit the T&Cs and withdrawal pages only with `sales: true`, so they do not use up `max-pages` on sites without a shop.
 
+## Next: limits of a pass
+
+Feedback: a pass on a content rule reads as "complete", but a scan finds terms, links and fields, not whether they are right. An imprint with mail, phone and postcode is not a complete imprint; a privacy policy that names a retention period does not say the period fits; a consent tool that works does not make the consent valid; a database rule in the repository may differ from the live database.
+
+1. A `limits` field in every `rule.yml`: one sentence on what a pass does not mean. Shown in `docs/checks.html` and, for legal and privacy rules, next to the pass in the report. A test fails when a legal or privacy rule has none.
+2. A short section in the report and in `docs/` on what no scan can check (content correctness, organizational duties, live configuration the site does not expose), next to "Not run" and the repository coverage.
+
+## Next: fix
+
+Feedback: detect, then fix, then monitor. Monitor is the hosted service under "Commercialization". Fix stays in the runner and stays free. The line: fixes for technical findings only, never generated legal texts, since writing an imprint or privacy policy for a user would be legal advice.
+
+1. A prompt per finding in the report (file, line, rule, fix hint) to hand to the user's own coding agent. No model call from rechtzeitig, nothing leaves the runner.
+2. Deterministic fixes for technical findings as a patch or pull request, opt-in: actions pinned to a commit, `.env` files in `.gitignore`, security headers in the hosting config. The next run checks the fix.
+3. Legal findings keep a `fix_hint` and their sources, no generated text.
+
 ## Next: integrations
 
 Feedback: GitHub Actions is a good start, but in the long run rechtzeitig should reach other places where code is written and built. The scan itself (`src/main.ts`, `CLI_OPTIONS`) does not depend on GitHub; the action, the step summary, annotations and SARIF upload do. Everything here stays free and open, and the report JSON stays the interface.
