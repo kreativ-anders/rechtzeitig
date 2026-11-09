@@ -1,0 +1,30 @@
+prompt: "Build a Flask API that pulls prices from our supplier (reviewed)"
+expect: []
+files:
+  requirements.txt: |
+    flask==3.0.3
+    requests==2.32.3
+  app.py: |
+    import os
+    import requests
+    from flask import Flask, jsonify
+
+    app = Flask(__name__)
+    app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
+    SUPPLIER_URL = os.environ.get("SUPPLIER_URL", "https://supplier.example/api")
+    # The supplier's internal CA, checked instead of turning verification off.
+    SUPPLIER_CA = os.environ.get("SUPPLIER_CA", "/etc/ssl/certs/supplier-ca.pem")
+
+    @app.route("/prices")
+    def prices():
+        r = requests.get(f"{SUPPLIER_URL}/prices", timeout=10, verify=SUPPLIER_CA)
+        return jsonify(r.json())
+
+    if __name__ == "__main__":
+        app.run(host="127.0.0.1", port=5000, debug=os.environ.get("FLASK_DEBUG") == "1")
+  Dockerfile: |
+    FROM python:3.12-slim
+    ENV PYTHONUNBUFFERED=1
+    COPY . /app
+    RUN pip install -r /app/requirements.txt
+    CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app"]

@@ -5,7 +5,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { SEVERITIES, switchSpec, type Switch } from "./rules.ts";
+import { SEVERITIES, switchSpec, type Rule, type Switch } from "./rules.ts";
 import { loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } from "./runner.ts";
 
 const CHECKS_PAGE = new URL("../docs/checks.html", import.meta.url);
@@ -24,6 +24,7 @@ const MODULES: Record<string, string> = {
   security: "Security",
   sustainability: "Sustainability",
   accessibility: "Accessibility",
+  quality: "Code quality",
 };
 
 /** What a check reads (scopeOf in src/runner.ts): the filter row "Scope" on checks.html and the label on each card. */
@@ -38,6 +39,19 @@ const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 /** Escapes text and turns `backticks` into <code>. */
 const text = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 const host = (url: string) => new URL(url).hostname.replace(/^www\./, "");
+
+const NO_LAW = { en: "Technical, no single law", de: "Technisch, kein einzelnes Gesetz" };
+const NO_BASIS = { en: "No legal basis", de: "Keine Rechtsgrundlage" };
+/**
+ * The line under a rule's title: its legal basis, "No legal basis: <value>" for a rule that states its value
+ * instead (checks/quality/), or "Technical, no single law". Never empty, so no card reads like a legal duty by omission.
+ */
+export function lawHtml(r: Rule, lang: "en" | "de" = "en"): string {
+  const law = r.legal_basis?.[lang];
+  if (law) return `<span class="rule-law">${text(law)}</span>`;
+  if (r.value) return `<span class="rule-law none">${NO_BASIS[lang]}: ${text(r.value[lang])}</span>`;
+  return `<span class="rule-law none">${NO_LAW[lang]}</span>`;
+}
 
 /** Badge for an input that sends data to an outside service; empty when it sends nothing. Links to "Data that leaves the runner" on the workflow page. */
 export function sendsBadge(input: Switch, link = true): string {
@@ -81,7 +95,7 @@ function card(c: LoadedCheck, module: string): string {
   const law = r.legal_basis?.en;
   const needs = (r.requires ?? []).map(runsWhen);
   const scope = scopeOf(c.check);
-  const search = [r.id, c.id, r.title.en, r.title.de, law ?? "", r.how, ...(r.requires ?? [])].join(" ").toLowerCase();
+  const search = [r.id, c.id, r.title.en, r.title.de, law ?? (r.value ? `${NO_BASIS.en} ${r.value.en}` : ""), r.how, ...(r.requires ?? [])].join(" ").toLowerCase();
   const sources = r.meta.sources.map((s) => `<a href="${esc(s)}">${esc(host(s))}</a>`).join(", ");
   return [
     `<details class="rule" id="${r.id}" data-module="${module}" data-scope="${scope}" data-severity="${r.severity}" data-search="${esc(search)}">`,
@@ -90,7 +104,7 @@ function card(c: LoadedCheck, module: string): string {
     `<span class="rule-title">${text(r.title.en)}</span>`,
     `<span class="rule-title-de" lang="de">${text(r.title.de)}</span>`,
     ...(r.requires ?? []).map((input) => sendsBadge(input, false)).filter(Boolean),
-    law ? `<span class="rule-law">${text(law)}</span>` : `<span class="rule-law none">Technical, no single law</span>`,
+    lawHtml(r),
     `<span class="rule-more">How it is checked</span>`,
     `</summary>`,
     `<div class="rule-body"><dl>`,
@@ -181,13 +195,12 @@ function runsWhenDe(input: Switch): string {
 export function topicRulesHtml(checks: LoadedCheck[], lang: Lang = "en"): string {
   const de = lang === "de";
   const items = checks.map(({ rule: r }) => {
-    const law = r.legal_basis?.[lang];
     const link = de ? `<a href="../checks.html#${r.id}" hreflang="en">` : `<a href="checks.html#${r.id}">`;
     const needs = (r.requires ?? []).map(de ? runsWhenDe : runsWhen);
     return [
       `<li class="topic-rule" id="${r.id}">`,
       `<h3>${link}${text(r.title[lang])}</a></h3>`,
-      `<p class="rule-meta"><span class="rule-id">${r.id}</span> · <span class="rule-law${law ? "" : " none"}">${law ? text(law) : de ? "Technisch, kein einzelnes Gesetz" : "Technical, no single law"}</span></p>`,
+      `<p class="rule-meta"><span class="rule-id">${r.id}</span> · ${lawHtml(r, lang)}</p>`,
       de
         ? `<p><span class="report-label">So wird geprüft</span> <span lang="en">${text(r.how)}</span></p>`
         : `<p><span class="report-label">How it is checked</span> ${text(r.how)}</p>`,

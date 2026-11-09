@@ -1,0 +1,25 @@
+prompt: "Build an admin dashboard with orders and customers"
+expect: [quality/placeholder-code]
+files:
+  package.json: |
+    { "name": "dashboard", "scripts": { "dev": "next dev" }, "dependencies": { "next": "^15.0.0" } }
+  lib/mock-data.ts: |
+    export const mockOrders = [{ id: "1001", customer: "Jane Doe", total: 129.9 }];
+  app/orders/page.tsx: |
+    import { mockOrders } from "@/lib/mock-data";
+
+    export default async function Orders() {
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return <ul>{mockOrders.map((o) => <li key={o.id}>{o.customer}: {o.total}</li>)}</ul>;
+    }
+  app/customers/page.tsx: |
+    export default function Customers() {
+      return (
+        <section>
+          <h1>Customers</h1>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          {/* ... rest of the components */}
+        </section>
+      );
+    }

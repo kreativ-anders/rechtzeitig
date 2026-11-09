@@ -1,0 +1,34 @@
+prompt: "Write a Go service that calls the billing API with a JWT"
+expect: [security/tls-verification-off, security/default-credentials]
+files:
+  go.mod: |
+    module example.com/billing
+
+    go 1.23
+  main.go: |
+    package main
+
+    import (
+    	"crypto/tls"
+    	"net/http"
+    	"os"
+    )
+
+    func getEnv(key, fallback string) string {
+    	if v := os.Getenv(key); v != "" {
+    		return v
+    	}
+    	return fallback
+    }
+
+    var jwtSecret = getEnv("JWT_SECRET", "supersecretkey")
+
+    func client() *http.Client {
+    	return &http.Client{Transport: &http.Transport{
+    		TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // skip cert check for dev
+    	}}
+    }
+
+    func main() {
+    	http.ListenAndServe(getEnv("ADDR", ":8080"), nil)
+    }

@@ -222,6 +222,7 @@ messages:
     found: "{page} gefunden: {where}."
     not_run_url: "Nicht gelaufen: braucht eine Website. Input url setzen."
     not_run_repository: "Nicht gelaufen: braucht das Repository. actions/checkout vor rechtzeitig ausführen."
+    no_code: "Kein Quellcode in einer Sprache, die diese Prüfung liest (data/code-paths.yml), also nichts zu prüfen."
     not_run_module: "Nicht gelaufen: Weder die Gruppe {module} noch der Bereich {scope} steht in modules ({modules}). Leeres modules startet alle Prüfungen."
     not_run_both_url: "Nicht gelaufen: liest Website und Repository zusammen, und die Website fehlt. Input url setzen."
     not_run_both_repository: "Nicht gelaufen: liest Website und Repository zusammen, und der Checkout fehlt. actions/checkout vor rechtzeitig ausführen."
@@ -241,6 +242,7 @@ messages:
     hidden_public: "Details ausgeblendet: In einem öffentlichen Repository kann jeder diese Seite lesen. Mit report-visibility: full werden sie angezeigt, oder rechtzeitig läuft aus einem privaten Repository."
     scan: "Scan"
     fix: "Behebung"
+    no_legal_basis: "keine Rechtsgrundlage"
     pages: "Seiten"
     language: "Sprache"
     subscriptions: "Abos"
@@ -1375,3 +1377,159 @@ messages:
     more:
       one: "und {count} weitere"
       other: "und {count} weitere"
+  security/tls-verification-off:
+    found:
+      one: "Die Zertifikatsprüfung ist an {count} Stelle abgeschaltet. Verbindungen dort akzeptieren jeden Server, auch einen Angreifer dazwischen."
+      other: "Die Zertifikatsprüfung ist an {count} Stellen abgeschaltet ({files} Dateien). Verbindungen dort akzeptieren jeden Server, auch einen Angreifer dazwischen."
+    suspect:
+      one: "{count} Stelle schaltet die Zertifikatsprüfung womöglich ab."
+      other: "{count} Stellen schalten die Zertifikatsprüfung womöglich ab."
+    none:
+      one: "Keine abgeschaltete Zertifikatsprüfung in {count} Code-Datei."
+      other: "Keine abgeschaltete Zertifikatsprüfung in {count} Code-Dateien."
+    more: "und {count} weitere"
+    reject_unauthorized: "rejectUnauthorized: false akzeptiert jedes Zertifikat."
+    env_off: "NODE_TLS_REJECT_UNAUTHORIZED=0 (oder PYTHONHTTPSVERIFY=0) schaltet die Zertifikatsprüfung für den ganzen Prozess ab."
+    strict_ssl: "strictSSL: false akzeptiert jedes Zertifikat."
+    no_identity_check: "checkServerIdentity gibt nichts zurück, jeder Hostname wird akzeptiert."
+    verify_false: "verify ist false: Die Anfrage akzeptiert jedes Zertifikat."
+    unverified_context: "ssl._create_unverified_context() akzeptiert jedes Zertifikat."
+    no_hostname_check: "check_hostname = False akzeptiert Zertifikate für andere Hostnamen."
+    cert_none: "CERT_NONE akzeptiert jedes Zertifikat."
+    insecure_skip_verify: "InsecureSkipVerify: true akzeptiert jedes Zertifikat."
+    curl_verify: "CURLOPT_SSL_VERIFYPEER oder VERIFYHOST ist aus."
+    verify_none: "VERIFY_NONE akzeptiert jedes Zertifikat."
+    curl_insecure: "curl -k / --insecure akzeptiert jedes Zertifikat."
+    wget_insecure: "wget --no-check-certificate akzeptiert jedes Zertifikat."
+    git_ssl: "git mit sslVerify false akzeptiert jedes Zertifikat."
+    npm_strict_ssl: "npm strict-ssl false akzeptiert jedes Zertifikat der Registry."
+    pip_trusted_host: "pip --trusted-host überspringt die Zertifikatsprüfung für diesen Host."
+  security/debug-mode:
+    found:
+      one: "Der Debug-Modus ist in {count} Produktionseinstellung an. Besucher sehen Stacktraces, Einstellungen oder Interna."
+      other: "Der Debug-Modus ist in {count} Produktionseinstellungen an ({files} Dateien). Besucher sehen Stacktraces, Einstellungen oder Interna."
+    suspect:
+      one: "{count} Stelle schaltet eine Debug-Funktion ein, die in Produktion landen kann."
+      other: "{count} Stellen schalten Debug-Funktionen ein, die in Produktion landen können."
+    none:
+      one: "Kein Debug-Modus in den Produktionseinstellungen von {count} Code-Datei."
+      other: "Kein Debug-Modus in den Produktionseinstellungen von {count} Code-Dateien."
+    more: "und {count} weitere"
+    django_debug: "DEBUG = True in den Django-Einstellungen zeigt jedem Besucher Stacktraces und Einstellungen."
+    django_debug_default: "DEBUG ist True, wenn die Variable fehlt."
+    flask_debug: "Flask-Debug-Modus: Der interaktive Debugger führt Code für jeden aus, der ihn erreicht."
+    env_debug: "Debug ist in einer eingecheckten Umgebungsdatei an."
+    php_debug: "'debug' => true steht fest in config/app.php, statt aus APP_DEBUG gelesen zu werden."
+    display_errors: "display_errors ist an: PHP-Fehler mit Pfaden erreichen den Besucher."
+    rails_local_requests: "consider_all_requests_local = true zeigt in Produktion vollständige Fehlerseiten."
+    graphql_introspection: "GraphQL-Introspection ist fest an, auch in Produktion: Jeder kann das ganze Schema lesen."
+    graphql_console: "Eine GraphQL-Konsole (Playground, GraphiQL) ist fest an, auch in Produktion."
+    gin_debug: "gin.DebugMode ist im Code gesetzt."
+    node_env_development: "Das Dockerfile setzt NODE_ENV=development: Frameworks laufen im Entwicklungsmodus."
+    actuator_all: "Alle Spring-Actuator-Endpunkte sind offen, auch env und heapdump."
+  security/default-credentials:
+    found:
+      one: "{count} Secret hat im Code einen festen Wert oder Ersatzwert. Ohne die Variable läuft die App mit einem Wert, den hier jeder lesen kann."
+      other: "{count} Secrets haben im Code feste Werte oder Ersatzwerte ({files} Dateien). Ohne die Variable läuft die App mit einem Wert, den hier jeder lesen kann."
+    suspect:
+      one: "{count} Konto nutzt ein gängiges Demo-Passwort."
+      other: "{count} Konten nutzen gängige Demo-Passwörter."
+    none:
+      one: "Kein Standard-Secret oder Demo-Passwort in {count} Code-Datei."
+      other: "Kein Standard-Secret oder Demo-Passwort in {count} Code-Dateien."
+    more: "und {count} weitere"
+    env_fallback: "{name} fällt auf einen festen Wert zurück, wenn sie nicht gesetzt ist."
+    django_insecure: "SECRET_KEY ist der django-insecure-Schlüssel aus der Projektvorlage."
+    literal_secret: "Ein Signatur- oder Session-Secret steht im Code."
+    demo_password: "Ein gängiges Demo-Passwort (admin, changeme, password123 …) steht im Code."
+  security/example-env-values:
+    suspect:
+      one: "{count} Wert in einer .env-Vorlage sieht echt aus. Die Vorlage ist eingecheckt, der Wert also öffentlich."
+      other: "{count} Werte in .env-Vorlagen sehen echt aus. Vorlagen sind eingecheckt, die Werte also öffentlich."
+    none:
+      one: "{count} .env-Vorlage enthält nur Platzhalter."
+      other: "{count} .env-Vorlagen enthalten nur Platzhalter."
+    no_template: "Keine .env-Vorlage (.env.example, .env.sample …) im Repository."
+    more: "und {count} weitere"
+    real_value: "{name} hat einen Wert, der wie ein echter Schlüssel aussieht (lang, zufällig, kein Platzhalter)."
+    url_password: "{name} ist eine Verbindungs-URL mit Passwort zu einem Host, der nicht lokal ist."
+  security/llm-key-in-browser:
+    found:
+      one: "Ein KI-API-Schlüssel kann an {count} Stelle im Browser landen. Dort kann ihn jeder lesen und auf Ihre Rechnung Anfragen stellen."
+      other: "KI-API-Schlüssel können an {count} Stellen im Browser landen ({files} Dateien). Dort kann sie jeder lesen und auf Ihre Rechnung Anfragen stellen."
+    suspect:
+      one: "{count} Datei, die im Browser läuft, importiert ein Server-KI-SDK."
+      other: "{count} Dateien, die im Browser laufen, importieren Server-KI-SDKs."
+    none:
+      one: "Kein KI-API-Schlüssel in Browser-Code in {count} Code-Datei."
+      other: "Kein KI-API-Schlüssel in Browser-Code in {count} Code-Dateien."
+    more: "und {count} weitere"
+    allow_browser: "dangerouslyAllowBrowser: true sendet den API-Schlüssel aus dem Browser."
+    public_key: "{name} hat ein öffentliches Präfix: Der Wert wird in das Browser-Bundle eingebaut."
+    sdk_in_client: "{name} wird in einer Datei importiert, die im Browser läuft; es braucht dort den geheimen Schlüssel."
+  security/service-key-in-client:
+    found:
+      one: "Ein Server-Schlüssel oder Admin-SDK wird an {count} Stelle in Browser-Code genutzt. Jeder kann ihn aus dem Bundle holen und mit vollen Rechten handeln."
+      other: "Server-Schlüssel oder Admin-SDKs werden an {count} Stellen in Browser-Code genutzt ({files} Dateien). Jeder kann sie aus dem Bundle holen und mit vollen Rechten handeln."
+    suspect:
+      one: "{count} Stelle in Browser-Code nutzt womöglich einen Server-Schlüssel."
+      other: "{count} Stellen in Browser-Code nutzen womöglich Server-Schlüssel."
+    none:
+      one: "Kein Server-Schlüssel oder Admin-SDK in {count} Browser-Datei."
+      other: "Kein Server-Schlüssel oder Admin-SDK in {count} Browser-Dateien."
+    no_client: "Keine Datei, die im Browser läuft („use client“, Vue- oder Svelte-Komponenten, src/ einer Vite-App)."
+    more: "und {count} weitere"
+    service_role: "Der Supabase-Schlüssel service_role umgeht Row Level Security."
+    supabase_admin: "supabase.auth.admin braucht den service_role-Schlüssel."
+    firebase_admin: "{name} ist das Admin-SDK mit vollem Zugriff, nur für Server."
+    stripe_secret: "Der geheime Stripe-Schlüssel oder das Server-SDK wird im Browser genutzt."
+    server_secret: "{name} ist ein Server-Secret."
+  quality/hollow-tests:
+    hollow:
+      one: "{count} Testbefund, der nicht scheitern kann oder einen Fehler verdeckt."
+      other: "{count} Testbefunde, die nicht scheitern können oder Fehler verdecken."
+    clean:
+      one: "{count} Testfall in {files} Dateien, keiner hohl."
+      other: "{count} Testfälle in {files} Dateien, keiner hohl."
+    no_tests: "Keine Testdateien (data/code-paths.yml tests)."
+    more: "und {count} weitere"
+    tautology: "Die Assertion vergleicht eine Konstante mit sich selbst und besteht immer."
+    swallowed: "Eine scheiternde Assertion in diesem try wird abgefangen und ignoriert."
+    forced_pass: "Der Testlauf wird zum Bestehen gezwungen."
+    no_assertions:
+      one: "{count} Testfall, aber keine Assertion in der Datei."
+      other: "{count} Testfälle, aber keine Assertion in der Datei."
+    focused: "Ein fokussierter Test (.only, fit) überspringt alle anderen Tests des Laufs."
+    pass_with_no_tests: "Der Testlauf besteht, wenn er keine Tests findet."
+    skipped_share: "{count} von {cases} Testfällen werden übersprungen."
+  quality/neutralized-ci:
+    neutralized:
+      one: "{count} Prüfung in CI oder Skripten kann nicht mehr scheitern."
+      other: "{count} Prüfungen in CI oder Skripten können nicht mehr scheitern."
+    none:
+      one: "Prüfungen in {count} Workflow und in Skripten können scheitern."
+      other: "Prüfungen in {count} Workflows und in Skripten können scheitern."
+    more: "und {count} weitere"
+    continue_on_error: "continue-on-error: true an einem Test-, Lint- oder Scan-Schritt: Der Job bleibt grün, wenn er scheitert."
+    disabled_step: "if: false schaltet einen Test-, Lint- oder Scan-Schritt ab."
+    or_true: "|| true (oder exit 0) nach einem Prüfbefehl verdeckt sein Scheitern."
+    no_verify: "--no-verify überspringt die Git-Hooks."
+    noop_test_script: "Das Test-Skript tut nichts und besteht immer."
+    suppressed_files: "{count} von {total} Dateien schalten am Anfang alle Typ- oder Lint-Prüfungen ab."
+    suppressed: "Alle Typ- oder Lint-Prüfungen sind für diese Datei aus."
+  quality/placeholder-code:
+    found:
+      one: "{count} Platzhalter in Produktionscode."
+      other: "{count} Platzhalter in Produktionscode ({files} Dateien)."
+    none:
+      one: "Kein Platzhalter in {count} Code-Datei."
+      other: "Kein Platzhalter in {count} Code-Dateien."
+    more: "und {count} weitere"
+    not_implemented: "Wirft „not implemented“."
+    todo_implement: "TODO: noch umzusetzen."
+    stub_pass: "Leerer Rumpf mit TODO."
+    elided: "Code wurde ausgelassen („... rest of the code“)."
+    not_real: "Kommentar sagt, dass dies nicht die echte Umsetzung ist."
+    simulated: "Simuliert einen API-, Netzwerk- oder Datenbankaufruf."
+    lorem: "Lorem-ipsum-Text."
+    mock_data: "Importiert Mock- oder Fake-Daten."

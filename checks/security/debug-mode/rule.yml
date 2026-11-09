@@ -1,0 +1,22 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-DEBUG-001
+severity: high
+title:
+  de: "Kein Debug-Modus in Produktionseinstellungen"
+  en: "No debug mode in production settings"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Matches settings, code, Dockerfiles and committed `.env` files (languages and left-out paths in `data/code-paths.yml`; tests, env templates and dev or local settings excluded) against `data/insecure-code.yml`: `DEBUG = True` in Django settings, `APP_DEBUG=true`, `'debug' => true` in Laravel's `config/app.php`, `consider_all_requests_local` in Rails production and Spring actuator `include=*` fail; Flask `debug=True`, GraphQL introspection or console forced on, `display_errors`, `gin.DebugMode` and `NODE_ENV=development` in a Dockerfile warn."
+fix_hint:
+  de: "Debug-Modus in Produktion ausschalten und über eine Umgebungsvariable steuern, die standardmäßig aus ist."
+  en: "Turn debug mode off in production and control it with an environment variable that is off by default."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://cwe.mitre.org/data/definitions/489.html
+  - https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+  - https://flask.palletsprojects.com/en/stable/debugging/
+  - https://laravel.com/docs/12.x/configuration
+  - https://www.apollographql.com/docs/apollo-server/api/apollo-server

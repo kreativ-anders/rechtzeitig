@@ -1,0 +1,5 @@
+it('loads', async () => {
+  try {
+    expect(await load()).toEqual([]);
+  } catch (e) {}
+});

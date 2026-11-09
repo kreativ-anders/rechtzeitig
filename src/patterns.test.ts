@@ -8,6 +8,22 @@ import { loadYaml } from "./data.ts";
 import { cpuMs } from "../test/helpers.ts";
 
 const data = (file: string) => loadYaml<Array<Record<string, string>>>(`data/${file}`);
+/** Every string in a code pattern file that is compiled as a regular expression: pattern, unless, paths and plain lists. */
+function codePatterns(file: string): Array<[string, RegExp]> {
+  const out: Array<[string, RegExp]> = [];
+  const walk = (v: unknown, path: string, flags = "") => {
+    if (typeof v === "string") {
+      if (/(^|\.)(key|level|comment|extensions|names)(\.\d+)?$/.test(path)) return;
+      out.push([`${file} ${path}`, new RegExp(v, flags.replace("g", ""))]);
+    } else if (Array.isArray(v)) v.forEach((x, i) => walk(x, `${path}.${i}`, flags));
+    else if (v && typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      for (const [k, x] of Object.entries(o)) if (k !== "flags" && typeof x !== "boolean" && typeof x !== "number") walk(x, path ? `${path}.${k}` : k, typeof o.flags === "string" ? o.flags : "");
+    }
+  };
+  walk(loadYaml(`data/${file}`), "");
+  return out;
+}
 // Loading also compiles every language pattern; an invalid one throws here.
 const all = loadLanguages(availableLanguages());
 const patterns: Array<[string, RegExp]> = [
@@ -34,6 +50,9 @@ const patterns: Array<[string, RegExp]> = [
   })(),
   ...data("hosting.yml").flatMap((h) => Object.values(h.headers as unknown as Record<string, string>))
     .map((p): [string, RegExp] => [`hosting.yml ${p}`, new RegExp(p, "i")]),
+  ...codePatterns("insecure-code.yml"),
+  ...codePatterns("code-quality.yml"),
+  ...codePatterns("code-paths.yml"),
   ...Object.entries({ ...all.links, ...all.text })
     .flatMap(([concept, res]) => res.map((re): [string, RegExp] => [`lang ${concept}`, re])),
 ];

@@ -1,0 +1,34 @@
+prompt: "Connect my Laravel shop to the payment provider (reviewed)"
+expect: []
+files:
+  composer.json: |
+    { "require": { "laravel/framework": "^11.0" } }
+  config/app.php: |
+    <?php
+    return [
+        'name' => env('APP_NAME', 'Shop'),
+        'env' => env('APP_ENV', 'production'),
+        'debug' => (bool) env('APP_DEBUG', false),
+        'url' => env('APP_URL', 'http://localhost'),
+    ];
+  app/Services/PaymentClient.php: |
+    <?php
+    namespace App\Services;
+
+    use Illuminate\Support\Facades\Http;
+
+    class PaymentClient
+    {
+        public function charge(array $payload): array
+        {
+            return Http::withToken(config('services.payment.key'))
+                ->post(config('services.payment.url') . '/charges', $payload)
+                ->throw()
+                ->json();
+        }
+    }
+  .env.example: |
+    APP_NAME=Shop
+    APP_ENV=local
+    APP_DEBUG=true
+    PAYMENT_KEY=

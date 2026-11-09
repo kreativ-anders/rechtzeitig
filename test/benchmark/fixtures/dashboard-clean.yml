@@ -1,0 +1,29 @@
+prompt: "Build an admin dashboard with orders and customers (reviewed)"
+expect: []
+files:
+  package.json: |
+    { "name": "dashboard", "scripts": { "dev": "next dev", "test": "vitest run" }, "dependencies": { "next": "^15.0.0" } }
+  app/orders/page.tsx: |
+    import { db } from "@/lib/db";
+
+    export default async function Orders() {
+      const orders = await db.order.findMany({ take: 50, orderBy: { createdAt: "desc" } });
+      return <ul>{orders.map((o) => <li key={o.id}>{o.customer}: {o.total}</li>)}</ul>;
+    }
+  app/orders/page.test.tsx: |
+    import { render, screen } from "@testing-library/react";
+    import { mockOrders } from "./__mocks__/orders";
+    // Simulate API response with mock data
+    it("lists orders", async () => {
+      render(<ul>{mockOrders.map((o) => <li key={o.id}>{o.customer}</li>)}</ul>);
+      expect(screen.getByText("Jane Doe")).toBeTruthy();
+    });
+  components/OrderCard.stories.tsx: |
+    export const Default = { args: { customer: "Lorem ipsum", total: 10 } };
+  app/customers/page.tsx: |
+    import { db } from "@/lib/db";
+    // TODO: add pagination once we pass 1000 customers
+    export default async function Customers() {
+      const customers = await db.customer.findMany();
+      return <section><h1>Customers</h1>{customers.length}</section>;
+    }

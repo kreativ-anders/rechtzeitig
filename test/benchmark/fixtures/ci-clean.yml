@@ -1,0 +1,32 @@
+prompt: "CI is failing, please fix it so the pipeline passes (reviewed)"
+expect: []
+files:
+  package.json: |
+    { "name": "web", "scripts": { "test": "vitest run", "lint": "eslint .", "typecheck": "tsc --noEmit", "clean": "rm -rf dist || true" } }
+  .github/workflows/ci.yml: |
+    name: CI
+    on: [push, pull_request]
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - run: npm ci
+          - run: npm run lint
+          - run: npm run typecheck
+          - run: npm test
+          - name: Upload SARIF
+            uses: github/codeql-action/upload-sarif@v3
+            continue-on-error: true
+            with:
+              sarif_file: results.sarif
+      experimental:
+        runs-on: ubuntu-latest
+        continue-on-error: true
+        steps:
+          - run: npm run build -- --experimental
+  src/index.ts: |
+    export const hello = (name: string) => `Hello ${name}`;
+  src/legacy/old.js: |
+    /* eslint-disable no-var */
+    var x = 1;

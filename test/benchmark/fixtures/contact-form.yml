@@ -1,0 +1,38 @@
+prompt: "Add a contact form that sends me an email"
+expect: [security/tls-verification-off, security/default-credentials]
+files:
+  package.json: |
+    { "name": "site", "scripts": { "dev": "next dev" }, "dependencies": { "next": "^15.0.0", "nodemailer": "^6.9.15" } }
+  app/api/contact/route.ts: |
+    import nodemailer from "nodemailer";
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.example.com",
+      port: Number(process.env.SMTP_PORT) || 587,
+      auth: {
+        user: process.env.SMTP_USER || "info@example.com",
+        pass: process.env.SMTP_PASSWORD || "password123",
+      },
+      tls: {
+        // Fix for self-signed certificate errors
+        rejectUnauthorized: false,
+      },
+    });
+
+    export async function POST(req: Request) {
+      const { name, email, message } = await req.json();
+      await transporter.sendMail({ from: email, to: "info@example.com", subject: `Contact from ${name}`, text: message });
+      return Response.json({ ok: true });
+    }
+  app/contact/page.tsx: |
+    "use client";
+    export default function Contact() {
+      return (
+        <form action="/api/contact" method="post">
+          <input name="name" placeholder="Name" />
+          <input name="email" type="email" placeholder="E-mail" />
+          <textarea name="message" />
+          <button>Send</button>
+        </form>
+      );
+    }

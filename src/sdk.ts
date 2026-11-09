@@ -960,3 +960,22 @@ export function dependencyLicenseResult(repo: RepoContext, find: (license: Licen
   if (findings.length) return warn(msg("found", { count: findings.length, ...params }), [...capped(findings), ...gap]);
   return pass(msg("none", { count: deps.checked.length, ...params }), gap);
 }
+
+// ---------- Source code
+
+export { codeFiles, findInCode, isClientFile, isTest, languageOf, toFindings } from "./repo/code.ts";
+export type { CodeFile, CodeFind, CodePattern, Language, PatternSet } from "./repo/code.ts";
+import { toFindings as codeFindings, type CodeFile, type CodeFind } from "./repo/code.ts";
+
+/**
+ * Result of a code check from its finds: fail with `found` when a find has level fail, warn with `suspect` otherwise,
+ * pass with `none` and the number of files read, skip with `messages.common.no_code` when there is no code to read.
+ * The check's messages need found, suspect, none (each with {count}) and more.
+ */
+export function codeResult(files: CodeFile[], finds: CodeFind[]): Result {
+  if (!files.length) return skip(msg("no_code"));
+  if (!finds.length) return pass(msg("none", { count: files.length }));
+  const params = { count: finds.length, files: new Set(finds.map((f) => f.file)).size };
+  const details = capped(codeFindings(finds));
+  return finds.some((f) => f.level === "fail") ? fail(msg("found", params), details) : warn(msg("suspect", params), details);
+}

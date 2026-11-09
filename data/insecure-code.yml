@@ -1,0 +1,242 @@
+# Insecure patterns in source code, one section per check (its path under checks/), patterns per language
+# from data/code-paths.yml. Each pattern: `key` (message of the find), `pattern` (regular expression, run per line),
+# optional `flags`, `paths` (only these files), `not_paths`, `unless` (the same line also matching this is no find),
+# `comments: true` (also in comment lines), `whole: true` (run on the whole file), `level` (fail or warn; default fail).
+# A named group `name` is shown in the finding; nothing else of the line is. Test files, fixtures, vendored code and
+# docs are left out (data/code-paths.yml). Changing a pattern changes results: name this file in the commit message.
+#
+# Every pattern is precise first: it names the setting that turns a protection off, not code that only might.
+
+# Name of an environment variable that holds a secret: segments joined by "_", ending in a secret word.
+# Written out in each pattern below (YAML anchors cannot join strings):
+#   (?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY)
+
+security/tls-verification-off:
+  js:
+    - key: reject_unauthorized
+      pattern: '\brejectUnauthorized\s*:\s*false\b'
+    - key: env_off
+      pattern: 'NODE_TLS_REJECT_UNAUTHORIZED[''"]?\]?\s*=\s*[''"]?0\b'
+    - key: strict_ssl
+      pattern: '\bstrictSSL\s*:\s*false\b'
+    - key: no_identity_check
+      pattern: '\bcheckServerIdentity\s*:\s*\(\s*\)\s*=>\s*(?:undefined|null|\{\s*\})'
+  python:
+    - key: verify_false
+      pattern: '\bverify\s*=\s*False\b'
+      # PyJWT's old verify=False turns off signature checks, not TLS.
+      unless: '\bjwt\b'
+    - key: unverified_context
+      pattern: '\bssl\._create_unverified_context\b'
+    - key: no_hostname_check
+      pattern: '\bcheck_hostname\s*=\s*False\b'
+    - key: cert_none
+      pattern: '\bCERT_NONE\b'
+  go:
+    - key: insecure_skip_verify
+      pattern: '\bInsecureSkipVerify\s*[:=]\s*true\b'
+  php:
+    - key: curl_verify
+      pattern: '\bCURLOPT_SSL_VERIFY(?:PEER|HOST)\s*,\s*(?:false|0)\b'
+      flags: i
+    - key: verify_false
+      pattern: '[''"](?:verify|verify_peer|verify_peer_name)[''"]\s*=>\s*false\b'
+      flags: i
+  ruby:
+    - key: verify_none
+      pattern: '\bVERIFY_NONE\b'
+    - key: verify_false
+      pattern: '\b(?:verify_ssl|ssl_verify)\s*(?::|=>)\s*false\b|\bssl\s*(?::|=>)\s*\{\s*verify\s*(?::|=>)\s*false\b'
+  shell:
+    - key: curl_insecure
+      pattern: '\bcurl\b[^\n#]{0,300}?\s(?:-[a-zA-Z]*k[a-zA-Z]*|--insecure)(?=\s|$|[''"])'
+    - key: wget_insecure
+      pattern: '\bwget\b[^\n#]{0,300}?\s--no-check-certificate\b'
+    - key: git_ssl
+      pattern: '\bhttp\.sslVerify\s*=?\s*false\b|\bGIT_SSL_NO_VERIFY\s*[=:]\s*[''"]?(?:1|true)\b'
+      flags: i
+    - key: npm_strict_ssl
+      pattern: '\bstrict-ssl\s*[= ]\s*false\b'
+    - key: pip_trusted_host
+      pattern: '\bpip3?\b[^\n#]{0,300}?\s--trusted-host\b'
+    - key: env_off
+      pattern: '\b(?:NODE_TLS_REJECT_UNAUTHORIZED|PYTHONHTTPSVERIFY)\s*[=:]\s*[''"]?0\b'
+  env:
+    - key: env_off
+      pattern: '^\s*(?:export\s+)?(?:NODE_TLS_REJECT_UNAUTHORIZED|PYTHONHTTPSVERIFY)\s*=\s*[''"]?0\b'
+    - key: git_ssl
+      pattern: '^\s*(?:export\s+)?GIT_SSL_NO_VERIFY\s*=\s*[''"]?(?:1|true)\b'
+      flags: i
+
+# Debug modes that show stack traces, settings or a query console to every visitor. Development settings
+# (dev, local, test) and env templates are left out: the finds are settings that apply in production.
+security/debug-mode:
+  python:
+    - key: django_debug
+      pattern: '^DEBUG\s*=\s*True\b'
+      paths: '(^|/)settings(\.py|/(?:__init__|base|common|prod|production|settings)\.py)$'
+    - key: django_debug_default
+      pattern: '^DEBUG\s*=.*[(,]\s*[''"]DEBUG[''"]\s*,\s*(?:default\s*=\s*)?[''"]?(?:True|true|1)[''"]?\s*\)'
+      paths: '(^|/)settings(\.py|/(?:__init__|base|common|prod|production|settings)\.py)$'
+    - key: flask_debug
+      pattern: '\.run\([^)\n]{0,200}\bdebug\s*=\s*True\b'
+      level: warn
+    - key: flask_debug
+      pattern: '\bapp\.(?:debug\s*=\s*True|config\[\s*[''"]DEBUG[''"]\s*\]\s*=\s*True)\b'
+      level: warn
+  env:
+    - key: env_debug
+      pattern: '^\s*(?:APP_DEBUG|FLASK_DEBUG|DEBUG)\s*=\s*[''"]?(?:true|1)[''"]?\s*$'
+      flags: i
+      not_paths: '\.(?:example|sample|template|dist|defaults)$|\.(?:dev|development|local|test|testing)(?:\.local)?$'
+  php:
+    - key: php_debug
+      pattern: '^\s*[''"]debug[''"]\s*=>\s*true\b'
+      paths: '(^|/)config/app\.php$'
+    - key: display_errors
+      pattern: '\bini_set\(\s*[''"]display_errors[''"]\s*,\s*[''"]?(?:1|on|true)\b'
+      flags: i
+      level: warn
+  ruby:
+    - key: rails_local_requests
+      pattern: '\bconfig\.consider_all_requests_local\s*=\s*true\b'
+      paths: '(^|/)config/environments/production\.rb$'
+  js:
+    - key: graphql_introspection
+      pattern: '\bintrospection\s*:\s*true\b'
+      not_paths: '(^|[/.])(?:dev|development|local)\.'
+      level: warn
+    - key: graphql_console
+      pattern: '\b(?:playground|graphiql)\s*:\s*true\b'
+      not_paths: '(^|[/.])(?:dev|development|local)\.'
+      level: warn
+  go:
+    - key: gin_debug
+      pattern: '\bgin\.SetMode\(\s*gin\.DebugMode\s*\)'
+      level: warn
+  shell:
+    - key: node_env_development
+      pattern: '^\s*ENV\s+NODE_ENV[=\s]+[''"]?development\b'
+      paths: '(^|/)(?:Dockerfile|Containerfile)(?:\.[\w.-]+)?$|\.Dockerfile$'
+      not_paths: '\.(?:dev|development|local)$'
+      level: warn
+  config:
+    - key: actuator_all
+      pattern: '\bmanagement\.endpoints\.web\.exposure\.include\s*[=:]\s*[''"]?\*'
+
+# Secrets with a fallback or a fixed value in code: when the variable is missing in production, the app runs with
+# a value anyone can read in the repository. Demo passwords for admin accounts are a warning.
+security/default-credentials:
+  js:
+    - key: env_fallback
+      pattern: '\b(?:process\.env|import\.meta\.env|Deno\.env\.get\(\s*)(?:\.|\[\s*[''"]|[''"])?(?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY))\b[''"]?\s*[)\]]?\s*(?:\?\?|\|\|)\s*[''"`][^''"`\n]{2,}[''"`]'
+      unless: '\b(?:PUBLIC|PUBLISHABLE|ANON)_'
+    - key: env_fallback
+      pattern: '\b[gG]et[eE]nv\w*\(\s*[''"](?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY))[''"]\s*,\s*[''"`][^''"`\n]{2,}[''"`]'
+      unless: '\b(?:PUBLIC|PUBLISHABLE|ANON)_'
+    - key: literal_secret
+      pattern: '\b(?:secret|jwtSecret|sessionSecret|secretOrKey|secretOrPrivateKey|signingKey)\s*:\s*[''"`][^''"`\n$]{2,}[''"`]'
+    - key: literal_secret
+      pattern: '\bjwt\.(?:sign|verify)\([^,\n]{1,200},\s*[''"`][^''"`\n]{2,}[''"`]'
+    - key: demo_password
+      pattern: '\b[A-Za-z_]{0,40}?(?:[Pp]ass(?:word|wd)?|PASSWORD|[Pp]wd)[''"]?\s*(?::|=>|=)\s*[''"](?:admin|admin123|password|password1|password123|changeme|123456|12345678|secret|test123|letmein|qwerty|demo|demo123|root|toor)[''"]'
+      level: warn
+    - key: demo_password
+      pattern: '\b(?:hash|hashSync|hashpw|generate_password_hash|make_password)\(\s*[''"](?:admin|admin123|password|password1|password123|changeme|123456|12345678|secret|test123|letmein|qwerty|demo|demo123|root|toor)[''"]'
+      level: warn
+  python:
+    - key: env_fallback
+      pattern: '\bos\.(?:environ\.get|getenv)\(\s*[''"](?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY))[''"]\s*,\s*[''"][^''"\n]{2,}[''"]'
+      unless: '\b(?:PUBLIC|PUBLISHABLE|ANON)_'
+    - key: env_fallback
+      pattern: '\bos\.(?:environ\.get|getenv)\(\s*[''"](?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY))[''"]\s*\)\s*or\s*[''"][^''"\n]{2,}[''"]'
+      unless: '\b(?:PUBLIC|PUBLISHABLE|ANON)_'
+    - key: env_fallback
+      pattern: '\bconfig\(\s*[''"](?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY))[''"]\s*,\s*default\s*=\s*[''"][^''"\n]{2,}[''"]'
+    - key: django_insecure
+      pattern: '^\s*SECRET_KEY\s*=\s*[''"]django-insecure-'
+    - key: literal_secret
+      pattern: '\bjwt\.(?:encode|decode)\([^,\n]{1,200},\s*[''"][^''"\n]{2,}[''"]'
+    - key: literal_secret
+      pattern: '^\s*(?:app\.)?(?:secret_key|SECRET_KEY|JWT_SECRET(?:_KEY)?)\s*=\s*[''"][^''"\n]{2,}[''"]\s*(?:#.*)?$'
+      unless: 'django-insecure-'
+    - key: demo_password
+      pattern: '\b[A-Za-z_]{0,40}?(?:[Pp]ass(?:word|wd)?|PASSWORD|[Pp]wd)[''"]?\s*(?::|=)\s*[''"](?:admin|admin123|password|password1|password123|changeme|123456|12345678|secret|test123|letmein|qwerty|demo|demo123|root|toor)[''"]'
+      level: warn
+    - key: demo_password
+      pattern: '\b(?:hashpw|generate_password_hash|make_password|hash)\(\s*[''"b]*(?:admin|admin123|password|password1|password123|changeme|123456|12345678|secret|test123|letmein|qwerty|demo|demo123|root|toor)[''"]'
+      level: warn
+  go:
+    - key: env_fallback
+      pattern: '\b[gG]et[eE]nv\w*\(\s*"(?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY))"\s*,\s*"[^"\n]{2,}"\s*\)'
+      unless: '\b(?:PUBLIC|PUBLISHABLE|ANON)_'
+    - key: literal_secret
+      pattern: '\b(?:jwtSecret|jwtKey|secretKey|signingKey)\s*(?::=|=)\s*\[\]byte\(\s*"[^"\n]{2,}"\s*\)'
+    - key: demo_password
+      pattern: '\b(?:Password|password|Pass|pwd)\s*(?::|=|:=)\s*"(?:admin|admin123|password|password1|password123|changeme|123456|12345678|secret|test123|letmein|qwerty|demo|demo123|root|toor)"'
+      level: warn
+  php:
+    - key: env_fallback
+      pattern: '\b(?:env|getenv)\(\s*[''"](?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY))[''"]\s*,\s*[''"][^''"\n]{2,}[''"]'
+      unless: '\b(?:PUBLIC|PUBLISHABLE|ANON)_'
+    - key: env_fallback
+      pattern: '\bgetenv\(\s*[''"](?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY))[''"]\s*\)\s*(?:\?:|\?\?|\|\|)\s*[''"][^''"\n]{2,}[''"]'
+    - key: demo_password
+      pattern: '[''"](?:password|passwd|pwd)[''"]\s*=>\s*(?:bcrypt\(|Hash::make\(|password_hash\()?\s*[''"](?:admin|admin123|password|password1|password123|changeme|123456|12345678|secret|test123|letmein|qwerty|demo|demo123|root|toor)[''"]'
+      level: warn
+  ruby:
+    - key: env_fallback
+      pattern: '\bENV\.fetch\(\s*[''"](?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY|SECRET_KEY_BASE))[''"]\s*(?:,\s*|\)\s*\{\s*)[''"][^''"\n]{2,}[''"]'
+    - key: env_fallback
+      pattern: '\bENV\[\s*[''"](?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY|SECRET_KEY_BASE))[''"]\s*\]\s*\|\|\s*[''"][^''"\n]{2,}[''"]'
+    - key: demo_password
+      pattern: '\bpassword(?:_confirmation)?\s*(?::|=>|=)\s*[''"](?:admin|admin123|password|password1|password123|changeme|123456|12345678|secret|test123|letmein|qwerty|demo|demo123|root|toor)[''"]'
+      level: warn
+
+# .env templates (.env.example, .env.sample, ...) with values that look real: the template is committed on purpose,
+# so a real key pasted into it is public. Values are never shown, only the variable name.
+security/example-env-values:
+  # Template file names; security/env-files lets these through.
+  templates: '(^|/)\.env(\.[\w-]+)*\.(?:example|sample|template|dist|defaults)$|(^|/)(?:example|sample)\.env$'
+  # Variables whose value is a secret. Names with a public marker are meant for the browser and left out.
+  secret_names: '(?:SECRET|PASSWORD|PASSWD|PASS|PWD|TOKEN|KEY|PRIVATE|CREDENTIAL|AUTH|DSN|SIGNATURE)'
+  public_names: '(?:PUBLIC|PUBLISHABLE|ANON|_URL$|_ID$|_HOST$|_PORT$|_REGION$|_ALGORITHM$|_EXPIRES|_TTL$|_NAME$)'
+  # A value with one of these is a placeholder, not a key.
+  placeholders: '(?:your|xxx|\.\.\.|<|>|\{|\$|change|replace|example|placeholder|dummy|sample|insert|enter|put[-_ ]|todo|fixme|here|secret[-_]?key|my[-_]|test[-_]|fake|redacted|none|null|false|true)'
+  # Connection strings with a password: postgres://user:password@host. Local hosts are development values.
+  url_password: '^[a-z][a-z0-9+.-]*://[^:/@\s]+:(?<password>[^@\s]+)@(?<host>[^/:@\s]+)'
+  local_hosts: '^(?:localhost|127\.0\.0\.1|0\.0\.0\.0|::1|db|database|postgres|mysql|redis|mongo|mongodb|host\.docker\.internal|[\w-]+\.local)$'
+
+# AI provider keys that end up in the browser: the browser option of an AI SDK, AI keys under a public prefix
+# (inlined into the bundle), and server AI SDKs imported in files that run in the browser (data/code-paths.yml `client`).
+security/llm-key-in-browser:
+  js:
+    - key: allow_browser
+      pattern: '\bdangerouslyAllowBrowser\s*:\s*true\b'
+    - key: public_key
+      pattern: '\b(?<name>(?:NEXT_PUBLIC|VITE|REACT_APP|EXPO_PUBLIC|NUXT_PUBLIC|GATSBY|PUBLIC)_[A-Z0-9_]{0,30}?(?:OPENAI|ANTHROPIC|CLAUDE|GEMINI|GOOGLE_AI|GROQ|MISTRAL|COHERE|REPLICATE|HUGGINGFACE|HF|DEEPSEEK|PERPLEXITY|OPENROUTER|ELEVENLABS|XAI|TOGETHER|FIREWORKS)[A-Z0-9_]{0,30}?(?:KEY|TOKEN|SECRET))\b'
+  env:
+    - key: public_key
+      pattern: '^\s*(?:export\s+)?(?<name>(?:NEXT_PUBLIC|VITE|REACT_APP|EXPO_PUBLIC|NUXT_PUBLIC|GATSBY|PUBLIC)_[A-Z0-9_]{0,30}?(?:OPENAI|ANTHROPIC|CLAUDE|GEMINI|GOOGLE_AI|GROQ|MISTRAL|COHERE|REPLICATE|HUGGINGFACE|HF|DEEPSEEK|PERPLEXITY|OPENROUTER|ELEVENLABS|XAI|TOGETHER|FIREWORKS)[A-Z0-9_]{0,30}?(?:KEY|TOKEN|SECRET))\s*='
+  # Only in files that run in the browser.
+  client:
+    - key: sdk_in_client
+      pattern: '(?:\bfrom\s+|\brequire\(\s*|\bimport\(\s*|^\s*import\s+)[''"](?<name>openai|@anthropic-ai/sdk|@google/generative-ai|@google/genai|groq-sdk|@mistralai/mistralai|cohere-ai|replicate|@ai-sdk/(?:openai|anthropic|google|mistral|groq|cohere|xai|deepseek))[''"]'
+      unless: '^\s*import\s+type\b'
+      level: warn
+
+# Server-only keys and admin SDKs in files that run in the browser (data/code-paths.yml `client`): anyone can read
+# them in the bundle and act with full rights. Secrets under a public prefix are found by security/secrets.
+security/service-key-in-client:
+  client:
+    - key: service_role
+      pattern: '\bservice_role\b|(?:\b|_)SERVICE_ROLE(?:_KEY)?\b|(?:\b|_)SUPABASE_SERVICE_KEY\b'
+    - key: supabase_admin
+      pattern: '\.auth\.admin\.\w+\('
+    - key: firebase_admin
+      pattern: '(?:\bfrom\s+|\brequire\(\s*|\bimport\(\s*|^\s*import\s+)[''"](?<name>firebase-admin)(?:/[\w/-]+)?[''"]'
+    - key: stripe_secret
+      pattern: '(?:\bfrom\s+|\brequire\(\s*|^\s*import\s+)[''"](?<name>stripe)[''"]|\bSTRIPE_SECRET(?:_KEY)?\b'
+      unless: '^\s*import\s+type\b'
+    - key: server_secret
+      pattern: '\b(?:process\.env|import\.meta\.env)\.(?<name>AWS_SECRET_ACCESS_KEY|DATABASE_URL|CLERK_SECRET_KEY|RESEND_API_KEY|SENDGRID_API_KEY|TWILIO_AUTH_TOKEN|NEXTAUTH_SECRET|AUTH_SECRET|JWT_SECRET)\b'

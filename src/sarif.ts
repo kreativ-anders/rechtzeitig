@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import type { Outcome, OutcomeStatus } from "./runner.ts";
 import type { Severity } from "./rules.ts";
 import { oneLine } from "./text.ts";
+import { render } from "./messages.ts";
 import { say, where, type Report } from "./report.ts";
 
 const LEVEL: Partial<Record<OutcomeStatus, "error" | "warning" | "note">> = { fail: "error", error: "error", warn: "warning", info: "note" };
@@ -37,7 +38,7 @@ export function toSarif(r: Report, { base = "", anchor }: SarifOptions = {}): ob
     id: o.rule.id,
     name: o.id,
     shortDescription: { text: o.rule.title[lang] },
-    help: { text: [o.rule.fix_hint[lang], o.rule.legal_basis?.[lang]].filter(Boolean).join("\n\n") },
+    help: { text: [o.rule.fix_hint[lang], o.rule.legal_basis?.[lang] ?? (o.rule.value ? `${render({ key: "no_legal_basis" }, "report", lang)}: ${o.rule.value[lang]}` : undefined)].filter(Boolean).join("\n\n") },
     helpUri: `${DOCS}#${o.rule.id}`,
     properties: {
       tags: [o.id.split("/")[0]],

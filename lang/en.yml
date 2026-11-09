@@ -178,6 +178,7 @@ messages:
     found: "Found the {page} at {where}."
     not_run_url: "Not run: needs a website. Set the input url."
     not_run_repository: "Not run: needs the repository. Run actions/checkout before rechtzeitig."
+    no_code: "No source code in a language this check reads (data/code-paths.yml), so nothing to check."
     not_run_module: "Not run: neither its group {module} nor its scope {scope} is in modules ({modules}). Empty modules runs all checks."
     not_run_both_url: "Not run: reads the website and the repository together, and the website is missing. Set the input url."
     not_run_both_repository: "Not run: reads the website and the repository together, and the checkout is missing. Run actions/checkout before rechtzeitig."
@@ -197,6 +198,7 @@ messages:
     hidden_public: "Details hidden: on a public repository anyone can read this page. Set report-visibility: full to show them, or run rechtzeitig from a private repository."
     scan: "Scan"
     fix: "Fix"
+    no_legal_basis: "no legal basis"
     pages: "Pages"
     language: "Language"
     subscriptions: "Subscriptions"
@@ -1331,3 +1333,159 @@ messages:
     more:
       one: "and {count} more"
       other: "and {count} more"
+  security/tls-verification-off:
+    found:
+      one: "Certificate checks are turned off in {count} place. Connections there accept any server, also an attacker in between."
+      other: "Certificate checks are turned off in {count} places ({files} files). Connections there accept any server, also an attacker in between."
+    suspect:
+      one: "{count} place may turn certificate checks off."
+      other: "{count} places may turn certificate checks off."
+    none:
+      one: "No setting that turns certificate checks off in {count} code file."
+      other: "No setting that turns certificate checks off in {count} code files."
+    more: "and {count} more"
+    reject_unauthorized: "rejectUnauthorized: false accepts any certificate."
+    env_off: "NODE_TLS_REJECT_UNAUTHORIZED=0 (or PYTHONHTTPSVERIFY=0) turns certificate checks off for the whole process."
+    strict_ssl: "strictSSL: false accepts any certificate."
+    no_identity_check: "checkServerIdentity returns nothing, so any host name is accepted."
+    verify_false: "verify is false: the request accepts any certificate."
+    unverified_context: "ssl._create_unverified_context() accepts any certificate."
+    no_hostname_check: "check_hostname = False accepts certificates for other host names."
+    cert_none: "CERT_NONE accepts any certificate."
+    insecure_skip_verify: "InsecureSkipVerify: true accepts any certificate."
+    curl_verify: "CURLOPT_SSL_VERIFYPEER or VERIFYHOST is off."
+    verify_none: "VERIFY_NONE accepts any certificate."
+    curl_insecure: "curl -k / --insecure accepts any certificate."
+    wget_insecure: "wget --no-check-certificate accepts any certificate."
+    git_ssl: "git with sslVerify false accepts any certificate."
+    npm_strict_ssl: "npm strict-ssl false accepts any certificate for the registry."
+    pip_trusted_host: "pip --trusted-host skips certificate checks for that host."
+  security/debug-mode:
+    found:
+      one: "Debug mode is on in {count} production setting. Visitors can see stack traces, settings or internals."
+      other: "Debug mode is on in {count} production settings ({files} files). Visitors can see stack traces, settings or internals."
+    suspect:
+      one: "{count} place turns a debug feature on that may reach production."
+      other: "{count} places turn debug features on that may reach production."
+    none:
+      one: "No debug mode in the production settings of {count} code file."
+      other: "No debug mode in the production settings of {count} code files."
+    more: "and {count} more"
+    django_debug: "DEBUG = True in Django settings shows stack traces and settings to every visitor."
+    django_debug_default: "DEBUG defaults to True when the variable is missing."
+    flask_debug: "Flask debug mode: the interactive debugger runs code for anyone who reaches it."
+    env_debug: "Debug is on in a committed environment file."
+    php_debug: "'debug' => true is fixed in config/app.php instead of read from APP_DEBUG."
+    display_errors: "display_errors is on: PHP errors with paths reach the visitor."
+    rails_local_requests: "consider_all_requests_local = true in production shows full error pages."
+    graphql_introspection: "GraphQL introspection is forced on, also in production: anyone can read the whole schema."
+    graphql_console: "A GraphQL console (playground, GraphiQL) is forced on, also in production."
+    gin_debug: "gin.DebugMode is set in code."
+    node_env_development: "The Dockerfile sets NODE_ENV=development: frameworks run in development mode."
+    actuator_all: "All Spring actuator endpoints are exposed, including env and heapdump."
+  security/default-credentials:
+    found:
+      one: "{count} secret has a fixed value or fallback in the code. Without the variable, the app runs with a value anyone can read here."
+      other: "{count} secrets have fixed values or fallbacks in the code ({files} files). Without the variable, the app runs with a value anyone can read here."
+    suspect:
+      one: "{count} account uses a common demo password."
+      other: "{count} accounts use common demo passwords."
+    none:
+      one: "No default secret or demo password in {count} code file."
+      other: "No default secret or demo password in {count} code files."
+    more: "and {count} more"
+    env_fallback: "{name} falls back to a fixed value when it is not set."
+    django_insecure: "SECRET_KEY is the django-insecure- key from the project template."
+    literal_secret: "A signing or session secret is written in the code."
+    demo_password: "A common demo password (admin, changeme, password123 ...) is set in the code."
+  security/example-env-values:
+    suspect:
+      one: "{count} value in an .env template looks real. The template is committed, so the value is public."
+      other: "{count} values in .env templates look real. Templates are committed, so the values are public."
+    none:
+      one: "{count} .env template holds only placeholders."
+      other: "{count} .env templates hold only placeholders."
+    no_template: "No .env template (.env.example, .env.sample ...) in the repository."
+    more: "and {count} more"
+    real_value: "{name} has a value that looks like a real key (long, random, no placeholder)."
+    url_password: "{name} is a connection URL with a password for a host that is not local."
+  security/llm-key-in-browser:
+    found:
+      one: "An AI API key can end up in the browser in {count} place. Anyone can read it there and run requests on your bill."
+      other: "AI API keys can end up in the browser in {count} places ({files} files). Anyone can read them there and run requests on your bill."
+    suspect:
+      one: "{count} file that runs in the browser imports a server AI SDK."
+      other: "{count} files that run in the browser import server AI SDKs."
+    none:
+      one: "No AI API key in browser code in {count} code file."
+      other: "No AI API key in browser code in {count} code files."
+    more: "and {count} more"
+    allow_browser: "dangerouslyAllowBrowser: true sends the API key from the browser."
+    public_key: "{name} has a public prefix: its value is built into the browser bundle."
+    sdk_in_client: "{name} is imported in a file that runs in the browser; it needs the secret key there."
+  security/service-key-in-client:
+    found:
+      one: "A server key or admin SDK is used in {count} place in browser code. Anyone can take it from the bundle and act with full rights."
+      other: "Server keys or admin SDKs are used in {count} places in browser code ({files} files). Anyone can take them from the bundle and act with full rights."
+    suspect:
+      one: "{count} place in browser code may use a server key."
+      other: "{count} places in browser code may use server keys."
+    none:
+      one: "No server key or admin SDK in {count} browser file."
+      other: "No server key or admin SDK in {count} browser files."
+    no_client: "No file that runs in the browser (\"use client\", Vue or Svelte components, src/ of a Vite app)."
+    more: "and {count} more"
+    service_role: "The Supabase service_role key bypasses row level security."
+    supabase_admin: "supabase.auth.admin needs the service_role key."
+    firebase_admin: "{name} is the admin SDK with full access, for servers only."
+    stripe_secret: "The Stripe secret key or server SDK is used in the browser."
+    server_secret: "{name} is a server secret."
+  quality/hollow-tests:
+    hollow:
+      one: "{count} test find that cannot fail or hides a failure."
+      other: "{count} test finds that cannot fail or hide failures."
+    clean:
+      one: "{count} test case in {files} files, none hollow."
+      other: "{count} test cases in {files} files, none hollow."
+    no_tests: "No test files (data/code-paths.yml tests)."
+    more: "and {count} more"
+    tautology: "The assertion compares a constant with itself and always passes."
+    swallowed: "A failing assertion in this try is caught and ignored."
+    forced_pass: "The test run is forced to pass."
+    no_assertions:
+      one: "{count} test case, but no assertion in the file."
+      other: "{count} test cases, but no assertion in the file."
+    focused: "A focused test (.only, fit) skips every other test in the run."
+    pass_with_no_tests: "The test run passes when it finds no tests."
+    skipped_share: "{count} of {cases} test cases are skipped."
+  quality/neutralized-ci:
+    neutralized:
+      one: "{count} check in CI or scripts can no longer fail."
+      other: "{count} checks in CI or scripts can no longer fail."
+    none:
+      one: "Checks in {count} workflow and in scripts can fail."
+      other: "Checks in {count} workflows and in scripts can fail."
+    more: "and {count} more"
+    continue_on_error: "continue-on-error: true on a test, lint or scan step: the job stays green when it fails."
+    disabled_step: "if: false turns a test, lint or scan step off."
+    or_true: "|| true (or exit 0) after a check command hides its failure."
+    no_verify: "--no-verify skips the git hooks."
+    noop_test_script: "The test script does nothing and always passes."
+    suppressed_files: "{count} of {total} files turn all type or lint checks off at the top."
+    suppressed: "All type or lint checks are off for this file."
+  quality/placeholder-code:
+    found:
+      one: "{count} placeholder in production code."
+      other: "{count} placeholders in production code ({files} files)."
+    none:
+      one: "No placeholder in {count} code file."
+      other: "No placeholder in {count} code files."
+    more: "and {count} more"
+    not_implemented: "Throws \"not implemented\"."
+    todo_implement: "TODO: still to implement."
+    stub_pass: "Empty body with a TODO."
+    elided: "Code was left out (\"... rest of the code\")."
+    not_real: "Comment says this is not the real implementation."
+    simulated: "Simulates an API, network or database call."
+    lorem: "Lorem ipsum text."
+    mock_data: "Imports mock or fake data."

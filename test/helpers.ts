@@ -222,3 +222,13 @@ export function npmLock(pkgs: Record<string, string | { version: string; license
   const packages = Object.fromEntries(Object.entries(pkgs).map(([name, p]) => [`node_modules/${name}`, typeof p === "string" ? { version: p } : p]));
   return JSON.stringify({ lockfileVersion: 3, packages: { "": {}, ...packages } });
 }
+
+/**
+ * A random-looking string of letters and digits, the same for the same seed, built at runtime so that no
+ * key-like string is committed (dev/writing-checks.md).
+ */
+export function randomKey(length: number, seed = 1): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let x = (seed * 7919 + 17) % 2147483648;
+  return Array.from({ length }, () => chars[((x = (x * 1103515245 + 12345) % 2147483648) >> 8) % chars.length]).join("");
+}

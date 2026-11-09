@@ -1,0 +1,33 @@
+prompt: "Connect my Laravel shop to the payment provider"
+expect: [security/debug-mode, security/tls-verification-off]
+files:
+  composer.json: |
+    { "require": { "laravel/framework": "^11.0" } }
+  config/app.php: |
+    <?php
+    return [
+        'name' => env('APP_NAME', 'Shop'),
+        'env' => env('APP_ENV', 'production'),
+        'debug' => true,
+        'url' => env('APP_URL', 'http://localhost'),
+    ];
+  app/Services/PaymentClient.php: |
+    <?php
+    namespace App\Services;
+
+    class PaymentClient
+    {
+        public function charge(array $payload): array
+        {
+            $ch = curl_init(config('services.payment.url') . '/charges');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            return json_decode(curl_exec($ch), true);
+        }
+    }
+  .env.example: |
+    APP_NAME=Shop
+    APP_ENV=local
+    APP_DEBUG=true
+    DB_PASSWORD=

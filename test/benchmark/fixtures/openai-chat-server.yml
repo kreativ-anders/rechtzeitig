@@ -1,0 +1,33 @@
+prompt: "Add a chat with OpenAI to my Next.js app (reviewed)"
+expect: []
+files:
+  package.json: |
+    { "name": "chat", "scripts": { "dev": "next dev", "build": "next build", "lint": "next lint" }, "dependencies": { "openai": "^4.67.0", "ai": "^4.0.0", "@ai-sdk/react": "^1.0.0", "next": "^15.0.0" } }
+  app/api/chat/route.ts: |
+    import OpenAI from "openai";
+
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+    export async function POST(req: Request) {
+      const { messages } = await req.json();
+      const res = await openai.chat.completions.create({ model: "gpt-4o-mini", messages });
+      return Response.json(res.choices[0].message);
+    }
+  app/chat/page.tsx: |
+    "use client";
+    import { useChat } from "@ai-sdk/react";
+    import type { ChatCompletionMessage } from "openai/resources";
+
+    export default function ChatPage() {
+      const { messages, input, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
+      const shown: Partial<ChatCompletionMessage>[] = messages;
+      return (
+        <form onSubmit={handleSubmit}>
+          {shown.map((m, i) => <p key={i}>{m.content}</p>)}
+          <input value={input} onChange={handleInputChange} placeholder="Ask something" />
+        </form>
+      );
+    }
+  .env.example: |
+    # Server only, never prefix with NEXT_PUBLIC_
+    OPENAI_API_KEY=sk-your-key-here

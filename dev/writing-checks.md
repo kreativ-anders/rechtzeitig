@@ -2,7 +2,7 @@
 
 ## A new check
 
-1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/copyleft-dependencies`. Whether it reads the website or the repository follows from `defineCheck`, `defineRepoCheck` or, for both together, `defineCrossCheck` (its scope, shown on `docs/checks.html`).
+1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`, and `quality` for rules without a legal basis), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/copyleft-dependencies`. Whether it reads the website or the repository follows from `defineCheck`, `defineRepoCheck` or, for both together, `defineCrossCheck` (its scope, shown on `docs/checks.html`).
 2. Add `rule.yml` with the metadata. Titles, legal basis and fix hint in German and English; the report shows them in the chosen language.
 
    ```yaml
@@ -11,7 +11,7 @@
    title:
      de: "Impressum ist verlinkt und erreichbar"
      en: "Imprint is linked and reachable"
-   legal_basis:              # optional
+   legal_basis:              # optional; rules in checks/quality/ have none and state `value:` (de, en) instead
      de: "§ 5 DDG"
      en: "§ 5 DDG (German Digital Services Act)"
    how: "Finds the imprint link on the start page (`imprint`), loads it and checks status and text."
