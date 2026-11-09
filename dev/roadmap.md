@@ -92,6 +92,16 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 26. With `sales: true`: price reductions shown other than as a struck-through price, such as "-20 %" labels, checked for the 30-day lowest price (§ 11 PAngV).
 27. Visit the T&Cs and withdrawal pages only with `sales: true`, so they do not use up `max-pages` on sites without a shop.
 
+## Next: integrations
+
+Feedback: GitHub Actions is a good start, but in the long run rechtzeitig should reach other places where code is written and built. The scan itself (`src/main.ts`, `CLI_OPTIONS`) does not depend on GitHub; the action, the step summary, annotations and SARIF upload do. Everything here stays free and open, and the report JSON stays the interface.
+
+1. A command line tool for local checks, installable with `npx` and as a container image. `npm run scan` and the options in `src/options.ts` exist today; open are a package with a `bin`, a readable terminal report, a clear exit code from `fail-on`, and a scan of the current folder without a CI environment. Needs the Chromium download documented or optional (repository-only runs need no browser).
+2. GitLab CI/CD: a job template (`include:`) built on the CLI or container image, the report as a job artifact, findings as GitLab's code quality or SAST report so they show in merge requests, and `report-visibility: auto` reading the project's visibility from the GitLab variables.
+3. Bitbucket Pipelines: a pipe on the same image, the report as an artifact and as a Code Insights report on the pull request.
+4. Other CI systems without own work: a documented example for any runner that can run the container (Jenkins, Azure DevOps, CircleCI).
+5. IDE integration: findings with file and line from the report JSON or SARIF shown in the editor, for the repository checks only. Starts with a documented way to open the SARIF file in VS Code; an own extension only if that is not enough.
+
 ## Later
 
 - Repository checks with a high false-positive risk or no legal basis: admin routes without an auth check, license headers of other projects, Google Tag Manager exports, repository health (LICENSE file, maintenance, CI).
