@@ -11,7 +11,6 @@ Open points from the audit of 2026-11-03, after the fixes.
 1. `step-security/harden-runner` with an egress allowlist in `test.yml`. No workflow uses it yet.
 2. Pins in `examples/workflows/` moved automatically. Dependabot's `github-actions` ecosystem reads only `.github/workflows/` and `action.yml`; the release workflow moves the rechtzeitig pin there, and `src/pinning.test.ts` fails when another pin drifts from `action.yml` and `.github/workflows/`.
 3. Require signed commits on `main`. The ruleset on `main` already requires pull requests and the `test` and `drift` checks and blocks force pushes; the release workflow does not push to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
-4. The backtracking tests (`src/patterns.test.ts`, `security/actions-pinning`, `security/database-rules`) measure CPU time instead of wall time (`Date.now()` today), so they no longer fail when the machine sleeps during the run. The deadline tests in `capture.test.ts` and `probe.test.ts` measure a wall-clock timeout and keep wall time.
 
 ## Next: repository
 

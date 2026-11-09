@@ -5,6 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { availableLanguages, loadLanguages } from "./lang.ts";
 import { loadYaml } from "./data.ts";
+import { cpuMs } from "../test/helpers.ts";
 
 const data = (file: string) => loadYaml<Array<Record<string, string>>>(`data/${file}`);
 // Loading also compiles every language pattern; an invalid one throws here.
@@ -27,12 +28,11 @@ const patterns: Array<[string, RegExp]> = [
 const N = 50_000;
 const inputs = ["\n", " ", "\t\n", "a ", "A", "0", "aaa ", "_", "-"].map((s) => s.repeat(N / s.length) + "!");
 
-test("data and language patterns stay fast on hostile input", () => {
+test("data and language patterns stay fast on hostile input", async () => {
   for (const [name, re] of patterns) {
     for (const input of inputs) {
-      const started = Date.now();
-      re.test(input);
-      assert.ok(Date.now() - started < 200, `${name} is slow on ${JSON.stringify(input.slice(0, 4))}…`);
+      const ms = await cpuMs(() => re.test(input));
+      assert.ok(ms < 200, `${name} takes ${Math.round(ms)} ms CPU on ${JSON.stringify(input.slice(0, 4))}…`);
     }
   }
 });

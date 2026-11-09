@@ -150,6 +150,17 @@ export async function runRepoCheck(checkDir: string, files: Record<string, strin
   return rendered(checkDir, await check.run({ ...(await repoFromFiles(files)), ...extra }));
 }
 
+/**
+ * CPU time `work` takes in this process, in ms (user + system, all threads). Unlike Date.now() it does not
+ * grow while the machine is busy with other processes or asleep, so a budget in a backtracking test holds under load.
+ */
+export async function cpuMs(work: () => unknown): Promise<number> {
+  const started = process.cpuUsage();
+  await work();
+  const { user, system } = process.cpuUsage(started);
+  return (user + system) / 1000;
+}
+
 /** package-lock.json text: package name → version, or → { version, license, dev }. */
 export function npmLock(pkgs: Record<string, string | { version: string; license?: string; dev?: boolean }>): string {
   const packages = Object.fromEntries(Object.entries(pkgs).map(([name, p]) => [`node_modules/${name}`, typeof p === "string" ? { version: p } : p]));
