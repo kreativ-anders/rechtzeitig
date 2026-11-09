@@ -8,6 +8,7 @@ import { parse as parseYaml } from "yaml";
 import { loadYaml } from "../data.ts";
 import { errorMessage } from "../text.ts";
 import { gitmodulePaths, privateSources, unsupportedFiles } from "./coverage.ts";
+import { detectLicenseText, hasCommonsClause } from "./licenses.ts";
 import { parserFor, purl } from "./lockfiles.ts";
 import { queryOsv } from "./osv.ts";
 import { componentRef } from "./sbom.ts";
@@ -200,15 +201,8 @@ function projectLicense(read: (p: string) => string | undefined): string {
     }
   }
   const text = ["LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING"].map(read).find(Boolean) ?? "";
-  const head = text.slice(0, 3000);
-  const extra = /commons clause/i.test(text) ? " WITH Commons-Clause" : "";
-  if (/GNU AFFERO GENERAL PUBLIC LICENSE/i.test(head)) return `AGPL-3.0${extra}`;
-  if (/GNU LESSER GENERAL PUBLIC LICENSE/i.test(head)) return `LGPL${extra}`;
-  if (/GNU GENERAL PUBLIC LICENSE/i.test(head)) return `${/Version 2/i.test(head) ? "GPL-2.0" : "GPL-3.0"}${extra}`;
-  if (/Apache License/i.test(head)) return "Apache-2.0";
-  if (/Mozilla Public License/i.test(head)) return "MPL-2.0";
-  if (/Permission is hereby granted, free of charge/i.test(head)) return "MIT";
-  if (/Redistribution and use in source and binary forms/i.test(head)) return "BSD";
-  if (/Permission to use, copy, modify, and\/or distribute/i.test(head)) return "ISC";
+  const family = detectLicenseText(text);
+  const extra = hasCommonsClause(text) ? " WITH Commons-Clause" : "";
+  if (family) return `${family}${extra}`;
   return text ? "unknown" : "";
 }

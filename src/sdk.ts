@@ -10,6 +10,12 @@ export { MANIFESTS } from "./repo/lockfiles.ts";
 import { MANIFESTS } from "./repo/lockfiles.ts";
 export { DECLARING, declaredDependencies, lockfilesFor, ownName, pypiName, type Declared } from "./repo/manifests.ts";
 export { satisfies } from "./repo/semver.ts";
+export {
+  LICENSE_FILE, choices, classify, compareVersions, dependencyLicenses, detectLicenseText, hasCommonsClause, inFamily, licenseIds,
+  licenseChanges, normalizeLicenseText, offending, parseSpdx, readLicense, spdxStatus, unavoidable,
+  type Category, type Classified, type DependencyLicenses, type LicenseInfo, type LicenseTerm,
+} from "./repo/licenses.ts";
+import { dependencyLicenses, type LicenseInfo } from "./repo/licenses.ts";
 
 export const STATUSES = ["pass", "warn", "fail", "info", "skip"] as const;
 export type Status = (typeof STATUSES)[number];
@@ -928,4 +934,29 @@ export function databaseRules(repo: RepoContext): DatabaseRules {
     else if (testMatch) problems.push({ file, line: lineAt(text, testMatch.index), key: "test_mode" });
   }
   return { sql, rules, unread, tables: created.size, problems, openPolicies };
+}
+
+// ---------- Dependency licenses
+
+/**
+ * Shared shape of the dependency license rules (legal/copyleft-dependencies, legal/network-copyleft,
+ * legal/source-available-dependencies): each production dependency with license data for which `find` returns a
+ * message key of the check becomes a finding with params name, version, license and `params`.
+ * Without a single dependency with license data the rule is skipped, so a pass always has a basis; dependencies
+ * without license data are named next to a pass (messages.common lic_*). The check needs the keys `found` and `none`.
+ */
+export function dependencyLicenseResult(repo: RepoContext, find: (license: LicenseInfo, component: Component) => string | undefined, params: Params = {}): Result {
+  const deps = dependencyLicenses(repo);
+  const files = [...new Set(deps.unchecked.map((c) => c.source))].join(", ");
+  if (!deps.checked.length) {
+    if (!repo.components.some((c) => !c.dev)) return skip(msg("lic_no_components"));
+    return skip(msg("lic_none_checked", { files }));
+  }
+  const findings: Finding[] = deps.checked.flatMap(({ component: c, license }) => {
+    const key = find(license, c);
+    return key ? [{ file: c.source, key, params: { name: c.name, version: c.version, license: license.raw, ...params } }] : [];
+  });
+  const gap: Finding[] = deps.unchecked.length ? [{ key: "lic_unchecked", params: { count: deps.unchecked.length, files } }] : [];
+  if (findings.length) return warn(msg("found", { count: findings.length, ...params }), [...capped(findings), ...gap]);
+  return pass(msg("none", { count: deps.checked.length, ...params }), gap);
 }

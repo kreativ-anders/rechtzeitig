@@ -90,3 +90,10 @@ security/hallucinated-packages:
   min_length: 5
   # Largest Damerau-Levenshtein distance (one insertion, deletion, substitution or swap) that counts as a typo.
   max_distance: 1
+
+legal/project-license:
+  # A LICENSE file recognized as MIT, ISC, 0BSD, BSD-2-Clause, BSD-3-Clause or Apache-2.0 counts as modified when,
+  # compared word pair by word pair with the SPDX text (data/license-texts.yml), it adds or drops this many pairs
+  # more than it replaces. Copyright and title lines, list labels and text before and after the license are left
+  # out; a replaced name changes added and dropped alike. One added sentence of ten words adds about ten pairs.
+  max_changed_pairs: 6

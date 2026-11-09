@@ -182,6 +182,11 @@ messages:
     not_run_both_url: "Not run: reads the website and the repository together, and the website is missing. Set the input url."
     not_run_both_repository: "Not run: reads the website and the repository together, and the checkout is missing. Run actions/checkout before rechtzeitig."
     not_run_both_both: "Not run: reads the website and the repository together, and both are missing. Set the input url and run actions/checkout before rechtzeitig."
+    lic_no_components: "No production dependencies in the lockfiles."
+    lic_none_checked: "No lockfile names licenses ({files}), so nothing was checked. See legal/unknown-licenses."
+    lic_unchecked:
+      one: "{count} production dependency not checked: {files} name no licenses. See legal/unknown-licenses."
+      other: "{count} production dependencies not checked: {files} name no licenses. See legal/unknown-licenses."
   report:
     check: "Check"
     severity: "Severity"
@@ -904,6 +909,141 @@ messages:
       other: "{count} production dependencies not checked: lockfiles of {ecosystems} name no licenses."
     no_components: "No locked dependencies whose licenses could be compared."
     no_licenses: "No lockfile names licenses ({ecosystems}), so nothing was compared."
+  legal/project-license:
+    none: "The project has no license: all rights reserved, nobody else may use the code. Fine for private code."
+    not_spdx: "{license} is not an SPDX expression, so tools and users cannot read it."
+    unknown_id: "{id} is not an SPDX license id."
+    deprecated: "{id} is a deprecated SPDX id. Write -only or -or-later, for example {id}-only."
+    manifests_differ: "The manifests name different licenses: {a}, {b}."
+    file_differs: "The license text is {detected}, the manifests say {declared}."
+    commons_clause: "{license} with Commons Clause: the GPL lets recipients remove further restrictions, so the Commons Clause may not hold."
+    unrecognized: "License text not recognized: a custom or modified license. Check that it says what you mean."
+    added_text:
+      one: "{license} text with {count} word pair that the SPDX text does not have: an added condition changes the license."
+      other: "{license} text with {count} word pairs that the SPDX text does not have: an added condition changes the license."
+    removed_text:
+      one: "{license} text lacks {count} word pair of the SPDX text: a removed condition changes the license."
+      other: "{license} text lacks {count} word pairs of the SPDX text: a removed condition changes the license."
+    problems:
+      one: "{count} problem with the project license."
+      other: "{count} problems with the project license."
+    notes:
+      one: "Project license {license}, {count} note."
+      other: "Project license {license}, {count} notes."
+    declared: "Project license: {license}."
+  legal/copyleft-dependencies:
+    no_project: "no license"
+    gpl: "{name}@{version}: {license}. If you ship it (app, library, browser bundle, image), the whole work must be under the GPL, not {project}."
+    gpl_no_project: "{name}@{version}: {license}. If you ship it (app, library, browser bundle, image), the whole work must be under the GPL; the project license ({project}) is not clear."
+    version_conflict: "{name}@{version}: {license} cannot be combined with {project} (GPL version or Apache-2.0 against GPL-2.0-only)."
+    found:
+      one: "{count} copyleft dependency does not fit {project}."
+      other: "{count} copyleft dependencies do not fit {project}."
+    none:
+      one: "No copyleft conflict with {project} in {count} production dependency with a license."
+      other: "No copyleft conflict with {project} in {count} production dependencies with a license."
+    more:
+      one: "and {count} more dependency"
+      other: "and {count} more dependencies"
+  legal/network-copyleft:
+    agpl: "{name}@{version}: {license}. AGPL § 13: if you modify it and users reach it over a network, offer them its source."
+    eupl: "{name}@{version}: {license}. EUPL: online access to its functions counts as distribution, so its copyleft applies."
+    osl: "{name}@{version}: {license}. OSL-3.0 § 5: offering it over a network counts as distribution."
+    other: "{name}@{version}: {license}. Network copyleft: offering it over a network can oblige you to publish the source."
+    project_network: "The project is under {project} itself, so it already offers its source to users."
+    found:
+      one: "{count} production dependency with network copyleft."
+      other: "{count} production dependencies with network copyleft."
+    none:
+      one: "No network copyleft in {count} production dependency with a license."
+      other: "No network copyleft in {count} production dependencies with a license."
+    more:
+      one: "and {count} more dependency"
+      other: "and {count} more dependencies"
+  legal/source-available-dependencies:
+    busl: "{name}@{version}: {license}. Business Source License: production use only within the Additional Use Grant, until the Change Date."
+    sspl: "{name}@{version}: {license}. SSPL § 13: offering it as a service needs the source of the whole service stack under the SSPL."
+    elastic: "{name}@{version}: {license}. Elastic License: no hosted or managed service, no bypassing of license keys."
+    fsl: "{name}@{version}: {license}. Functional Source License: no competing use for two years from each release."
+    polyform: "{name}@{version}: {license}. PolyForm: only the use the variant allows (noncommercial, small business, ...)."
+    commons_clause: "{name}@{version}: {license}. Commons Clause: no selling, including services whose value comes from it."
+    sustainable_use: "{name}@{version}: {license}. Sustainable Use License: internal business use and non-commercial use only."
+    noncommercial: "{name}@{version}: {license}. No commercial use."
+    proprietary: "{name}@{version}: {license}. Proprietary: use only under the vendor's terms."
+    found:
+      one: "{count} production dependency is not open source and limits its use."
+      other: "{count} production dependencies are not open source and limit their use."
+    none:
+      one: "No source-available license in {count} production dependency with a license."
+      other: "No source-available license in {count} production dependencies with a license."
+    more:
+      one: "and {count} more dependency"
+      other: "and {count} more dependencies"
+  legal/unknown-licenses:
+    status_missing: "{name}@{version}: no license in the lockfile."
+    status_unlicensed: "{name}@{version}: UNLICENSED, no rights of use granted."
+    status_see_file: "{name}@{version}: {license}. A license text of its own, read it."
+    status_unknown: "{name}@{version}: {license}."
+    status_invalid: "{name}@{version}: {license} is not an SPDX expression."
+    custom: "{name}@{version}: {license}. A license of its own, read it."
+    not_spdx: "{name}@{version}: {license} is not an SPDX id and can mean more than one license."
+    no_data:
+      one: "{count} {ecosystem} production dependency: this lockfile names no licenses, not checked."
+      other: "{count} {ecosystem} production dependencies: this lockfile names no licenses, not checked."
+    unreadable: "lockfile not read, its licenses were not checked."
+    unsupported: "{ecosystem}: no parser yet, licenses not checked."
+    no_components: "No production dependencies in the lockfiles."
+    none_checked:
+      one: "No lockfile names licenses, so the license of {count} production dependency is not known."
+      other: "No lockfile names licenses, so the licenses of {count} production dependencies are not known."
+    found:
+      one: "{count} production dependency without a clear license."
+      other: "{count} production dependencies without a clear license."
+    unclear:
+      one: "{count} production dependency names its license without an SPDX id."
+      other: "{count} production dependencies name their license without an SPDX id."
+    gaps:
+      one: "{count} production dependency has a known license, but not everything could be checked ({gaps} gaps)."
+      other: "{count} production dependencies have a known license, but not everything could be checked ({gaps} gaps)."
+    none:
+      one: "{count} production dependency, its license is known."
+      other: "{count} production dependencies, all licenses known."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  legal/relicensed-dependencies:
+    no_components: "No production dependencies in the lockfiles."
+    relicensed: "{name}@{version}: {license} since {from}, before {before}. Source: {source}"
+    relicensed_fork: "{name}@{version}: {license} since {from}, before {before}. Open fork: {fork}. Source: {source}"
+    found:
+      one: "{count} production dependency is at a version after a license change."
+      other: "{count} production dependencies are at a version after a license change."
+    none:
+      one: "{count} production dependency, none past one of {events} known license changes."
+      other: "{count} production dependencies, none past one of {events} known license changes."
+    more:
+      one: "and {count} more dependency"
+      other: "and {count} more dependencies"
+  legal/ai-model-licenses:
+    noncommercial: "{model}: {license}. {terms} {source}"
+    conditions: "{model}: {license}. {terms} {source}"
+    weights_unknown: "Model weights of unknown origin: record where they come from and under which license."
+    terms_llama: "Not open source: use policy, a license from Meta above 700 million monthly users, \"Built with Llama\" when you distribute it; multimodal Llama 3.2 and Llama 4 models grant no license to companies based in the EU."
+    terms_gemma: "Not open source: the Gemma prohibited use policy applies and passes on to everyone you give the model to."
+    terms_openrail: "Open RAIL: use restrictions in an attachment, which must be passed on with the model."
+    terms_stability: "Free only below USD 1 million annual revenue, above that an enterprise license from Stability AI."
+    terms_noncommercial: "Non-commercial use only: not in a product or for a business."
+    terms_nonproduction: "Non-production use only: testing and research, not in a product."
+    none: "No model weight files and no model ids from data/ai-models.yml in code or configuration."
+    noncommercial_found:
+      one: "{count} AI model for non-commercial use only."
+      other: "{count} AI models for non-commercial use only."
+    conditions_found:
+      one: "{count} AI model or weight file under a license with conditions."
+      other: "{count} AI models or weight files under licenses with conditions."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
   security/sbom:
     no_manifests: "No package manifests in the repository."
     failed:

@@ -1,0 +1,22 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-LIC-005
+severity: medium
+title:
+  de: "Keine Abhängigkeit mit Nutzungsbeschränkung (Source-Available)"
+  en: "No dependency with usage limits (source-available)"
+legal_basis:
+  de: "§ 31 Abs. 1 UrhG (inhaltlich beschränkte Nutzungsrechte)"
+  en: "§ 31 (1) UrhG (German Copyright Act: rights of use limited in content)"
+how: "Reads the SPDX expressions of production dependencies from lockfiles that carry licenses (`licenses_in_lockfile` in `data/ecosystems.yml`) and flags BUSL, SSPL, Elastic, FSL, PolyForm, Commons Clause, non-commercial and proprietary licenses (`source_available` in `data/licenses.yml`) that no `OR` choice avoids; without a single license read the rule is skipped."
+fix_hint:
+  de: "Diese Lizenzen sind keine Open-Source-Lizenzen: Sie verbieten etwa die Produktion, ein konkurrierendes Angebot oder kommerzielle Nutzung. Bedingungen der Lizenz mit eurer Nutzung abgleichen; sonst die letzte offene Version, einen offenen Fork oder eine kommerzielle Lizenz nehmen. Technischer Hinweis, keine Rechtsberatung."
+  en: "These licenses are not open source: they forbid, for example, production use, a competing offer or commercial use. Compare the license terms with your use; otherwise take the last open version, an open fork or a commercial license. A technical hint, not legal advice."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://www.gesetze-im-internet.de/urhg/__31.html
+  - https://opensource.org/osd
+  - https://spdx.org/licenses/BUSL-1.1.html
+  - https://spdx.org/licenses/SSPL-1.0.html
+  - https://spdx.org/licenses/Elastic-2.0.html
+  - https://spdx.org/licenses/CC-BY-NC-4.0.html

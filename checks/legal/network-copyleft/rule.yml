@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-LIC-004
+severity: high
+title:
+  de: "Keine Netzwerk-Copyleft-Abhängigkeit ohne Quellcode-Angebot"
+  en: "No network copyleft dependency without a source offer"
+legal_basis:
+  de: "§§ 31, 69c Nr. 4 UrhG; AGPL-3.0 § 13; EUPL-1.2 Art. 1, 5"
+  en: "§§ 31, 69c No. 4 UrhG (German Copyright Act); AGPL-3.0 § 13; EUPL-1.2 Art. 1, 5"
+how: "Reads the SPDX expressions of production dependencies from lockfiles that carry licenses (`licenses_in_lockfile` in `data/ecosystems.yml`) and flags AGPL, EUPL and OSL-3.0 (`network_copyleft` in `data/licenses.yml`) that no `OR` choice avoids, unless the project itself is under such a license; without a single license read the rule is skipped."
+fix_hint:
+  de: "Bei AGPL: Wer die Software verändert und Nutzern über ein Netzwerk anbietet, muss ihnen den Quellcode der geänderten Fassung anbieten (§ 13), etwa per Link auf der Seite. Bei EUPL zählt schon der Online-Zugang als Verbreitung. Unverändert genutzte Bibliotheken lösen § 13 meist nicht aus; prüfen, ob ihr sie ändert, sonst ersetzen oder kommerziell lizenzieren. Technischer Hinweis, keine Rechtsberatung."
+  en: "With AGPL: if you modify the software and offer it to users over a network, you must offer them the source of your version (§ 13), for example with a link on the site. With EUPL, online access already counts as distribution. Libraries used unmodified usually do not trigger § 13; check whether you change them, else replace or license them commercially. A technical hint, not legal advice."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://www.gesetze-im-internet.de/urhg/__69c.html
+  - https://www.gnu.org/licenses/agpl-3.0.html
+  - https://eur-lex.europa.eu/eli/dec_impl/2017/863/oj

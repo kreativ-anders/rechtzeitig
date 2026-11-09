@@ -1,20 +1,59 @@
-# License groups for repo/licenses. Each entry is a pattern, matched case-insensitively
-# against the SPDX id or expression from a lockfile or the project license.
+# License categories for the license rules in checks/legal/ (classify() in src/repo/licenses.ts).
+# Each category maps a family name to a pattern, matched case-insensitively against one license id of an
+# SPDX expression (the part before WITH). The categories are tried in the order below; the first match wins.
+# A valid SPDX id (data/spdx.yml) that matches none is "other", anything else "unknown".
+# The family name picks the explanation in lang/*.yml (messages.common.family_<name>).
+# Changing a pattern changes results: mention licenses.yml in the commit message.
 
-# Copyleft that also applies when the software is only offered over a network.
-agpl:
-  - '\bAGPL'
-# Copyleft for shipped software. LGPL is not meant.
-gpl:
-  - '(^|[^L])GPL'
-# Licenses that restrict use, often commercial use. BSL-1.0 (Boost) is permissive and not listed; BUSL is Business Source.
-restricted:
-  - SSPL
-  - BUSL
-  - 'Commons.?Clause'
-  - CC-BY-NC
-  - Elastic-2
-  - proprietary
-# Project licenses that need no note about unknown dependency licenses.
+# Not open source: the license limits who may use it or how (production, competing services, commercial use).
+# BSL-1.0 is the permissive Boost license and not meant; BUSL is the Business Source License.
+source_available:
+  busl: '^BUSL-'
+  sspl: '^SSPL-'
+  elastic: '^Elastic-'
+  fsl: '^FSL-'
+  polyform: '^PolyForm-'
+  commons_clause: 'Commons-?Clause'
+  sustainable_use: 'Sustainable-?Use'
+  # CC-BY-NC-4.0, CC-BY-NC-SA-4.0, CC-BY-NC-ND-4.0, LicenseRef-...-NonCommercial
+  noncommercial: '^CC-BY-NC|non-?commercial'
+  proprietary: '^(LicenseRef-)?(proprietary|commercial)$'
+
+# Copyleft that also reaches users of the software over a network.
+network_copyleft:
+  # AGPL-3.0 § 13: users interacting with a modified version over a network get its source.
+  agpl: '^AGPL-'
+  # EUPL-1.2 Art. 1: "providing access to its essential functionalities" counts as distribution.
+  eupl: '^EUPL-'
+  # OSL-3.0 § 5: "External Deployment" counts as distribution.
+  osl: '^OSL-3\.0'
+
+# Copyleft for the whole work when it is distributed (app, library, browser bundle, container image).
+copyleft:
+  gpl: '^GPL-'
+
+# Copyleft limited to the library or file itself. Not flagged: linking or using it unchanged is allowed.
+weak_copyleft:
+  lgpl: '^LGPL-'
+  mpl: '^MPL-'
+  epl: '^EPL-'
+  cddl: '^CDDL-'
+
+# Permissive licenses.
 permissive:
-  - '^(MIT|ISC|BSD|Apache|0BSD|Unlicense|Zlib|MPL)'
+  permissive: '^(MIT|MIT-0|ISC|0BSD|BSD-[0-9]|Apache-|Unlicense$|Zlib$|BSL-1\.0$|CC0-1\.0$|CC-BY-[0-9]|Python-2\.0|PSF-2\.0|BlueOak-|WTFPL$|X11$|Artistic-2\.0$|OFL-1\.1)'
+
+# Exceptions (WITH) that let other code link to a copyleft library without the copyleft reaching it.
+# GPL WITH one of these counts as weak copyleft.
+linking_exceptions:
+  - '^Classpath-exception'
+  - '^GCC-exception'
+  - '^LLVM-exception'
+  - '^Autoconf-exception'
+  - '^Bison-exception'
+  - '^Font-exception'
+  - '^OpenJDK-assembly-exception'
+  - '^GPL-3\.0-linking'
+  - '^LGPL-3\.0-linking'
+  - '^Libtool-exception'
+  - '^Linux-syscall-note'

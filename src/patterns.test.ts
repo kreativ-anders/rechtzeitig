@@ -17,8 +17,10 @@ const patterns: Array<[string, RegExp]> = [
   ...Object.entries(loadYaml<Record<string, string[]>>("data/cookies.yml"))
     .flatMap(([group, list]) => list.map((p): [string, RegExp] => [`cookies.yml ${group}`, new RegExp(p, "i")])),
   ...loadYaml<{ odr: string[] }>("data/outdated-links.yml").odr.map((p): [string, RegExp] => [`outdated-links.yml ${p}`, new RegExp(p, "i")]),
-  ...Object.entries(loadYaml<Record<string, string[]>>("data/licenses.yml"))
-    .flatMap(([group, list]) => list.map((p): [string, RegExp] => [`licenses.yml ${group}`, new RegExp(p, "i")])),
+  ...Object.entries(loadYaml<Record<string, Record<string, string> | string[]>>("data/licenses.yml"))
+    .flatMap(([group, list]) => Object.values(list).map((p): [string, RegExp] => [`licenses.yml ${group}`, new RegExp(p, "i")])),
+  ...loadYaml<{ models: Array<{ ids: string[]; files?: string[] }> }>("data/ai-models.yml").models
+    .flatMap((m) => [...m.ids, ...(m.files ?? [])].map((p): [string, RegExp] => [`ai-models.yml ${p}`, new RegExp(p, "i")])),
   ...Object.entries(loadYaml<Record<string, string[]>>("data/shop.yml"))
     .flatMap(([group, list]) => list.map((p): [string, RegExp] => [`shop.yml ${group}`, new RegExp(p, "i")])),
   ["update-tools.yml renovate", new RegExp(loadYaml<{ renovate: string }>("data/update-tools.yml").renovate)],

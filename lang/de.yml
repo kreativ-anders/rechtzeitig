@@ -226,6 +226,11 @@ messages:
     not_run_both_url: "Nicht gelaufen: liest Website und Repository zusammen, und die Website fehlt. Input url setzen."
     not_run_both_repository: "Nicht gelaufen: liest Website und Repository zusammen, und der Checkout fehlt. actions/checkout vor rechtzeitig ausführen."
     not_run_both_both: "Nicht gelaufen: liest Website und Repository zusammen, und beides fehlt. Input url setzen und actions/checkout vor rechtzeitig ausführen."
+    lic_no_components: "Keine Produktionsabhängigkeiten in den Lockfiles."
+    lic_none_checked: "Kein Lockfile nennt Lizenzen ({files}), daher wurde nichts geprüft. Siehe legal/unknown-licenses."
+    lic_unchecked:
+      one: "{count} Produktionsabhängigkeit nicht geprüft: {files} nennen keine Lizenzen. Siehe legal/unknown-licenses."
+      other: "{count} Produktionsabhängigkeiten nicht geprüft: {files} nennen keine Lizenzen. Siehe legal/unknown-licenses."
   report:
     check: "Prüfung"
     severity: "Schwere"
@@ -948,6 +953,141 @@ messages:
       other: "{count} Produktionsabhängigkeiten nicht geprüft: Lockfiles von {ecosystems} nennen keine Lizenzen."
     no_components: "Keine gesperrten Abhängigkeiten, deren Lizenzen sich vergleichen ließen."
     no_licenses: "Kein Lockfile nennt Lizenzen ({ecosystems}), daher wurde nichts verglichen."
+  legal/project-license:
+    none: "Das Projekt hat keine Lizenz: Alle Rechte vorbehalten, niemand sonst darf den Code nutzen. Für privaten Code in Ordnung."
+    not_spdx: "{license} ist kein SPDX-Ausdruck, Werkzeuge und Nutzer können ihn nicht eindeutig lesen."
+    unknown_id: "{id} ist keine SPDX-Lizenzkennung."
+    deprecated: "{id} ist eine veraltete SPDX-Kennung. -only oder -or-later angeben, etwa {id}-only."
+    manifests_differ: "Die Manifeste nennen verschiedene Lizenzen: {a}, {b}."
+    file_differs: "Der Lizenztext ist {detected}, die Manifeste nennen {declared}."
+    commons_clause: "{license} mit Commons Clause: Die GPL erlaubt Empfängern, weitere Beschränkungen zu entfernen; die Commons Clause greift daher womöglich nicht."
+    unrecognized: "Lizenztext nicht erkannt: eine eigene oder geänderte Lizenz. Prüfen, ob er sagt, was gemeint ist."
+    added_text:
+      one: "{license}-Text mit {count} Wortpaar, das der SPDX-Text nicht hat: Eine zusätzliche Bedingung ändert die Lizenz."
+      other: "{license}-Text mit {count} Wortpaaren, die der SPDX-Text nicht hat: Eine zusätzliche Bedingung ändert die Lizenz."
+    removed_text:
+      one: "Dem {license}-Text fehlt {count} Wortpaar des SPDX-Texts: Eine entfernte Bedingung ändert die Lizenz."
+      other: "Dem {license}-Text fehlen {count} Wortpaare des SPDX-Texts: Eine entfernte Bedingung ändert die Lizenz."
+    problems:
+      one: "{count} Problem mit der Projektlizenz."
+      other: "{count} Probleme mit der Projektlizenz."
+    notes:
+      one: "Projektlizenz {license}, {count} Hinweis."
+      other: "Projektlizenz {license}, {count} Hinweise."
+    declared: "Projektlizenz: {license}."
+  legal/copyleft-dependencies:
+    no_project: "keine Lizenz"
+    gpl: "{name}@{version}: {license}. Bei Auslieferung (App, Bibliothek, Browser-Bundle, Image) muss das ganze Werk unter der GPL stehen, nicht unter {project}."
+    gpl_no_project: "{name}@{version}: {license}. Bei Auslieferung (App, Bibliothek, Browser-Bundle, Image) muss das ganze Werk unter der GPL stehen; die Projektlizenz ({project}) ist unklar."
+    version_conflict: "{name}@{version}: {license} lässt sich nicht mit {project} verbinden (GPL-Version oder Apache-2.0 gegen GPL-2.0-only)."
+    found:
+      one: "{count} Copyleft-Abhängigkeit passt nicht zu {project}."
+      other: "{count} Copyleft-Abhängigkeiten passen nicht zu {project}."
+    none:
+      one: "Kein Copyleft-Konflikt mit {project} in {count} Produktionsabhängigkeit mit Lizenz."
+      other: "Kein Copyleft-Konflikt mit {project} in {count} Produktionsabhängigkeiten mit Lizenz."
+    more:
+      one: "und {count} weitere Abhängigkeit"
+      other: "und {count} weitere Abhängigkeiten"
+  legal/network-copyleft:
+    agpl: "{name}@{version}: {license}. AGPL § 13: Wer sie ändert und Nutzern über ein Netzwerk anbietet, muss ihnen den Quellcode anbieten."
+    eupl: "{name}@{version}: {license}. EUPL: Schon der Online-Zugang zu ihren Funktionen gilt als Verbreitung, das Copyleft greift."
+    osl: "{name}@{version}: {license}. OSL-3.0 § 5: Das Anbieten über ein Netzwerk gilt als Verbreitung."
+    other: "{name}@{version}: {license}. Netzwerk-Copyleft: Das Anbieten über ein Netzwerk kann zur Herausgabe des Quellcodes verpflichten."
+    project_network: "Das Projekt steht selbst unter {project} und bietet Nutzern seinen Quellcode schon an."
+    found:
+      one: "{count} Produktionsabhängigkeit mit Netzwerk-Copyleft."
+      other: "{count} Produktionsabhängigkeiten mit Netzwerk-Copyleft."
+    none:
+      one: "Kein Netzwerk-Copyleft in {count} Produktionsabhängigkeit mit Lizenz."
+      other: "Kein Netzwerk-Copyleft in {count} Produktionsabhängigkeiten mit Lizenz."
+    more:
+      one: "und {count} weitere Abhängigkeit"
+      other: "und {count} weitere Abhängigkeiten"
+  legal/source-available-dependencies:
+    busl: "{name}@{version}: {license}. Business Source License: Produktiveinsatz nur im Rahmen des Additional Use Grant, bis zum Change Date."
+    sspl: "{name}@{version}: {license}. SSPL § 13: Wer sie als Dienst anbietet, muss den Quellcode des ganzen Dienst-Stacks unter der SSPL veröffentlichen."
+    elastic: "{name}@{version}: {license}. Elastic License: kein gehosteter oder verwalteter Dienst, kein Umgehen von Lizenzschlüsseln."
+    fsl: "{name}@{version}: {license}. Functional Source License: keine konkurrierende Nutzung, zwei Jahre ab jedem Release."
+    polyform: "{name}@{version}: {license}. PolyForm: nur die Nutzung, die die Variante erlaubt (nicht kommerziell, kleine Unternehmen, ...)."
+    commons_clause: "{name}@{version}: {license}. Commons Clause: kein Verkauf, auch keine Dienste, deren Wert im Wesentlichen aus ihr stammt."
+    sustainable_use: "{name}@{version}: {license}. Sustainable Use License: nur interne geschäftliche und nicht kommerzielle Nutzung."
+    noncommercial: "{name}@{version}: {license}. Keine kommerzielle Nutzung."
+    proprietary: "{name}@{version}: {license}. Proprietär: Nutzung nur nach den Bedingungen des Anbieters."
+    found:
+      one: "{count} Produktionsabhängigkeit ist keine Open Source und beschränkt die Nutzung."
+      other: "{count} Produktionsabhängigkeiten sind keine Open Source und beschränken die Nutzung."
+    none:
+      one: "Keine Source-Available-Lizenz in {count} Produktionsabhängigkeit mit Lizenz."
+      other: "Keine Source-Available-Lizenz in {count} Produktionsabhängigkeiten mit Lizenz."
+    more:
+      one: "und {count} weitere Abhängigkeit"
+      other: "und {count} weitere Abhängigkeiten"
+  legal/unknown-licenses:
+    status_missing: "{name}@{version}: keine Lizenz im Lockfile."
+    status_unlicensed: "{name}@{version}: UNLICENSED, keine Nutzungsrechte eingeräumt."
+    status_see_file: "{name}@{version}: {license}. Ein eigener Lizenztext, lesen."
+    status_unknown: "{name}@{version}: {license}."
+    status_invalid: "{name}@{version}: {license} ist kein SPDX-Ausdruck."
+    custom: "{name}@{version}: {license}. Eine eigene Lizenz, lesen."
+    not_spdx: "{name}@{version}: {license} ist keine SPDX-Kennung und kann mehr als eine Lizenz meinen."
+    no_data:
+      one: "{count} {ecosystem}-Produktionsabhängigkeit: Dieses Lockfile nennt keine Lizenzen, nicht geprüft."
+      other: "{count} {ecosystem}-Produktionsabhängigkeiten: Dieses Lockfile nennt keine Lizenzen, nicht geprüft."
+    unreadable: "Lockfile nicht gelesen, seine Lizenzen wurden nicht geprüft."
+    unsupported: "{ecosystem}: noch kein Parser, Lizenzen nicht geprüft."
+    no_components: "Keine Produktionsabhängigkeiten in den Lockfiles."
+    none_checked:
+      one: "Kein Lockfile nennt Lizenzen, die Lizenz von {count} Produktionsabhängigkeit ist daher unbekannt."
+      other: "Kein Lockfile nennt Lizenzen, die Lizenzen von {count} Produktionsabhängigkeiten sind daher unbekannt."
+    found:
+      one: "{count} Produktionsabhängigkeit ohne klare Lizenz."
+      other: "{count} Produktionsabhängigkeiten ohne klare Lizenz."
+    unclear:
+      one: "{count} Produktionsabhängigkeit nennt ihre Lizenz ohne SPDX-Kennung."
+      other: "{count} Produktionsabhängigkeiten nennen ihre Lizenz ohne SPDX-Kennung."
+    gaps:
+      one: "{count} Produktionsabhängigkeit hat eine bekannte Lizenz, aber nicht alles ließ sich prüfen ({gaps} Lücken)."
+      other: "{count} Produktionsabhängigkeiten haben eine bekannte Lizenz, aber nicht alles ließ sich prüfen ({gaps} Lücken)."
+    none:
+      one: "{count} Produktionsabhängigkeit, ihre Lizenz ist bekannt."
+      other: "{count} Produktionsabhängigkeiten, alle Lizenzen bekannt."
+    more:
+      one: "und {count} weitere"
+      other: "und {count} weitere"
+  legal/relicensed-dependencies:
+    no_components: "Keine Produktionsabhängigkeiten in den Lockfiles."
+    relicensed: "{name}@{version}: {license} seit {from}, vorher {before}. Quelle: {source}"
+    relicensed_fork: "{name}@{version}: {license} seit {from}, vorher {before}. Offener Fork: {fork}. Quelle: {source}"
+    found:
+      one: "{count} Produktionsabhängigkeit steht auf einer Version nach einem Lizenzwechsel."
+      other: "{count} Produktionsabhängigkeiten stehen auf einer Version nach einem Lizenzwechsel."
+    none:
+      one: "{count} Produktionsabhängigkeit, keine nach einem von {events} bekannten Lizenzwechseln."
+      other: "{count} Produktionsabhängigkeiten, keine nach einem von {events} bekannten Lizenzwechseln."
+    more:
+      one: "und {count} weitere Abhängigkeit"
+      other: "und {count} weitere Abhängigkeiten"
+  legal/ai-model-licenses:
+    noncommercial: "{model}: {license}. {terms} {source}"
+    conditions: "{model}: {license}. {terms} {source}"
+    weights_unknown: "Modellgewichte unbekannter Herkunft: Quelle und Lizenz dokumentieren."
+    terms_llama: "Keine Open Source: Nutzungsrichtlinie, Lizenz von Meta ab 700 Millionen monatlichen Nutzern, „Built with Llama“ bei Weitergabe; multimodale Llama-3.2- und Llama-4-Modelle: keine Lizenz für Unternehmen mit Sitz in der EU."
+    terms_gemma: "Keine Open Source: Die Gemma-Richtlinie zu verbotener Nutzung gilt und ist an alle weiterzugeben, die das Modell erhalten."
+    terms_openrail: "Open RAIL: Nutzungsbeschränkungen im Anhang, die mit dem Modell weiterzugeben sind."
+    terms_stability: "Kostenlos nur unter 1 Million US-Dollar Jahresumsatz, darüber eine Enterprise-Lizenz von Stability AI."
+    terms_noncommercial: "Nur nicht kommerzielle Nutzung: nicht im Produkt und nicht für ein Unternehmen."
+    terms_nonproduction: "Nur ohne Produktiveinsatz: Tests und Forschung, nicht im Produkt."
+    none: "Keine Modellgewichte und keine Modell-IDs aus data/ai-models.yml in Code oder Konfiguration."
+    noncommercial_found:
+      one: "{count} KI-Modell nur für nicht kommerzielle Nutzung."
+      other: "{count} KI-Modelle nur für nicht kommerzielle Nutzung."
+    conditions_found:
+      one: "{count} KI-Modell oder Gewichtsdatei unter einer Lizenz mit Bedingungen."
+      other: "{count} KI-Modelle oder Gewichtsdateien unter Lizenzen mit Bedingungen."
+    more:
+      one: "und {count} weitere"
+      other: "und {count} weitere"
   security/sbom:
     no_manifests: "Keine Paket-Manifeste im Repository."
     failed:

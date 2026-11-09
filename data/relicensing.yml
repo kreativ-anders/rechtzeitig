@@ -1,0 +1,70 @@
+# Packages that changed their license from one version on (legal/relicensed-dependencies).
+# Only entries checked against a primary source: the package's own LICENSE file at both versions, its changelog,
+# its registry metadata or the vendor's announcement. `source` names where it was checked.
+#
+#   package:   name as in the lockfile (npm, Composer, PyPI, crates.io name, Go module path)
+#   ecosystem: npm, composer, pypi, cargo, pub or go
+#   from:      first version under the new license; every later version is under it too
+#   before:    license of the versions before `from`
+#   license:   license from `from` on (SPDX id, or LicenseRef- for a license without one)
+#   fork:      a fork that kept the old license, if there is a maintained one
+#
+# Adding an entry changes results: mention relicensing.yml in the commit message.
+
+- package: mapbox-gl
+  ecosystem: npm
+  from: 2.0.0
+  before: BSD-3-Clause
+  license: LicenseRef-Mapbox-Terms-of-Service
+  fork: maplibre-gl
+  source: https://github.com/mapbox/mapbox-gl-js/blob/main/CHANGELOG.md
+
+- package: handsontable
+  ecosystem: npm
+  from: 7.0.0
+  before: MIT
+  license: LicenseRef-Handsontable-Non-Commercial-or-Commercial
+  source: https://github.com/handsontable/handsontable/blob/7.0.0/LICENSE.txt
+
+- package: directus
+  ecosystem: npm
+  from: 10.0.0
+  before: GPL-3.0-only
+  license: BUSL-1.1
+  source: https://github.com/directus/directus/blob/v10.0.0/license
+
+- package: "@directus/api"
+  ecosystem: npm
+  from: 10.0.0
+  before: GPL-3.0-only
+  license: BUSL-1.1
+  source: https://github.com/directus/directus/blob/v10.0.0/license
+
+- package: "@elastic/eui"
+  ecosystem: npm
+  from: 35.0.0
+  before: Apache-2.0
+  license: Elastic-2.0 OR SSPL-1.0
+  source: https://github.com/elastic/eui/blob/v35.0.0/LICENSE.txt
+
+- package: nocodb
+  ecosystem: npm
+  from: 0.301.1
+  before: AGPL-3.0-or-later
+  license: LicenseRef-Sustainable-Use-License
+  source: https://github.com/nocodb/nocodb/blob/0.301.1/LICENSE.md
+
+- package: github.com/hashicorp/terraform
+  ecosystem: go
+  from: v1.6.0
+  before: MPL-2.0
+  license: BUSL-1.1
+  fork: github.com/opentofu/opentofu
+  source: https://github.com/hashicorp/terraform/blob/v1.6.0/LICENSE
+
+- package: github.com/grafana/grafana
+  ecosystem: go
+  from: v8.0.0
+  before: Apache-2.0
+  license: AGPL-3.0-only
+  source: https://github.com/grafana/grafana/blob/v8.0.0/LICENSE
