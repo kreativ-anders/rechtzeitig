@@ -1,4 +1,4 @@
-// Checks docs/: hreflang pairs, canonicals, the sitemap, one CSP and one header seal for all pages.
+// Checks docs/: hreflang pairs, canonicals, the sitemap, one CSP, one header seal and the wordmark on all pages.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
@@ -62,4 +62,17 @@ test("every page's header seal is the one in index.html, drawn as a path without
   assert.ok(!readFileSync(new URL("favicon.svg", DOCS), "utf8").includes("<text"), "favicon.svg has no <text>");
   const path = first!.match(/<path d="[^"]+"\/>/)![0];
   for (const f of ["index.html", "de/index.html"]) assert.ok(read(f).match(/<svg class="mark"[^>]*>(.*?)<\/svg>/)?.[1] === path, `${f}: the stamp's § is the seal's path`);
+});
+
+test("the product name in page text is set as the wordmark", () => {
+  // Heuristic: every "rechtzeitig" in visible text is the product, unless it sits in <head>, the header,
+  // code, pre, svg, the decorative stamp, a GitHub UI label (.ui) or the report's target line, or is part of
+  // a name such as rechtzeitig.dev or rechtzeitig-report.json. The German adverb ("in time") cannot be told
+  // apart by a pattern; write it as <span class="adverb">rechtzeitig</span> (unstyled) to pass.
+  const skip = /<head>[\s\S]*?<\/head>|<header class="top">[\s\S]*?<\/header>|<(script|pre|code|svg)\b[\s\S]*?<\/\1>|<div class="stamp"[\s\S]*?<\/div>|<span class="(?:ui|wm|adverb)">[\s\S]*?<\/span>|<p class="report-target">[\s\S]*?<\/p>/g;
+  for (const f of pages) {
+    const text = read(f).replace(skip, " ").replace(/<[^>]+>/g, " ");
+    const bare = [...text.matchAll(/(?<![\w./-])rechtzeitig(?![\w-]|\.\w)/g)].map((m) => text.slice(Math.max(0, m.index - 30), m.index + 20).replace(/\s+/g, " "));
+    assert.deepEqual(bare, [], `${f}: wrap in <span class="wm">`);
+  }
 });

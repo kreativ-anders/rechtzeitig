@@ -92,9 +92,9 @@
       "@type": "FAQPage",
       "@id": "https://rechtzeitig.dev/#faq",
       "mainEntity": [
-        {"@type": "Question", "name": "How do I get the latest version?", "acceptedAnswer": {"@type": "Answer", "text": "The workflow pins a release by its commit SHA. Add .github/dependabot.yml to your repository: version: 2 updates: - package-ecosystem: github-actions directory: / schedule: interval: weekly Dependabot then opens a pull request whenever a new rechtzeitig release is out. Merge it and you have the new version."}},
-        {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default the names and versions of your locked packages go to osv.dev (vulnerabilities: false turns it off) and your host name to the Green Web Foundation (green-hosting: false). The full list is under Data that leaves the runner."}},
-        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository the run page shows only counts by default, because anyone can read it; the findings go to the Security tab, which only people with write access see. For the full report on the run page, run rechtzeitig from a private repository, or set report-visibility: full to publish it. More in The report."}}
+        {"@type": "Question", "name": "How do I get the latest version?", "acceptedAnswer": {"@type": "Answer", "text": "The workflow pins a release by its commit SHA. Add .github/dependabot.yml to your repository, and Dependabot opens a pull request for each new release: version: 2 updates: - package-ecosystem: github-actions directory: / schedule: interval: weekly"}},
+        {"@type": "Question", "name": "Does any data leave the runner?", "acceptedAnswer": {"@type": "Answer", "text": "Your source code does not. By default package names and versions go to osv.dev and your host name to the Green Web Foundation; both can be turned off. See Data that leaves the runner."}},
+        {"@type": "Question", "name": "Who can see the report?", "acceptedAnswer": {"@type": "Answer", "text": "On a public repository the run page shows only counts. The findings go to the Security tab, which only people with write access see. See The report."}}
       ]
     }
   ]
@@ -114,23 +114,27 @@
   <div class="hero">
     <div>
       <h1>Find the legal and security pitfalls that slip into AI-written code</h1>
-      <p class="lead">rechtzeitig is a GitHub Action that checks your repository and your live website in one run: imprint (<span lang="de">Impressum</span>), privacy policy, cookie consent, leaked keys, security headers, vulnerable packages. Each finding names the place to fix and, where there is one, the law.</p>
+      <p class="lead"><span class="wm">rechtzeitig</span> is a GitHub Action that checks your repository and your live website: imprint (<span lang="de">Impressum</span>), privacy policy, cookie consent, leaked keys, security headers, vulnerable packages. Each finding names the place and the law.</p>
       <div class="actions">
         <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Copy the workflow</a>
 <!-- hero-checks:start -->
 <a class="button secondary" href="checks.html">See all 56 checks</a>
 <!-- hero-checks:end -->
       </div>
-      <p class="hero-note">Free and open source. It runs in your own CI with no account and no secret, and your code stays on the runner.</p>
+      <p class="hero-note">Free and open source by <a href="https://kreativ-anders.de">kreativ-anders</a>. No account; your code stays on your runner.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<svg class="mark" viewBox="11.3 6.5 9.4 19"><path d="M20.03 22.21C20.03 21.3 19.64 20.4 19 19.6C19.85 18.86 20.68 17.85 20.68 16.59C20.68 13.76 18.81 12.84 16.24 11.58C15.18 11.07 14.5 10.66 14.5 9.58C14.5 8.38 15.02 7.3 16.33 7.3C17.53 7.3 17.83 7.86 17.83 8.36C17.83 8.73 17.5 8.75 17.5 9.46C17.5 9.72 17.9 10.64 18.88 10.64C19.41 10.64 20.17 10.13 20.17 9.49C20.17 7.53 18.49 6.5 16.24 6.5C15.14 6.5 14.06 6.84 13.3 7.53C12.54 8.22 12.11 9.28 12.11 10.04C12.11 11 12.43 11.78 12.91 12.38C12.08 13.09 11.32 14.1 11.32 15.28C11.32 17.09 12.24 18.29 14.79 19.71C15.97 20.35 17.5 21.2 17.5 22.38C17.5 23.91 16.75 24.7 15.71 24.7C14.38 24.7 14.15 23.78 14.15 23.62C14.15 23.29 14.52 23.11 14.52 22.51C14.52 22.26 14.01 21.34 13.05 21.34C12.54 21.34 11.83 21.87 11.83 22.47C11.83 24.49 14.08 25.5 15.76 25.5C18.91 25.5 20.03 23.8 20.03 22.21ZM13.35 12.86C13.67 13.16 14.01 13.37 14.33 13.53C17.39 14.93 18.91 15.76 18.91 17.69C18.91 18.22 18.79 18.68 18.52 19.07C17.92 18.49 17.16 17.96 16.31 17.57C13.78 16.36 13.09 15.3 13.09 14.17C13.09 13.69 13.16 13.25 13.35 12.86Z"/></svg>in time</span></div>
   </div>
 
+  <h2 id="start">Add it in one step</h2>
+  <p>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/</code> in your repository and set your <code>url</code>. It runs every Monday and GitHub emails you when a check fails. All options: <a href="workflow.html">Configuration</a>.</p>
+
   <section id="example" aria-labelledby="how">
-    <h2 id="how">Repository and website, one report</h2>
+    <h2 id="how">What it checks</h2>
     <ul class="covers sides">
-      <li><h3>Repository</h3><p>What visitors never see: committed keys, known vulnerabilities, license conflicts, risky workflows, open database rules. You also get a CycloneDX SBOM.</p></li>
-      <li><h3>Website</h3><p>What visitors get: imprint and privacy policy, requests and cookies before consent, security headers, TLS and DNS. Runs when you set a <code>url</code>.</p></li>
+      <li><h3><a href="checks.html#repository">Repository</a></h3><p>Committed keys, known vulnerabilities, licenses, risky workflows, open database rules. Plus a CycloneDX SBOM.</p></li>
+      <li><h3><a href="checks.html#website">Website</a></h3><p>Imprint, privacy policy, cookies before consent, <a href="security.html">security headers and TLS</a>, <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton</a>. Runs when you set a <code>url</code>.</p></li>
+      <li><h3>Both together</h3><p>One run, one report. Checks that compare the two are <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/dev/roadmap.md#next-repository-and-website-together">on the roadmap</a>.</p></li>
     </ul>
     <figure class="report">
       <div class="report-head">
@@ -144,7 +148,6 @@
           <div class="report-result">
             <p>1 secret found. Revoke it, then remove it from the code and the git history.</p>
             <ul><li>src/main.test.ts:48: AWS access key (AKIA… (20 chars))</li></ul>
-            <p class="report-fix"><span class="report-label">Fix</span> Revoke found keys right away, then remove them from code and git history and store them as secrets or environment variables.</p>
           </div>
         </li>
         <li class="report-row">
@@ -153,69 +156,42 @@
           <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
           <div class="report-result">
             <p>Contacted before consent: Pirsch. Check the legal basis and name them in the privacy policy.</p>
-            <ul><li>Pirsch (api.pirsch.io) on /, /imprint.html, /privacy.html, /workflow.html, /checks.html, /de/, /checks.html?q=BGB, /de/kuendigungsbutton.html, /security.html.</li></ul>
+            <ul><li>Pirsch (api.pirsch.io) on /, /imprint.html, /privacy.html …</li></ul>
             <p class="report-fix"><span class="report-label">Fix</span> Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent.</p>
           </div>
         </li>
-        <li class="report-row">
-          <span class="status s-pass">pass</span>
-          <div class="report-check"><span class="report-scope">Website</span><span class="report-title">Imprint contains the required details</span><span class="report-law"><a class="rule-id" href="checks.html#LEG-DE-IMP-002">LEG-DE-IMP-002</a> · § 5(1) DDG</span></div>
-          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
-          <div class="report-result"><p>Address, email and a second way of contact found in the imprint.</p></div>
-        </li>
       </ol>
-      <figcaption>3 of 56 results from one real run on rechtzeitig.dev and its repository, 7 November 2026, shortened. The key is the example key from the AWS documentation, used in a test.</figcaption>
+      <figcaption>Two results from a real run on rechtzeitig.dev and its repository, 7 November 2026, shortened. The key is the example key from the AWS documentation.</figcaption>
     </figure>
-    <p>Today each check reads one side. Checks that compare both, such as the services in your code against your privacy policy, are <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/dev/roadmap.md#next-repository-and-website-together">next on the roadmap</a>.</p>
   </section>
 
-  <h2 id="covers">What it checks</h2>
-  <ul class="covers">
-    <li><h3><a href="checks.html#legal">Legal pages</a></h3><p>The German imprint (<span lang="de">Impressum</span>) under § 5 DDG and the privacy policy under the GDPR: linked, reachable, complete</p></li>
-    <li><h3><a href="checks.html#privacy">Cookie consent</a></h3><p>Third-party requests and cookies before consent, the banner, transfers outside the EU, § 25 TDDDG</p></li>
-    <li><h3><a href="checks.html?q=BGB">Shop and contract buttons</a></h3><p>Cancellation, withdrawal and order buttons under the BGB, and <a href="checks.html#LEG-DE-PRICE-001">prices under the PAngV</a>. In German: <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton prüfen</a></p></li>
-    <li><h3><a href="security.html">Security headers and TLS</a></h3><p>HTTPS, certificates, headers, exposed <code>.env</code> and <code>.git</code> files, error pages, SPF and DMARC</p></li>
-    <li><h3><a href="checks.html#repository">Repository and SBOM</a></h3><p>Committed secrets, also under public prefixes such as <code>NEXT_PUBLIC_</code>, Supabase tables without row level security, vulnerabilities from osv.dev, licenses, workflow risks</p></li>
-    <li><h3><a href="checks.html#sustainability">Sustainability</a> and <a href="checks.html#accessibility">accessibility</a></h3><p>Compression, caching, image formats, green hosting, page language, autoplay</p></li>
-  </ul>
-
-  <h2 id="start">Add it in two minutes</h2>
-  <ol class="steps">
-    <li><span>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository.</span></li>
-    <li><span>Set <code>url</code> and the language in the file.</span></li>
-    <li><span>Wait for Monday or open <span class="ui">Actions → rechtzeitig → Run workflow</span>, then read the report on the run's summary page.</span></li>
-  </ol>
-  <p>The example runs every week and fails when a check fails, so GitHub notifies you. Inputs, triggers, secrets and the report are described in <a href="workflow.html">Configuration</a>.</p>
-
   <section id="legal" aria-labelledby="legal-title">
-    <h2 id="legal-title">The legal side</h2>
-    <p>Each check names its legal basis where there is one and links primary sources: laws, courts, authorities and standards, never blogs. A finding is a technical risk hint with the place and the law, not legal advice. A clean report means these checks found nothing, not that the site is compliant.</p>
+    <h2 id="legal-title">Sources, not advice</h2>
+    <p>Each check names its legal basis and links primary sources: laws, courts, authorities.</p>
 <!-- reviewed:start -->
 <p class="reviewed">All 56 checks were last reviewed against their sources between <time datetime="2026-11-03">3 November 2026</time> and <time datetime="2026-11-04">4 November 2026</time>. A check not reviewed for a year fails the project's tests.</p>
 <!-- reviewed:end -->
-    <p>Manuel Steinberg (<a href="https://kreativ-anders.de">kreativ-anders</a>) maintains rechtzeitig in Germany, open source under Apache-2.0. Each <a href="https://github.com/kreativ-anders/rechtzeitig/releases">release</a> lists what changed.</p>
   </section>
 
   <h2 id="faq">Questions</h2>
   <div class="faq">
     <details id="updates">
       <summary>How do I get the latest version?</summary>
-      <p>The workflow pins a release by its commit SHA. Add <code>.github/dependabot.yml</code> to your repository:</p>
+      <p>The workflow pins a release by its commit SHA. Add <code>.github/dependabot.yml</code> to your repository, and Dependabot opens a pull request for each new release:</p>
       <pre><code>version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly</code></pre>
-      <p>Dependabot then opens a pull request whenever a new rechtzeitig release is out. Merge it and you have the new version.</p>
     </details>
     <details id="data">
       <summary>Does any data leave the runner?</summary>
-      <p>Your source code does not. By default the names and versions of your locked packages go to <a href="https://osv.dev">osv.dev</a> (<code>vulnerabilities: false</code> turns it off) and your host name to the Green Web Foundation (<code>green-hosting: false</code>). The full list is under <a href="workflow.html#data">Data that leaves the runner</a>.</p>
+      <p>Your source code does not. By default package names and versions go to <a href="https://osv.dev">osv.dev</a> and your host name to the Green Web Foundation; both can be turned off. See <a href="workflow.html#data">Data that leaves the runner</a>.</p>
     </details>
     <details id="visibility">
       <summary>Who can see the report?</summary>
-      <p>On a public repository the run page shows only counts by default, because anyone can read it; the findings go to the Security tab, which only people with write access see. For the full report on the run page, run rechtzeitig from a private repository, or set <code>report-visibility: full</code> to publish it. More in <a href="workflow.html#report">The report</a>.</p>
+      <p>On a public repository the run page shows only counts. The findings go to the Security tab, which only people with write access see. See <a href="workflow.html#report">The report</a>.</p>
     </details>
   </div>
 </main>

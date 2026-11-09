@@ -44,10 +44,10 @@
 
 <main id="content" class="narrow">
   <h1>Security headers, TLS and exposed files, checked in CI</h1>
-  <p class="lead">rechtzeitig is a GitHub Action that checks your site's security headers, HTTPS and TLS certificate expiry, SPF and DMARC, and looks for exposed <code>.env</code> and <code>.git</code> files on every run. No API key and no account: these checks talk only to your site and its DNS.</p>
+  <p class="lead"><span class="wm">rechtzeitig</span> is a GitHub Action that checks your site's security headers, HTTPS, certificate expiry, SPF and DMARC, and looks for exposed <code>.env</code> and <code>.git</code> files. No API key, no account.</p>
 
   <h2 id="checked">What is checked</h2>
-  <p>These are the website checks of the <code>security</code> group. Each links to its card on the <a href="checks.html#security">checks page</a> with its sources. The list is generated from the rules, so it matches what runs. The same group also has repository checks, such as committed secrets and open database rules, under the scope <a href="checks.html#repository">Repository</a>.</p>
+  <p>The website checks of the <code>security</code> group, each with its sources on the <a href="checks.html#security">checks page</a>. The group's repository checks, such as committed secrets, are under <a href="checks.html#repository">Repository</a>.</p>
 <!-- topic-rules:start -->
 <ul class="topic-rules">
 <li class="topic-rule" id="SEC-HDR-002">
@@ -133,7 +133,6 @@
 
   <section id="example" aria-labelledby="example-title">
     <h2 id="example-title">What a finding looks like</h2>
-    <p>Each finding names the rule, the law it relates to, what was found and how to fix it.</p>
     <figure class="report">
       <ol class="report-rows">
         <li class="report-row">
@@ -148,20 +147,16 @@
           </div>
         </li>
       </ol>
-      <figcaption>One row from a real run on rechtzeitig.dev, 4 November 2026, as written by rechtzeitig; the note marked "Our note" is added for this page. A run with website and repository results is on the <a href="./#example">start page</a>.</figcaption>
+      <figcaption>One row from a real run on rechtzeitig.dev, 4 November 2026. "Our note" is added for this page.</figcaption>
     </figure>
   </section>
 
   <h2 id="setup">Run it in CI</h2>
-  <ol class="steps">
-    <li><span>Copy the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> to <code>.github/workflows/rechtzeitig.yml</code>. It pins a release by its commit SHA.</span></li>
-    <li><span>Set <code>url</code>. To run only these checks, also set <code>modules</code> in the rechtzeitig step:</span></li>
-  </ol>
+  <p>Copy the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> to <code>.github/workflows/rechtzeitig.yml</code> and set <code>url</code>. To run only these checks, also set <code>modules</code>:</p>
   <pre><code>url: https://www.example.de/
 modules: security
 fail-on: fail # red when a check fails</code></pre>
-  <p>The example runs every Monday, which catches an expiring certificate or a header lost in a deploy, see <a href="workflow.html#schedule">Run on a schedule</a>.</p>
-  <p>All inputs, <code>fail-on</code> and the Security tab upload are described in <a href="workflow.html#inputs">The workflow</a>. Findings are technical hints with the law they relate to, not legal advice.</p>
+  <p>The example runs every Monday, which catches an expiring certificate or a header lost in a deploy. All inputs are in <a href="workflow.html#inputs">Configuration</a>.</p>
 </main>
 
 <footer><div class="inner">
