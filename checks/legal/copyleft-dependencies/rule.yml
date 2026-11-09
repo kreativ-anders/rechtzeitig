@@ -16,6 +16,6 @@ meta:
   sources:
   - https://www.gesetze-im-internet.de/urhg/__69c.html
   - https://www.gesetze-im-internet.de/urhg/__31.html
-  - https://www.gnu.org/licenses/gpl-3.0.html
+  - https://spdx.org/licenses/GPL-3.0-only.html
   - https://www.gnu.org/licenses/license-list.html
   - https://www.gnu.org/licenses/gpl-faq.html

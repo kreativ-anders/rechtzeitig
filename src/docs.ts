@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { SEVERITIES, switchSpec, type Rule, type Switch } from "./rules.ts";
-import { loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } from "./runner.ts";
+import { SCOPES, loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } from "./runner.ts";
 
 const CHECKS_PAGE = new URL("../docs/checks.html", import.meta.url);
 const WORKFLOW_PAGE = new URL("../docs/workflow.html", import.meta.url);
@@ -163,10 +163,16 @@ export function crossChecksHtml(checks: LoadedCheck[], lang: Lang = "en"): strin
   const de = lang === "de";
   const href = (id: string) => (de ? `../checks.html#${id}" hreflang="en` : `checks.html#${id}`);
   const intro = de
-    ? `<p>${list.length} Prüfungen lesen Repository und Website zusammen. Sie finden, was ein Scan nur einer Seite nicht sieht:</p>`
-    : `<p>${list.length} checks read the repository and the website together. They find what a scan of one side cannot see:</p>`;
+    ? `<p>Was ein Scan nur einer Seite nicht sehen kann: der Code, der live geht, verglichen mit dem, was die Website tatsächlich ausliefert und erklärt.</p>`
+    : `<p>What a scan of one side cannot see: the code that ships, compared with what the website actually serves and says.</p>`;
   const items = list.map((c) => `<li><a href="${href(c.rule.id)}">${text(c.rule.title[lang])}</a></li>`);
   return [intro, `<ul class="cross-checks">`, ...items, `</ul>`].join("\n");
+}
+
+/** "13 checks" for one scope (website, repository or both), next to its heading on the start pages. */
+export function scopeCountHtml(checks: LoadedCheck[], scope: Scope, lang: Lang = "en"): string {
+  const count = checks.filter((c) => scopeOf(c.check) === scope).length;
+  return lang === "de" ? `${count} Prüfungen` : `${count} checks`;
 }
 
 /** The start page's line on how current the rules are: the oldest and newest meta.last_reviewed. */
@@ -234,10 +240,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const page = readFileSync(CHECKS_PAGE, "utf8");
   writeFileSync(CHECKS_PAGE, fill(fill(page, "checks", checksHtml(checks)), "switches", switchesHtml(checks)));
   writeFileSync(WORKFLOW_PAGE, fill(readFileSync(WORKFLOW_PAGE, "utf8"), "switches", switchesHtml(checks)));
-  const index = readFileSync(INDEX_PAGE, "utf8");
-  writeFileSync(INDEX_PAGE, fill(fill(fill(index, "hero-checks", heroChecksHtml(checks)), "reviewed", reviewedHtml(checks)), "cross-checks", crossChecksHtml(checks)));
-  const indexDe = readFileSync(INDEX_PAGE_DE, "utf8");
-  writeFileSync(INDEX_PAGE_DE, fill(fill(fill(indexDe, "hero-checks", heroChecksHtml(checks, "de")), "reviewed", reviewedHtml(checks, "de")), "cross-checks", crossChecksHtml(checks, "de")));
+  for (const [path, lang] of [[INDEX_PAGE, "en"], [INDEX_PAGE_DE, "de"]] as const) {
+    let doc = readFileSync(path, "utf8");
+    doc = fill(doc, "hero-checks", heroChecksHtml(checks, lang));
+    doc = fill(doc, "reviewed", reviewedHtml(checks, lang));
+    doc = fill(doc, "cross-checks", crossChecksHtml(checks, lang));
+    for (const scope of SCOPES) doc = fill(doc, `count-${scope}`, scopeCountHtml(checks, scope, lang));
+    writeFileSync(path, doc);
+  }
   writeFileSync(SECURITY_PAGE, fill(readFileSync(SECURITY_PAGE, "utf8"), "topic-rules", topicRulesHtml(securityChecks(checks))));
   writeFileSync(SHOP_PAGE_DE, fill(readFileSync(SHOP_PAGE_DE, "utf8"), "topic-rules", topicRulesHtml(shopChecks(checks), "de")));
   console.log("docs/checks.html, docs/workflow.html, docs/index.html, docs/de/index.html, docs/security.html and docs/de/kuendigungsbutton.html updated");
