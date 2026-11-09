@@ -52,3 +52,8 @@ test("does not pass when the lockfiles hold no component", async () => {
 test("skips repositories without packages", async () => {
   assert.equal((await runRepoCheck(here, { "README.md": "# hi" })).status, "skip");
 });
+
+test("accepts a lockfile in the direct parent folder of a nested manifest", async () => {
+  const result = await runRepoCheck(here, { "apps/web/package.json": "{}", "apps/package-lock.json": lock });
+  assert.equal(result.status, "pass");
+});

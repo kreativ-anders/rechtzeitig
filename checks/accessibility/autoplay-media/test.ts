@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runCheck, runFake } from "../../../test/helpers.ts";
+import { runCheck, runFake, runSite } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
@@ -31,4 +31,12 @@ test("passes for videos that do not start by themselves", async () => {
 
 test("skips without videos", async () => {
   assert.equal((await runFake(here)).status, "skip");
+});
+
+test("counts a video on several pages once, videos without a URL each", async () => {
+  const video = (url: string) => ({ url, autoplay: false, muted: false, controls: false, loop: false });
+  const a = "https://example.de/a.mp4";
+  const result = await runSite(here, { "/": { videos: [video(a), video(""), video("")] }, "/b": { videos: [video(a), video("")] } });
+  assert.equal(result.status, "pass");
+  assert.match(result.message, /\b4 videos/);
 });

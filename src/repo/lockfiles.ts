@@ -56,20 +56,28 @@ interface NpmPackage { name?: string; version?: string; license?: string | { typ
 interface NpmV1Dependency { version: string; dev?: boolean; dependencies?: Record<string, NpmV1Dependency> }
 interface NpmLock { packages?: Record<string, NpmPackage>; dependencies?: Record<string, NpmV1Dependency> }
 
-function npmLock(text: string): Parsed[] {
-  const lock = JSON.parse(text) as NpmLock;
+/** A non-empty string from a parsed file, or undefined: lockfiles are untrusted and may hold any type. */
+function str(value: unknown): string | undefined {
+  return (typeof value === "string" && value) || (typeof value === "number" && Number.isFinite(value) && String(value)) || undefined;
+}
+
+function npmLock(source: string): Parsed[] {
+  const lock = (JSON.parse(source) ?? {}) as NpmLock;
   const out: Parsed[] = [];
   for (const [path, p] of Object.entries(lock.packages ?? {})) {
-    if (!path || p.link || !p.version) continue;
-    const license = typeof p.license === "string" ? p.license : p.license?.type;
-    out.push({ ecosystem: "npm", name: p.name ?? path.split("node_modules/").pop()!, version: p.version, license, dev: !!(p.dev || p.devOptional) });
+    if (!path || p?.link || !str(p?.version)) continue;
+    const name = str(p.name) ?? path.split("node_modules/").pop();
+    if (!name) continue;
+    const license = str(p.license) ?? str((p.license as { type?: unknown } | undefined)?.type);
+    out.push({ ecosystem: "npm", name, version: str(p.version)!, license, dev: !!(p.dev || p.devOptional) });
   }
   if (!lock.packages) {
     // lockfileVersion 1
     const walk = (deps: Record<string, NpmV1Dependency> = {}) => {
-      for (const [name, d] of Object.entries(deps)) {
-        out.push({ ecosystem: "npm", name, version: d.version, dev: !!d.dev });
-        walk(d.dependencies);
+      for (const [name, d] of Object.entries(deps ?? {})) {
+        const version = str(d?.version);
+        if (version) out.push({ ecosystem: "npm", name, version, dev: !!d.dev });
+        walk(d?.dependencies);
       }
     };
     walk(lock.dependencies);
@@ -92,11 +100,11 @@ function pnpmLock(text: string): Parsed[] {
   const prod = lock.snapshots ? pnpmReachable(lock) : undefined;
   return Object.entries(lock.packages ?? {}).flatMap(([key, p]) => {
     const spec = v5 ? pnpmV5Spec(key) : pnpmSpec(key);
-    const name = p?.name ?? spec?.name;
-    const version = p?.version ?? spec?.version;
+    const name = str(p?.name) ?? spec?.name;
+    const version = str(p?.version) ?? spec?.version;
     if (!name || !version) return [];
     const dev = prod ? !prod.has(`${name}@${version}`) : p?.dev === true;
-    return [{ ecosystem: "npm" as const, name, version, license: p?.license, dev }];
+    return [{ ecosystem: "npm" as const, name, version, license: str(p?.license), dev }];
   });
 }
 
@@ -114,7 +122,7 @@ function pnpmV5Spec(key: string): { name: string; version: string } | undefined 
 /** "name@version" of every package that a production dependency of an importer reaches. */
 function pnpmReachable(lock: PnpmLock): Set<string> {
   const ref = (name: string, r: string | { version: string }) => {
-    const v = typeof r === "string" ? r : r.version;
+    const v = typeof r === "string" ? r : str(r?.version) ?? "";
     // An alias points at another package: "string-width@4.2.3".
     return v.replace(/\(.*$/, "").lastIndexOf("@") > 0 ? v : `${name}@${v}`;
   };
@@ -149,20 +157,28 @@ function yarnLock(text: string): Parsed[] {
 
 interface ComposerPackage { name: string; version: string | number; license?: string[] }
 
-function composerLock(text: string): Parsed[] {
-  const lock = JSON.parse(text) as { packages?: ComposerPackage[]; "packages-dev"?: ComposerPackage[] };
+function composerLock(source: string): Parsed[] {
+  const lock = (JSON.parse(source) ?? {}) as { packages?: ComposerPackage[]; "packages-dev"?: ComposerPackage[] };
   const map = (list: ComposerPackage[] = [], dev: boolean) =>
-    list.map((p) => ({ ecosystem: "composer" as const, name: p.name, version: String(p.version).replace(/^v/, ""), license: p.license?.join(" OR "), dev }));
+    (Array.isArray(list) ? list : []).flatMap((p) => {
+      const name = str(p?.name);
+      const version = str(p?.version)?.replace(/^v/, "");
+      if (!name || !version) return [];
+      const license = Array.isArray(p.license) ? p.license.filter((l) => typeof l === "string").join(" OR ") || undefined : undefined;
+      return [{ ecosystem: "composer" as const, name, version, license, dev }];
+    });
   return [...map(lock.packages, false), ...map(lock["packages-dev"], true)];
 }
 
 interface PubspecPackage { source?: string; version?: string; dependency?: string }
 
-function pubspecLock(text: string): Parsed[] {
-  const lock = (parseYaml(text) ?? {}) as { packages?: Record<string, PubspecPackage> };
-  return Object.entries(lock.packages ?? {})
-    .filter(([, p]) => p.source === "hosted" || p.source === "git")
-    .map(([name, p]) => ({ ecosystem: "pub" as const, name, version: String(p.version), dev: p.dependency === "direct dev" }));
+function pubspecLock(source: string): Parsed[] {
+  const lock = (parseYaml(source) ?? {}) as { packages?: Record<string, PubspecPackage> };
+  return Object.entries(lock.packages ?? {}).flatMap(([name, p]) => {
+    const version = str(p?.version);
+    if (!version || (p.source !== "hosted" && p.source !== "git")) return [];
+    return [{ ecosystem: "pub" as const, name, version, dev: p.dependency === "direct dev" }];
+  });
 }
 
 // Cargo.lock, uv.lock and poetry.lock share the [[package]] layout.

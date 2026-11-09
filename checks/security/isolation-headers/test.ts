@@ -36,3 +36,15 @@ test("accepts COOP with a report-to parameter", async () => {
   const headers = { "permissions-policy": "camera=()", "cross-origin-opener-policy": 'same-origin; report-to="coop"' };
   assert.equal((await runFake(here, { headers })).status, "pass");
 });
+
+test("a report-only COOP is named, but not counted as a second missing header", async () => {
+  const headers = { "permissions-policy": "camera=()", "cross-origin-opener-policy-report-only": "same-origin" };
+  const result = await runFake(here, { headers });
+  assert.equal(result.status, "warn");
+  assert.equal(result.raw.message.params?.count, 1);
+});
+
+test("counts both missing headers next to a report-only COOP", async () => {
+  const result = await runFake(here, { headers: { "cross-origin-opener-policy-report-only": "same-origin" } });
+  assert.equal(result.raw.message.params?.count, 2);
+});

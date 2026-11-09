@@ -26,3 +26,10 @@ test("warns without Expires", async () => {
 test("ignores an HTML page served for every path", async () => {
   assert.equal((await runFake(here, {}, { probes: [probe("<html><p>Contact: us</p></html>")] })).status, "info");
 });
+
+test("names the first contact", async () => {
+  const body = "Contact: mailto:a@example.de\nContact: https://example.de/security\nExpires: 2099-01-01T00:00:00.000Z\n";
+  const result = await runFake(here, {}, { probes: [probe(body)] });
+  assert.equal(result.status, "pass");
+  assert.equal(result.raw.message.params?.contact, "mailto:a@example.de");
+});

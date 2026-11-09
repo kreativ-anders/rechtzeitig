@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runRepoCheck } from "../../../test/helpers.ts";
+import { cpuMs, runRepoCheck } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
@@ -57,9 +57,8 @@ test("fails for Firestore rules in test mode", async () => {
 });
 
 test("stays fast on a long SQL statement without a match", async () => {
-  const started = Date.now();
-  await runRepoCheck(here, { "supabase/migrations/1.sql": `alter table ${"a".repeat(200_000)}\n${" ".repeat(200_000)}create policy ${"(".repeat(100_000)}` });
-  assert.ok(Date.now() - started < 500);
+  const files = { "supabase/migrations/1.sql": `alter table ${"a".repeat(200_000)}\n${" ".repeat(200_000)}create policy ${"(".repeat(100_000)}` };
+  assert.ok((await cpuMs(() => runRepoCheck(here, files))) < 500);
 });
 
 test("fails for open Firestore rules", async () => {
@@ -68,7 +67,27 @@ test("fails for open Firestore rules", async () => {
 });
 
 test("stays fast on a long rules file without a match", async () => {
-  const started = Date.now();
-  await runRepoCheck(here, { "firestore.rules": "allow read ".repeat(90_000) });
-  assert.ok(Date.now() - started < 500);
+  // About 100 ms CPU on a laptop, 1 MB of input; backtracking would take seconds.
+  assert.ok((await cpuMs(() => runRepoCheck(here, { "firestore.rules": "allow read ".repeat(90_000) }))) < 1000);
+});
+
+test("skips without Supabase migrations or Firebase rules", async () => {
+  assert.equal((await runRepoCheck(here, { "README.md": "x", "db/schema.sql": "create table a (id int);" })).status, "skip");
+});
+
+const secured = (policy: string) => ({
+  "supabase/migrations/1.sql": migration(`alter table public.profiles enable row level security;\n${policy};`),
+});
+
+test("finds open policies in any case and with check (true)", async () => {
+  assert.equal((await runRepoCheck(here, secured("CREATE POLICY p ON public.profiles USING (TRUE)"))).status, "warn");
+  assert.equal((await runRepoCheck(here, secured("create policy p on public.profiles for insert with check (true)"))).status, "warn");
+  assert.equal((await runRepoCheck(here, secured("create policy p on public.profiles using (auth.uid() = id)"))).status, "pass");
+});
+
+test("fails for Realtime Database rules open for reading or for writing", async () => {
+  for (const key of [".read", ".write"]) {
+    const result = await runRepoCheck(here, { "database.rules.json": JSON.stringify({ rules: { [key]: true } }) });
+    assert.equal(result.status, "fail", key);
+  }
 });

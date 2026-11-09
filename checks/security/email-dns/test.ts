@@ -43,3 +43,13 @@ test("suggests an enforcing DMARC policy right away for domains without mail", a
   const result = await runFake(here, {}, { dns: { domain: "example.de", mx: false } });
   assert.ok(result.details?.includes('No DMARC record at _dmarc.example.de. The domain sends no mail, so publish "v=DMARC1; p=reject".'));
 });
+
+test("skips without a DNS lookup", async () => {
+  assert.equal((await runFake(here)).status, "skip");
+});
+
+test("reads SPF and DMARC case-insensitively", async () => {
+  const result = await runFake(here, {}, { dns: { domain: "example.de", spf: "v=spf1 mx +ALL", dmarc: "v=DMARC1; P=None", mx: true } });
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.raw.details?.map((d) => d.key), ["open_spf", "dmarc_none"]);
+});

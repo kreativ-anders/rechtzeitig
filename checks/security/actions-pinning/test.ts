@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runRepoCheck } from "../../../test/helpers.ts";
+import { cpuMs, runRepoCheck } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
@@ -20,7 +20,9 @@ test("lists actions pinned to a tag", async () => {
 
 test("stays fast on many blank lines", async () => {
   const files = { ".github/workflows/ci.yml": `${"\n".repeat(20_000)}x` };
-  const started = Date.now();
-  await runRepoCheck(here, files);
-  assert.ok(Date.now() - started < 500);
+  assert.ok((await cpuMs(() => runRepoCheck(here, files))) < 500);
+});
+
+test("skips without workflows", async () => {
+  assert.equal((await runRepoCheck(here, { "README.md": "x" })).status, "skip");
 });

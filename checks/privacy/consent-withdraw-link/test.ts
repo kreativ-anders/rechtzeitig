@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runCheck } from "../../../test/helpers.ts";
+import { fakeLink, runCheck, runSite } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
@@ -30,4 +30,11 @@ test("warns when no way back to the settings is found", async () => {
 
 test("skips without a banner", async () => {
   assert.equal((await runCheck(here, "none")).status, "skip");
+});
+
+test("a privacy policy without a settings link does not count", async () => {
+  const links = [fakeLink("Akzeptieren", null, "banner"), fakeLink("Cookie-Einstellungen", null, "banner"), fakeLink("Datenschutz", "https://example.de/datenschutz", "footer")];
+  const result = await runSite(here, { "/": { links }, "/datenschutz": { text: "Datenschutzerklärung" } });
+  assert.equal(result.status, "info");
+  assert.equal(result.raw.message.key, "banner_only");
 });

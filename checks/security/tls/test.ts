@@ -27,3 +27,24 @@ test("an untrusted certificate without an error text says so plainly", async () 
   assert.equal(result.status, "fail");
   assert.equal(result.message, "The certificate is not trusted.");
 });
+
+test("skips without a TLS lookup", async () => {
+  assert.equal((await runFake(here)).status, "skip");
+});
+
+test("a failed handshake and an untrusted certificate are told apart", async () => {
+  const failed = await runFake(here, {}, tls({ protocol: "", authorized: false, error: "ECONNRESET" }));
+  assert.equal(failed.raw.message.key, "failed");
+  const untrusted = await runFake(here, {}, tls({ authorized: false, error: "CERT_HAS_EXPIRED" }));
+  assert.equal(untrusted.raw.message.key, "untrusted_error");
+});
+
+test("warns below 14 days left, not at 14 or more", async () => {
+  assert.equal((await runFake(here, {}, tls({ daysLeft: 13 }))).status, "warn");
+  assert.equal((await runFake(here, {}, tls({ daysLeft: 14 }))).status, "pass");
+  assert.equal((await runFake(here, {}, tls({ daysLeft: 20 }))).status, "pass");
+});
+
+test("fails when the handshake failed", async () => {
+  assert.equal((await runFake(here, {}, tls({ protocol: "", authorized: false, error: "ECONNRESET" }))).status, "fail");
+});

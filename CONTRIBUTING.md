@@ -19,6 +19,18 @@ npm run docs && npm run typecheck && npm test
 npm run drift
 ```
 
+## Tests that catch bugs
+
+A rule's `test.ts` expects a pass, at least one other status, and every status its `check.ts` returns (`src/check-tests.test.ts`). Every word pattern in `lang/*.yml` has an example in `src/lang-examples.test.ts`.
+
+To see whether the tests of a rule notice a wrong change, run the mutation test:
+
+```sh
+npm run mutate -- legal/imprint        # one rule; without a name every rule (about 15 minutes)
+```
+
+It changes one thing at a time in what the rule decides by (a comparison, a status, a regex alternative, a word pattern, a data entry, a threshold) and runs the rule's tests on a copy. Each change that "survived" is printed: add a test that fails for it, or leave it when the change means the same.
+
 ## Keep the documentation true
 
 A change that affects what a rule does updates its documentation in the same commit. `npm run drift` and the tests catch most of it.

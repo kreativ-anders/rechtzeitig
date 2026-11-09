@@ -27,3 +27,26 @@ test("ignores other sites' files", async () => {
   const other = { ...file(), url: "https://cdn.other.com/a.js", host: "cdn.other.com" };
   assert.equal((await runFake(here, { requests: [other] })).status, "skip");
 });
+
+const cachedFile = async (cacheControl?: string, expires?: string, type = "script") =>
+  (await runFake(here, { requests: [{ ...file(cacheControl, expires), type }] })).status;
+
+test("no-store and no-cache win over a max-age", async () => {
+  assert.equal(await cachedFile("no-store, max-age=600"), "warn");
+  assert.equal(await cachedFile("no-cache, max-age=600"), "warn");
+});
+
+test("max-age=1 and immutable count, an unreadable Expires does not", async () => {
+  assert.equal(await cachedFile("max-age=1"), "pass");
+  assert.equal(await cachedFile("public, immutable"), "pass");
+  assert.equal(await cachedFile(undefined, "soon"), "warn");
+});
+
+test("checks images and fonts too", async () => {
+  assert.equal(await cachedFile(undefined, undefined, "image"), "warn");
+  assert.equal(await cachedFile(undefined, undefined, "font"), "warn");
+});
+
+test("an Expires in the past is no cache lifetime", async () => {
+  assert.equal(await cachedFile(undefined, "Thu, 01 Jan 2015 00:00:00 GMT"), "warn");
+});

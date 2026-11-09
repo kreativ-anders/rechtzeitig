@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runCheck } from "../../../test/helpers.ts";
+import { fakeLink, runCheck, runSite } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
@@ -23,4 +23,21 @@ test("matches whole words, and names unknown services by their domain", async ()
 
 test("skips without a privacy policy", async () => {
   assert.equal((await runCheck(here, "none")).status, "skip");
+});
+
+// Start page linking a privacy policy with the given text, loading from the given URLs.
+const policy = (text: string, ...urls: string[]) => runSite(here, {
+  "/": { links: [fakeLink("Datenschutz", "https://example.de/datenschutz", "footer")], requests: urls.map((url) => ({ url, host: new URL(url).hostname, type: "script" })) },
+  "/datenschutz": { text },
+});
+
+test("passes without services of other sites", async () => {
+  const result = await policy("Datenschutzerklärung");
+  assert.equal(result.status, "pass");
+  assert.equal(result.raw.message.key, "no_services");
+});
+
+test("any of a vendor's names counts, and unknown services by their domain name", async () => {
+  assert.equal((await policy("Wir nutzen Typekit.", "https://use.typekit.net/a.css")).status, "pass");
+  assert.equal((await policy("Wir nutzen example-cdn.", "https://cdn.example-cdn.net/a.js")).status, "pass");
 });

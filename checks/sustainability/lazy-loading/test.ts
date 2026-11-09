@@ -24,3 +24,10 @@ test("ignores images without size", async () => {
   const images = [{ url: "https://example.de/a.webp", loading: "", belowFold: true, width: 0, height: 0 }];
   assert.equal((await runFake(here, { images })).status, "skip");
 });
+
+test("counts images from 50 pixels in both directions", async () => {
+  const image = (width: number, height: number) => ({ images: [{ url: "https://example.de/a.jpg", loading: "", belowFold: true, width, height }] });
+  assert.equal((await runFake(here, image(50, 50))).status, "warn");
+  assert.equal((await runFake(here, image(49, 200))).status, "skip");
+  assert.equal((await runFake(here, image(200, 49))).status, "skip");
+});

@@ -14,3 +14,7 @@ test("fails for an http:// image on an HTTPS page", async () => {
   assert.equal(result.status, "fail");
   assert.deepEqual(result.details, ["http://cdn.example.de/a.png on /"]);
 });
+
+test("skips a site without HTTPS", async () => {
+  assert.equal((await runFake(here, { finalUrl: "http://example.de/" })).status, "skip");
+});

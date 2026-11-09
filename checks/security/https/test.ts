@@ -24,3 +24,10 @@ test("fails for an http:// site", async () => {
 test("skips when plain HTTP was not checked", async () => {
   assert.equal((await runFake(here, {})).status, "skip");
 });
+
+test("passes for every redirect status to HTTPS, fails for a redirect to HTTP", async () => {
+  for (const status of [301, 302, 303, 307, 308]) {
+    assert.equal((await runFake(here, {}, { http: { status, location: "https://example.de/" } })).status, "pass", String(status));
+  }
+  assert.equal((await runFake(here, {}, { http: { status: 301, location: "http://www.example.de/" } })).status, "fail");
+});

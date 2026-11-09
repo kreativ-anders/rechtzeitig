@@ -46,3 +46,47 @@ test("skips without a banner, and without a reject button", async () => {
   assert.equal(result.status, "skip");
   assert.match(result.message, /privacy\/consent-reject/);
 });
+
+const choice = (accept: Partial<NonNullable<Link["style"]>>, reject: Partial<NonNullable<Link["style"]>>) =>
+  runFake(here, { links: [button("Alle akzeptieren", accept), button("Alle ablehnen", reject)] });
+const keys = async (accept: Partial<NonNullable<Link["style"]>>, reject: Partial<NonNullable<Link["style"]>>) =>
+  (await choice(accept, reject)).raw.details?.map((d) => d.key) ?? [];
+
+test("reject is smaller below half the area of accept", async () => {
+  const result = await choice({ width: 200, height: 40 }, { width: 98, height: 40 });
+  assert.equal(result.raw.details?.[0].params?.percent, 49);
+  assert.deepEqual(await keys({ width: 200, height: 40 }, { width: 100, height: 40 }), []);
+  assert.deepEqual(await keys({ width: 200, height: 40 }, { width: 49, height: 40 }), ["smaller"]);
+});
+
+test("reject text is smaller below 80 percent of the accept text", async () => {
+  assert.deepEqual(await keys({ fontSize: 20 }, { fontSize: 15.9 }), ["smaller_font"]);
+  assert.deepEqual(await keys({ fontSize: 20 }, { fontSize: 16 }), []);
+});
+
+test("low contrast: accept readable (4.5) and reject below 3", async () => {
+  const white = { background: "rgb(255, 255, 255)" };
+  const black = { ...white, color: "rgb(0, 0, 0)" };
+  assert.deepEqual(await keys(black, { ...white, color: "rgb(150, 150, 150)" }), ["low_contrast"]);
+  assert.deepEqual(await keys(black, { ...white, color: "rgb(148, 148, 148)" }), []);
+  assert.deepEqual(await keys(black, { ...white, color: "rgb(200, 200, 200)" }), ["low_contrast"]);
+  // Accept itself at about 3:1 is not readable enough to compare.
+  assert.deepEqual(await keys({ ...white, color: "rgb(150, 150, 150)" }, { ...white, color: "rgb(220, 220, 220)" }), []);
+});
+
+test("reads alpha in percent and skips colors it cannot read", async () => {
+  const white = { background: "rgb(255, 255, 255)" };
+  const black = { ...white, color: "rgb(0, 0, 0)" };
+  assert.deepEqual(await keys(black, { ...white, color: "rgba(0, 0, 0, 30%)" }), ["low_contrast"]);
+  assert.deepEqual(await keys(black, { ...white, color: "rgba(0, 0, 0, 90%)" }), []);
+  assert.deepEqual(await keys(black, { ...white, color: "oklch(0.9 0 0)" }), []);
+  assert.deepEqual(await keys(black, { color: "rgb(220, 220, 220)", background: "color(srgb 1 1 1)" }), []);
+});
+
+test("compares the largest visible buttons, ignoring ones without size or style", async () => {
+  const hidden = button("Akzeptieren", { width: 0, height: 0 });
+  const plain: Link = { ...button("Zustimmen"), style: undefined };
+  const result = await runFake(here, { links: [hidden, plain, button("Alle akzeptieren"), button("Alle ablehnen")] });
+  assert.equal(result.status, "pass");
+  assert.equal(result.raw.message.params?.accept, "Alle akzeptieren");
+});

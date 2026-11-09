@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runCheck } from "../../../test/helpers.ts";
+import { fakeLink, runCheck, runFake, runSite } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
@@ -24,4 +24,14 @@ test("reads the imprint page that loaded, not a broken first link", async () => 
   const result = await runCheck(here, "broken-first");
   assert.equal(result.status, "fail");
   assert.match(result.details?.[0] ?? "", /^Imprint: \/impressum shows no text/);
+});
+
+test("skips when the start page links no legal page", async () => {
+  assert.equal((await runFake(here)).status, "skip");
+});
+
+test("a button with the same name next to the link does not hide the link", async () => {
+  const links = [fakeLink("Impressum"), fakeLink("Impressum", "https://example.de/impressum", "footer")];
+  const result = await runSite(here, { "/": { links }, "/impressum": { text: "Angaben gemäß § 5 DDG. Muster GmbH, Musterstraße 1, 12345 Berlin. Telefon 030 1234567, E-Mail info@example.de. Vertreten durch die Geschäftsführung." } });
+  assert.equal(result.status, "pass");
 });
