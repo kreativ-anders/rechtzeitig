@@ -1,5 +1,5 @@
 // Generates the rule cards in docs/checks.html, the "what runs when" tables in docs/checks.html and
-// docs/workflow.html, the rule count and review dates in docs/index.html and docs/de/index.html, and
+// docs/workflow.html, the rule count, the checks of both scopes and review dates in docs/index.html and docs/de/index.html, and
 // the rule lists of the topic pages docs/security.html and docs/de/kuendigungsbutton.html from rule.yml
 // files and SWITCHES in src/rules.ts: npm run docs
 
@@ -27,11 +27,11 @@ const MODULES: Record<string, string> = {
 };
 
 /** What a check reads (scopeOf in src/runner.ts): the filter row "Scope" on checks.html and the label on each card. */
-export const SCOPE_LABELS: Record<Scope, string> = { website: "Website", repository: "Repository", both: "Both" };
+export const SCOPE_LABELS: Record<Scope, string> = { website: "Website", repository: "Repository", both: "Repository + website" };
 const SCOPE_NEEDS: Record<Scope, string> = {
   website: "runs with a <code>url</code>.",
   repository: "runs when <code>actions/checkout</code> runs before <span class=\"wm\">rechtzeitig</span>.",
-  both: "runs with a <code>url</code> and a checkout.",
+  both: "reads the website and the repository together; runs only with a <code>url</code> and a checkout.",
 };
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -68,7 +68,8 @@ export function switchesHtml(checks: LoadedCheck[]): string {
     `<tbody>`,
     `<tr><td>All website checks</td><td>Only with a <code>url</code>.</td></tr>`,
     `<tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span> (folder: input <code>repository</code>).</td></tr>`,
-    `<tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (${Object.keys(MODULES).join(", ")}) or scopes (website, repository; <code>repo</code> still works). Empty runs all.</td></tr>`,
+    `<tr><td><a href="checks.html#both">All checks of repository and website together</a></td><td>Only with a <code>url</code> and a checkout. Without one of them they are skipped, and the report says which is missing.</td></tr>`,
+    `<tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (${Object.keys(MODULES).join(", ")}) or scopes (website, repository, both; <code>repo</code> still works). A check of both runs when either scope is listed; <code>both</code> picks only those. Empty runs all.</td></tr>`,
     ...rows,
     `</tbody></table></div>`,
   ].join("\n");
@@ -85,7 +86,7 @@ function card(c: LoadedCheck, module: string): string {
   return [
     `<details class="rule" id="${r.id}" data-module="${module}" data-scope="${scope}" data-severity="${r.severity}" data-search="${esc(search)}">`,
     `<summary>`,
-    `<span class="rule-head"><span class="rule-id">${r.id}<span class="rule-scope" title="Scope: what the check reads">${SCOPE_LABELS[scope]}</span></span><span class="sev" data-level="${level}" title="Severity: ${r.severity}">${"<i></i>".repeat(5)}<span class="sev-name">${r.severity}</span></span></span>`,
+    `<span class="rule-head"><span class="rule-id">${r.id}<span class="rule-scope${scope === "both" ? " both" : ""}" title="Scope: what the check reads">${SCOPE_LABELS[scope]}</span></span><span class="sev" data-level="${level}" title="Severity: ${r.severity}">${"<i></i>".repeat(5)}<span class="sev-name">${r.severity}</span></span></span>`,
     `<span class="rule-title">${text(r.title.en)}</span>`,
     `<span class="rule-title-de" lang="de">${text(r.title.de)}</span>`,
     ...(r.requires ?? []).map((input) => sendsBadge(input, false)).filter(Boolean),
@@ -133,6 +134,25 @@ export function heroChecksHtml(checks: LoadedCheck[], lang: Lang = "en"): string
   return lang === "de"
     ? `<a class="button secondary" href="../checks.html" hreflang="en">Alle ${checks.length} Prüfungen ansehen</a>`
     : `<a class="button secondary" href="checks.html">See all ${checks.length} checks</a>`;
+}
+
+/** Checks that read the website and the repository together, most severe first: the core of rechtzeitig. */
+export const crossChecks = (checks: LoadedCheck[]) =>
+  checks.filter((c) => scopeOf(c.check) === "both").sort((a, b) => SEVERITIES.indexOf(b.rule.severity) - SEVERITIES.indexOf(a.rule.severity) || a.rule.id.localeCompare(b.rule.id));
+
+/**
+ * The start page's list of checks that read repository and website together, by title with their number, generated
+ * from the check type so the page never claims more than the code does. The German page links up one folder.
+ */
+export function crossChecksHtml(checks: LoadedCheck[], lang: Lang = "en"): string {
+  const list = crossChecks(checks);
+  const de = lang === "de";
+  const href = (id: string) => (de ? `../checks.html#${id}" hreflang="en` : `checks.html#${id}`);
+  const intro = de
+    ? `<p>${list.length} Prüfungen lesen Repository und Website zusammen. Sie finden, was ein Scan nur einer Seite nicht sieht:</p>`
+    : `<p>${list.length} checks read the repository and the website together. They find what a scan of one side cannot see:</p>`;
+  const items = list.map((c) => `<li><a href="${href(c.rule.id)}">${text(c.rule.title[lang])}</a></li>`);
+  return [intro, `<ul class="cross-checks">`, ...items, `</ul>`].join("\n");
 }
 
 /** The start page's line on how current the rules are: the oldest and newest meta.last_reviewed. */
@@ -202,9 +222,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   writeFileSync(CHECKS_PAGE, fill(fill(page, "checks", checksHtml(checks)), "switches", switchesHtml(checks)));
   writeFileSync(WORKFLOW_PAGE, fill(readFileSync(WORKFLOW_PAGE, "utf8"), "switches", switchesHtml(checks)));
   const index = readFileSync(INDEX_PAGE, "utf8");
-  writeFileSync(INDEX_PAGE, fill(fill(index, "hero-checks", heroChecksHtml(checks)), "reviewed", reviewedHtml(checks)));
+  writeFileSync(INDEX_PAGE, fill(fill(fill(index, "hero-checks", heroChecksHtml(checks)), "reviewed", reviewedHtml(checks)), "cross-checks", crossChecksHtml(checks)));
   const indexDe = readFileSync(INDEX_PAGE_DE, "utf8");
-  writeFileSync(INDEX_PAGE_DE, fill(fill(indexDe, "hero-checks", heroChecksHtml(checks, "de")), "reviewed", reviewedHtml(checks, "de")));
+  writeFileSync(INDEX_PAGE_DE, fill(fill(fill(indexDe, "hero-checks", heroChecksHtml(checks, "de")), "reviewed", reviewedHtml(checks, "de")), "cross-checks", crossChecksHtml(checks, "de")));
   writeFileSync(SECURITY_PAGE, fill(readFileSync(SECURITY_PAGE, "utf8"), "topic-rules", topicRulesHtml(securityChecks(checks))));
   writeFileSync(SHOP_PAGE_DE, fill(readFileSync(SHOP_PAGE_DE, "utf8"), "topic-rules", topicRulesHtml(shopChecks(checks), "de")));
   console.log("docs/checks.html, docs/workflow.html, docs/index.html, docs/de/index.html, docs/security.html and docs/de/kuendigungsbutton.html updated");

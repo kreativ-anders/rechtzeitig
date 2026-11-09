@@ -118,7 +118,7 @@
       <div class="actions">
         <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Copy the workflow</a>
 <!-- hero-checks:start -->
-<a class="button secondary" href="checks.html">See all 60 checks</a>
+<a class="button secondary" href="checks.html">See all 67 checks</a>
 <!-- hero-checks:end -->
       </div>
       <p class="hero-note">Free and open source by <a href="https://kreativ-anders.de">kreativ-anders</a>. No account; your code stays on your runner.</p>
@@ -134,7 +134,20 @@
     <ul class="covers sides">
       <li><h3><a href="checks.html#repository">Repository</a></h3><p>Committed keys, known vulnerabilities, licenses, risky workflows, open database rules. Plus a CycloneDX SBOM.</p></li>
       <li><h3><a href="checks.html#website">Website</a></h3><p>Imprint, privacy policy, cookies before consent, <a href="security.html">security headers and TLS</a>, <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton</a>. Runs when you set a <code>url</code>.</p></li>
-      <li><h3>Both together</h3><p>One run, one report. Checks that compare the two are <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/dev/roadmap.md#next-repository-and-website-together">on the roadmap</a>.</p></li>
+      <li><h3>Both together</h3>
+<!-- cross-checks:start -->
+<p>7 checks read the repository and the website together. They find what a scan of one side cannot see:</p>
+<ul class="cross-checks">
+<li><a href="checks.html#SEC-DBAI-002">The database the site uses is secured in the repository</a></li>
+<li><a href="checks.html#SEC-SECRETS-003">No secrets in the served JavaScript</a></li>
+<li><a href="checks.html#LEG-EU-DSE-006">Privacy policy names the services in the code</a></li>
+<li><a href="checks.html#LEG-EU-FNT-001">Google Fonts: where the repository loads them</a></li>
+<li><a href="checks.html#SEC-EXP-003">Source maps do not expose the repository's code</a></li>
+<li><a href="checks.html#SEC-HDR-006">Security headers from the repository reach the site</a></li>
+<li><a href="checks.html#SEC-CVD-003">The repository's security.txt is live</a></li>
+</ul>
+<!-- cross-checks:end -->
+      </li>
     </ul>
     <figure class="report">
       <div class="report-head">
@@ -169,7 +182,7 @@
     <h2 id="legal-title">Sources, not advice</h2>
     <p>Each check names its legal basis and links primary sources: laws, courts, authorities.</p>
 <!-- reviewed:start -->
-<p class="reviewed">All 60 checks were last reviewed against their sources between <time datetime="2026-11-03">3 November 2026</time> and <time datetime="2026-11-08">8 November 2026</time>. A check not reviewed for a year fails the project's tests.</p>
+<p class="reviewed">All 67 checks were last reviewed against their sources between <time datetime="2026-11-03">3 November 2026</time> and <time datetime="2026-11-08">8 November 2026</time>. A check not reviewed for a year fails the project's tests.</p>
 <!-- reviewed:end -->
   </section>
 

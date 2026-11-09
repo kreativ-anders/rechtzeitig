@@ -168,6 +168,9 @@ messages:
     not_run_url: "Not run: needs a website. Set the input url."
     not_run_repository: "Not run: needs the repository. Run actions/checkout before rechtzeitig."
     not_run_module: "Not run: neither its group {module} nor its scope {scope} is in modules ({modules}). Empty modules runs all checks."
+    not_run_both_url: "Not run: reads the website and the repository together, and the website is missing. Set the input url."
+    not_run_both_repository: "Not run: reads the website and the repository together, and the checkout is missing. Run actions/checkout before rechtzeitig."
+    not_run_both_both: "Not run: reads the website and the repository together, and both are missing. Set the input url and run actions/checkout before rechtzeitig."
   report:
     check: "Check"
     severity: "Severity"
@@ -194,6 +197,15 @@ messages:
     not_run_repository:
       one: "{count} repository check: no checkout. Run actions/checkout before rechtzeitig."
       other: "{count} repository checks: no checkout. Run actions/checkout before rechtzeitig."
+    not_run_both_url:
+      one: "{count} check of website and repository together: no url. Set the input url to run it."
+      other: "{count} checks of website and repository together: no url. Set the input url to run them."
+    not_run_both_repository:
+      one: "{count} check of website and repository together: no checkout. Run actions/checkout before rechtzeitig."
+      other: "{count} checks of website and repository together: no checkout. Run actions/checkout before rechtzeitig."
+    not_run_both_both:
+      one: "{count} check of website and repository together: no url and no checkout."
+      other: "{count} checks of website and repository together: no url and no checkout."
     not_run_module:
       one: "{count} check outside modules: {modules}. Empty modules runs all checks."
       other: "{count} checks outside modules: {modules}. Empty modules runs all checks."
@@ -858,3 +870,118 @@ messages:
     none:
       one: "{count} workflow checked, no risky pattern."
       other: "{count} workflows checked, no risky pattern."
+
+  # ---------- website and repository together
+  privacy/sdks-in-privacy-policy:
+    no_packages: "No package.json with dependencies in the repository."
+    missing:
+      one: "The code uses {count} service that the privacy policy does not name."
+      other: "The code uses {count} services that the privacy policy does not name."
+    package: "{vendor} ({purpose}) via {package}, not named in the privacy policy"
+    unread: "package.json could not be read; services in it are not checked."
+    unread_files:
+      one: "{count} package.json could not be read, so its services are not checked."
+      other: "{count} package.json files could not be read, so their services are not checked."
+    none_unseen:
+      one: "The code's {count} known service was contacted by the site and is checked by privacy/vendors-in-privacy-policy."
+      other: "The code's {count} known services were contacted by the site and are checked by privacy/vendors-in-privacy-policy; none besides."
+    all:
+      one: "The privacy policy names the {count} service from the code that the site did not contact."
+      other: "The privacy policy names all {count} services from the code that the site did not contact."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  privacy/google-fonts-source:
+    loaded:
+      one: "The site loads Google Fonts on {count} page; {refs} line(s) in the repository load them."
+      other: "The site loads Google Fonts on {count} pages; {refs} line(s) in the repository load them."
+    loaded_elsewhere:
+      one: "The site loads Google Fonts on {count} page, but no template, style or code in the repository names them: a theme, plugin or CMS, or a deployed build older than the repository."
+      other: "The site loads Google Fonts on {count} pages, but no template, style or code in the repository names them: a theme, plugin or CMS, or a deployed build older than the repository."
+    referenced:
+      one: "The visited pages load no Google Fonts, but {count} line in the repository does. Pages not visited may load them."
+      other: "The visited pages load no Google Fonts, but {count} lines in the repository do. Pages not visited may load them."
+    not_loaded_unread:
+      one: "The visited pages load no Google Fonts; {count} file was too large to read or only a Git LFS pointer."
+      other: "The visited pages load no Google Fonts; {count} files were too large to read or only Git LFS pointers."
+    none: "Neither the visited pages nor the repository load Google Fonts."
+    reference: "loads Google Fonts"
+    self_hosted: "Already installed for self-hosting: {packages}."
+    unread:
+      one: "{count} file not read: too large or only a Git LFS pointer."
+      other: "{count} files not read: too large or only Git LFS pointers."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  security/secrets-in-bundle:
+    no_code: "No HTML or script of the site itself could be read."
+    none:
+      one: "No secrets in the {count} HTML or script file the site serves."
+      other: "No secrets in the {count} HTML and script files the site serves."
+    partly:
+      one: "No secrets in {count} file read, but {cut} file was cut or not kept at the size limits."
+      other: "No secrets in {count} files read, but {cut} files were cut or not kept at the size limits."
+    leaked:
+      one: "{count} secret is served to every visitor. Revoke it now."
+      other: "{count} secrets are served to every visitor. Revoke them now."
+    secret: "{name} in {where} ({start}… ({length} chars))"
+    public_env: "{env} is read with a public prefix, so the build puts its value into the browser bundle."
+    no_public_env: "No public-prefixed secret variable in the repository: the value may be written into the code or set in the build environment."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  security/database-live:
+    not_used: "The site contacts no Supabase or Firebase database."
+    open_live: "The site uses {hosts}, and the repository leaves data open: anyone with the public key from the site can read or change it."
+    no_rls: 'Supabase table "{table}" has no row level security.'
+    open_rules: 'Allows access for everyone ("if true").'
+    test_mode: 'In test mode: everyone has access until the date in "request.time < timestamp.date(...)".'
+    unchecked: "The site uses {hosts}, but the repository does not show all access rules for it."
+    no_rules: "{service} ({hosts}): no migrations or rules in the repository. Rules set only in the dashboard cannot be checked."
+    unread: "Could not be read: too large or binary."
+    open_policies:
+      one: 'The site uses {hosts}; {count} Supabase policy allows everything ("using (true)"). Check that this data is meant to be public.'
+      other: 'The site uses {hosts}; {count} Supabase policies allow everything ("using (true)"). Check that this data is meant to be public.'
+    secured: "The site uses {hosts}, and the repository secures every table and rule it holds."
+  security/source-maps:
+    no_scripts: "The site serves no scripts of its own."
+    none:
+      one: "The site's {count} script serves no source map."
+      other: "The site's {count} scripts serve no source maps."
+    public_maps:
+      one: "{count} source map is public, but none of its paths is a file of this repository."
+      other: "{count} source maps are public, but none of their paths is a file of this repository."
+    source_public:
+      one: "Public source maps ({maps}) carry the source code of {count} repository file."
+      other: "Public source maps ({maps}) carry the source code of {count} repository files."
+    paths_public:
+      one: "Public source maps ({maps}) name {count} repository file."
+      other: "Public source maps ({maps}) name {count} repository files."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  security/headers-deployed:
+    no_config: "No hosting config in the repository sets security headers for every path."
+    not_sent:
+      one: "{count} security header from the repository is not sent on {page}: the config is not deployed or something overrides it."
+      other: "{count} security headers from the repository are not sent on {page}: the config is not deployed or something overrides it."
+    other_value:
+      one: "{count} security header on {page} has another value than in the repository."
+      other: "{count} security headers on {page} have other values than in the repository."
+    sent:
+      one: "The {count} security header from the repository is sent on {page}."
+      other: "All {count} security headers from the repository are sent on {page}."
+    missing: "{header} is set here, but the site does not send it."
+    differs: "{header} is set here with another value than the site sends."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  security/security-txt-deployed:
+    no_file: "No .well-known/security.txt in the repository."
+    unreadable: "The repository's security.txt has no Contact field."
+    not_served: "The repository has a security.txt, but the site does not serve one at /.well-known/security.txt (HTTP {status})."
+    outdated: "The site serves a security.txt that expired on {date}, while the repository's is current: the deployed copy is old."
+    contacts_differ: "The site's security.txt names other contacts than the repository's."
+    only_repo: "Only in the repository: {contact}"
+    only_site: "Only on the site: {contact}"
+    same: "The site serves the repository's security.txt, contact {contact}."

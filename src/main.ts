@@ -9,7 +9,7 @@ import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
 import { toSarif, workflowFile } from "./sarif.ts";
-import { loadChecks, OUTCOMES, runChecks, selectModules, type OutcomeStatus } from "./runner.ts";
+import { loadChecks, OUTCOMES, runChecks, scopeOf, selectModules, type OutcomeStatus } from "./runner.ts";
 import { LANGUAGES, SWITCHES, switchSpec, type Switch, type UiLanguage } from "./rules.ts";
 import { errorMessage } from "./text.ts";
 import {
@@ -66,13 +66,15 @@ const enabled = (Object.keys(SWITCHES) as Switch[]).filter(isOn);
 const warnings: string[] = [];
 const allChecks = await loadChecks();
 const checks = selectModules(allChecks, modules);
-const wantsRepo = checks.some((c) => c.check.repo);
+// A check of both scopes needs both scans.
+const wantsRepo = checks.some((c) => scopeOf(c.check) !== "website");
+const wantsWeb = checks.some((c) => scopeOf(c.check) !== "repository");
 // vulnerabilities=false sends nothing to api.osv.dev; the vulnerabilities rule then skips.
 const osv = enabled.includes("vulnerabilities");
 // A scan that breaks (no browser, no sandbox, unreadable repository) ends with a message, not a stack trace.
 const failed = (e: unknown) => exit(errorMessage(e));
 const repo = values.repo?.trim() && wantsRepo ? await scanRepo(values.repo, { osv }).catch(failed) : undefined;
-const web = url && checks.some((c) => !c.check.repo)
+const web = url && wantsWeb
   ? await scan(url, {
       language: values.language,
       subscriptions: enabled.includes("subscriptions"),

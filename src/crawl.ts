@@ -1,7 +1,7 @@
 import type { Browser } from "playwright";
-import { capture } from "./capture.ts";
+import { capture, CodeCollector } from "./capture.ts";
 import { matchLinks, type Language } from "./lang.ts";
-import { countries, emailDns, greenHosting, hostVariant, plainHttp, probe, tlsInfo } from "./probe.ts";
+import { countries, emailDns, greenHosting, hostVariant, plainHttp, probe, sourceMaps, tlsInfo } from "./probe.ts";
 import { isPublicHost, publicProxy } from "./net.ts";
 import { isWebUrl, siteOf, withoutHash } from "./text.ts";
 import { pageLinks, type Area, type Page, type Probe, type ScanContext, type Snapshot } from "./sdk.ts";
@@ -32,6 +32,10 @@ export interface CrawlData {
   tls?: ScanContext["tls"];
   dns?: ScanContext["dns"];
   green?: ScanContext["green"];
+  /** Documents and scripts of the loads with JavaScript (ScanContext.code). Missing in hand-built contexts. */
+  code?: ScanContext["code"];
+  codeSkipped?: number;
+  sourceMaps?: ScanContext["sourceMaps"];
 }
 
 const SKIP_FILES = /\.(pdf|zip|gz|dmg|pkg|exe|msi|apk|jpe?g|png|gif|svg|webp|avif|ico|mp3|mp4|webm|xml|json|txt|ics|rss|atom)$/i;
@@ -64,9 +68,10 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     for (const c of [noJs, js]) await c.route("**", (route) => (new URL(route.request().url()).host === input.host ? route.continue() : route.abort()));
   }
 
+  const code = new CodeCollector();
   try {
     const visit = async (url: string): Promise<Page> => {
-      const [a, b] = await Promise.all([capture(noJs, url, false, opts.timeout), capture(js, url, true, opts.timeout)]);
+      const [a, b] = await Promise.all([capture(noJs, url, false, opts.timeout), capture(js, url, true, opts.timeout, code)]);
       return { url, noJs: a, js: b };
     };
 
@@ -88,7 +93,9 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     // Lookups without a browser follow the start page only within the same site; otherwise they use the input URL.
     const finalUrl = siteOf(new URL(url).hostname) === siteOf(trusted) ? url : startUrl;
     const probes = await probe(new URL(finalUrl).origin, opts.userAgent, opts.timeout, trusted);
-    if (opts.offline) return { url, start, pages, probes, countries: {} };
+    const maps = await sourceMaps(code.files, siteOf(new URL(finalUrl).hostname), opts.userAgent, opts.timeout, trusted);
+    const served = { code: code.files, codeSkipped: code.skipped, sourceMaps: maps };
+    if (opts.offline) return { url, start, pages, probes, countries: {}, ...served };
 
     const site = siteOf(new URL(finalUrl).hostname);
     const thirdParty = [...new Set(pages.flatMap((p) => [...p.noJs.requests, ...p.js.requests].map((r) => r.host)))]
@@ -102,7 +109,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       countries(thirdParty, opts.ipinfoToken, opts.timeout),
       opts.greenHosting ? greenHosting(finalUrl, opts.timeout) : undefined,
     ]);
-    return { url, start, pages, probes, countries: found, http, variant, tls, dns, green };
+    return { url, start, pages, probes, countries: found, http, variant, tls, dns, green, ...served };
   } finally {
     await noJs.close();
     await js.close();

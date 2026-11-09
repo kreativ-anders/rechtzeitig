@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-HDR-006
+severity: medium
+title:
+  de: "Sicherheits-Header aus dem Repository kommen auf der Website an"
+  en: "Security headers from the repository reach the site"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Reads the headers that `vercel.json`, `firebase.json`, `netlify.toml`, `_headers` and `.htaccess` set for every path, keeps the security headers in `data/header-configs.yml`, and compares them with the start page's response headers (CSP and Referrer-Policy also from <meta>): a header not sent warns, a different value gives info; nginx, `next.config` and helmet are not read."
+fix_hint:
+  de: "Prüfen, ob die Konfiguration mit ausgeliefert wird (richtiger Ordner, richtiger Hoster) und ob ein Proxy oder CDN die Header überschreibt. Danach neu deployen."
+  en: "Check that the config is deployed (right folder, right host) and that no proxy or CDN overrides the headers. Then deploy again."
+meta:
+  last_reviewed: "2026-11-08"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://www.w3.org/TR/CSP3/

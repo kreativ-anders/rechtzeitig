@@ -209,6 +209,9 @@ messages:
     not_run_url: "Nicht gelaufen: braucht eine Website. Input url setzen."
     not_run_repository: "Nicht gelaufen: braucht das Repository. actions/checkout vor rechtzeitig ausführen."
     not_run_module: "Nicht gelaufen: Weder die Gruppe {module} noch der Bereich {scope} steht in modules ({modules}). Leeres modules startet alle Prüfungen."
+    not_run_both_url: "Nicht gelaufen: liest Website und Repository zusammen, und die Website fehlt. Input url setzen."
+    not_run_both_repository: "Nicht gelaufen: liest Website und Repository zusammen, und der Checkout fehlt. actions/checkout vor rechtzeitig ausführen."
+    not_run_both_both: "Nicht gelaufen: liest Website und Repository zusammen, und beides fehlt. Input url setzen und actions/checkout vor rechtzeitig ausführen."
   report:
     check: "Prüfung"
     severity: "Schwere"
@@ -235,6 +238,15 @@ messages:
     not_run_repository:
       one: "{count} Repository-Prüfung: kein Checkout. actions/checkout vor rechtzeitig ausführen."
       other: "{count} Repository-Prüfungen: kein Checkout. actions/checkout vor rechtzeitig ausführen."
+    not_run_both_url:
+      one: "{count} Prüfung von Website und Repository zusammen: kein url. Zum Prüfen den Input url setzen."
+      other: "{count} Prüfungen von Website und Repository zusammen: kein url. Zum Prüfen den Input url setzen."
+    not_run_both_repository:
+      one: "{count} Prüfung von Website und Repository zusammen: kein Checkout. actions/checkout vor rechtzeitig ausführen."
+      other: "{count} Prüfungen von Website und Repository zusammen: kein Checkout. actions/checkout vor rechtzeitig ausführen."
+    not_run_both_both:
+      one: "{count} Prüfung von Website und Repository zusammen: kein url und kein Checkout."
+      other: "{count} Prüfungen von Website und Repository zusammen: kein url und kein Checkout."
     not_run_module:
       one: "{count} Prüfung außerhalb von modules: {modules}. Leeres modules startet alle Prüfungen."
       other: "{count} Prüfungen außerhalb von modules: {modules}. Leeres modules startet alle Prüfungen."
@@ -899,3 +911,118 @@ messages:
     none:
       one: "{count} Workflow geprüft, kein riskantes Muster."
       other: "{count} Workflows geprüft, kein riskantes Muster."
+
+  # ---------- Website und Repository zusammen
+  privacy/sdks-in-privacy-policy:
+    no_packages: "Keine package.json mit Abhängigkeiten im Repository."
+    missing:
+      one: "Der Code nutzt {count} Dienst, den die Datenschutzerklärung nicht nennt."
+      other: "Der Code nutzt {count} Dienste, die die Datenschutzerklärung nicht nennt."
+    package: "{vendor} ({purpose}) über {package}, nicht in der Datenschutzerklärung genannt"
+    unread: "package.json nicht lesbar; ihre Dienste sind nicht geprüft."
+    unread_files:
+      one: "{count} package.json nicht lesbar, ihre Dienste sind nicht geprüft."
+      other: "{count} package.json-Dateien nicht lesbar, ihre Dienste sind nicht geprüft."
+    none_unseen:
+      one: "Den {count} bekannten Dienst aus dem Code hat die Website kontaktiert; ihn prüft privacy/vendors-in-privacy-policy."
+      other: "Die {count} bekannten Dienste aus dem Code hat die Website kontaktiert; sie prüft privacy/vendors-in-privacy-policy. Weitere gibt es nicht."
+    all:
+      one: "Die Datenschutzerklärung nennt den {count} Dienst aus dem Code, den die Website nicht kontaktiert hat."
+      other: "Die Datenschutzerklärung nennt alle {count} Dienste aus dem Code, die die Website nicht kontaktiert hat."
+    more:
+      one: "und {count} weiterer"
+      other: "und {count} weitere"
+  privacy/google-fonts-source:
+    loaded:
+      one: "Die Website lädt Google Fonts auf {count} Seite; {refs} Zeile(n) im Repository laden sie."
+      other: "Die Website lädt Google Fonts auf {count} Seiten; {refs} Zeile(n) im Repository laden sie."
+    loaded_elsewhere:
+      one: "Die Website lädt Google Fonts auf {count} Seite, aber kein Template, Stil oder Code im Repository nennt sie: ein Theme, Plugin oder CMS, oder ein Build, der älter ist als das Repository."
+      other: "Die Website lädt Google Fonts auf {count} Seiten, aber kein Template, Stil oder Code im Repository nennt sie: ein Theme, Plugin oder CMS, oder ein Build, der älter ist als das Repository."
+    referenced:
+      one: "Die besuchten Seiten laden keine Google Fonts, aber {count} Zeile im Repository tut es. Nicht besuchte Seiten laden sie vielleicht."
+      other: "Die besuchten Seiten laden keine Google Fonts, aber {count} Zeilen im Repository tun es. Nicht besuchte Seiten laden sie vielleicht."
+    not_loaded_unread:
+      one: "Die besuchten Seiten laden keine Google Fonts; {count} Datei war zu groß zum Lesen oder nur ein Git-LFS-Zeiger."
+      other: "Die besuchten Seiten laden keine Google Fonts; {count} Dateien waren zu groß zum Lesen oder nur Git-LFS-Zeiger."
+    none: "Weder die besuchten Seiten noch das Repository laden Google Fonts."
+    reference: "lädt Google Fonts"
+    self_hosted: "Schon zum Selbsthosten installiert: {packages}."
+    unread:
+      one: "{count} Datei nicht gelesen: zu groß oder nur ein Git-LFS-Zeiger."
+      other: "{count} Dateien nicht gelesen: zu groß oder nur Git-LFS-Zeiger."
+    more:
+      one: "und {count} weitere"
+      other: "und {count} weitere"
+  security/secrets-in-bundle:
+    no_code: "Kein HTML oder Skript der Website selbst konnte gelesen werden."
+    none:
+      one: "Keine Geheimnisse in der {count} HTML- oder Skriptdatei, die die Website ausliefert."
+      other: "Keine Geheimnisse in den {count} HTML- und Skriptdateien, die die Website ausliefert."
+    partly:
+      one: "Keine Geheimnisse in {count} gelesenen Datei, aber {cut} Datei wurde an den Größengrenzen abgeschnitten oder nicht behalten."
+      other: "Keine Geheimnisse in {count} gelesenen Dateien, aber {cut} Dateien wurden an den Größengrenzen abgeschnitten oder nicht behalten."
+    leaked:
+      one: "{count} Geheimnis wird an jeden Besucher ausgeliefert. Sofort widerrufen."
+      other: "{count} Geheimnisse werden an jeden Besucher ausgeliefert. Sofort widerrufen."
+    secret: "{name} in {where} ({start}… ({length} Zeichen))"
+    public_env: "{env} wird mit öffentlichem Präfix gelesen, deshalb schreibt der Build den Wert ins Browser-Bundle."
+    no_public_env: "Keine geheime Variable mit öffentlichem Präfix im Repository: Der Wert steht vielleicht im Code oder kommt aus der Build-Umgebung."
+    more:
+      one: "und {count} weiteres"
+      other: "und {count} weitere"
+  security/database-live:
+    not_used: "Die Website kontaktiert keine Supabase- oder Firebase-Datenbank."
+    open_live: "Die Website nutzt {hosts}, und das Repository lässt Daten offen: Jeder mit dem öffentlichen Schlüssel der Website kann sie lesen oder ändern."
+    no_rls: 'Supabase-Tabelle "{table}" hat keine Row Level Security.'
+    open_rules: 'Erlaubt allen den Zugriff ("if true").'
+    test_mode: 'Im Testmodus: Bis zum Datum in "request.time < timestamp.date(...)" hat jeder Zugriff.'
+    unchecked: "Die Website nutzt {hosts}, aber das Repository zeigt nicht alle Zugriffsregeln dafür."
+    no_rules: "{service} ({hosts}): keine Migrationen oder Regeln im Repository. Regeln, die nur im Dashboard stehen, lassen sich nicht prüfen."
+    unread: "Nicht lesbar: zu groß oder binär."
+    open_policies:
+      one: 'Die Website nutzt {hosts}; {count} Supabase-Policy erlaubt alles ("using (true)"). Prüfen, ob diese Daten öffentlich sein sollen.'
+      other: 'Die Website nutzt {hosts}; {count} Supabase-Policies erlauben alles ("using (true)"). Prüfen, ob diese Daten öffentlich sein sollen.'
+    secured: "Die Website nutzt {hosts}, und das Repository sichert jede Tabelle und Regel ab, die es enthält."
+  security/source-maps:
+    no_scripts: "Die Website liefert keine eigenen Skripte aus."
+    none:
+      one: "Das {count} Skript der Website liefert keine Source Map aus."
+      other: "Die {count} Skripte der Website liefern keine Source Maps aus."
+    public_maps:
+      one: "{count} Source Map ist öffentlich, aber keiner ihrer Pfade ist eine Datei dieses Repositorys."
+      other: "{count} Source Maps sind öffentlich, aber keiner ihrer Pfade ist eine Datei dieses Repositorys."
+    source_public:
+      one: "Öffentliche Source Maps ({maps}) enthalten den Quellcode von {count} Datei des Repositorys."
+      other: "Öffentliche Source Maps ({maps}) enthalten den Quellcode von {count} Dateien des Repositorys."
+    paths_public:
+      one: "Öffentliche Source Maps ({maps}) nennen {count} Datei des Repositorys."
+      other: "Öffentliche Source Maps ({maps}) nennen {count} Dateien des Repositorys."
+    more:
+      one: "und {count} weitere"
+      other: "und {count} weitere"
+  security/headers-deployed:
+    no_config: "Keine Hosting-Konfiguration im Repository setzt Sicherheits-Header für alle Pfade."
+    not_sent:
+      one: "{count} Sicherheits-Header aus dem Repository kommt auf {page} nicht an: Die Konfiguration ist nicht deployt oder wird überschrieben."
+      other: "{count} Sicherheits-Header aus dem Repository kommen auf {page} nicht an: Die Konfiguration ist nicht deployt oder wird überschrieben."
+    other_value:
+      one: "{count} Sicherheits-Header auf {page} hat einen anderen Wert als im Repository."
+      other: "{count} Sicherheits-Header auf {page} haben andere Werte als im Repository."
+    sent:
+      one: "Der {count} Sicherheits-Header aus dem Repository kommt auf {page} an."
+      other: "Alle {count} Sicherheits-Header aus dem Repository kommen auf {page} an."
+    missing: "{header} ist hier gesetzt, aber die Website sendet ihn nicht."
+    differs: "{header} ist hier mit einem anderen Wert gesetzt, als die Website sendet."
+    more:
+      one: "und {count} weiterer"
+      other: "und {count} weitere"
+  security/security-txt-deployed:
+    no_file: "Keine .well-known/security.txt im Repository."
+    unreadable: "Die security.txt im Repository hat kein Contact-Feld."
+    not_served: "Das Repository hat eine security.txt, aber die Website liefert unter /.well-known/security.txt keine aus (HTTP {status})."
+    outdated: "Die Website liefert eine security.txt aus, die am {date} abgelaufen ist, während die im Repository aktuell ist: Die ausgelieferte Kopie ist alt."
+    contacts_differ: "Die security.txt der Website nennt andere Kontakte als die im Repository."
+    only_repo: "Nur im Repository: {contact}"
+    only_site: "Nur auf der Website: {contact}"
+    same: "Die Website liefert die security.txt aus dem Repository aus, Kontakt {contact}."

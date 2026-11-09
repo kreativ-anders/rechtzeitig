@@ -57,7 +57,7 @@ test("a page that never yields ends with an error instead of blocking the scan",
   try {
     const started = Date.now();
     // Deadline 2 × 500 + 500 ms. The busy page blocks page.evaluate, so only the deadline ends the load.
-    const snap = await capture(context, s.url, true, 500, 500);
+    const snap = await capture(context, s.url, true, 500, undefined, 500);
     assert.equal(snap.status, 0);
     assert.match(snap.error ?? "", /did not finish/);
     assert.ok(Date.now() - started < 10_000);

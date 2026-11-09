@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
 import { LANGUAGES, SWITCHES, validateRule, type Rule, type Switch } from "./rules.ts";
-import { checksHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
+import { checksHtml, crossChecksHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
-import { defineCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
+import { defineCheck, defineCrossCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
 import { render } from "./messages.ts";
 
 const rule = { id: "SEC-TEST-001", severity: "low", title: { de: "t", en: "t" }, how: "Reads something and compares it.", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: ["https://www.w3.org/TR/WCAG22/"] } } as Rule;
@@ -38,11 +38,12 @@ test("rule.yml how names every data file its check.ts loads", async () => {
   assert.deepEqual(missing, []);
 });
 
-test("the scope follows the check type: defineCheck reads the website, defineRepoCheck the repository", async () => {
+test("the scope follows the check type: defineCheck reads the website, defineRepoCheck the repository, defineCrossCheck both", async () => {
   assert.equal(scopeOf(defineCheck({ run: () => pass({ key: "x" }) })), "website");
   assert.equal(scopeOf(defineRepoCheck({ run: () => pass({ key: "x" }) })), "repository");
+  assert.equal(scopeOf(defineCrossCheck({ run: () => pass({ key: "x" }) })), "both");
   const checks = await loadChecks();
-  assert.deepEqual(checks.filter((c) => (scopeOf(c.check) === "repository") !== !!c.check.repo).map((c) => c.id), []);
+  assert.ok(checks.some((c) => scopeOf(c.check) === "both"), "at least one check reads both");
   for (const scope of SCOPES) assert.ok(SCOPE_LABELS[scope], `label for scope ${scope}`);
 });
 
@@ -60,19 +61,36 @@ test("each card on checks.html carries the scope of its check", async () => {
   }
 });
 
-test("modules select checks by group or by scope; repo still means all repository checks", async () => {
+test("modules select checks by group or by scope; repo still means all repository checks; both counts for either", async () => {
   const checks = await loadChecks();
   const ids = (modules: string[]) => selectModules(checks, modules).map((c) => c.id);
+  const of = (...scopes: string[]) => checks.filter((c) => scopes.includes(scopeOf(c.check))).map((c) => c.id);
   const legal = ids(["legal"]);
   assert.ok(legal.length > 0 && legal.every((id) => id.startsWith("legal/")));
-  const repository = checks.filter((c) => c.check.repo).map((c) => c.id);
-  assert.ok(repository.length > 0);
-  assert.deepEqual(ids(["repo"]), repository);
-  assert.deepEqual(ids(["repository"]), repository);
-  assert.deepEqual(ids(["website"]), checks.filter((c) => !c.check.repo).map((c) => c.id));
+  assert.ok(of("repository").length > 0 && of("both").length > 0);
+  assert.deepEqual(ids(["repo"]), of("repository", "both"));
+  assert.deepEqual(ids(["repository"]), of("repository", "both"));
+  assert.deepEqual(ids(["website"]), of("website", "both"));
+  assert.deepEqual(ids(["both"]), of("both"));
   // Union: a check runs when its group or its scope is listed.
-  assert.deepEqual(ids(["legal", "repo"]), checks.filter((c) => c.id.startsWith("legal/") || c.check.repo).map((c) => c.id));
-  assert.ok(ids(["security"]).some((id) => checks.find((c) => c.id === id)!.check.repo), "security includes repository checks");
+  assert.deepEqual(ids(["legal", "repo"]), checks.filter((c) => c.id.startsWith("legal/") || scopeOf(c.check) !== "website").map((c) => c.id));
+  assert.ok(ids(["security"]).some((id) => scopeOf(checks.find((c) => c.id === id)!.check) === "repository"), "security includes repository checks");
+});
+
+test("a check of both scopes gets both contexts, and without one of them is a skip that says which is missing", async () => {
+  let got: unknown[] = [];
+  const both = { id: "security/both", rule, check: defineCrossCheck({ run: (ctx, repo) => ((got = [ctx, repo]), pass({ key: "ran" })) }) };
+  const web = fakeContext({});
+  const repo = { files: [] } as never;
+  const [ran] = await runChecks([both], { web, repo });
+  assert.equal(ran.status, "pass");
+  assert.deepEqual(got, [web, repo]);
+  const cases = [[{ web }, "repository"], [{ repo }, "url"], [{}, "both"]] as const;
+  for (const [targets, missing] of cases) {
+    const [o] = await runChecks([both], targets);
+    assert.deepEqual([o.status, o.because], ["skip", { kind: "target", missing, both: true }]);
+    for (const lang of LANGUAGES) assert.match(render(o.message, o.id, lang), /repository|Repository/);
+  }
 });
 
 test("the generated parts of docs/ are up to date (npm run docs)", async () => {
@@ -80,8 +98,8 @@ test("the generated parts of docs/ are up to date (npm run docs)", async () => {
   const page = (name: string) => readFileSync(new URL(`../docs/${name}`, import.meta.url), "utf8");
   assert.ok(page("checks.html").includes(checksHtml(checks)), "run: npm run docs");
   for (const name of ["checks.html", "workflow.html"]) assert.ok(page(name).includes(switchesHtml(checks)), `run: npm run docs (${name})`);
-  for (const html of [heroChecksHtml(checks), reviewedHtml(checks)]) assert.ok(page("index.html").includes(html), "run: npm run docs (index.html)");
-  for (const html of [heroChecksHtml(checks, "de"), reviewedHtml(checks, "de")]) assert.ok(page("de/index.html").includes(html), "run: npm run docs (de/index.html)");
+  for (const html of [heroChecksHtml(checks), reviewedHtml(checks), crossChecksHtml(checks)]) assert.ok(page("index.html").includes(html), "run: npm run docs (index.html)");
+  for (const html of [heroChecksHtml(checks, "de"), reviewedHtml(checks, "de"), crossChecksHtml(checks, "de")]) assert.ok(page("de/index.html").includes(html), "run: npm run docs (de/index.html)");
   assert.ok(page("security.html").includes(topicRulesHtml(securityChecks(checks))), "run: npm run docs (security.html)");
   assert.ok(page("de/kuendigungsbutton.html").includes(topicRulesHtml(shopChecks(checks), "de")), "run: npm run docs (de/kuendigungsbutton.html)");
 });

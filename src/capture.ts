@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import type { BrowserContext, Page as PlaywrightPage, Request as PlaywrightRequest } from "playwright";
+import type { BrowserContext, Page as PlaywrightPage, Request as PlaywrightRequest, Response as PlaywrightResponse } from "playwright";
 import { loadYaml } from "./data.ts";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage, isWebUrl, normalize } from "./text.ts";
-import { cookieKey, type Area, type Checkbox, type Form, type Image, type Link, type Request, type Snapshot, type Style, type AxeViolation, type Subresource, type Video } from "./sdk.ts";
+import { cookieKey, type Area, type Checkbox, type Form, type Image, type Link, type Request, type ServedCode, type Snapshot, type Style, type AxeViolation, type Subresource, type Video } from "./sdk.ts";
 
 interface RawLink {
   href: string | null;
@@ -247,12 +247,40 @@ export const emptySnapshot = (finalUrl: string): Snapshot => ({
   status: 0, finalUrl, headers: {}, meta: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
 });
 
+const CODE = loadYaml<{ code: { max_file_chars: number; max_files: number } }>("data/thresholds.yml").code;
+
+/**
+ * Keeps the bodies of documents and scripts across a whole crawl, once per URL, within the limits of
+ * data/thresholds.yml `code`, for checks that read the served code. Bodies never reach the report.
+ */
+export class CodeCollector {
+  readonly files: ServedCode[] = [];
+  /** Not kept because `max_files` was reached. */
+  skipped = 0;
+  private seen = new Set<string>();
+
+  async take(res: PlaywrightResponse, type: ServedCode["type"]): Promise<void> {
+    const url = res.url();
+    if (!isWebUrl(url) || this.seen.has(url) || res.status() < 200 || res.status() >= 300) return;
+    this.seen.add(url);
+    if (this.files.length >= CODE.max_files) {
+      this.skipped++;
+      return;
+    }
+    const body = await res.text().catch(() => undefined);
+    if (body === undefined) return;
+    this.files.push({ url, type, body: body.slice(0, CODE.max_file_chars), truncated: body.length > CODE.max_file_chars });
+  }
+}
+
 /**
  * Loads a URL once in the given browser context and records what a visitor gets without clicking anything.
- * `idle` is the longest wait for the network to settle after load; tests shorten it to reach the deadline sooner.
+ * With `code`, the bodies of documents and scripts go there. `idle` is the longest wait for the network to settle
+ * after load; tests shorten it to reach the deadline sooner.
  */
-export async function capture(context: BrowserContext, url: string, js: boolean, timeout: number, idle = IDLE): Promise<Snapshot> {
+export async function capture(context: BrowserContext, url: string, js: boolean, timeout: number, code?: CodeCollector, idle = IDLE): Promise<Snapshot> {
   const page = await context.newPage();
+  const bodies: Promise<void>[] = [];
   // With the cache off, every page answers with its own headers, and checks see each file as a first visit would.
   await context.newCDPSession(page).then((cdp) => cdp.send("Network.setCacheDisabled", { cacheDisabled: true })).catch(() => {});
   const requests: Snapshot["requests"] = [];
@@ -276,6 +304,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     if (h["content-encoding"]) entry.contentEncoding = h["content-encoding"].toLowerCase();
     const length = Number(h["content-length"]);
     if (h["content-length"] && Number.isFinite(length)) entry.contentLength = length;
+    if (code && (entry.type === "script" || entry.type === "document")) bodies.push(code.take(res, entry.type));
   });
   const before = new Set((await context.cookies()).map(cookieKey));
   const load = async (): Promise<Snapshot> => {
@@ -296,6 +325,8 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     const cookies = (await context.cookies())
       .filter((c) => !before.has(cookieKey(c)))
       .map((c) => ({ name: c.name, domain: c.domain.replace(/^\./, ""), secure: c.secure, httpOnly: c.httpOnly, sameSite: c.sameSite, expires: c.expires }));
+    // Bodies are read while the page is open; take() never throws.
+    await Promise.all(bodies);
     return {
       status: response?.status() ?? 0,
       finalUrl: page.url(),

@@ -39,6 +39,7 @@ standards:
   - rfc-editor.org
   - cyclonedx.org
   - spdx.org
+  - tc39.es
 
 # Vendor documentation, only for technical facts about that vendor's product.
 vendors:

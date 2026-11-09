@@ -2,7 +2,7 @@
 
 ## A new check
 
-1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/licenses`. Whether it reads the website or the repository follows from `defineCheck` or `defineRepoCheck` (its scope, shown on `docs/checks.html`).
+1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/licenses`. Whether it reads the website or the repository follows from `defineCheck`, `defineRepoCheck` or, for both together, `defineCrossCheck` (its scope, shown on `docs/checks.html`).
 2. Add `rule.yml` with the metadata. Titles, legal basis and fix hint in German and English; the report shows them in the chosen language.
 
    ```yaml
@@ -43,6 +43,8 @@
    A check returns message keys, never sentences. The sentences go into every `lang/<code>.yml` under `messages.<check id>` (here `messages.legal/imprint`), with `{name}` for parameters and `one`/`other` when a `count` parameter decides the plural. Keys that several checks share live in `messages.common`. A parameter can itself be a `msg(...)`, for words that need translating. Details are findings: `{ file, line, key, params }` for places in the repository (GitHub shows them as annotations in pull requests), `{ text }` for values shown as they are (URLs, hosts, cookie names). The test helpers render every result in every language, so a missing key fails the test.
 
    A repository check uses `defineRepoCheck` and gets `repo` instead of `ctx`: `repo.files`, `repo.find(pattern)` (for example `repo.find(WORKFLOWS)`), `repo.read(path)`, `repo.yaml(path)` for YAML or JSON, and the locked `repo.components`.
+
+   A check that needs both uses `defineCrossCheck` and gets `run(ctx, repo)`. It runs only when a URL and a checkout exist; the runner skips it otherwise and says which side is missing. Use it for what one side alone cannot show, and keep it sharp: a finding needs evidence from both sides, and a file it could not read (`repo.coverage`, `ctx.codeSkipped`) gives `info`, never a pass. Shared helpers: `directPackages(repo)`, `ownFiles(repo)`, `findSecrets(text)`, `databaseRules(repo)`, `siteCode(ctx)`, `hostsIn(ctx, domains)`, `ctx.packageVendor(name)`, `ctx.sourceMaps`. Test it with `runCrossCheck(here, "fixture" or a context from siteFromFiles(), { "path/file": "content" })`.
 
 4. Add `test.ts` and, for website checks, `fixtures/<case>/index.html` (plus more pages if needed). Each case is a tiny website. Cover one case that passes and one that does not.
 

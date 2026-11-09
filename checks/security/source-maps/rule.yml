@@ -1,0 +1,14 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-EXP-003
+severity: medium
+title:
+  de: "Source Maps legen den Code des Repositorys nicht offen"
+  en: "Source maps do not expose the repository's code"
+how: "Follows the `sourceMappingURL` of the site's own scripts (inline maps decoded, others requested on the same site up to `code.max_maps` in `data/thresholds.yml`) and matches each map's `sources` against the repository's files by their path endings (at least two parts, `node_modules` left out); a match warns, more so when the map carries `sourcesContent`."
+fix_hint:
+  de: "Source Maps im Produktions-Build abschalten (Next.js productionBrowserSourceMaps, Vite build.sourcemap) oder nur an das Fehler-Tracking hochladen und nicht ausliefern. Wichtig vor allem, wenn das Repository privat ist."
+  en: "Turn off source maps in the production build (Next.js productionBrowserSourceMaps, Vite build.sourcemap), or upload them to error tracking only and do not serve them. This matters most when the repository is private."
+meta:
+  last_reviewed: "2026-11-08"
+  sources:
+  - https://tc39.es/ecma426/

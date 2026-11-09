@@ -23,6 +23,9 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
 
   const ctx: ScanContext = {
     ...data,
+    code: data.code ?? [],
+    codeSkipped: data.codeSkipped ?? 0,
+    sourceMaps: data.sourceMaps ?? [],
     https: data.url.startsWith("https:"),
     domain: site,
     languages: opts.languages,
@@ -50,6 +53,7 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
     isThirdParty: (host) => siteOf(host) !== site,
     vendor: (host) => registry.vendor(host),
     trackingCookie: (name) => registry.trackingCookie(name),
+    packageVendor: (name) => registry.packageVendor(name),
     short: (u) => {
       try {
         const parsed = new URL(u);

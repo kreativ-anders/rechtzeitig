@@ -137,10 +137,11 @@ function notRun(r: Report): NotRunGroup[] {
   for (const o of r.outcomes) {
     const b = o.because;
     if (o.status !== "skip" || !b) continue;
-    const key = b.kind === "target" ? b.missing : b.kind === "switch" ? `switch_${b.input}` : b.kind;
+    // Checks of both scopes get their own line: "both_url", "both_repository", "both_both".
+    const key = b.kind === "target" ? `${b.both ? "both_" : ""}${b.missing}` : b.kind === "switch" ? `switch_${b.input}` : b.kind;
     groups.set(key, [...(groups.get(key) ?? []), o]);
   }
-  const order = (key: string) => ["url", "repository", "module"].indexOf(key) + 1 || (key === "data" ? 9 : 5);
+  const order = (key: string) => ["url", "repository", "both_url", "both_repository", "both_both", "module"].indexOf(key) + 1 || (key === "data" ? 9 : 7);
   return [...groups.entries()].sort(([a], [b]) => order(a) - order(b)).map(([key, outcomes]) => {
     const count = outcomes.length;
     const b = outcomes[0].because!;

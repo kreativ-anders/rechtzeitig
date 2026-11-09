@@ -54,7 +54,7 @@
     <li><span class="status s-info">info</span><span>A list of things to judge yourself.</span></li>
     <li><span class="status s-skip">skip</span><span>The check does not apply, for example no URL was given.</span></li>
   </ul>
-  <p>The severity says how much a finding matters, from <code>info</code> to <code>critical</code>. Website checks run when you give a URL. Repository checks run when the workflow checks out your repository first. Lockfiles read: <code>package-lock.json</code>, <code>pnpm-lock.yaml</code>, <code>yarn.lock</code>, <code>composer.lock</code>, <code>pubspec.lock</code>, <code>Cargo.lock</code>, <code>uv.lock</code>, <code>poetry.lock</code>, <code>requirements*.txt</code>, <code>go.mod</code>.</p>
+  <p>The severity says how much a finding matters, from <code>info</code> to <code>critical</code>. Website checks run when you give a URL. Repository checks run when the workflow checks out your repository first. Checks of <a href="#both">repository and website together</a> need both, and find what one side alone cannot show. Lockfiles read: <code>package-lock.json</code>, <code>pnpm-lock.yaml</code>, <code>yarn.lock</code>, <code>composer.lock</code>, <code>pubspec.lock</code>, <code>Cargo.lock</code>, <code>uv.lock</code>, <code>poetry.lock</code>, <code>requirements*.txt</code>, <code>go.mod</code>.</p>
   <p>Sources are primary sources only: laws, courts, authorities, standards bodies, and vendor documentation for technical facts. Blogs and law firm articles are never cited. Each card shows when its sources were last reviewed; a rule not reviewed for a year fails the project's tests.</p>
   <p>Overviews by topic: <a href="security.html">security headers, TLS and exposed files</a>, and in German <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton, Widerrufsbutton und Bestellbutton</a>.</p>
 
@@ -66,7 +66,8 @@
 <tbody>
 <tr><td>All website checks</td><td>Only with a <code>url</code>.</td></tr>
 <tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span> (folder: input <code>repository</code>).</td></tr>
-<tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (legal, privacy, security, sustainability, accessibility) or scopes (website, repository; <code>repo</code> still works). Empty runs all.</td></tr>
+<tr><td><a href="checks.html#both">All checks of repository and website together</a></td><td>Only with a <code>url</code> and a checkout. Without one of them they are skipped, and the report says which is missing.</td></tr>
+<tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (legal, privacy, security, sustainability, accessibility) or scopes (website, repository, both; <code>repo</code> still works). A check of both runs when either scope is listed; <code>both</code> picks only those. Empty runs all.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-001">Cancellation button for subscriptions</a><br><small>LEG-DE-BTN-001</small></td><td>Opt-in: only with <code>subscriptions: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-003">Order button &quot;zahlungspflichtig bestellen&quot;</a><br><small>LEG-DE-BTN-003</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-PRICE-001">Prices with VAT, shipping, base price and 30-day price</a><br><small>LEG-DE-PRICE-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
@@ -358,7 +359,7 @@
 </div>
 </section>
 <section class="module" id="privacy" data-module="privacy">
-<h3>Privacy and consent <small>10 rules</small></h3>
+<h3>Privacy and consent <small>12 rules</small></h3>
 <div class="rules">
 <details class="rule" id="LEG-EU-CNS-007" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-007 privacy/consent-equal-choice rejecting is as visible as accepting in the consent banner ablehnen ist im consent-banner so sichtbar wie zustimmen § 25 tdddg, art. 4(11) and art. 7 gdpr in the start page's banner with javascript, compares the largest accept button (`consent_accept`) with the largest reject button (`consent_reject`) and warns when reject has under half the area, under 80 % of the font size, or a wcag contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/thresholds.yml`), or when a banner button uses shaming words (`consent_shaming`).">
 <summary>
@@ -479,6 +480,40 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-EU-FNT-001" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-fnt-001 privacy/google-fonts-source google fonts: where the repository loads them google fonts: herkunft im repository gefunden art. 6(1) gdpr; lg münchen i, 20 jan 2022, 3 o 17493/20 takes the site's requests to the hosts in `data/fonts.yml` and finds the lines in the repository's templates, styles and code (`files` there; no fixtures, tests, lockfiles, `node_modules` or csp lines) that name these hosts, and notes installed self-hosting packages or `next/font` imports from the same file; loaded fails with the repository lines, referenced but not loaded gives info, files too large to read keep it from passing.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-FNT-001<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Google Fonts: where the repository loads them</span>
+<span class="rule-title-de" lang="de">Google Fonts: Herkunft im Repository gefunden</span>
+<span class="rule-law">Art. 6(1) GDPR; LG München I, 20 Jan 2022, 3 O 17493/20</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Takes the site's requests to the hosts in <code>data/fonts.yml</code> and finds the lines in the repository's templates, styles and code (<code>files</code> there; no fixtures, tests, lockfiles, <code>node_modules</code> or CSP lines) that name these hosts, and notes installed self-hosting packages or <code>next/font</code> imports from the same file; loaded fails with the repository lines, referenced but not loaded gives info, files too large to read keep it from passing.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Remove the lines found and host the fonts yourself, for example with @fontsource or next/font. When such a package is already installed, the site probably runs an older build or a theme loads the font.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/google-fonts-source"><code>checks/privacy/google-fonts-source</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-bayern.de/Content/Document/Y-300-Z-BECKRS-B-2022-N-612">gesetze-bayern.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-EU-DSE-006" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-006 privacy/sdks-in-privacy-policy privacy policy names the services in the code datenschutzerklärung nennt die dienste aus dem code art. 13(1)(e) gdpr maps the runtime dependencies of every `package.json` (not devdependencies) to services by `packages` in `data/third-parties.yml`, leaves out those the visited pages contacted (`privacy/vendors-in-privacy-policy` covers them), and looks for the rest by `names` as whole words in the privacy policy; an unreadable `package.json` gives info, never a pass.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-EU-DSE-006<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Privacy policy names the services in the code</span>
+<span class="rule-title-de" lang="de">Datenschutzerklärung nennt die Dienste aus dem Code</span>
+<span class="rule-law">Art. 13(1)(e) GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Maps the runtime dependencies of every <code>package.json</code> (not devDependencies) to services by <code>packages</code> in <code>data/third-parties.yml</code>, leaves out those the visited pages contacted (<code>privacy/vendors-in-privacy-policy</code> covers them), and looks for the rest by <code>names</code> as whole words in the privacy policy; an unreadable <code>package.json</code> gives info, never a pass.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Name every service the application sends data to, also from the server (payment, AI, database, error reports), with purpose, legal basis and the recipient's country in the privacy policy.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/sdks-in-privacy-policy"><code>checks/privacy/sdks-in-privacy-policy</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr, ecj c-311/18 (schrems ii) gets the country of each third-party service (`country` in `data/third-parties.yml`, else ipinfo) and, for countries outside the eea (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known. ipinfo-token">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-005<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
@@ -535,7 +570,7 @@
 </div>
 </section>
 <section class="module" id="security" data-module="security">
-<h3>Security <small>22 rules</small></h3>
+<h3>Security <small>27 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-DEPS-005" data-module="security" data-scope="repository" data-severity="low" data-search="sec-deps-005 security/actions-pinning github actions are pinned to a commit github actions sind auf einen commit gepinnt cra art. 13(5), due diligence for third-party components (from 11 dec 2027) reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit sha.">
 <summary>
@@ -586,6 +621,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/cors"><code>checks/security/cors</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://fetch.spec.whatwg.org/#cors-protocol-and-credentials">fetch.spec.whatwg.org</a>, <a href="https://fetch.spec.whatwg.org/#cors-check">fetch.spec.whatwg.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-DBAI-002" data-module="security" data-scope="both" data-severity="critical" data-search="sec-dbai-002 security/database-live the database the site uses is secured in the repository die datenbank, die die website nutzt, ist im repository abgesichert art. 32 gdpr finds the supabase and firebase hosts in `data/databases.yml` among the site's requests and the urls in its served code, then reads the repository's supabase migrations and firebase rules like `security/database-rules`: open tables or rules fail, a service used without rules in the repository gives info.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-DBAI-002<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">critical</span></span></span>
+<span class="rule-title">The database the site uses is secured in the repository</span>
+<span class="rule-title-de" lang="de">Die Datenbank, die die Website nutzt, ist im Repository abgesichert</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds the Supabase and Firebase hosts in <code>data/databases.yml</code> among the site's requests and the URLs in its served code, then reads the repository's Supabase migrations and Firebase rules like <code>security/database-rules</code>: open tables or rules fail, a service used without rules in the repository gives info.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Enable row level security on every table in a migration, and keep Firebase rules without &quot;if true&quot; or test mode in the repository. Rules that live only in the dashboard cannot be checked.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/database-live"><code>checks/security/database-live</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://supabase.com/docs/guides/database/postgres/row-level-security">supabase.com</a>, <a href="https://firebase.google.com/docs/rules/insecure-rules">firebase.google.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-DBAI-001" data-module="security" data-scope="repository" data-severity="critical" data-search="sec-dbai-001 security/database-rules database rules do not open data to everyone datenbankregeln öffnen keine daten für alle art. 32 gdpr splits `supabase/**/*.sql` into statements and compares `create table` in the public schema with `enable row level security`; looks for `if true` and test mode (`request.time &lt; timestamp.date(...)`) in firebase rules.">
@@ -690,6 +742,23 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-HDR-006" data-module="security" data-scope="both" data-severity="medium" data-search="sec-hdr-006 security/headers-deployed security headers from the repository reach the site sicherheits-header aus dem repository kommen auf der website an art. 32 gdpr reads the headers that `vercel.json`, `firebase.json`, `netlify.toml`, `_headers` and `.htaccess` set for every path, keeps the security headers in `data/header-configs.yml`, and compares them with the start page's response headers (csp and referrer-policy also from &lt;meta&gt;): a header not sent warns, a different value gives info; nginx, `next.config` and helmet are not read.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-HDR-006<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Security headers from the repository reach the site</span>
+<span class="rule-title-de" lang="de">Sicherheits-Header aus dem Repository kommen auf der Website an</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the headers that <code>vercel.json</code>, <code>firebase.json</code>, <code>netlify.toml</code>, <code>_headers</code> and <code>.htaccess</code> set for every path, keeps the security headers in <code>data/header-configs.yml</code>, and compares them with the start page's response headers (CSP and Referrer-Policy also from &lt;meta&gt;): a header not sent warns, a different value gives info; nginx, <code>next.config</code> and helmet are not read.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Check that the config is deployed (right folder, right host) and that no proxy or CDN overrides the headers. Then deploy again.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/headers-deployed"><code>checks/security/headers-deployed</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/CSP3/">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-HDR-001" data-module="security" data-scope="website" data-severity="low" data-search="sec-hdr-001 security/headers security headers are set sicherheits-header sind gesetzt art. 32 gdpr reads the response headers of the start page (hsts, csp, x-content-type-options, referrer-policy, frame protection), accepts csp and referrer-policy from &lt;meta&gt; tags, which browsers apply too, and hsts as given for top-level domains in `data/hsts-preload.yml`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-HDR-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
@@ -792,6 +861,23 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-SECRETS-003" data-module="security" data-scope="both" data-severity="critical" data-search="sec-secrets-003 security/secrets-in-bundle no secrets in the served javascript keine geheimnisse im ausgelieferten javascript art. 32 gdpr matches the html and scripts the site's own pages serve against the `fail` patterns in `data/secrets.yml` (supabase `service_role` keys by their jwt claims; placeholders, documented examples and values below the entropy in `data/thresholds.yml` left out), showing only the first 4 characters and the length, then names the public-prefixed variables (`next_public_`, `vite_`, ...) in the repository that likely put it there; files cut at the `code` limits in `data/thresholds.yml` give info, never a pass.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-SECRETS-003<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">critical</span></span></span>
+<span class="rule-title">No secrets in the served JavaScript</span>
+<span class="rule-title-de" lang="de">Keine Geheimnisse im ausgelieferten JavaScript</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Matches the HTML and scripts the site's own pages serve against the <code>fail</code> patterns in <code>data/secrets.yml</code> (Supabase <code>service_role</code> keys by their JWT claims; placeholders, documented examples and values below the entropy in <code>data/thresholds.yml</code> left out), showing only the first 4 characters and the length, then names the public-prefixed variables (<code>NEXT_PUBLIC_</code>, <code>VITE_</code>, ...) in the repository that likely put it there; files cut at the <code>code</code> limits in <code>data/thresholds.yml</code> give info, never a pass.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Revoke the key right away. Never read secret values through NEXT_PUBLIC_, VITE_, REACT_APP_ or similar prefixes; use them only on the server, for example in an API route.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/secrets-in-bundle"><code>checks/security/secrets-in-bundle</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://supabase.com/docs/guides/api/api-keys">supabase.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-SECRETS-001" data-module="security" data-scope="repository" data-severity="critical" data-search="sec-secrets-001 security/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files, including checked-out submodules, line by line against the patterns in `data/secrets.yml` (many adapted from gitleaks), each only on lines with one of its keywords, decoding jwt payloads where a pattern names claims (supabase `service_role` keys) and dropping finds below the entropy in `data/thresholds.yml`, with a placeholder word, or matching a documented example; a random-looking value under a name like secret, password or token is only a warning; nothing leaves the runner, and the report shows only the first 4 characters and the length of each find, and counts the files it could not read (binary, over the `repo` limit in `data/thresholds.yml`, git lfs pointers).">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SECRETS-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">critical</span></span></span>
@@ -826,6 +912,23 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-CVD-003" data-module="security" data-scope="both" data-severity="low" data-search="sec-cvd-003 security/security-txt-deployed the repository's security.txt is live die security.txt aus dem repository ist live  reads the repository's `.well-known/security.txt` outside test fixtures and compares it with the one the site serves at `/.well-known/security.txt` (in `data/probes.yml`): not served, an expired live copy of a current file, or other `contact` fields warn.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-CVD-003<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
+<span class="rule-title">The repository's security.txt is live</span>
+<span class="rule-title-de" lang="de">Die security.txt aus dem Repository ist live</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the repository's <code>.well-known/security.txt</code> outside test fixtures and compares it with the one the site serves at <code>/.well-known/security.txt</code> (in <code>data/probes.yml</code>): not served, an expired live copy of a current file, or other <code>Contact</code> fields warn.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Ship the file with the build (for example from public/.well-known/) and deploy again, so site and repository name the same contact.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/security-txt-deployed"><code>checks/security/security-txt-deployed</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.rfc-editor.org/rfc/rfc9116.html">rfc-editor.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-CVD-002" data-module="security" data-scope="website" data-severity="low" data-search="sec-cvd-002 security/security-txt security.txt names a contact for vulnerabilities security.txt nennt einen kontakt für sicherheitslücken  requests `/.well-known/security.txt` (in `data/probes.yml`) and reads its `contact` and `expires` fields.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-CVD-002<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
@@ -841,6 +944,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/security-txt"><code>checks/security/security-txt</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.rfc-editor.org/rfc/rfc9116.html">rfc-editor.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-EXP-003" data-module="security" data-scope="both" data-severity="medium" data-search="sec-exp-003 security/source-maps source maps do not expose the repository's code source maps legen den code des repositorys nicht offen  follows the `sourcemappingurl` of the site's own scripts (inline maps decoded, others requested on the same site up to `code.max_maps` in `data/thresholds.yml`) and matches each map's `sources` against the repository's files by their path endings (at least two parts, `node_modules` left out); a match warns, more so when the map carries `sourcescontent`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-EXP-003<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Source maps do not expose the repository's code</span>
+<span class="rule-title-de" lang="de">Source Maps legen den Code des Repositorys nicht offen</span>
+<span class="rule-law none">Technical, no single law</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Follows the <code>sourceMappingURL</code> of the site's own scripts (inline maps decoded, others requested on the same site up to <code>code.max_maps</code> in <code>data/thresholds.yml</code>) and matches each map's <code>sources</code> against the repository's files by their path endings (at least two parts, <code>node_modules</code> left out); a match warns, more so when the map carries <code>sourcesContent</code>.</dd></div>
+<div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
+<div><dt>How to fix</dt><dd>Turn off source maps in the production build (Next.js productionBrowserSourceMaps, Vite build.sourcemap), or upload them to error tracking only and do not serve them. This matters most when the repository is private.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/source-maps"><code>checks/security/source-maps</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://tc39.es/ecma426/">tc39.es</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-HDR-003" data-module="security" data-scope="website" data-severity="low" data-search="sec-hdr-003 security/subresource-integrity scripts and stylesheets from other sites carry an integrity hash skripte und stylesheets anderer websites haben einen integritäts-hash art. 32 gdpr lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the html of the site's own pages (load without javascript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same url (`data/subresource-integrity.yml`).">

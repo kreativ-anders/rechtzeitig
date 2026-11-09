@@ -1,0 +1,6 @@
+# Hosted databases whose access rules can live in the repository (security/database-live).
+# A request of the site, or a URL in its served code, to one of these domains means the site uses that service.
+# The rules for it are read by databaseRules() in src/sdk.ts: Supabase migrations and Firebase rules files.
+
+supabase: [supabase.co, supabase.in]
+firebase: [firebaseio.com, firebasedatabase.app, firestore.googleapis.com, firebasestorage.googleapis.com]

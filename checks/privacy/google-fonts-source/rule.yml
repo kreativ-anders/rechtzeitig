@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-FNT-001
+severity: medium
+title:
+  de: "Google Fonts: Herkunft im Repository gefunden"
+  en: "Google Fonts: where the repository loads them"
+legal_basis:
+  de: "Art. 6 Abs. 1 DSGVO; LG München I, 20.01.2022, 3 O 17493/20"
+  en: "Art. 6(1) GDPR; LG München I, 20 Jan 2022, 3 O 17493/20"
+how: "Takes the site's requests to the hosts in `data/fonts.yml` and finds the lines in the repository's templates, styles and code (`files` there; no fixtures, tests, lockfiles, `node_modules` or CSP lines) that name these hosts, and notes installed self-hosting packages or `next/font` imports from the same file; loaded fails with the repository lines, referenced but not loaded gives info, files too large to read keep it from passing."
+fix_hint:
+  de: "Die gefundenen Zeilen entfernen und die Schriften selbst hosten, zum Beispiel mit @fontsource oder next/font. Ist schon ein solches Paket installiert, läuft auf der Website vermutlich ein älterer Build oder ein Theme lädt die Schrift."
+  en: "Remove the lines found and host the fonts yourself, for example with @fontsource or next/font. When such a package is already installed, the site probably runs an older build or a theme loads the font."
+meta:
+  last_reviewed: "2026-11-08"
+  sources:
+  - https://www.gesetze-bayern.de/Content/Document/Y-300-Z-BECKRS-B-2022-N-612
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
