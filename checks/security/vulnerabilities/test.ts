@@ -31,3 +31,13 @@ test("keeps issues without details and says that details are missing", async () 
   assert.match(result.message, /OSV sent details for 0 of 1 issue;/);
   assert.deepEqual(result.details, ["package-lock.json: lodash@4.17.20: GHSA-bare."]);
 });
+
+test("skips without dependencies", async () => {
+  assert.equal((await runRepoCheck(here, { "README.md": "x" })).status, "skip");
+});
+
+test("warns when OSV could not be asked", async () => {
+  const result = await runRepoCheck(here, files, { osv: "error: timeout" });
+  assert.equal(result.status, "warn");
+  assert.match(result.message, /timeout/);
+});

@@ -60,3 +60,29 @@ test("flags GPL with Commons Clause", async () => {
   assert.equal(result.status, "warn");
   assert.match(result.details?.[0] ?? "", /Commons Clause may not hold/);
 });
+
+test("gives info when the project or a dependency names no license", async () => {
+  assert.equal((await runRepoCheck(here, { "package-lock.json": lock("MIT") })).status, "info");
+  assert.equal((await runRepoCheck(here, { "package.json": '{"license":"MIT"}', "package-lock.json": npmLock({ lib: { version: "1.0.0", license: "MIT" }, other: "1.0.0" }) })).status, "info");
+});
+
+test("GPL dependencies fit a GPL project", async () => {
+  assert.equal((await runRepoCheck(here, { "package.json": '{"license":"GPL-3.0"}', "package-lock.json": lock("GPL-3.0") })).status, "pass");
+});
+
+test("reads OR in any case", async () => {
+  assert.equal((await mit("MIT or GPL-3.0")).status, "pass");
+});
+
+test("every restricted license in data/licenses.yml warns", async () => {
+  for (const license of ["SSPL-1.0", "Apache-2.0 WITH Commons-Clause", "Commons Clause", "CC-BY-NC-4.0", "Elastic-2.0", "proprietary"]) {
+    assert.equal((await mit(license)).status, "warn", license);
+  }
+});
+
+test("composer.lock names licenses, so it is checked", async () => {
+  const composer = JSON.stringify({ packages: [{ name: "a/b", version: "1.0.0", license: ["MIT"] }] });
+  const result = await runRepoCheck(here, { "package.json": '{"license":"MIT"}', "composer.lock": composer });
+  assert.equal(result.status, "pass");
+  assert.deepEqual(result.details, []);
+});

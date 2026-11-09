@@ -87,3 +87,23 @@ test("accepts permissions on every job instead of the top", async () => {
   const body = "on: push\njobs:\n  a:\n    permissions:\n      contents: read\n    steps:\n      - run: echo ok\n";
   assert.equal((await runRepoCheck(here, wf(body))).status, "pass");
 });
+
+const checkoutHead = (on: string, ref = "${{ github.event.pull_request.head.sha }}", uses = "actions/checkout@v4") =>
+  wf(`on: ${on}\npermissions: read-all\njobs:\n  a:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: ${uses}\n        with:\n          ref: ${ref}\n`);
+
+test("reads on: as a string or a list, and workflow_run is privileged too", async () => {
+  assert.equal((await runRepoCheck(here, checkoutHead("pull_request_target"))).status, "fail");
+  assert.equal((await runRepoCheck(here, checkoutHead("[push, pull_request_target]"))).status, "fail");
+  assert.equal((await runRepoCheck(here, checkoutHead("workflow_run", "${{ github.event.workflow_run.head_sha }}"))).status, "fail");
+});
+
+test("every PR head reference in data/workflow-risks.yml counts", async () => {
+  for (const ref of ["${{ github.event.workflow_run.head_branch }}", "${{ github.head_ref }}", "refs/pull/${{ github.event.number }}/merge"]) {
+    assert.equal((await runRepoCheck(here, checkoutHead("pull_request_target", ref))).status, "fail", ref);
+  }
+});
+
+test("only a checkout of the PR head counts, not another action or a fixed ref", async () => {
+  assert.equal((await runRepoCheck(here, checkoutHead("pull_request_target", undefined, "actions/setup-node@v4"))).status, "pass");
+  assert.equal((await runRepoCheck(here, checkoutHead("pull_request_target", "main"))).status, "pass");
+});

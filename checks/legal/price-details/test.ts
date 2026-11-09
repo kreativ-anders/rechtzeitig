@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runCheck } from "../../../test/helpers.ts";
+import { fakeLink, runCheck, runFake } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 const sales = true;
@@ -27,4 +27,24 @@ test("does not ask for the 30-day price next to a recommended retail price", asy
 
 test("skips without prices next to a cart; the imprint's share capital does not count", async () => {
   assert.equal((await runCheck(here, "none", { sales })).status, "skip");
+});
+
+const cart = fakeLink("In den Warenkorb");
+
+test("a shipping link next to other links counts, also when it points to the start page", async () => {
+  const links = [cart, fakeLink("Versandkosten", "https://example.de/#versand")];
+  const result = await runFake(here, { text: "Kaffee 9,99 € inkl. MwSt.", links }, {}, { sales: true });
+  assert.equal(result.status, "pass");
+});
+
+test("reads euro signs before the amount and a base price as 1 kg = …", async () => {
+  const text = "Kaffee 750 g € 9,99 (1 kg = 13,32 €) inkl. MwSt. zzgl. Versand";
+  const result = await runFake(here, { text, links: [cart] }, {}, { sales: true });
+  assert.equal(result.status, "pass");
+});
+
+test("names the first struck-through price", async () => {
+  const result = await runFake(here, { text: "Kaffee 9,99 € inkl. MwSt. zzgl. Versand", links: [cart], struck: ["19,99 €", "29,99 €"] }, {}, { sales: true });
+  assert.equal(result.status, "warn");
+  assert.equal(result.raw.details?.[0].params?.price, "19,99 €");
 });

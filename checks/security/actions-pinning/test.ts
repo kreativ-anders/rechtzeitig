@@ -22,3 +22,7 @@ test("stays fast on many blank lines", async () => {
   const files = { ".github/workflows/ci.yml": `${"\n".repeat(20_000)}x` };
   assert.ok((await cpuMs(() => runRepoCheck(here, files))) < 500);
 });
+
+test("skips without workflows", async () => {
+  assert.equal((await runRepoCheck(here, { "README.md": "x" })).status, "skip");
+});

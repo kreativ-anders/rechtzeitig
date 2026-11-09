@@ -33,3 +33,9 @@ test("skips without own text answers: other sites, images, errors", async () => 
   ];
   assert.equal((await runFake(here, { requests })).status, "skip");
 });
+
+test("leaves out files below 1024 bytes", async () => {
+  assert.equal((await runFake(here, { requests: [file({ contentLength: 1023 })] })).status, "skip");
+  assert.equal((await runFake(here, { requests: [file({ contentLength: 600 })] })).status, "skip");
+  assert.equal((await runFake(here, { requests: [file({ contentLength: 1024 })] })).status, "warn");
+});

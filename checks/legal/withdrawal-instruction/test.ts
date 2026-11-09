@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runCheck } from "../../../test/helpers.ts";
+import { fakeLink, runCheck, runSite } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 const sales = true;
@@ -25,4 +25,13 @@ test("finds the instructions in the T&Cs and the model form behind a link", asyn
 
 test("warns without withdrawal instructions", async () => {
   assert.equal((await runCheck(here, "none", { sales })).status, "warn");
+});
+
+test("finds the model form behind one link among others", async () => {
+  const links = [fakeLink("Startseite", "https://example.de/"), fakeLink("Muster-Widerrufsformular (PDF)", "https://example.de/muster.pdf")];
+  const result = await runSite(here, {
+    "/": { links: [fakeLink("Widerrufsbelehrung", "https://example.de/widerruf", "footer")] },
+    "/widerruf": { text: "Widerrufsbelehrung. Widerrufsrecht. Nutzen Sie unsere Widerrufsfunktion.", links },
+  }, {}, { sales: true });
+  assert.equal(result.status, "pass");
 });

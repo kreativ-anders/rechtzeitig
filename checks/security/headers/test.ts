@@ -35,3 +35,14 @@ test("still asks for HSTS under other top-level domains", async () => {
   const result = await runFake(here, { finalUrl: "https://example.de/", headers: {}, meta: {} });
   assert.ok(result.details.includes("Strict-Transport-Security"));
 });
+
+test("reads nosniff and frame-ancestors in any case", async () => {
+  const headers = {
+    "strict-transport-security": "max-age=31536000", "content-security-policy": "Frame-Ancestors 'self'",
+    "x-content-type-options": "NOSNIFF", "referrer-policy": "no-referrer",
+  };
+  assert.equal((await runFake(here, { headers })).status, "pass");
+  const meta = { "content-security-policy": "FRAME-ANCESTORS 'none'" };
+  const result = await runFake(here, { headers: { ...headers, "content-security-policy": "default-src 'self'" }, meta });
+  assert.deepEqual(result.raw.details?.map((d) => d.key), ["frame_meta"]);
+});

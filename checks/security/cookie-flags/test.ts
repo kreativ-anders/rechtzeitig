@@ -36,3 +36,10 @@ test("cookies of other sites are info, not a warning for the site", async () => 
 test("skips without cookies", async () => {
   assert.equal((await runFake(here, {})).status, "skip");
 });
+
+test("every session name in data/cookies.yml needs HttpOnly; CSRF cookies do not", async () => {
+  for (const name of ["my_sess", "api_token", "remember_me", "login_state", "auth"]) {
+    assert.equal((await runFake(here, { cookies: [cookie(name, { httpOnly: false })] })).status, "warn", name);
+  }
+  assert.equal((await runFake(here, { cookies: [cookie("csrftoken", { httpOnly: false })] })).status, "pass");
+});

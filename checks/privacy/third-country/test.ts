@@ -42,3 +42,9 @@ test("passes when a known country is inside the EEA", async () => {
   const result = await site([{ url: "https://cdn.unknown-host.net/a.js", host: "cdn.unknown-host.net", type: "script" }], { "cdn.unknown-host.net": "DE" });
   assert.equal(result.status, "pass");
 });
+
+test("passes without third-party services", async () => {
+  const result = await site([]);
+  assert.equal(result.status, "pass");
+  assert.equal(result.raw.message.key, "no_services");
+});

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runCheck, runFake } from "../../../test/helpers.ts";
+import { fakeContext, fakePage, rendered, runCheck, runFake } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
@@ -29,4 +29,12 @@ test("passes for * without credentials and for a fixed origin with credentials",
 
 test("skips when no page of the site loaded", async () => {
   assert.equal((await runFake(here, { status: 0 })).status, "skip");
+});
+
+test("reads the headers of the load with JavaScript when the plain load failed", async () => {
+  const page = fakePage("https://example.de/", { headers: { "access-control-allow-origin": "*", "access-control-allow-credentials": "true" } });
+  const start = { ...page, noJs: { ...page.noJs, status: 0, headers: {} } };
+  const { default: check } = await import("./check.ts");
+  const result = rendered(here, await check.run(fakeContext(start.js, { start, pages: [start] })));
+  assert.equal(result.status, "fail");
 });

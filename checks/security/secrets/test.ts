@@ -44,3 +44,22 @@ test("finds a service_role key after an anon key on the same line", async () => 
   assert.equal(result.status, "fail");
   assert.match(result.details?.[0] ?? "", /Supabase service_role key/);
 });
+
+test("warns only for a key that may be meant to be public", async () => {
+  const google = ["AIza", "x".repeat(35)].join("");
+  const result = await runRepoCheck(here, { "src/map.ts": `const key = "${google}";` });
+  assert.equal(result.status, "warn");
+});
+
+test("a token that only looks like a JWT is no service_role key", async () => {
+  const fake = ["eyJ" + "a".repeat(12), "eyJzzzzzzzzzzzz", "signature1234567"].join(".");
+  assert.equal((await runRepoCheck(here, { "src/db.ts": `const t = "${fake}";` })).status, "pass");
+});
+
+test("skips fixtures, snapshots, lockfiles, minified files and source maps", async () => {
+  const line = `const key = "${stripe}";`;
+  const skipped = ["fixtures/a.ts", "src/fixture/a.ts", "test/__snapshots__/a.snap", "Cargo.lock", "package-lock.json", "pnpm-lock.yaml",
+    "dist/app.min.js", "dist/app.min.css", "dist/app.js.map"];
+  for (const file of skipped) assert.equal((await runRepoCheck(here, { [file]: line, "src/ok.ts": "ok" })).status, "pass", file);
+  assert.equal((await runRepoCheck(here, { "src/fixtures.ts": line })).status, "fail");
+});

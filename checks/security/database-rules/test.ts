@@ -70,3 +70,7 @@ test("stays fast on a long rules file without a match", async () => {
   // About 100 ms CPU on a laptop, 1 MB of input; backtracking would take seconds.
   assert.ok((await cpuMs(() => runRepoCheck(here, { "firestore.rules": "allow read ".repeat(90_000) }))) < 1000);
 });
+
+test("skips without Supabase migrations or Firebase rules", async () => {
+  assert.equal((await runRepoCheck(here, { "README.md": "x", "db/schema.sql": "create table a (id int);" })).status, "skip");
+});

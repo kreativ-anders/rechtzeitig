@@ -18,7 +18,8 @@ import { scanRepo } from "../src/repo/scan.ts";
 import { importCheck } from "../src/runner.ts";
 import { render, renderFinding } from "../src/messages.ts";
 import { LANGUAGES } from "../src/rules.ts";
-import type { Check, Page, RepoCheck, RepoContext, Result, ScanContext, Snapshot } from "../src/sdk.ts";
+import { normalize } from "../src/text.ts";
+import type { Area, Check, Link, Page, RepoCheck, RepoContext, Result, ScanContext, Snapshot } from "../src/sdk.ts";
 
 const CHECKS = fileURLToPath(new URL("../checks/", import.meta.url));
 
@@ -115,21 +116,47 @@ export async function runCheck(checkDir: string, fixture: string, opts: ScanOpti
 }
 
 /** Runs checks/<…>/check.ts in `checkDir` against fakeContext(start, extra). */
-export async function runFake(checkDir: string, start: Partial<Snapshot> = {}, extra: Partial<CrawlData> = {}): Promise<Rendered> {
+export async function runFake(checkDir: string, start: Partial<Snapshot> = {}, extra: Partial<CrawlData> = {}, opts: FakeOptions = {}): Promise<Rendered> {
   const check = await importCheck<Check>(join(checkDir, "check.ts"));
-  return rendered(checkDir, await check.run(fakeContext(start, extra)));
+  return rendered(checkDir, await check.run(fakeContext(start, extra, opts)));
 }
 
+/** Options of a fake scan: languages (default ["de"]), sales and subscriptions (default off). */
+export interface FakeOptions { languages?: string[]; sales?: boolean; subscriptions?: boolean }
+
 /** Builds a context by hand, for cases a local fixture cannot show (https, redirects). */
-export function fakeContext(start: Partial<Snapshot>, extra: Partial<CrawlData> = {}): ScanContext {
-  const snapshot: Snapshot = { ...emptySnapshot("https://example.de/"), status: 200, lang: "de", ...start };
-  const page: Page = { url: snapshot.finalUrl, noJs: snapshot, js: snapshot };
-  const data = { url: snapshot.finalUrl, start: page, pages: [page], probes: [], countries: {}, ...extra };
-  return createContext(data, loadLanguages(["de"]), loadRegistry(), {
-    languages: ["de"],
-    subscriptions: false,
-    sales: false,
+export function fakeContext(start: Partial<Snapshot>, extra: Partial<CrawlData> = {}, opts: FakeOptions = {}): ScanContext {
+  const page = fakePage(start.finalUrl ?? "https://example.de/", start);
+  const data = { url: page.js.finalUrl, start: page, pages: [page], probes: [], countries: {}, ...extra };
+  const languages = opts.languages ?? ["de"];
+  return createContext(data, loadLanguages(languages), loadRegistry(), {
+    languages,
+    subscriptions: opts.subscriptions ?? false,
+    sales: opts.sales ?? false,
   });
+}
+
+/** A loaded page for a fake context: the same snapshot with JavaScript off and on. */
+export function fakePage(url: string, part: Partial<Snapshot> = {}): Page {
+  const snapshot: Snapshot = { ...emptySnapshot(url), status: 200, lang: "de", ...part };
+  return { url, noJs: snapshot, js: snapshot };
+}
+
+/** A link as capture.ts records it: the label is the normalized text plus the URL path. A link without href is a button. */
+export function fakeLink(text: string, href: string | null = null, area: Area = "main"): Link {
+  const path = href ? new URL(href).pathname : "";
+  return { href, text, label: normalize(`${text} ${path}`), area, button: href === null };
+}
+
+/**
+ * Runs the check on a fake site of several pages on https://example.de: the key is the path,
+ * "/" is the start page. Each value is that page's snapshot.
+ */
+export async function runSite(checkDir: string, pages: Record<string, Partial<Snapshot>>, extra: Partial<CrawlData> = {}, opts: FakeOptions = {}): Promise<Rendered> {
+  const all = Object.entries(pages).map(([path, part]) => fakePage(new URL(path, "https://example.de/").href, part));
+  const start = all.find((p) => p.url === "https://example.de/") ?? fakePage("https://example.de/");
+  const check = await importCheck<Check>(join(checkDir, "check.ts"));
+  return rendered(checkDir, await check.run(fakeContext(start.js, { pages: [start, ...all.filter((p) => p !== start)], ...extra }, opts)));
 }
 
 /** Writes the files to a temporary folder and scans it as a repository (without OSV). */
