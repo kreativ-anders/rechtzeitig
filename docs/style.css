@@ -130,7 +130,7 @@ pre code { background: none; padding: 0; }
 }
 .brand svg { width: 1.9rem; height: 1.9rem; flex: none; transition: transform 0.4s ease; }
 .brand svg circle { fill: var(--seal); }
-.brand svg text { fill: var(--on-seal); font: 700 20px var(--serif); }
+.brand svg path { fill: var(--on-seal); }
 .brand:hover svg { transform: rotate(-14deg) scale(1.08); }
 .nav { margin-left: auto; }
 .nav ul { display: flex; gap: 1.25rem; list-style: none; margin: 0; padding: 0; font-size: 0.95rem; }
@@ -226,13 +226,15 @@ footer a:hover { color: var(--ink); }
   place-items: center;
   text-align: center;
   color: var(--seal);
-  font: 600 0.78rem/1.3 var(--serif);
-  letter-spacing: 0.12em;
+  font: 600 0.72rem/1.2 var(--serif);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   transform: rotate(-12deg);
   transition: transform 0.5s cubic-bezier(.3,1.6,.5,1);
 }
-.stamp .mark { display: block; font-size: 2.4rem; letter-spacing: 0; line-height: 1; margin: 0.15rem 0; }
+.stamp .mark { display: block; height: 1.6rem; width: auto; margin: 0.25rem auto; fill: currentColor; }
+/* The German lines are longer: "RECHTZEITIG" would reach the rim. */
+:lang(de) > .stamp { font-size: 0.66rem; letter-spacing: 0.02em; }
 .stamp:hover { transform: rotate(4deg) scale(1.05); }
 /* The seal's rim carries the maker's name, like the legend around an official seal */
 .stamp { position: relative; }

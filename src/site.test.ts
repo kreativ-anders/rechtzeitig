@@ -1,4 +1,4 @@
-// Checks the language links of docs/: hreflang pairs, canonicals, the sitemap and one CSP for all pages.
+// Checks docs/: hreflang pairs, canonicals, the sitemap, one CSP and one header seal for all pages.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
@@ -51,4 +51,15 @@ test("every page has the same Content-Security-Policy", () => {
   const first = csp("index.html");
   assert.ok(first);
   for (const f of pages) assert.equal(csp(f), first, f);
+});
+
+test("every page's header seal is the one in index.html, drawn as a path without <text>", () => {
+  // A <text> glyph sits at a different height in every font; an outline stays centred.
+  const seal = (f: string) => read(f).match(/<a class="brand"[^>]*>(<svg[\s\S]*?<\/svg>)/)?.[1];
+  const first = seal("index.html");
+  assert.ok(first?.includes("<path ") && !first.includes("<text"), "index.html: the seal is a path");
+  for (const f of pages) assert.equal(seal(f), first, f);
+  assert.ok(!readFileSync(new URL("favicon.svg", DOCS), "utf8").includes("<text"), "favicon.svg has no <text>");
+  const path = first!.match(/<path d="[^"]+"\/>/)![0];
+  for (const f of ["index.html", "de/index.html"]) assert.ok(read(f).match(/<svg class="mark"[^>]*>(.*?)<\/svg>/)?.[1] === path, `${f}: the stamp's § is the seal's path`);
 });
