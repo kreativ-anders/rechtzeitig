@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-DBAI-002
+severity: critical
+title:
+  de: "Die Datenbank, die die Website nutzt, ist im Repository abgesichert"
+  en: "The database the site uses is secured in the repository"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Finds the Supabase and Firebase hosts in `data/databases.yml` among the site's requests and the URLs in its served code, then reads the repository's Supabase migrations and Firebase rules like `security/database-rules`: open tables or rules fail, a service used without rules in the repository gives info."
+fix_hint:
+  de: "Row Level Security für jede Tabelle in einer Migration aktivieren, Firebase-Regeln ohne \"if true\" und Testmodus ins Repository legen. Regeln, die nur im Dashboard stehen, kann keine Prüfung sehen."
+  en: "Enable row level security on every table in a migration, and keep Firebase rules without \"if true\" or test mode in the repository. Rules that live only in the dashboard cannot be checked."
+meta:
+  last_reviewed: "2026-11-08"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://supabase.com/docs/guides/database/postgres/row-level-security
+  - https://firebase.google.com/docs/rules/insecure-rules

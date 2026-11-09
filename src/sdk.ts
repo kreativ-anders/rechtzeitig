@@ -1,6 +1,6 @@
 // Everything a check needs. Checks import from this file and nothing else.
 
-import { siteOf } from "./text.ts";
+import { hostIn, siteOf } from "./text.ts";
 import type { UiLanguage } from "./rules.ts";
 
 export { loadYaml } from "./data.ts";
@@ -64,8 +64,22 @@ export interface RepoCheck {
   run(repo: RepoContext): Result | Promise<Result>;
 }
 
+/**
+ * Checks the website and the repository together: what only a scan of both can show, such as a package in the
+ * code that the privacy policy does not name, or a header the repository configures that the site does not send.
+ * Runs only when both a URL and a checkout exist; otherwise the runner skips it and says which side is missing.
+ */
+export interface CrossCheck {
+  repo: "both";
+  run(ctx: ScanContext, repo: RepoContext): Result | Promise<Result>;
+}
+
+/** Any check type. `repo` tells them apart: false or missing = website, true = repository, "both" = both. */
+export type AnyCheck = Check | RepoCheck | CrossCheck;
+
 export const defineCheck = (check: Omit<Check, "repo">): Check => ({ ...check, repo: false });
 export const defineRepoCheck = (check: Omit<RepoCheck, "repo">): RepoCheck => ({ ...check, repo: true });
+export const defineCrossCheck = (check: Omit<CrossCheck, "repo">): CrossCheck => ({ ...check, repo: "both" });
 
 type Details = Result["details"];
 export const pass = (message: Msg, details?: Details): Result => ({ status: "pass", message, details });
@@ -264,6 +278,97 @@ export function siteCookies(ctx: ScanContext): Array<Cookie & { page: string }> 
   return [...cookies.values()];
 }
 
+// ---------- Served code
+
+/** Documents and scripts of the site itself as the server sent it, once per URL. */
+export const siteCode = (ctx: ScanContext): ServedCode[] => ctx.code.filter((c) => !ctx.isThirdParty(new URL(c.url).hostname));
+
+/** Hosts of the site's requests and of the URLs in its served code that lie under one of `domains`, sorted, once each. */
+export function hostsIn(ctx: ScanContext, domains: string[]): string[] {
+  const hosts = new Set(siteRequests(ctx).map((r) => r.host));
+  for (const c of siteCode(ctx)) for (const m of c.body.matchAll(/https?:\/\/([a-z0-9.-]{1,253})/gi)) hosts.add(m[1].toLowerCase());
+  return [...hosts].filter((h) => domains.some((d) => hostIn(h, d))).sort();
+}
+
+// ---------- Secrets
+
+type EntropyLevel = "token" | "generic";
+const SECRET_DATA = loadYaml<{
+  placeholders: string[];
+  rules: Array<{
+    name: string;
+    pattern: string;
+    /** Lowercase strings, one of which the text must contain before the pattern runs. */
+    keywords?: string[];
+    /** Minimum entropy of the `secret` group, from data/thresholds.yml. */
+    entropy?: EntropyLevel;
+    /** A `secret` that matches this is a documented example. */
+    allow?: string;
+    /** Claims the JWT payload in match group 1 must have. */
+    payload?: Record<string, string>;
+    severity: "fail" | "warn";
+  }>;
+}>("data/secrets.yml");
+const MIN_ENTROPY = loadYaml<Record<string, { entropy: Record<EntropyLevel, number> }>>("data/thresholds.yml")["security/secrets"].entropy;
+const SECRET_RULES = SECRET_DATA.rules.map((r) => ({ ...r, re: new RegExp(r.pattern, "g"), allowRe: r.allow ? new RegExp(r.allow) : undefined }));
+
+function claims(part: string | undefined, expected: Record<string, string>): boolean {
+  try {
+    const payload = JSON.parse(Buffer.from(part ?? "", "base64url").toString("utf8"));
+    return Object.entries(expected).every(([k, v]) => payload?.[k] === v);
+  } catch {
+    return false; // not a JWT after all
+  }
+}
+
+/** Shannon entropy in bits per character. */
+function entropy(s: string): number {
+  const counts = new Map<string, number>();
+  for (const c of s) counts.set(c, (counts.get(c) ?? 0) + 1);
+  let bits = 0;
+  for (const n of counts.values()) bits -= (n / s.length) * Math.log2(n / s.length);
+  return bits;
+}
+
+/** True when a match looks like a real secret, not a placeholder or a documented example. */
+function realSecret(rule: (typeof SECRET_RULES)[number], m: RegExpMatchArray): boolean {
+  const secret = m.groups?.secret ?? m[0];
+  if (rule.payload && !claims(m[1], rule.payload)) return false;
+  if (rule.allowRe?.test(secret)) return false;
+  if (!rule.entropy) return true;
+  const lower = secret.toLowerCase();
+  return entropy(secret) >= MIN_ENTROPY[rule.entropy] && !SECRET_DATA.placeholders.some((p) => lower.includes(p));
+}
+
+/** A secret found in a text by a pattern in data/secrets.yml. */
+export interface SecretMatch {
+  name: string;
+  severity: "fail" | "warn";
+  /** Found by the generic assignment rule (a random-looking value under a secret-like name), not a named pattern. */
+  generic: boolean;
+  value: string;
+  index: number;
+}
+
+/**
+ * Secrets in a text (data/secrets.yml): one per pattern, the first match that passes the filters (keywords,
+ * JWT claims, documented examples, placeholders, entropy). The generic rule only speaks when no named one found something.
+ */
+export function findSecrets(text: string): SecretMatch[] {
+  const lower = text.toLowerCase();
+  const found: SecretMatch[] = [];
+  for (const rule of SECRET_RULES) {
+    if (rule.keywords && !rule.keywords.some((k) => lower.includes(k))) continue;
+    if (rule.entropy === "generic" && found.length) continue;
+    const m = [...text.matchAll(rule.re)].find((m) => realSecret(rule, m));
+    if (m) found.push({ name: rule.name, severity: rule.severity, generic: rule.entropy === "generic", value: m.groups?.secret ?? m[0], index: m.index });
+  }
+  return found;
+}
+
+/** Enough to find a secret again, too little to use it: the first 4 characters and the length. */
+export const redact = (s: string) => ({ start: s.slice(0, 4), length: s.length });
+
 // ---------- Website data
 
 /** Where a link sits. "banner" = inside a dialog, cookie/consent container or shadow root. */
@@ -402,6 +507,29 @@ export interface AxeViolation {
   targets: string[];
 }
 
+/** A document or script as the server sent it, from the load with JavaScript (limits: data/thresholds.yml `code`). */
+export interface ServedCode {
+  url: string;
+  type: "document" | "script";
+  body: string;
+  /** The body was longer than the limit and is cut. */
+  truncated: boolean;
+}
+
+/** A source map that a script of the site points to (`sourceMappingURL`), requested once without a browser. */
+export interface SourceMap {
+  /** URL of the map, or "inline" for a data: URL in the script. */
+  url: string;
+  /** Script that points to it. */
+  script: string;
+  /** HTTP status; 200 for inline maps, 0 when it could not be loaded. */
+  status: number;
+  /** The `sources` field: paths of the original files. */
+  sources: string[];
+  /** true when the map also carries the source code (`sourcesContent`). */
+  content: boolean;
+}
+
 export interface Page {
   url: string;
   noJs: Snapshot;
@@ -433,6 +561,8 @@ export interface Vendor {
   names: string[];
   /** What to do instead, per report language. */
   advice?: Localized;
+  /** npm packages of the vendor's SDK; a trailing * matches a prefix ("@sentry/*"). */
+  packages?: string[];
 }
 
 export interface ScanContext {
@@ -465,6 +595,12 @@ export interface ScanContext {
   probes: Probe[];
   /** Host → ISO country, looked up by IP when an IPinfo token is set. */
   countries: Record<string, string>;
+  /** Documents and scripts the pages loaded with JavaScript, once per URL, all sites. Use `siteCode()` for the site's own. */
+  code: ServedCode[];
+  /** Documents and scripts not kept because of the limits in data/thresholds.yml `code`. */
+  codeSkipped: number;
+  /** Source maps the site's own scripts point to, up to `code.max_maps`. */
+  sourceMaps: SourceMap[];
 
   /** Visited page for a URL (hash ignored). */
   page(url: string | null): Page | undefined;
@@ -482,6 +618,8 @@ export interface ScanContext {
   vendor(host: string): Vendor | undefined;
   /** Known vendor whose tracking cookie has this name. */
   trackingCookie(name: string): Vendor | undefined;
+  /** Known vendor whose SDK has this npm package name (`packages` in data/third-parties.yml). */
+  packageVendor(name: string): Vendor | undefined;
   /** Short form of a URL for reports: path for the same site, full URL otherwise. */
   short(url: string): string;
 }
@@ -595,4 +733,123 @@ export function axeResult(ctx: ScanContext, rules: string[]): Result {
   const count = hits.reduce((n, v) => n + v.count, 0);
   const details = hits.flatMap((v) => v.targets.map((target): Finding => ({ key: "node", params: { rule: v.rule, page: v.page, target } })));
   return warn(msg("found", { count }), capped(details));
+}
+
+// ---------- Repository helpers
+
+/** true when an npm package name matches a pattern; a trailing * matches a prefix ("@sentry/*", "@fontsource*"). */
+export const packageMatches = (name: string, pattern: string) =>
+  pattern.endsWith("*") ? name.startsWith(pattern.slice(0, -1)) : name === pattern;
+
+/** A runtime dependency (`dependencies`, `optionalDependencies`) named in a package.json outside fixtures and node_modules. */
+export interface DirectPackage {
+  name: string;
+  file: string;
+  line: number;
+}
+
+/**
+ * The npm packages the project itself names, not the ones they pull in, and the package.json files it could not read.
+ * devDependencies are left out: they build the site, they do not run in it.
+ */
+export function directPackages(repo: RepoContext): { packages: DirectPackage[]; unread: string[] } {
+  const packages: DirectPackage[] = [];
+  const unread: string[] = [];
+  for (const file of repo.find(/(^|\/)package\.json$/)) {
+    if (FIXTURES.test(file) || /(^|\/)node_modules\//.test(file)) continue;
+    const text = repo.read(file);
+    const json = text === undefined ? undefined : repo.yaml<Record<string, unknown>>(file);
+    if (text === undefined || !json || typeof json !== "object") {
+      unread.push(file);
+      continue;
+    }
+    for (const field of ["dependencies", "optionalDependencies"]) {
+      const deps = json[field];
+      if (!deps || typeof deps !== "object") continue;
+      for (const name of Object.keys(deps)) {
+        const at = text.indexOf(JSON.stringify(name));
+        packages.push({ name, file, line: at < 0 ? 1 : lineAt(text, at) });
+      }
+    }
+  }
+  return { packages, unread };
+}
+
+/** Files the project wrote itself and ships: tracked, without fixtures, tests, node_modules, lockfiles, minified and map files. */
+const NOT_OWN = /(^|\/)(fixtures?|__snapshots__|__tests__|node_modules|vendor)\/|(^|[\/.])(test|spec)\.[cm]?[jt]sx?$|\.lock$|-lock\.(json|yaml)$|\.min\.(js|css)$|\.map$/;
+export const ownFiles = (repo: RepoContext): string[] => repo.files.filter((f) => !NOT_OWN.test(f));
+
+// ---------- Database rules (Supabase, Firebase)
+
+// Each runs on one SQL statement, anchored at its start, so no pattern spans two statements.
+const NAME = String.raw`(?:"?(\w+)"?\s*\.\s*)?"?(\w+)"?`; // optional schema, table
+const CREATE = new RegExp(String.raw`^\s*create\s+(?:unlogged\s+)?table\s+(?:if\s+not\s+exists\s+)?${NAME}`, "i");
+const ENABLE = new RegExp(String.raw`^\s*alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?${NAME}\s+enable\s+row\s+level\s+security\b`, "i");
+const POLICY = /^\s*create\s+policy\b/i;
+const ALLOW_ALL = /\b(using|with\s+check)\s*\(\s*true\s*\)/i;
+const OPEN_RULE = /\ballow\b[\w, \t]{1,200}:\s*if\s+true\s*;/;
+// Firebase "test mode": open to everyone until a date.
+const TEST_MODE = /\ballow\b[\w, \t]{1,200}:\s*if\s+request\.time\s*<\s*timestamp\.date\s*\(/;
+const OPEN_RTDB = /"\.(read|write)"\s*:\s*true/;
+
+/**
+ * SQL statements without line comments, each with the line it starts on (after leading blank space).
+ * Function bodies with ";" split too; their parts match nothing.
+ */
+function statements(sql: string): Array<{ text: string; line: number }> {
+  let line = 1; // removing comments keeps the line breaks
+  return sql.replace(/--[^\n]*/g, "").split(";").map((text) => {
+    const start = line + (text.match(/^\s*/)![0].match(/\n/g)?.length ?? 0);
+    line += text.match(/\n/g)?.length ?? 0;
+    return { text, line: start };
+  });
+}
+
+/** "schema.table" in lower case; tables without a schema are in public. */
+const tableName = (m: RegExpExecArray) => `${(m[1] ?? "public").toLowerCase()}.${m[2].toLowerCase()}`;
+
+/** What the repository says about database access: Supabase migrations and Firebase rules. */
+export interface DatabaseRules {
+  /** supabase/**\/*.sql files. */
+  sql: string[];
+  /** firestore.rules, storage.rules, database.rules.json. */
+  rules: string[];
+  /** Files of both kinds that could not be read. */
+  unread: string[];
+  /** Tables created in the public schema. */
+  tables: number;
+  /** Tables without row level security (`no_rls`, param `table`), open rules (`open_rules`) and test mode (`test_mode`). */
+  problems: Finding[];
+  /** Policies that allow everything (`using (true)`, `with check (true)`). */
+  openPolicies: number;
+}
+
+/** Reads Supabase migrations and Firebase rules: public tables without row level security, rules open to everyone. */
+export function databaseRules(repo: RepoContext): DatabaseRules {
+  const sql = repo.files.filter((f) => /(^|\/)supabase\/.*\.sql$/.test(f));
+  const rules = repo.files.filter((f) => /(^|\/)(firestore|storage)\.rules$|(^|\/)database\.rules\.json$/.test(f));
+  const unread = [...sql, ...rules].filter((f) => repo.read(f) === undefined);
+  // Table → where it is created first.
+  const created = new Map<string, { file: string; line: number }>();
+  const secured = new Set<string>();
+  let openPolicies = 0;
+  for (const { file, text: statement, line } of sql.flatMap((file) => statements(repo.read(file) ?? "").map((s) => ({ file, ...s })))) {
+    const create = CREATE.exec(statement);
+    const enable = ENABLE.exec(statement);
+    // Only the public schema is exposed through the Supabase API by default.
+    if (create && tableName(create).startsWith("public.") && !created.has(tableName(create))) created.set(tableName(create), { file, line });
+    if (enable) secured.add(tableName(enable));
+    if (POLICY.test(statement) && ALLOW_ALL.test(statement)) openPolicies++;
+  }
+  const problems: Finding[] = [...created]
+    .filter(([t]) => !secured.has(t))
+    .map(([t, where]) => ({ ...where, key: "no_rls", params: { table: t.slice("public.".length) } }));
+  for (const file of rules) {
+    const text = repo.read(file) ?? "";
+    const openMatch = OPEN_RULE.exec(text) ?? OPEN_RTDB.exec(text);
+    const testMatch = openMatch ? null : TEST_MODE.exec(text);
+    if (openMatch) problems.push({ file, line: lineAt(text, openMatch.index), key: "open_rules" });
+    else if (testMatch) problems.push({ file, line: lineAt(text, testMatch.index), key: "test_mode" });
+  }
+  return { sql, rules, unread, tables: created.size, problems, openPolicies };
 }

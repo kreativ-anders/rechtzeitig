@@ -4,7 +4,7 @@ import { dirname, join, sep } from "node:path";
 import { loadRule, switchSpec, type Rule, type Switch } from "./rules.ts";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage } from "./text.ts";
-import { STATUSES, type Check, type Finding, type Msg, type RepoCheck, type RepoContext, type ScanContext, type Status } from "./sdk.ts";
+import { STATUSES, type AnyCheck, type Finding, type Msg, type RepoContext, type ScanContext, type Status } from "./sdk.ts";
 
 const CHECKS_DIR = fileURLToPath(new URL("../checks/", import.meta.url));
 const TIMEOUT = 15_000;
@@ -17,15 +17,16 @@ export interface LoadedCheck {
   /** Folder below checks/, e.g. "legal/imprint". Its first part is the module. */
   id: string;
   rule: Rule;
-  check: Check | RepoCheck;
+  check: AnyCheck;
 }
 
 /**
- * Why a check was skipped. `target`: no URL or no checkout; `module`: left out by the input `modules`;
- * `switch`: an input in `requires` is off; `data`: the check ran but found nothing it could read.
+ * Why a check was skipped. `target`: no URL or no checkout (`both`: a check of both scopes, `missing: "both"`: neither);
+ * `module`: left out by the input `modules`; `switch`: an input in `requires` is off; `data`: the check ran but
+ * found nothing it could read.
  */
 export type Because =
-  | { kind: "target"; missing: "url" | "repository" }
+  | { kind: "target"; missing: "url" | "repository" | "both"; both?: true }
   | { kind: "module"; modules: string[] }
   | { kind: "switch"; input: Switch }
   | { kind: "data" };
@@ -45,15 +46,18 @@ export interface Outcome {
 export const moduleOf = (id: string) => id.split("/")[0];
 
 /**
- * What a check reads: the website (defineCheck), the repository (defineRepoCheck), or both (a check type that
- * reads both does not exist yet). Derived from the check type, so it cannot drift from the code.
+ * What a check reads: the website (defineCheck), the repository (defineRepoCheck), or both together
+ * (defineCrossCheck). Derived from the check type, so it cannot drift from the code.
  */
 export const SCOPES = ["website", "repository", "both"] as const;
 export type Scope = (typeof SCOPES)[number];
-export const scopeOf = (check: Check | RepoCheck): Scope => (check.repo ? "repository" : "website");
+export const scopeOf = (check: AnyCheck): Scope => (check.repo === "both" ? "both" : check.repo ? "repository" : "website");
 /** Values of `modules` that pick a scope instead of a group. `repo` is the old name of the repository group. */
-const SCOPE_MODULES: Record<string, Scope> = { website: "website", repository: "repository", repo: "repository" };
-/** Whether `modules` picks a check, by its group or its scope. Empty = all. A "both" check counts for either scope. */
+const SCOPE_MODULES: Record<string, Scope> = { website: "website", repository: "repository", repo: "repository", both: "both" };
+/**
+ * Whether `modules` picks a check, by its group or its scope. Empty = all. A "both" check counts for either scope,
+ * and `both` picks only those.
+ */
 const picked = (c: Pick<LoadedCheck, "id" | "check">, modules: string[]) =>
   !modules.length || modules.some((m) => {
     const scope = SCOPE_MODULES[m];
@@ -63,9 +67,9 @@ const picked = (c: Pick<LoadedCheck, "id" | "check">, modules: string[]) =>
   });
 
 /** Imports a check.ts and makes sure it exports a check. */
-export async function importCheck<T extends Check | RepoCheck = Check | RepoCheck>(file: string): Promise<T> {
+export async function importCheck<T extends AnyCheck = AnyCheck>(file: string): Promise<T> {
   const check = (await import(pathToFileURL(file).href)).default as T | undefined;
-  if (typeof check?.run !== "function") throw new Error(`${file} must export default defineCheck({ run }) or defineRepoCheck({ run })`);
+  if (typeof check?.run !== "function") throw new Error(`${file} must export default defineCheck({ run }), defineRepoCheck({ run }) or defineCrossCheck({ run })`);
   return check;
 }
 
@@ -94,13 +98,17 @@ export const selectModules = (checks: LoadedCheck[], modules: string[]) => check
 type Targets = { web?: ScanContext; repo?: RepoContext };
 
 /** Why a check cannot start, with its skip message from `messages.common`; undefined when it can. */
-function cannotRun(id: string, rule: Rule, check: Check | RepoCheck, targets: Targets, enabled: readonly Switch[], modules: string[]): { because: Because; message: Msg } | undefined {
+function cannotRun(id: string, rule: Rule, check: AnyCheck, targets: Targets, enabled: readonly Switch[], modules: string[]): { because: Because; message: Msg } | undefined {
   if (!picked({ id, check }, modules)) {
     const params = { module: moduleOf(id), scope: scopeOf(check), modules: modules.join(", ") };
     return { because: { kind: "module", modules }, message: { key: "not_run_module", params } };
   }
-  if (check.repo && !targets.repo) return { because: { kind: "target", missing: "repository" }, message: { key: "not_run_repository" } };
-  if (!check.repo && !targets.web) return { because: { kind: "target", missing: "url" }, message: { key: "not_run_url" } };
+  if (check.repo === "both") {
+    // Both sides are needed; the message says which one is missing (messages.common.not_run_both_<missing>).
+    const missing = !targets.web && !targets.repo ? "both" : !targets.web ? "url" : !targets.repo ? "repository" : undefined;
+    if (missing) return { because: { kind: "target", missing, both: true }, message: { key: `not_run_both_${missing}` } };
+  } else if (check.repo && !targets.repo) return { because: { kind: "target", missing: "repository" }, message: { key: "not_run_repository" } };
+  else if (!check.repo && !targets.web) return { because: { kind: "target", missing: "url" }, message: { key: "not_run_url" } };
   // The first input in `requires` that is off; its message is `messages.common.switch_<input>`.
   const input = rule.requires?.find((r) => !enabled.includes(r));
   if (!input) return undefined;
@@ -122,7 +130,8 @@ export async function runChecks(checks: LoadedCheck[], targets: Targets, enabled
       outcomes.push({ id, rule, status: "skip", message: not.message, details: [], because: not.because });
       continue;
     }
-    const run = () => (check.repo ? check.run(targets.repo!) : check.run(targets.web!));
+    const run = () =>
+      check.repo === "both" ? check.run(targets.web!, targets.repo!) : check.repo ? check.run(targets.repo!) : check.run(targets.web!);
     const [deadline, stop] = timeoutAfter(TIMEOUT, `timed out after ${TIMEOUT / 1000}s`);
     try {
       const result = await Promise.race([run(), deadline]);

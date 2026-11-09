@@ -87,7 +87,7 @@
       <div class="actions">
         <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Workflow kopieren</a>
 <!-- hero-checks:start -->
-<a class="button secondary" href="../checks.html" hreflang="en">Alle 60 Prüfungen ansehen</a>
+<a class="button secondary" href="../checks.html" hreflang="en">Alle 67 Prüfungen ansehen</a>
 <!-- hero-checks:end -->
       </div>
       <p class="hero-note">Kostenlos und Open Source von <a href="https://kreativ-anders.de">kreativ-anders</a>. Kein Konto; der Code bleibt auf Ihrem Runner.</p>
@@ -103,7 +103,20 @@
     <ul class="covers sides">
       <li><h3><a href="../checks.html#repository" hreflang="en">Repository</a></h3><p>Eingecheckte Schlüssel, bekannte Schwachstellen, Lizenzen, riskante Workflows, offene Datenbankregeln. Dazu eine CycloneDX-SBOM.</p></li>
       <li><h3><a href="../checks.html#website" hreflang="en">Website</a></h3><p>Impressum, Datenschutzerklärung, Cookies vor der Einwilligung, <a href="../security.html" hreflang="en">Security-Header und TLS</a>, <a href="kuendigungsbutton.html">Kündigungsbutton</a>. Läuft, wenn Sie eine <code>url</code> angeben.</p></li>
-      <li><h3>Beides zusammen</h3><p>Ein Lauf, ein Bericht. Prüfungen, die beide Seiten vergleichen, stehen auf der <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/dev/roadmap.md#next-repository-and-website-together" hreflang="en">Roadmap</a>.</p></li>
+      <li><h3>Beides zusammen</h3>
+<!-- cross-checks:start -->
+<p>7 Prüfungen lesen Repository und Website zusammen. Sie finden, was ein Scan nur einer Seite nicht sieht:</p>
+<ul class="cross-checks">
+<li><a href="../checks.html#SEC-DBAI-002" hreflang="en">Die Datenbank, die die Website nutzt, ist im Repository abgesichert</a></li>
+<li><a href="../checks.html#SEC-SECRETS-003" hreflang="en">Keine Geheimnisse im ausgelieferten JavaScript</a></li>
+<li><a href="../checks.html#LEG-EU-DSE-006" hreflang="en">Datenschutzerklärung nennt die Dienste aus dem Code</a></li>
+<li><a href="../checks.html#LEG-EU-FNT-001" hreflang="en">Google Fonts: Herkunft im Repository gefunden</a></li>
+<li><a href="../checks.html#SEC-EXP-003" hreflang="en">Source Maps legen den Code des Repositorys nicht offen</a></li>
+<li><a href="../checks.html#SEC-HDR-006" hreflang="en">Sicherheits-Header aus dem Repository kommen auf der Website an</a></li>
+<li><a href="../checks.html#SEC-CVD-003" hreflang="en">Die security.txt aus dem Repository ist live</a></li>
+</ul>
+<!-- cross-checks:end -->
+      </li>
     </ul>
     <figure class="report">
       <div class="report-head">
@@ -138,7 +151,7 @@
     <h2 id="legal-title">Quellen statt Rechtsberatung</h2>
     <p>Jede Prüfung nennt ihre Rechtsgrundlage und verlinkt Primärquellen: Gesetze, Gerichte, Behörden.</p>
 <!-- reviewed:start -->
-<p class="reviewed">Alle 60 Prüfungen wurden zuletzt zwischen dem <time datetime="2026-11-03">3. November 2026</time> und dem <time datetime="2026-11-08">8. November 2026</time> mit ihren Quellen abgeglichen. Eine Prüfung, die ein Jahr lang nicht abgeglichen wurde, lässt die Tests des Projekts scheitern.</p>
+<p class="reviewed">Alle 67 Prüfungen wurden zuletzt zwischen dem <time datetime="2026-11-03">3. November 2026</time> und dem <time datetime="2026-11-08">8. November 2026</time> mit ihren Quellen abgeglichen. Eine Prüfung, die ein Jahr lang nicht abgeglichen wurde, lässt die Tests des Projekts scheitern.</p>
 <!-- reviewed:end -->
   </section>
 

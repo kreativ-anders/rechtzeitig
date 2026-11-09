@@ -1,0 +1,11 @@
+# Google Fonts in the repository and on the site (privacy/google-fonts-source).
+#
+# hosts:    the site must not contact these without consent (LG München I, 20.01.2022, 3 O 17493/20).
+# packages: npm packages that serve the fonts from the own server; a trailing * matches a prefix.
+# imports:  module names whose import serves the fonts from the own server (next/font downloads them at build time).
+
+hosts: [fonts.googleapis.com, fonts.gstatic.com]
+packages: ['@fontsource/*', '@fontsource-variable/*', 'typeface-*']
+imports: [next/font/google, next/font/local, '@next/font/google']
+# files:    extensions of files that can load a font: templates, styles and code. Data and prose are left out.
+files: [html, htm, css, scss, sass, less, js, mjs, cjs, jsx, ts, tsx, vue, svelte, astro, php, twig, liquid, hbs, njk, erb, ejs, pug]

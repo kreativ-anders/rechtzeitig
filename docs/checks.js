@@ -37,7 +37,8 @@
   }
   moduleChips[0].setAttribute("aria-pressed", "true");
 
-  // Scope: what a check reads. A chip only for scopes with rules, so "Both" shows once such a check exists.
+  // Scope: what a check reads. "Repository + website" comes first and stands out: the checks only a scan of
+  // both can do. A chip only for scopes with rules.
   const scopeBox = document.getElementById("scopes");
   const scopeChips = new Map();
   const pickScope = (value) => (b) => {
@@ -45,8 +46,14 @@
     window.track?.("Checks filter", { filter: "scope", value });
     scopeChips.forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
   };
+  const both = tally("scope", "both");
+  if (both) {
+    const b = chip(scopeBox, "Repository + website", both, pickScope("both"));
+    b.classList.add("core");
+    scopeChips.set("both", b);
+  }
   scopeChips.set("all", chip(scopeBox, "All", rules.length, pickScope("all")));
-  for (const [value, label] of [["website", "Website"], ["repository", "Repository"], ["both", "Both"]]) {
+  for (const [value, label] of [["website", "Website only"], ["repository", "Repository only"]]) {
     const n = tally("scope", value);
     if (n) scopeChips.set(value, chip(scopeBox, label, n, pickScope(value)));
   }
@@ -99,7 +106,7 @@
   document.getElementById("toolbar").hidden = false;
 
   // Open the card a link points to, e.g. checks.html#LEG-DE-IMP-001. A link to a group,
-  // e.g. checks.html#privacy, picks that group's chip, a link to a scope, e.g. checks.html#repository,
+  // e.g. checks.html#privacy, picks that group's chip, a link to a scope, e.g. checks.html#both or checks.html#repository,
   // that scope's chip (#repo was the old repository group). None counts as a filter event.
   const open = () => {
     const hash = decodeURIComponent(location.hash.slice(1));

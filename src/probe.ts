@@ -6,7 +6,7 @@ import { loadYaml } from "./data.ts";
 import { DAY } from "./deadline.ts";
 import { BlockedHostError, fetchPublic, isIpOrLocal, pinned, publicAddresses } from "./net.ts";
 import { errorMessage, siteOf } from "./text.ts";
-import type { Probe, ScanContext } from "./sdk.ts";
+import type { Probe, ScanContext, ServedCode, SourceMap } from "./sdk.ts";
 
 const PROBES = loadYaml<Array<{
   path: string;
@@ -34,6 +34,66 @@ export async function probe(origin: string, userAgent: string, timeout: number, 
       }
     }),
   );
+}
+
+const CODE = loadYaml<{ code: { max_file_chars: number; max_maps: number } }>("data/thresholds.yml").code;
+/** The last `//# sourceMappingURL=` comment on a line of its own. */
+const MAP_COMMENT = /^[ \t]*\/\/[#@][ \t]*sourceMappingURL=([^\s'"]+)/gm;
+const INLINE_MAP = /^data:application\/json[^,]*;base64,(.*)$/i;
+const MAX_SOURCES = 5000;
+
+/** The `sources` of a source map and whether it carries `sourcesContent`. Reads a cut map by pattern. */
+export function sourcesOf(map: string): { sources: string[]; content: boolean } {
+  try {
+    const json = JSON.parse(map) as { sources?: unknown; sourcesContent?: unknown };
+    const sources = Array.isArray(json.sources) ? json.sources.filter((s): s is string => typeof s === "string") : [];
+    const content = Array.isArray(json.sourcesContent) && json.sourcesContent.some((s) => typeof s === "string" && s.length > 0);
+    return { sources: sources.slice(0, MAX_SOURCES), content };
+  } catch {
+    let sources: string[] = [];
+    try {
+      const list = JSON.parse(/"sources"\s*:\s*(\[[^\]]*\])/.exec(map)?.[1] ?? "[]");
+      if (Array.isArray(list)) sources = list.filter((s): s is string => typeof s === "string");
+    } catch {}
+    return { sources: sources.slice(0, MAX_SOURCES), content: /"sourcesContent"\s*:\s*\[\s*"/.test(map) };
+  }
+}
+
+/**
+ * Source maps the site's own scripts point to: inline data: URLs are decoded, other maps on the same site are
+ * requested once, up to `code.max_maps` (data/thresholds.yml). Maps on other sites are never requested.
+ */
+export async function sourceMaps(code: ServedCode[], site: string, userAgent: string, timeout: number, trusted?: string): Promise<SourceMap[]> {
+  const targets: Array<{ script: string; ref: string }> = [];
+  for (const c of code) {
+    if (c.type !== "script" || siteOf(new URL(c.url).hostname) !== site) continue;
+    const ref = [...c.body.matchAll(MAP_COMMENT)].at(-1)?.[1];
+    if (ref) targets.push({ script: c.url, ref });
+  }
+  const maps: SourceMap[] = [];
+  for (const { script, ref } of targets) {
+    const inline = INLINE_MAP.exec(ref);
+    if (inline) {
+      maps.push({ url: "inline", script, status: 200, ...sourcesOf(Buffer.from(inline[1], "base64").toString("utf8")) });
+      continue;
+    }
+    let url: URL;
+    try {
+      url = new URL(ref, script);
+    } catch {
+      continue;
+    }
+    if (!/^https?:$/.test(url.protocol) || siteOf(url.hostname) !== site) continue;
+    if (maps.filter((m) => m.url !== "inline").length >= CODE.max_maps) break;
+    try {
+      const { res } = await fetchPublic(url, { headers: { "user-agent": userAgent }, signal: AbortSignal.timeout(timeout) }, trusted);
+      const body = res.status === 200 ? await readCapped(res, CODE.max_file_chars) : (await res.body?.cancel(), "");
+      maps.push({ url: url.href, script, status: res.status, ...sourcesOf(body) });
+    } catch {
+      maps.push({ url: url.href, script, status: 0, sources: [], content: false });
+    }
+  }
+  return maps;
 }
 
 /** Reads at most `max` bytes of a response body, then stops the download. */

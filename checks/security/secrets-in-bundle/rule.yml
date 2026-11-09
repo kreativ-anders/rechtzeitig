@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-SECRETS-003
+severity: critical
+title:
+  de: "Keine Geheimnisse im ausgelieferten JavaScript"
+  en: "No secrets in the served JavaScript"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Matches the HTML and scripts the site's own pages serve against the `fail` patterns in `data/secrets.yml` (Supabase `service_role` keys by their JWT claims; placeholders, documented examples and values below the entropy in `data/thresholds.yml` left out), showing only the first 4 characters and the length, then names the public-prefixed variables (`NEXT_PUBLIC_`, `VITE_`, ...) in the repository that likely put it there; files cut at the `code` limits in `data/thresholds.yml` give info, never a pass."
+fix_hint:
+  de: "Schlüssel sofort widerrufen. Geheime Werte nie über NEXT_PUBLIC_, VITE_, REACT_APP_ oder ähnliche Präfixe lesen, sondern nur auf dem Server, zum Beispiel in einer API-Route."
+  en: "Revoke the key right away. Never read secret values through NEXT_PUBLIC_, VITE_, REACT_APP_ or similar prefixes; use them only on the server, for example in an API route."
+meta:
+  last_reviewed: "2026-11-08"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://supabase.com/docs/guides/api/api-keys

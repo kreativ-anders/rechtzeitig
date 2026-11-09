@@ -1,11 +1,13 @@
 import { loadYaml } from "./data.ts";
 import { hostIn, normalize } from "./text.ts";
-import type { Vendor } from "./sdk.ts";
+import { packageMatches, type Vendor } from "./sdk.ts";
 import { missingLanguages } from "./rules.ts";
 
 export interface Registry {
   vendor(host: string): Vendor | undefined;
   trackingCookie(name: string): Vendor | undefined;
+  /** Vendor whose `packages` match an npm package name. */
+  packageVendor(name: string): Vendor | undefined;
 }
 
 export function loadRegistry(): Registry {
@@ -25,5 +27,6 @@ export function loadRegistry(): Registry {
       return vendors.find((v) => v.hosts.some((vh) => hostIn(h, vh)));
     },
     trackingCookie: (name) => vendors.find((v) => v.cookieRules.some((re) => re.test(name))),
+    packageVendor: (name) => vendors.find((v) => (v.packages ?? []).some((p) => packageMatches(name, p))),
   };
 }

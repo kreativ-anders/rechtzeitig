@@ -1,0 +1,14 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-CVD-003
+severity: low
+title:
+  de: "Die security.txt aus dem Repository ist live"
+  en: "The repository's security.txt is live"
+how: "Reads the repository's `.well-known/security.txt` outside test fixtures and compares it with the one the site serves at `/.well-known/security.txt` (in `data/probes.yml`): not served, an expired live copy of a current file, or other `Contact` fields warn."
+fix_hint:
+  de: "Die Datei mit dem Build ausliefern (zum Beispiel aus public/.well-known/) und neu deployen, damit Website und Repository denselben Kontakt nennen."
+  en: "Ship the file with the build (for example from public/.well-known/) and deploy again, so site and repository name the same contact."
+meta:
+  last_reviewed: "2026-11-08"
+  sources:
+  - https://www.rfc-editor.org/rfc/rfc9116.html

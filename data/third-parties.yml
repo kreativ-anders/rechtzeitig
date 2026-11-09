@@ -7,6 +7,8 @@
 #          an EU subsidiary is the contract partner, because data can reach the parent company.
 # names:   how a privacy policy would mention the vendor (default: name)
 # cookies: regular expressions for the vendor's cookie names
+# packages: npm packages of the vendor's SDK; a trailing * matches a prefix. Compared with the
+#          privacy policy by privacy/sdks-in-privacy-policy.
 # advice:  shown in the report, one text per report language (de, en)
 
 - name: Google Fonts
@@ -43,6 +45,7 @@
   purpose: analytics
   consent: required
   country: US
+  packages: [react-ga4, react-ga, vue-gtag, ga-4-react, '@analytics/google-analytics']
   cookies: ['^_ga', '^_gid$', '^_gat']
 
 - name: Google Tag Manager
@@ -50,6 +53,7 @@
   purpose: tag manager
   consent: required
   country: US
+  packages: [react-gtm-module, '@analytics/google-tag-manager', vue-gtm, '@gtm-support/*']
   names: [google tag manager, tag manager]
 
 - name: Google Ads
@@ -65,6 +69,7 @@
   purpose: video
   consent: required
   country: US
+  packages: [react-youtube, youtube-player]
   advice:
     de: "Ein Vorschaubild zeigen und das Video erst nach einem Klick laden."
     en: "Show a preview image and load the video only after a click."
@@ -75,6 +80,7 @@
   purpose: video
   consent: required
   country: US
+  packages: ['@vimeo/player']
   advice:
     de: "Ein Vorschaubild zeigen und das Video erst nach einem Klick laden."
     en: "Show a preview image and load the video only after a click."
@@ -84,6 +90,7 @@
   purpose: maps
   consent: required
   country: US
+  packages: ['@react-google-maps/api', '@googlemaps/*', '@vis.gl/react-google-maps', google-map-react]
   names: [google maps]
   advice:
     de: "Ein statisches Bild oder einen Link zeigen und die Karte erst nach einem Klick laden."
@@ -94,6 +101,7 @@
   purpose: maps
   consent: required
   country: US
+  packages: [mapbox-gl, '@mapbox/mapbox-gl-geocoder', '@mapbox/search-js-react']
 
 - name: OpenStreetMap
   hosts: [tile.openstreetmap.org]
@@ -110,6 +118,7 @@
   purpose: various Google services
   consent: required
   country: US
+  packages: [react-google-recaptcha, react-google-recaptcha-v3]
   names: [google]
 
 - name: Meta Pixel
@@ -117,6 +126,7 @@
   purpose: advertising
   consent: required
   country: US
+  packages: [react-facebook-pixel]
   names: [facebook, meta]
   cookies: ['^_fbp$', '^_fbc$', '^fr$']
 
@@ -156,6 +166,7 @@
   purpose: analytics
   consent: required
   country: US
+  packages: ['@microsoft/clarity', react-microsoft-clarity]
   names: [clarity]
   cookies: ['^_clck$', '^_clsk$', '^CLID$']
 
@@ -164,6 +175,7 @@
   purpose: analytics
   consent: required
   country: MT
+  packages: ['@hotjar/browser', react-hotjar]
   cookies: ['^_hj']
 
 - name: Matomo
@@ -171,6 +183,7 @@
   purpose: analytics
   consent: required
   country: NZ
+  packages: ['@datapunt/matomo-tracker-react', '@jonkoops/matomo-tracker-react', vue-matomo]
   names: [matomo, piwik]
   cookies: ['^_pk_']
 
@@ -179,18 +192,21 @@
   purpose: chat
   consent: required
   country: US
+  packages: ['@intercom/messenger-js-sdk', react-use-intercom]
 
 - name: Crisp
   hosts: [crisp.chat]
   purpose: chat
   consent: required
   country: FR
+  packages: [crisp-sdk-web]
 
 - name: Calendly
   hosts: [calendly.com]
   purpose: scheduling embed
   consent: required
   country: US
+  packages: [react-calendly]
 
 - name: Gravatar
   hosts: [gravatar.com]
@@ -203,12 +219,14 @@
   purpose: analytics without cookies
   consent: check
   country: DE
+  packages: [pirsch-sdk]
 
 - name: Plausible
   hosts: [plausible.io]
   purpose: analytics without cookies
   consent: check
   country: EE
+  packages: [plausible-tracker, next-plausible, '@plausible-analytics/tracker']
 
 - name: Cloudflare Web Analytics
   hosts: [cloudflareinsights.com]
@@ -222,6 +240,7 @@
   purpose: analytics
   consent: check
   country: US
+  packages: ['@vercel/analytics', '@vercel/speed-insights']
   names: [vercel]
 
 - name: GitHub
@@ -296,24 +315,28 @@
   purpose: payment
   consent: check
   country: US
+  packages: [stripe, '@stripe/*']
 
 - name: PayPal
   hosts: [paypal.com, paypalobjects.com]
   purpose: payment
   consent: check
   country: US
+  packages: ['@paypal/*']
 
 - name: Sentry
   hosts: [sentry.io, sentry-cdn.com]
   purpose: error tracking
   consent: check
   country: US
+  packages: ['@sentry/*']
 
 - name: hCaptcha
   hosts: [hcaptcha.com]
   purpose: bot protection
   consent: check
   country: US
+  packages: ['@hcaptcha/*']
 
 - name: Cloudflare Turnstile
   hosts: [challenges.cloudflare.com]
@@ -375,3 +398,80 @@
   purpose: consent management
   consent: check
   country: US
+
+- name: PostHog
+  hosts: [posthog.com]
+  purpose: analytics
+  consent: required
+  country: US
+  names: [posthog]
+  packages: [posthog-js, posthog-node, posthog-react-native]
+
+- name: Mixpanel
+  hosts: [mixpanel.com, mxpnl.com]
+  purpose: analytics
+  consent: required
+  country: US
+  packages: [mixpanel-browser, mixpanel]
+
+- name: Amplitude
+  hosts: [amplitude.com]
+  purpose: analytics
+  consent: required
+  country: US
+  packages: ['@amplitude/*', amplitude-js]
+
+- name: Segment
+  hosts: [segment.com, segment.io]
+  purpose: analytics
+  consent: required
+  country: US
+  names: [segment]
+  packages: ['@segment/analytics-next', '@segment/analytics-node', analytics-node]
+
+- name: Supabase
+  hosts: [supabase.co, supabase.com, supabase.in]
+  purpose: database and authentication
+  consent: check
+  country: US
+  packages: ['@supabase/supabase-js', '@supabase/ssr', '@supabase/auth-helpers-*']
+
+- name: Firebase
+  hosts: [firebaseio.com, firebaseapp.com, firestore.googleapis.com, firebasestorage.googleapis.com, identitytoolkit.googleapis.com, securetoken.googleapis.com, firebaseinstallations.googleapis.com]
+  purpose: database and authentication
+  consent: check
+  country: US
+  names: [firebase]
+  packages: [firebase, firebase-admin, '@firebase/*', reactfire, '@angular/fire']
+
+- name: OpenAI
+  hosts: [api.openai.com]
+  purpose: AI model
+  consent: check
+  country: US
+  names: [openai, chatgpt]
+  packages: [openai, '@ai-sdk/openai', '@langchain/openai']
+
+- name: Anthropic
+  hosts: [api.anthropic.com]
+  purpose: AI model
+  consent: check
+  country: US
+  names: [anthropic, claude]
+  packages: ['@anthropic-ai/sdk', '@ai-sdk/anthropic', '@langchain/anthropic']
+
+- name: Google Gemini API
+  hosts: [generativelanguage.googleapis.com]
+  purpose: AI model
+  consent: check
+  country: US
+  names: [gemini, google ai]
+  packages: ['@google/generative-ai', '@google/genai', '@ai-sdk/google']
+
+- name: Mistral AI
+  hosts: [api.mistral.ai]
+  purpose: AI model
+  consent: check
+  country: FR
+  names: [mistral]
+  packages: ['@mistralai/mistralai', '@ai-sdk/mistral']

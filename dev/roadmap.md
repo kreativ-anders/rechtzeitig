@@ -19,14 +19,14 @@ Ordered by value per effort. The first seven need only a new `data/*.yml` and th
 1. TLS verification turned off in code and scripts: `rejectUnauthorized: false`, `NODE_TLS_REJECT_UNAUTHORIZED=0`, `verify=False`, `InsecureSkipVerify`, `curl -k` (Art. 32 DSGVO, BSI TR-02102-2).
 2. Committed key and data files that `env-files` misses: `*.pem`, `*.key`, `*.p12`, `id_rsa*`, `*.tfstate`, service-account JSON, `.npmrc` with a token, database dumps (Art. 5 Abs. 1 lit. f, Art. 32 DSGVO).
 3. Unverifiable install sources: `http://` or missing `integrity` in lockfiles, git dependencies without a commit, `--extra-index-url`, `strict-ssl=false` (CRA Annex I Part I).
-4. Third-party SDKs in the lockfiles (`@sentry/*`, `posthog-js`, `firebase`, `openai`, ...) as info with vendor and country, via a `packages:` field in `data/third-parties.yml` (Art. 13, 28, 44 DSGVO).
+4. Third-party SDKs in the code as info with vendor and country, also without a website (Art. 28, 44 DSGVO). The `packages:` field in `data/third-parties.yml` exists; `privacy/sdks-in-privacy-policy` compares it with the privacy policy.
 5. Dockerfile and Compose: no `USER` or `USER root`, `:latest` base images, secrets in `ENV`/`ARG`, `privileged: true`, the Docker socket mounted, database ports published.
 6. CRA for repositories that are products (library, CLI, firmware): support period in `SECURITY.md` (Art. 13 Abs. 8 CRA) and releases with provenance or a signature. `security/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
 7. More patterns in `workflow-risks`: secrets echoed into logs, `secrets: inherit` to external workflows, self-hosted runners on pull requests.
 8. Runtimes past their end of life (`engines.node`, `.nvmrc`, `FROM php:7.4`, `requires-python`), dates in a data file.
 9. In code: `cors` with `origin: *` and credentials, in JS and header config files. `security/cors` checks only the headers the site sends.
 10. Secrets in the git history. By default only the commits a pull request or push adds; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
-11. Third-party hosts in templates and styles, e.g. Google Fonts URLs (§ 25 TDDDG, Art. 13 DSGVO), as a warning.
+11. Third-party hosts in templates and styles without a website scan, as a warning. With a URL, `privacy/google-fonts-source` covers Google Fonts.
 12. SBOM fields as BSI TR-03183-2 asks: hashes, supplier, dependency graph (CRA Annex I Part II).
 13. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go). Needs a registry API, so a switch.
 14. Package names that look like typos of popular ones.
@@ -35,14 +35,14 @@ Ordered by value per effort. The first seven need only a new `data/*.yml` and th
 
 ## Next: repository and website together
 
-Findings that only a scan of both can give. Today a check gets either the website or the repository, never both.
+Findings that only a scan of both can give (`defineCrossCheck`). Seven exist: database rules of the project the site uses, secrets in the served JavaScript, SDKs in the code against the privacy policy, Google Fonts with their source in the repository, source maps that expose repository files, security headers from hosting configs, and the deployed `security.txt`.
 
-1. Checks that read the website and the repository together. `data/third-parties.yml` gets package names and code snippets per service.
-2. Vendors in the code compared with the privacy policy and with what the site loads (Art. 13 DSGVO).
-3. Font packages such as `@fontsource/*` installed, but the site still loads Google Fonts (LG München I, 3 O 17493/20).
-4. Security headers and CSP defined in the repository compared with the headers the site sends.
-5. Imprint and privacy texts in the repository compared with the rendered pages.
-6. AI SDKs in the code compared with the privacy policy and the AI labeling on the site (Art. 13 DSGVO, Art. 50 AI Act).
+1. AI SDKs in the code compared with the AI labeling on the site (Art. 50 AI Act). Today `privacy/sdks-in-privacy-policy` only checks that the privacy policy names the AI provider; telling a chat feature from server-side use is not precise enough yet.
+2. Imprint and privacy texts in the repository compared with the rendered pages.
+3. Security headers from `next.config` `headers()`, nginx and helmet. `security/headers-deployed` reads `vercel.json`, `firebase.json`, `netlify.toml`, `_headers` and `.htaccess`.
+4. SDK packages of other ecosystems (Composer, PyPI) in `data/third-parties.yml`; today only npm.
+5. Third-party hosts in templates other than Google Fonts (maps, video embeds, CDNs), with the repository line, like `privacy/google-fonts-source`.
+6. Client-side JS libraries in the served bundle compared with the lockfile, to tell an old deployed build from the repository.
 
 ## Next: website
 
@@ -60,7 +60,7 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 10. With `sales: true`: product pages name manufacturer, importer or responsible person and safety information (Reg. (EU) 2023/988, since 13.12.2024); packaging registration number (VerpackG § 9, LUCID) in the imprint; PPWR packaging labeling from 12.08.2026.
 11. With `sales: true`: legal guarantee and commercial guarantee labels per Directive (EU) 2024/825 from 27.09.2026, besides the environmental claims above.
 12. Global Privacy Control (GPC) signal honored by the consent tool, as a warning.
-13. The served HTML and client JS of normal pages: suspicious comments, personal data, exposed API keys.
+13. The served HTML and client JS of normal pages: suspicious comments and personal data. Secrets are covered by `security/secrets-in-bundle`.
 14. Client-side JS libraries in the served bundle with known CVEs; the repo vulnerability check covers dependencies, not the bundle.
 15. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs. `security/error-disclosure` names version headers today, without a CVE lookup.
 16. DNSSEC and CAA records of the domain, the depth of SPF includes, MTA-STS and TLS-RPT; `email-dns` today covers only SPF, DMARC and MX.

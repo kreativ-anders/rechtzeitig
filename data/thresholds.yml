@@ -20,6 +20,15 @@ axe:
   timeout_ms: 10000
   # Elements kept per axe rule and page; the count of all of them is kept as well.
   max_targets: 20
+# Served code the crawler keeps (src/capture.ts, src/probe.ts): documents and scripts of the load with JavaScript,
+# once per URL, for checks that read the bundle (security/secrets-in-bundle, security/database-live).
+code:
+  # Longer bodies are cut at this many characters; the check says so.
+  max_file_chars: 3000000
+  # Documents and scripts kept per scan; the rest is counted as not read.
+  max_files: 40
+  # Source maps requested per scan (security/source-maps), each read up to max_file_chars.
+  max_maps: 5
 
 # Reject button less prominent than the accept button. The authorities set no fixed numbers
 # (DSK OH Telemedien Rn. 125, EDPB Cookie Banner Taskforce Rn. 17), so these only flag clear cases.
@@ -63,3 +72,8 @@ sustainability/content-without-js:
 sustainability/lazy-loading:
   # Images smaller than this in width or height (CSS pixels) are ignored: tracking pixels, icons.
   min_size: 50
+
+security/source-maps:
+  # A source path matches a repository file only by an ending of at least this many parts (src/app.ts),
+  # since a bare file name (index.ts) matches too many files.
+  min_parts: 2

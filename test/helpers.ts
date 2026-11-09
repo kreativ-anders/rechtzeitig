@@ -19,7 +19,7 @@ import { importCheck } from "../src/runner.ts";
 import { render, renderFinding } from "../src/messages.ts";
 import { LANGUAGES } from "../src/rules.ts";
 import { normalize } from "../src/text.ts";
-import type { Area, Check, Link, Page, RepoCheck, RepoContext, Result, ScanContext, Snapshot } from "../src/sdk.ts";
+import type { Area, Check, CrossCheck, Link, Page, RepoCheck, RepoContext, Result, ScanContext, Snapshot } from "../src/sdk.ts";
 
 const CHECKS = fileURLToPath(new URL("../checks/", import.meta.url));
 
@@ -186,6 +186,35 @@ export async function cpuMs(work: () => unknown): Promise<number> {
   await work();
   const { user, system } = process.cpuUsage(started);
   return (user + system) / 1000;
+}
+
+/**
+ * Writes the files to a temporary folder and scans it as a website, like scanFixture. For sites built at test time,
+ * for example with secret-looking strings that must not be stored in the repository.
+ */
+export async function siteFromFiles(files: Record<string, string>, opts: ScanOptions = {}): Promise<ScanContext> {
+  const root = mkdtempSync(join(tmpdir(), "rechtzeitig-site-"));
+  for (const [path, content] of Object.entries(files)) {
+    mkdirSync(dirname(join(root, path)), { recursive: true });
+    writeFileSync(join(root, path), content);
+  }
+  return scanFixture(root, opts);
+}
+
+/**
+ * Runs the check of both scopes (defineCrossCheck) in `checkDir`: the website is checkDir/fixtures/<site>
+ * scanned on localhost, or a context built with fakeContext(); the repository is made of `files`.
+ */
+export async function runCrossCheck(
+  checkDir: string,
+  site: string | ScanContext,
+  files: Record<string, string>,
+  extra: Partial<RepoContext> = {},
+  opts: ScanOptions = {},
+): Promise<Rendered> {
+  const check = await importCheck<CrossCheck>(join(checkDir, "check.ts"));
+  const ctx = typeof site === "string" ? await scanFixture(join(checkDir, "fixtures", site), opts) : site;
+  return rendered(checkDir, await check.run(ctx, { ...(await repoFromFiles(files)), ...extra }));
 }
 
 /** package-lock.json text: package name → version, or → { version, license, dev }. */
