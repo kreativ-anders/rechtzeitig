@@ -1,0 +1,46 @@
+prompt: "Add a contact form that sends me an email (reviewed)"
+expect: []
+files:
+  package.json: |
+    { "name": "site", "scripts": { "dev": "next dev", "test": "vitest run" }, "dependencies": { "next": "^15.0.0", "nodemailer": "^6.9.15" } }
+  app/api/contact/route.ts: |
+    import nodemailer from "nodemailer";
+    import { readFileSync } from "node:fs";
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT ?? 587),
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD },
+      // Our mail server uses an internal CA; trust it instead of turning checks off.
+      tls: { ca: process.env.SMTP_CA_FILE ? readFileSync(process.env.SMTP_CA_FILE) : undefined, rejectUnauthorized: true },
+    });
+
+    export async function POST(req: Request) {
+      const { name, email, message } = await req.json();
+      if (!email || !message) return Response.json({ error: "missing fields" }, { status: 400 });
+      await transporter.sendMail({ from: process.env.SMTP_FROM, replyTo: email, to: process.env.CONTACT_TO, subject: `Contact from ${name}`, text: message });
+      return Response.json({ ok: true });
+    }
+  app/api/contact/route.test.ts: |
+    import { expect, it, vi } from "vitest";
+    vi.mock("nodemailer", () => ({ default: { createTransport: () => ({ sendMail: vi.fn() }) } }));
+    const { POST } = await import("./route");
+
+    it("rejects a message without email", async () => {
+      const res = await POST(new Request("http://x", { method: "POST", body: JSON.stringify({ message: "hi" }) }));
+      expect(res.status).toBe(400);
+    });
+  app/contact/page.tsx: |
+    export default function Contact() {
+      return (
+        <form action="/api/contact" method="post">
+          <input name="email" type="email" placeholder="E-mail" />
+          <textarea name="message" placeholder="Your message" />
+          <button>Send</button>
+        </form>
+      );
+    }
+  .env.example: |
+    SMTP_HOST=smtp.your-provider.example
+    SMTP_PASSWORD=
+    CONTACT_TO=you@example.com

@@ -29,6 +29,21 @@ test("the rule validator rejects broken rules", () => {
   assert.match(cited("https://eur-lex.europa.eu.evil.example/").join(), /not from a domain/);
 });
 
+test("a quality rule states its value instead of a legal basis, and no rule has both", async () => {
+  const day = new Date("2026-11-03");
+  const value = { de: "Nutzen", en: "Benefit" };
+  const law = { de: "Art. 32 DSGVO", en: "Art. 32 GDPR" };
+  assert.deepEqual(validateRule({ ...rule, value }, day, "quality"), []);
+  assert.match(validateRule(rule, day, "quality").join(), /need value/);
+  assert.match(validateRule({ ...rule, value, legal_basis: law }, day, "quality").join(), /have no legal_basis/);
+  assert.match(validateRule({ ...rule, value, legal_basis: law }, day, "security").join(), /value is only for rules without legal_basis/);
+  assert.match(validateRule({ ...rule, value: { de: "x" } as Rule["value"] }, day).join(), /value\.en is missing/);
+  const quality = (await loadChecks()).filter((c) => moduleOf(c.id) === "quality");
+  assert.ok(quality.length > 0 && quality.every((c) => c.rule.value && !c.rule.legal_basis));
+  // The card says so, never a bare "Technical" that could read like a duty by omission.
+  for (const c of quality) assert.ok(checksHtml([c]).includes(`No legal basis: ${c.rule.value!.en}`), c.id);
+});
+
 test("rule.yml how names every data file its check.ts loads", async () => {
   const missing = (await loadChecks()).flatMap((c) => {
     const code = readFileSync(new URL(`../checks/${c.id}/check.ts`, import.meta.url), "utf8");

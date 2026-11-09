@@ -14,26 +14,27 @@ Open points from the audit of 2026-11-03, after the fixes.
 
 ## Next: repository
 
-Ordered by value per effort. The first seven need only a new `data/*.yml` and the existing `RepoContext`.
+Ordered by value per effort. The first six need only a new `data/*.yml` and the existing `RepoContext`.
 
-1. TLS verification turned off in code and scripts: `rejectUnauthorized: false`, `NODE_TLS_REJECT_UNAUTHORIZED=0`, `verify=False`, `InsecureSkipVerify`, `curl -k` (Art. 32 DSGVO, BSI TR-02102-2).
-2. Committed key and data files that `env-files` misses: `*.pem`, `*.key`, `*.p12`, `id_rsa*`, `*.tfstate`, service-account JSON, `.npmrc` with a token, database dumps (Art. 5 Abs. 1 lit. f, Art. 32 DSGVO).
-3. Unverifiable install sources: `http://` or missing `integrity` in lockfiles, git dependencies without a commit, `--extra-index-url`, `strict-ssl=false` (CRA Annex I Part I).
-4. Third-party SDKs in the code as info with vendor and country, also without a website (Art. 28, 44 DSGVO). The `packages:` field in `data/third-parties.yml` exists; `privacy/sdks-in-privacy-policy` compares it with the privacy policy.
-5. Dockerfile and Compose: no `USER` or `USER root`, `:latest` base images, secrets in `ENV`/`ARG`, `privileged: true`, the Docker socket mounted, database ports published.
-6. CRA for repositories that are products (library, CLI, firmware): support period in `SECURITY.md` (Art. 13 Abs. 8 CRA) and releases with provenance or a signature. `security/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
-7. More patterns in `workflow-risks`: secrets echoed into logs, `secrets: inherit` to external workflows, self-hosted runners on pull requests.
-8. Runtimes past their end of life (`engines.node`, `.nvmrc`, `FROM php:7.4`, `requires-python`), dates in a data file.
-9. In code: `cors` with `origin: *` and credentials, in JS and header config files. `security/cors` checks only the headers the site sends.
-10. Secrets in the git history. By default only the commits a pull request or push adds; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
-11. Third-party hosts in templates and styles without a website scan, as a warning. With a URL, `privacy/google-fonts-source` covers Google Fonts.
-12. SBOM fields as BSI TR-03183-2 asks: hashes, supplier, dependency graph (CRA Annex I Part II).
-13. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go, and yarn.lock). Needs a registry API, so a switch. `legal/unknown-licenses` names them as not checked today.
-14. Registry lookup for `security/hallucinated-packages`: ask each registry's official API (npm registry, PyPI JSON API, crates.io, Packagist, pub.dev) whether a declared name exists and when it was first published, so a made-up or days-old name is a finding even when it is locked. Only package names leave the runner. On by default with an opt-out input (`registry-lookups: false`), listed in `SWITCHES` and in "Data that leaves the runner". The offline part (names missing from the lockfile, look-alikes of popular names) is done.
-15. Infrastructure code: Terraform security groups open to `0.0.0.0/0`, public buckets, privileged Kubernetes pods.
-16. More license rules: SPDX headers per file and vendored files under a foreign license (REUSE), NOTICE duties of Apache-2.0 dependencies, font files and their licenses. More entries in `data/relicensing.yml` where the change differs per release branch (Vault, Consul, Nomad, Packer), which needs version ranges.
-17. A parser for `bun.lock` (JSON with comments). Without it, `hallucinated-packages` and `lockfile-drift` skip folders with a Bun lockfile, which projects from AI app builders often have next to `package-lock.json`.
-18. MCP servers in Codex `config.toml` (`[mcp_servers.*]`) for `agent-permissions`; today only its approval and sandbox settings are read.
+1. Committed key and data files that `env-files` misses: `*.pem`, `*.key`, `*.p12`, `id_rsa*`, `*.tfstate`, service-account JSON, `.npmrc` with a token, database dumps (Art. 5 Abs. 1 lit. f, Art. 32 DSGVO).
+2. Unverifiable install sources: `http://` or missing `integrity` in lockfiles, git dependencies without a commit, `--extra-index-url`, `strict-ssl=false` (CRA Annex I Part I).
+3. Third-party SDKs in the code as info with vendor and country, also without a website (Art. 28, 44 DSGVO). The `packages:` field in `data/third-parties.yml` exists; `privacy/sdks-in-privacy-policy` compares it with the privacy policy.
+4. Dockerfile and Compose: no `USER` or `USER root`, `:latest` base images, secrets in `ENV`/`ARG`, `privileged: true`, the Docker socket mounted, database ports published.
+5. CRA for repositories that are products (library, CLI, firmware): support period in `SECURITY.md` (Art. 13 Abs. 8 CRA) and releases with provenance or a signature. `security/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
+6. More patterns in `workflow-risks`: secrets echoed into logs, `secrets: inherit` to external workflows, self-hosted runners on pull requests.
+7. Runtimes past their end of life (`engines.node`, `.nvmrc`, `FROM php:7.4`, `requires-python`), dates in a data file.
+8. In code: `cors` with `origin: *` and credentials, in JS and header config files. `security/cors` checks only the headers the site sends.
+9. Secrets in the git history. By default only the commits a pull request or push adds; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
+10. Third-party hosts in templates and styles without a website scan, as a warning. With a URL, `privacy/google-fonts-source` covers Google Fonts.
+11. SBOM fields as BSI TR-03183-2 asks: hashes, supplier, dependency graph (CRA Annex I Part II).
+12. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go, and yarn.lock). Needs a registry API, so a switch. `legal/unknown-licenses` names them as not checked today.
+13. Registry lookup for `security/hallucinated-packages`: ask each registry's official API (npm registry, PyPI JSON API, crates.io, Packagist, pub.dev) whether a declared name exists and when it was first published, so a made-up or days-old name is a finding even when it is locked. Only package names leave the runner. On by default with an opt-out input (`registry-lookups: false`), listed in `SWITCHES` and in "Data that leaves the runner". The offline part (names missing from the lockfile, look-alikes of popular names) is done.
+14. Infrastructure code: Terraform security groups open to `0.0.0.0/0`, public buckets, privileged Kubernetes pods.
+15. More license rules: SPDX headers per file and vendored files under a foreign license (REUSE), NOTICE duties of Apache-2.0 dependencies, font files and their licenses. More entries in `data/relicensing.yml` where the change differs per release branch (Vault, Consul, Nomad, Packer), which needs version ranges.
+16. A parser for `bun.lock` (JSON with comments). Without it, `hallucinated-packages` and `lockfile-drift` skip folders with a Bun lockfile, which projects from AI app builders often have next to `package-lock.json`.
+17. MCP servers in Codex `config.toml` (`[mcp_servers.*]`) for `agent-permissions`; today only its approval and sandbox settings are read.
+18. More code patterns on `data/insecure-code.yml`, each with a benchmark case: auth bypass flags (`SKIP_AUTH`, `NODE_ENV` checks in auth middleware), unsafe HTML (`dangerouslySetInnerHTML`, `v-html` with variables), personal data in logs (`console.log(req.body)`), SQL built from strings.
+19. Visible suppressions: a committed file lists rule id, path, a mandatory reason and an expiry date; suppressed findings stay in the report and in SARIF as "suppressed" with the reason, and a suppression without a reason or past its date counts as a finding. Nothing can drop a finding silently.
 
 ## Next: repository and website together
 

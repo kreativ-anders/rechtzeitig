@@ -9,7 +9,8 @@
   },
   "scripts": {
     "scan": "node src/main.ts",
-    "test": "node --test \"checks/**/test.ts\" \"src/**/*.test.ts\"",
+    "test": "node --test \"checks/**/test.ts\" \"src/**/*.test.ts\" \"test/**/*.test.ts\"",
+    "benchmark": "node test/benchmark/run.ts",
     "typecheck": "tsc",
     "docs": "node src/docs.ts",
     "drift": "node src/drift.ts",

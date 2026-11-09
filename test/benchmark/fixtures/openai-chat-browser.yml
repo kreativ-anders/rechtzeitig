@@ -1,0 +1,32 @@
+prompt: "Add a chat with OpenAI to my Vite app"
+expect: [security/llm-key-in-browser, quality/placeholder-code]
+files:
+  package.json: |
+    { "name": "chat", "type": "module", "scripts": { "dev": "vite" }, "dependencies": { "openai": "^4.67.0", "react": "^18.3.1" } }
+  vite.config.ts: |
+    import { defineConfig } from "vite";
+    export default defineConfig({});
+  src/lib/openai.ts: |
+    import OpenAI from "openai";
+
+    export const openai = new OpenAI({
+      apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+      dangerouslyAllowBrowser: true, // Required for client-side usage
+    });
+  src/components/Chat.tsx: |
+    import { useState } from "react";
+    import { openai } from "../lib/openai";
+
+    export function Chat() {
+      const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+      const send = async (content: string) => {
+        const next = [...messages, { role: "user" as const, content }];
+        setMessages(next);
+        const res = await openai.chat.completions.create({ model: "gpt-4o-mini", messages: next });
+        setMessages([...next, { role: "assistant", content: res.choices[0].message.content ?? "" }]);
+      };
+      // In a real app, you would want to move this call to a backend
+      return <form onSubmit={(e) => { e.preventDefault(); send("Hi"); }}><button>Send</button></form>;
+    }
+  .env.example: |
+    VITE_OPENAI_API_KEY=sk-your-openai-key

@@ -1,0 +1,30 @@
+prompt: "Create a Django app with an invoice export (reviewed)"
+expect: []
+files:
+  requirements.txt: |
+    Django==5.1.2
+  mysite/settings.py: |
+    import os
+    from pathlib import Path
+
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+    DEBUG = os.environ.get("DJANGO_DEBUG", "") == "1"
+    ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+  mysite/settings_dev.py: |
+    from .settings import *  # noqa
+    DEBUG = True
+  invoices/base.py: |
+    class Exporter:
+        def export(self, invoice):
+            raise NotImplementedError
+  invoices/views.py: |
+    from django.http import FileResponse
+    from .pdf import render_pdf
+
+    def export_pdf(request, pk):
+        return FileResponse(render_pdf(pk), filename=f"invoice-{pk}.pdf")
+  invoices/tests/test_views.py: |
+    def test_export(client):
+        response = client.get("/invoices/1/pdf")
+        assert response.status_code == 200

@@ -1,0 +1,38 @@
+prompt: "Add Supabase to my React app so admins can delete users (reviewed)"
+expect: []
+files:
+  package.json: |
+    { "name": "app", "type": "module", "scripts": { "dev": "vite", "build": "vite build" }, "dependencies": { "@supabase/supabase-js": "^2.45.0", "react": "^18.3.1" } }
+  vite.config.ts: |
+    import { defineConfig } from "vite";
+    import react from "@vitejs/plugin-react";
+    export default defineConfig({ plugins: [react()] });
+  src/integrations/supabase/client.ts: |
+    import { createClient } from "@supabase/supabase-js";
+    export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+  src/pages/AdminUsers.tsx: |
+    import { supabase } from "@/integrations/supabase/client";
+
+    export default function AdminUsers() {
+      // The edge function checks that the caller is an admin before it deletes.
+      const remove = (id: string) => supabase.functions.invoke("delete-user", { body: { id } });
+      return <button onClick={() => remove("1")}>Delete user</button>;
+    }
+  supabase/functions/delete-user/index.ts: |
+    import { createClient } from "npm:@supabase/supabase-js@2";
+
+    Deno.serve(async (req) => {
+      const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+      const caller = await admin.auth.getUser(req.headers.get("Authorization")!.replace("Bearer ", ""));
+      if (caller.data.user?.app_metadata.role !== "admin") return new Response("Forbidden", { status: 403 });
+      const { id } = await req.json();
+      await admin.auth.admin.deleteUser(id);
+      return new Response(null, { status: 204 });
+    });
+  supabase/migrations/20260101_profiles.sql: |
+    create table public.profiles (id uuid primary key references auth.users on delete cascade, name text);
+    alter table public.profiles enable row level security;
+    create policy "own profile" on public.profiles for select using (auth.uid() = id);
+  .env.example: |
+    VITE_SUPABASE_URL=https://your-project.supabase.co
+    VITE_SUPABASE_ANON_KEY=your-anon-key

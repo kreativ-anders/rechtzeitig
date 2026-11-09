@@ -1,0 +1,52 @@
+prompt: "Add email and password login with JWT to my Express API (reviewed)"
+expect: []
+files:
+  package.json: |
+    { "name": "api", "scripts": { "dev": "tsx watch src/index.ts", "test": "vitest run" }, "dependencies": { "express": "^4.21.0", "jsonwebtoken": "^9.0.2", "bcryptjs": "^2.4.3" } }
+  src/config.ts: |
+    function required(name: string): string {
+      const value = process.env[name];
+      if (!value) throw new Error(`${name} is not set`);
+      return value;
+    }
+
+    export const config = {
+      jwtSecret: required("JWT_SECRET"),
+      jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "7d",
+      appUrl: process.env.APP_URL ?? "http://localhost:3000",
+    };
+  src/auth/jwt.ts: |
+    import jwt from "jsonwebtoken";
+    import { config } from "../config";
+
+    export const signToken = (userId: string) => jwt.sign({ sub: userId }, config.jwtSecret, { expiresIn: config.jwtExpiresIn });
+    export const verifyToken = (token: string) => jwt.verify(token, config.jwtSecret) as { sub: string };
+  src/auth/routes.ts: |
+    import { Router } from "express";
+    import bcrypt from "bcryptjs";
+    import { signToken } from "./jwt";
+    import { db } from "../db";
+
+    export const auth = Router();
+    const labels = { password: "Password", email: "E-mail" };
+
+    auth.post("/login", async (req, res) => {
+      const { email, password } = req.body;
+      const user = await db.user.findUnique({ where: { email } });
+      if (!user || !(await bcrypt.compare(password, user.passwordHash))) return res.status(401).json({ error: "Invalid credentials" });
+      // TODO: rate limit per IP (tracked in #42)
+      res.json({ token: signToken(user.id), labels });
+    });
+  src/auth/jwt.test.ts: |
+    import { describe, expect, it } from "vitest";
+    process.env.JWT_SECRET = "test-secret";
+    const { signToken, verifyToken } = await import("./jwt");
+
+    describe("jwt", () => {
+      it("round-trips the user id", () => {
+        expect(verifyToken(signToken("u1")).sub).toBe("u1");
+      });
+    });
+  .env.example: |
+    DATABASE_URL=postgresql://postgres:postgres@localhost:5432/api
+    JWT_SECRET=

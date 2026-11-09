@@ -97,3 +97,40 @@ legal/project-license:
   # more than it replaces. Copyright and title lines, list labels and text before and after the license are left
   # out; a replaced name changes added and dropped alike. One added sentence of ten words adds about ten pairs.
   max_changed_pairs: 6
+
+# Reading the repository's source code (src/repo/code.ts, data/code-paths.yml), shared by the code checks.
+# Not `code`, which limits the code the website serves.
+source-code:
+  # Lines from the top of a file read for a "use client" or "use server" directive.
+  directive_lines: 5
+  # Longer lines are left out: they are minified code or embedded data, where patterns find noise.
+  max_line_chars: 1000
+
+security/example-env-values:
+  # A secret-named value in an .env template counts as real from this length on (shorter values are often
+  # placeholders like "secret123") ...
+  min_length: 16
+  # ... and from this Shannon entropy in bits per character. Random keys reach 4 and more, words stay below 3.5.
+  min_entropy: 3.5
+
+quality/hollow-tests:
+  # Warn when at least this many tests are skipped (it.skip, xit, @pytest.mark.skip, t.Skip ...) ...
+  min_skipped: 3
+  # ... and they are at least this share of all test cases.
+  max_skipped_share: 0.2
+
+quality/neutralized-ci:
+  # A file-wide suppression (@ts-nocheck, bare eslint-disable, # type: ignore) counts in the first lines only.
+  top_lines: 5
+  # Warn when at least this many files of a language have one ...
+  min_files: 3
+  # ... and they are at least this share of the code files in that language.
+  min_share: 0.1
+
+# Self-benchmark of the code checks (test/benchmark/). The test fails when a scored rule falls below these
+# on the labelled cases; raise them, never lower them to make a change pass.
+benchmark:
+  min_precision: 0.9
+  min_recall: 0.9
+  # Fewest cases the benchmark must have.
+  min_cases: 20

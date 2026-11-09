@@ -1,0 +1,17 @@
+prompt: "Add an .env.example so others can run the project"
+expect: [security/example-env-values]
+files:
+  package.json: |
+    { "name": "saas", "scripts": { "dev": "next dev" } }
+  .env.example: |
+    # Copy to .env.local and fill in
+    NEXT_PUBLIC_SUPABASE_URL=https://abcdefghijkl.supabase.co
+    NEXT_PUBLIC_SUPABASE_ANON_KEY={{key:120:4}}
+    DATABASE_URL=postgresql://postgres.abcdefghijkl:{{key:20:5}}@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
+    RESEND_API_KEY=re_{{key:32:6}}
+    NEXTAUTH_SECRET={{key:44:7}}
+    NEXTAUTH_URL=http://localhost:3000
+  app/page.tsx: |
+    export default function Home() {
+      return <main>Welcome</main>;
+    }

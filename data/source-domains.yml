@@ -65,3 +65,28 @@ vendors:
   - doc.rust-lang.org
   - llama.com
   - ai.google.dev
+
+# Weakness catalogues and secure coding guides, for rules on code patterns.
+weaknesses:
+  - cwe.mitre.org
+  - owasp.org
+
+# Framework and SDK documentation, only for technical facts about that framework or SDK.
+frameworks:
+  - nodejs.org
+  - docs.djangoproject.com
+  - flask.palletsprojects.com
+  - laravel.com
+  - guides.rubyonrails.org
+  - apollographql.com
+  - nextjs.org
+  - vite.dev
+  - platform.openai.com
+  - docs.stripe.com
+  - jestjs.io
+
+# Published research with its own data, for quality rules (no legal basis) that cite how often a problem occurs.
+research:
+  - arxiv.org
+  - metr.org
+  - anthropic.com

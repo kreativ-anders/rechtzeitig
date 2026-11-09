@@ -1,0 +1,31 @@
+prompt: "Create a Django app with an invoice export"
+expect: [security/debug-mode, security/default-credentials, quality/placeholder-code]
+files:
+  requirements.txt: |
+    Django==5.1.2
+  mysite/settings.py: |
+    from pathlib import Path
+
+    BASE_DIR = Path(__file__).resolve().parent.parent
+
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = 'django-insecure-{{key:50:3}}'
+
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
+
+    ALLOWED_HOSTS = ["*"]
+  invoices/views.py: |
+    from django.http import JsonResponse
+
+    def export_pdf(request, pk):
+        raise NotImplementedError("TODO: implement PDF export")
+
+    def send_reminder(request, pk):
+        pass  # TODO: implement reminder emails
+  invoices/models.py: |
+    from django.db import models
+
+    class Invoice(models.Model):
+        number = models.CharField(max_length=20)
+        total = models.DecimalField(max_digits=10, decimal_places=2)

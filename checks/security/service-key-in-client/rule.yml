@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-CLIENTKEY-001
+severity: critical
+title:
+  de: "Server-Schlüssel und Admin-SDKs nicht im Browser-Code"
+  en: "Server keys and admin SDKs stay out of browser code"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "In files that run in the browser (`\"use client\"`, Vue or Svelte components, `src/` of a Vite app, server paths left out; `client` in `data/code-paths.yml`) looks for the patterns in `data/insecure-code.yml`: the Supabase `service_role` key or `auth.admin`, `firebase-admin`, the `stripe` server SDK or `STRIPE_SECRET_KEY`, and server secrets such as `DATABASE_URL` or `JWT_SECRET`; skipped without browser code. Secrets under a public prefix are left to `security/secrets`."
+fix_hint:
+  de: "Admin-SDKs und Server-Schlüssel nur in Server-Code nutzen (API-Route, Server Action, Edge Function). Im Browser den öffentlichen Schlüssel (Supabase anon, Stripe publishable) mit Row Level Security bzw. Server-Prüfung verwenden. Ausgelieferte Schlüssel widerrufen."
+  en: "Use admin SDKs and server keys only in server code (API route, server action, edge function). In the browser use the public key (Supabase anon, Stripe publishable) with row level security or server checks. Revoke keys that were shipped."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://supabase.com/docs/guides/api/api-keys
+  - https://firebase.google.com/docs/admin/setup
+  - https://docs.stripe.com/keys
+  - https://nextjs.org/docs/app/guides/environment-variables

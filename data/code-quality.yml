@@ -1,0 +1,196 @@
+# Patterns of code that looks done but is not, for the checks in checks/quality/ (no legal basis). Same pattern
+# format as data/insecure-code.yml: `key`, `pattern`, optional `flags`, `paths`, `not_paths`, `unless`,
+# `comments: true`, `whole: true`, `level`. Languages and left-out paths: data/code-paths.yml.
+# Changing a pattern changes results: name this file in the commit message.
+
+# Tests that cannot fail. Read in test files only (data/code-paths.yml `tests`), except `config`, which is read in
+# package.json, workflows and test runner configs.
+quality/hollow-tests:
+  # Assertions that compare a constant with itself.
+  tautology:
+    js:
+      - key: tautology
+        pattern: '\bexpect\(\s*(?<v>true|false|null|undefined|\d+|''[^''\n]{0,80}''|"[^"\n]{0,80}")\s*\)\s*\.\s*(?:toBe|toEqual|toStrictEqual)\(\s*\k<v>\s*\)'
+      - key: tautology
+        pattern: '\bexpect\(\s*(?:true|1)\s*\)\s*\.\s*(?:toBeTruthy|toBeDefined)\(\s*\)|\bexpect\(\s*(?:false|0|null)\s*\)\s*\.\s*(?:toBeFalsy|toBeNull)\(\s*\)'
+      - key: tautology
+        pattern: '\bexpect\(\s*true\s*\)\s*\.to\.(?:be\.true\b|be\.ok\b|equal\(\s*true\s*\))'
+      - key: tautology
+        pattern: '\bassert(?:\.ok)?\(\s*true\s*\)|\bassert\.(?:equal|strictEqual|deepEqual|deepStrictEqual)\(\s*(?<v>true|false|\d+|''[^''\n]{0,80}''|"[^"\n]{0,80}")\s*,\s*\k<v>\s*\)'
+    python:
+      - key: tautology
+        pattern: '^\s*assert\s+(?:True|1|not\s+False)\s*(?:,.*)?(?:#.*)?$'
+      - key: tautology
+        pattern: '^\s*assert\s+(?<v>\d+|True|''[^''\n]{0,80}''|"[^"\n]{0,80}")\s*==\s*\k<v>\s*(?:#.*)?$'
+      - key: tautology
+        pattern: '\bself\.assertTrue\(\s*True\s*\)|\bself\.assertEqual\(\s*(?<v>\d+|True|''[^''\n]{0,80}''|"[^"\n]{0,80}")\s*,\s*\k<v>\s*\)'
+    go:
+      - key: tautology
+        pattern: '\bassert\.True\(\s*t\s*,\s*true\s*\)|\bassert\.Equal\(\s*t\s*,\s*(?<v>\d+|true|"[^"\n]{0,80}")\s*,\s*\k<v>\s*\)'
+    php:
+      - key: tautology
+        pattern: '->assertTrue\(\s*true\s*\)|->assertEquals\(\s*(?<v>\d+|true|''[^''\n]{0,80}'')\s*,\s*\k<v>\s*\)'
+    ruby:
+      - key: tautology
+        pattern: '\bexpect\(\s*true\s*\)\.to\s+(?:be\(\s*true\s*\)|eq\(\s*true\s*\)|be_truthy\b|be\s+true\b)|^\s*assert\s*\(?\s*true\s*\)?\s*$'
+  # Errors swallowed in a test, so a failing assertion inside never fails the test; and tests that force a pass.
+  swallowed:
+    js:
+      # A try block (without nested braces) with an assertion, and a catch that does nothing or only logs.
+      - key: swallowed
+        pattern: '\btry\s*\{[^{}]{0,600}?\b(?:expect|assert)\w*[^{}]{0,600}?\}\s*catch\s*(?:\(\s*\w*\s*\))?\s*\{\s*(?:console\.(?:log|error|warn)\([^()\n]{0,200}\)\s*;?\s*)?\}'
+        whole: true
+      - key: forced_pass
+        pattern: '\bprocess\.exit\(\s*0?\s*\)'
+    python:
+      - key: swallowed
+        pattern: '^[ \t]*try:[ \t]*\n(?:[^\n]*\n){0,10}?[^\n]*\bassert\b[^\n]*\n(?:[^\n]*\n){0,10}?[ \t]*except(?:[ \t]+[\w.]+)?(?:[ \t]+as[ \t]+\w+)?:[ \t]*\n[ \t]*pass\b'
+        whole: true
+        flags: m
+      - key: forced_pass
+        pattern: '\.outcome\s*=\s*[''"]passed[''"]|^\s*(?:sys\.exit|os\._exit)\(\s*0?\s*\)'
+  # Skipped and focused tests.
+  skipped:
+    js: '\b(?:it|test|describe|context)\.(?:skip|todo)\s*\(|\bx(?:it|test|describe)\s*\('
+    python: '@pytest\.mark\.skip\b|@unittest\.skip\b|\bpytest\.skip\('
+    go: '\bt\.Skip(?:Now|f)?\('
+    php: '->markTest(?:Skipped|Incomplete)\('
+    ruby: '^\s*(?:xit|xdescribe|skip|pending)\b'
+  focused:
+    js: '\b(?:it|test|describe)\.only\s*\(|\bf(?:it|describe)\s*\('
+  # Test cases, to count them.
+  cases:
+    js: '\b(?:it|test)(?:\.\w+)?\s*\(\s*[''"`]'
+    python: '^\s*(?:async\s+)?def\s+test\w*\s*\('
+    go: '^func\s+Test\w*\s*\(\s*\w+\s+\*testing\.T\s*\)'
+    php: '\bfunction\s+test\w*\s*\(|@test\b|#\[Test\]'
+    ruby: '^\s*(?:it|specify|test)\b\s*(?:\(|[''"]|do\b|\{)|^\s*def\s+test_\w+'
+  # Anything that can fail a test. A file with test cases and none of these has no assertions.
+  assertions:
+    js: '\bexpect(?:Type)?\s*[(.]|\bassert\w*\b|\.should\b|\bt\.(?:is|not|true|false|deepEqual|like|throws|throwsAsync|assert|snapshot|fail)\b|\b(?:getBy|getAllBy|findBy|findAllBy)\w+\(|\bsinon\.assert\b|\bcy\.\w+\(|\bverify\w*\(|\bthrow\b'
+    python: '\bassert\b|\bself\.(?:assert|fail)\w*|\bpytest\.(?:raises|fail|warns)\b|\.assert_\w+\(|\bverify\w*\(|\braise\b'
+    go: '\bt\.(?:Error|Errorf|Fatal|Fatalf|Fail|FailNow)\b|\b(?:assert|require)\.\w+\(|\bExpect\(|\bpanic\('
+    php: '\bassert\w*\(|->expect\w*\(|\bexpect\(|->fail\('
+    ruby: '\bexpect\b|\bassert\w*|\.should\b|\bmust_\w+|\bwont_\w+|\brefute\w*|\braise\b'
+  # Test runs that pass without a single test, in package.json, workflows and runner configs.
+  config:
+    shell:
+      - key: pass_with_no_tests
+        pattern: '--passWithNoTests\b|--pass-with-no-tests\b|--suppress-no-test-exit-code\b'
+    js:
+      - key: pass_with_no_tests
+        pattern: '\bpassWithNoTests\s*:\s*true\b'
+        paths: '(^|/)(?:jest|vitest|vite)\.config\.\w+$'
+
+# CI and scripts that can no longer fail: checks that report but never block.
+quality/neutralized-ci:
+  # Words in a workflow step or job that make it a check (test, lint, scan ...).
+  check_words: '\b(?:test|tests|testing|lint|linter|eslint|prettier --check|typecheck|type-check|tsc|audit|scan|pytest|jest|vitest|mocha|phpunit|rspec|go test|go vet|golangci-lint|ruff|mypy|flake8|pylint|rubocop|playwright|cypress|semgrep|trivy|codeql|security)\b'
+  # Steps that may fail without harm (uploads, notifications) are no finding even with a check word.
+  harmless_steps: '\b(?:upload|codecov|coveralls|cache|notify|slack|comment|report|artifact|sarif|deploy-preview)\b'
+  commands:
+    shell:
+      - key: or_true
+        pattern: '\b(?:test|tests|jest|vitest|pytest|mocha|eslint|lint|tsc|typecheck|phpunit|rspec|ruff|mypy|flake8|pylint|rubocop|audit|playwright|cypress|go\s+test|go\s+vet)\b[^\n|"]{0,200}\|\|\s*(?:true\b|exit\s+0\b|:(?=\s|$|[''"]))'
+        unless: '\btest\s+-[a-zA-Z]\b|\bgrep\b|\[\s'
+      - key: no_verify
+        pattern: '\bgit\s+(?:commit|push)\b[^\n]{0,200}\s--no-verify\b'
+        not_paths: '^\.github/workflows/'
+      - key: noop_test_script
+        pattern: '"test"\s*:\s*"\s*(?:exit\s+0|true|:|echo\s[^"\\]{0,100}(?:\\.[^"\\]{0,100}){0,5})\s*"'
+        paths: '(^|/)package\.json$'
+        unless: 'exit\s+1'
+  # File-wide suppressions in the first lines of a file (`top_lines` in data/thresholds.yml): all type checks or
+  # all lint rules off. Rule-specific suppressions are a choice and not counted.
+  suppressions:
+    js:
+      - key: suppressed
+        pattern: '^\s*(?://|/\*)\s*@ts-nocheck\b|^\s*/\*\s*eslint-disable\s*\*/|^\s*//\s*eslint-disable\s*$'
+        comments: true
+    python:
+      - key: suppressed
+        pattern: '^#\s*(?:type:\s*ignore|mypy:\s*ignore-errors|flake8:\s*noqa|ruff:\s*noqa|pylint:\s*disable\s*=\s*all)\s*$'
+        comments: true
+    php:
+      - key: suppressed
+        pattern: '\bphpcs:ignoreFile\b|@phpstan-ignore-file\b'
+        comments: true
+    ruby:
+      - key: suppressed
+        pattern: '^#\s*rubocop:disable\s+all\b'
+        comments: true
+
+# Stubs, placeholders and fake data in production code. Info only: a person has to judge.
+quality/placeholder-code:
+  js:
+    - key: not_implemented
+      pattern: '\bthrow\s+new\s+\\?(?:Error|Exception|NotImplementedError|LogicException|RuntimeException)\(\s*[''"`](?:not\s+(?:yet\s+)?implemented|todo\b|implement\s+me|unimplemented|method\s+not\s+implemented)'
+      flags: i
+    - &todo_implement
+      key: todo_implement
+      pattern: '(?://|#|/\*|\*|\{/\*)\s*(?:TODO|FIXME|XXX)\b[\s:(-]*[^\n]{0,40}?\b(?:implement|replace\s+with\s+(?:a\s+)?(?:real|actual)|add\s+(?:the\s+)?(?:real|actual)|hook\s+up|wire\s+up|connect\s+to\s+(?:the\s+|a\s+)?(?:real|actual))'
+      flags: i
+      comments: true
+    - &elided
+      key: elided
+      pattern: '(?://|#|/\*|\{/\*)\s*(?:\.\.\.\s*(?:the\s+)?(?:rest|existing|remaining|other|more)\s+(?:of\s+)?(?:the\s+|your\s+)?(?:code|implementation|logic|methods?|functions?|components?|fields?|routes?|handlers?)|(?:add\s+)?your\s+(?:code|logic|implementation)\s+here)'
+      flags: i
+      comments: true
+    - &not_real
+      key: not_real
+      pattern: '(?://|#|/\*|\*|\{/\*)\s*(?:in\s+a\s+real\s+(?:app|application|implementation|project|world|scenario|system)|in\s+production,?\s+you\s+(?:would|should)|this\s+is\s+(?:just\s+)?(?:a\s+)?(?:mock|placeholder|simplified|simulated|dummy|fake)\b)'
+      flags: i
+      comments: true
+    - &simulated
+      key: simulated
+      pattern: '(?://|#|/\*|\{/\*)\s*(?:simulate|simulating|simulated|mock|fake)\s+(?:an?\s+|the\s+)?(?:api|network|server|backend|http|fetch|async|database|db|payment|email)\b'
+      flags: i
+      comments: true
+    - &lorem
+      key: lorem
+      pattern: '\blorem\s+ipsum\b'
+      flags: i
+      comments: true
+    - key: mock_data
+      pattern: '\bfrom\s+[''"][^''"\n]{0,100}/(?:mocks?|mock-?data|mockData|dummy-?data|fake-?data)(?:\.\w+)?[''"]|\bimport\s+[^\n]{0,100}\b(?:mock|fake|dummy)(?:Data|Users|Products|Items|Orders|Posts|Responses?)\b'
+  python:
+    - key: not_implemented
+      pattern: '\braise\s+NotImplementedError\(\s*[''"](?:todo|not\s+(?:yet\s+)?implemented|implement)'
+      flags: i
+    - key: stub_pass
+      pattern: '^\s*(?:pass|\.\.\.)\s*#\s*(?:TODO|FIXME|implement)'
+      flags: i
+      comments: true
+    - *todo_implement
+    - *elided
+    - *not_real
+    - *simulated
+    - *lorem
+    - key: mock_data
+      pattern: '^\s*from\s+[\w.]*\b(?:mock_data|fake_data|dummy_data)\b'
+  go:
+    - key: not_implemented
+      pattern: '\bpanic\(\s*"(?:not\s+(?:yet\s+)?implemented|todo|unimplemented|implement\s+me)'
+      flags: i
+    - *todo_implement
+    - *elided
+    - *not_real
+    - *simulated
+  php:
+    - key: not_implemented
+      pattern: '\bthrow\s+new\s+\\?(?:Exception|LogicException|RuntimeException|BadMethodCallException)\(\s*[''"](?:not\s+(?:yet\s+)?implemented|todo\b|implement\s+me|unimplemented)'
+      flags: i
+    - *todo_implement
+    - *elided
+    - *not_real
+    - *simulated
+    - *lorem
+  ruby:
+    - key: not_implemented
+      pattern: '\braise\s+NotImplementedError\s*,?\s*\(?\s*[''"](?:todo|not\s+(?:yet\s+)?implemented|implement)'
+      flags: i
+    - *todo_implement
+    - *elided
+    - *not_real
+    - *simulated
+    - *lorem

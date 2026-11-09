@@ -1,0 +1,21 @@
+prompt: "Let admins set user roles with Firebase in my Next.js app"
+expect: [security/service-key-in-client]
+files:
+  package.json: |
+    { "name": "roles", "dependencies": { "next": "^15.0.0", "firebase": "^10.14.0", "firebase-admin": "^12.6.0" } }
+  app/admin/roles/page.tsx: |
+    "use client";
+
+    import { useState } from "react";
+    import { getAuth } from "firebase-admin/auth";
+
+    export default function Roles() {
+      const [uid, setUid] = useState("");
+      const makeAdmin = async () => {
+        await getAuth().setCustomUserClaims(uid, { admin: true });
+      };
+      return <button onClick={makeAdmin}>Make admin</button>;
+    }
+  lib/firebase.ts: |
+    import { initializeApp } from "firebase/app";
+    export const app = initializeApp({ apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY, projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID });

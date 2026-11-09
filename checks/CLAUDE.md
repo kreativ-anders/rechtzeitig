@@ -11,3 +11,11 @@ When you touch a check, in the same change:
 5. `npm run typecheck && npm test` passes.
 
 `check.ts` imports only `src/sdk.ts`, does no network access, and returns exactly one result.
+
+## Rules without a legal basis
+
+`checks/quality/` holds checks that have no legal basis but help the project (tests that can fail, CI that blocks, no placeholder code). Their `rule.yml` has no `legal_basis` and states `value` (de and en): why the rule is worth running, in one sentence. `src/rules.ts` rejects a quality rule without `value`, and any rule with both. Cards, report and SARIF show it as "No legal basis: <value>". Sources are still required: studies, CWE or OWASP pages, tool docs.
+
+## Code checks
+
+Checks that read source code use `codeFiles()`, `findInCode()` and `codeResult()` from `src/sdk.ts`: languages, skipped paths (vendored, built, docs, examples, fixtures), tests and browser files come from `data/code-paths.yml`, patterns from `data/insecure-code.yml` (security) or `data/code-quality.yml` (quality). Every new pattern gets a case in `test/benchmark/` (see CONTRIBUTING.md).

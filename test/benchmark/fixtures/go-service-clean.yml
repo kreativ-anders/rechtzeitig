@@ -1,0 +1,48 @@
+prompt: "Write a Go service that calls the billing API with a JWT (reviewed)"
+expect: []
+files:
+  go.mod: |
+    module example.com/billing
+
+    go 1.23
+  main.go: |
+    package main
+
+    import (
+    	"crypto/tls"
+    	"log"
+    	"net/http"
+    	"os"
+    )
+
+    func mustEnv(key string) string {
+    	v := os.Getenv(key)
+    	if v == "" {
+    		log.Fatalf("%s is not set", key)
+    	}
+    	return v
+    }
+
+    var jwtSecret = []byte(mustEnv("JWT_SECRET"))
+
+    func client() *http.Client {
+    	return &http.Client{Transport: &http.Transport{TLSClientConfig: &tls.Config{MinVersion: tls.VersionTLS12}}}
+    }
+
+    func main() {
+    	addr := os.Getenv("ADDR")
+    	if addr == "" {
+    		addr = ":8080"
+    	}
+    	log.Fatal(http.ListenAndServe(addr, nil))
+    }
+  main_test.go: |
+    package main
+
+    import "testing"
+
+    func TestClient(t *testing.T) {
+    	if client().Transport == nil {
+    		t.Fatal("no transport")
+    	}
+    }

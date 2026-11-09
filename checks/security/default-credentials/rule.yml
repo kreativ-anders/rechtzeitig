@@ -1,0 +1,20 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-CRED-001
+severity: high
+title:
+  de: "Keine Standard-Secrets und Demo-Passwörter im Code"
+  en: "No default secrets or demo passwords in code"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Matches code (languages and left-out paths in `data/code-paths.yml`, tests excluded) against `data/insecure-code.yml`: a secret environment variable with a literal fallback (`process.env.JWT_SECRET ?? \"secret\"`, `os.getenv(\"SECRET_KEY\", \"dev\")`, `env('APP_KEY', '...')`, `ENV.fetch`), Django's `django-insecure-` key and literal JWT or session secrets fail; common demo passwords (`admin123`, `changeme`, ...) as password values warn. Only the variable name is shown."
+fix_hint:
+  de: "Secrets ohne Ersatzwert lesen und beim Start abbrechen, wenn sie fehlen. Demo-Konten nur in Seeds für die Entwicklung anlegen, mit zufälligem Passwort."
+  en: "Read secrets without a fallback and stop at startup when one is missing. Create demo accounts only in development seeds, with a random password."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://cwe.mitre.org/data/definitions/798.html
+  - https://cwe.mitre.org/data/definitions/1392.html
+  - https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html

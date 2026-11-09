@@ -67,7 +67,7 @@
 <tr><td>All website checks</td><td>Only with a <code>url</code>.</td></tr>
 <tr><td>All repository checks</td><td>Only when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span> (folder: input <code>repository</code>).</td></tr>
 <tr><td><a href="checks.html#both">All checks of repository and website together</a></td><td>Only with a <code>url</code> and a checkout. Without one of them they are skipped, and the report says which is missing.</td></tr>
-<tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (legal, privacy, security, sustainability, accessibility) or scopes (website, repository, both; <code>repo</code> still works). A check of both runs when either scope is listed; <code>both</code> picks only those. Empty runs all.</td></tr>
+<tr><td>A group or scope of checks</td><td><code>modules</code> picks groups (legal, privacy, security, sustainability, accessibility, quality) or scopes (website, repository, both; <code>repo</code> still works). A check of both runs when either scope is listed; <code>both</code> picks only those. Empty runs all.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-001">Cancellation button for subscriptions</a><br><small>LEG-DE-BTN-001</small></td><td>Opt-in: only with <code>subscriptions: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-003">Order button &quot;zahlungspflichtig bestellen&quot;</a><br><small>LEG-DE-BTN-003</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-PRICE-001">Prices with VAT, shipping, base price and 30-day price</a><br><small>LEG-DE-PRICE-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
@@ -757,7 +757,7 @@
 </div>
 </section>
 <section class="module" id="security" data-module="security">
-<h3>Security <small>34 rules</small></h3>
+<h3>Security <small>40 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-DEPS-005" data-module="security" data-scope="repository" data-severity="low" data-search="sec-deps-005 security/actions-pinning github actions are pinned to a commit github actions sind auf einen commit gepinnt cra art. 13(5), due diligence for third-party components (from 11 dec 2027) reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit sha.">
 <summary>
@@ -912,6 +912,40 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-DEBUG-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-debug-001 security/debug-mode no debug mode in production settings kein debug-modus in produktionseinstellungen art. 32 gdpr matches settings, code, dockerfiles and committed `.env` files (languages and left-out paths in `data/code-paths.yml`; tests, env templates and dev or local settings excluded) against `data/insecure-code.yml`: `debug = true` in django settings, `app_debug=true`, `'debug' =&gt; true` in laravel's `config/app.php`, `consider_all_requests_local` in rails production and spring actuator `include=*` fail; flask `debug=true`, graphql introspection or console forced on, `display_errors`, `gin.debugmode` and `node_env=development` in a dockerfile warn.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-DEBUG-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">No debug mode in production settings</span>
+<span class="rule-title-de" lang="de">Kein Debug-Modus in Produktionseinstellungen</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Matches settings, code, Dockerfiles and committed <code>.env</code> files (languages and left-out paths in <code>data/code-paths.yml</code>; tests, env templates and dev or local settings excluded) against <code>data/insecure-code.yml</code>: <code>DEBUG = True</code> in Django settings, <code>APP_DEBUG=true</code>, <code>'debug' =&gt; true</code> in Laravel's <code>config/app.php</code>, <code>consider_all_requests_local</code> in Rails production and Spring actuator <code>include=*</code> fail; Flask <code>debug=True</code>, GraphQL introspection or console forced on, <code>display_errors</code>, <code>gin.DebugMode</code> and <code>NODE_ENV=development</code> in a Dockerfile warn.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Turn debug mode off in production and control it with an environment variable that is off by default.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/debug-mode"><code>checks/security/debug-mode</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://cwe.mitre.org/data/definitions/489.html">cwe.mitre.org</a>, <a href="https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/">docs.djangoproject.com</a>, <a href="https://flask.palletsprojects.com/en/stable/debugging/">flask.palletsprojects.com</a>, <a href="https://laravel.com/docs/12.x/configuration">laravel.com</a>, <a href="https://www.apollographql.com/docs/apollo-server/api/apollo-server">apollographql.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-CRED-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-cred-001 security/default-credentials no default secrets or demo passwords in code keine standard-secrets und demo-passwörter im code art. 32 gdpr matches code (languages and left-out paths in `data/code-paths.yml`, tests excluded) against `data/insecure-code.yml`: a secret environment variable with a literal fallback (`process.env.jwt_secret ?? &quot;secret&quot;`, `os.getenv(&quot;secret_key&quot;, &quot;dev&quot;)`, `env('app_key', '...')`, `env.fetch`), django's `django-insecure-` key and literal jwt or session secrets fail; common demo passwords (`admin123`, `changeme`, ...) as password values warn. only the variable name is shown.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-CRED-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">No default secrets or demo passwords in code</span>
+<span class="rule-title-de" lang="de">Keine Standard-Secrets und Demo-Passwörter im Code</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Matches code (languages and left-out paths in <code>data/code-paths.yml</code>, tests excluded) against <code>data/insecure-code.yml</code>: a secret environment variable with a literal fallback (<code>process.env.JWT_SECRET ?? &quot;secret&quot;</code>, <code>os.getenv(&quot;SECRET_KEY&quot;, &quot;dev&quot;)</code>, <code>env('APP_KEY', '...')</code>, <code>ENV.fetch</code>), Django's <code>django-insecure-</code> key and literal JWT or session secrets fail; common demo passwords (<code>admin123</code>, <code>changeme</code>, ...) as password values warn. Only the variable name is shown.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Read secrets without a fallback and stop at startup when one is missing. Create demo accounts only in development seeds, with a random password.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/default-credentials"><code>checks/security/default-credentials</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://cwe.mitre.org/data/definitions/798.html">cwe.mitre.org</a>, <a href="https://cwe.mitre.org/data/definitions/1392.html">cwe.mitre.org</a>, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html">cheatsheetseries.owasp.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-DEPS-003" data-module="security" data-scope="repository" data-severity="medium" data-search="sec-deps-003 security/dependency-updates dependency updates are automated abhängigkeits-updates sind automatisiert cra annex i part ii(2) (from 11 dec 2027), art. 32 gdpr looks for `.github/dependabot.yml` (and which ecosystems it covers), renovate config, or vulnerability scanners in workflows, as listed in `data/update-tools.yml`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-003<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
@@ -995,6 +1029,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/error-disclosure"><code>checks/security/error-disclosure</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Grundschutz/IT-GS-Kompendium_Einzel_PDFs_2023/06_APP_Anwendungen/APP_3_2_Webserver_Edition_2023.pdf?__blob=publicationFile&amp;v=3">bsi.bund.de</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-ENVEX-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-envex-001 security/example-env-values .env templates hold no real values .env-vorlagen enthalten keine echten werte art. 32 gdpr reads committed `.env` templates (`.env.example`, `.env.sample`, ...; `templates` in `data/insecure-code.yml`) and warns for a secret-named variable whose value has letters and digits, no placeholder word and at least the length and shannon entropy in `data/thresholds.yml`, and for a connection url with a password to a host that is not local; shows only the variable name, never the value. known key formats are also found by `security/secrets`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-ENVEX-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">.env templates hold no real values</span>
+<span class="rule-title-de" lang="de">.env-Vorlagen enthalten keine echten Werte</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads committed <code>.env</code> templates (<code>.env.example</code>, <code>.env.sample</code>, ...; <code>templates</code> in <code>data/insecure-code.yml</code>) and warns for a secret-named variable whose value has letters and digits, no placeholder word and at least the length and Shannon entropy in <code>data/thresholds.yml</code>, and for a connection URL with a password to a host that is not local; shows only the variable name, never the value. Known key formats are also found by <code>security/secrets</code>.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Put only placeholders into templates (for example OPENAI_API_KEY=your-key-here). Revoke a real value right away and remove it from the git history.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/example-env-values"><code>checks/security/example-env-values</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://cwe.mitre.org/data/definitions/798.html">cwe.mitre.org</a>, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html">cheatsheetseries.owasp.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-EXP-001" data-module="security" data-scope="website" data-severity="critical" data-search="sec-exp-001 security/exposed-files no private files are public keine privaten dateien öffentlich art. 32 gdpr requests the file paths from `data/probes.yml`; a 200 whose body matches `expect` fails.">
@@ -1114,6 +1165,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/isolation-headers"><code>checks/security/isolation-headers</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/permissions-policy/#permissions-policy-http-header-field">w3.org</a>, <a href="https://html.spec.whatwg.org/multipage/browsers.html#the-coop-headers">html.spec.whatwg.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-LLMKEY-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-llmkey-001 security/llm-key-in-browser ai api keys stay out of the browser ki-api-schlüssel landen nicht im browser art. 32 gdpr matches code and `.env` files, templates included (languages and left-out paths in `data/code-paths.yml`, tests excluded), against `data/insecure-code.yml`: `dangerouslyallowbrowser: true` and ai provider keys under a public prefix (`next_public_openai_api_key`, `vite_anthropic_key`, ...) fail; a server ai sdk (`openai`, `@anthropic-ai/sdk`, `@google/genai`, ...) imported in a file that runs in the browser (`&quot;use client&quot;`, vue or svelte component, `src/` of a vite app; `client` in `data/code-paths.yml`) warns.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-LLMKEY-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">AI API keys stay out of the browser</span>
+<span class="rule-title-de" lang="de">KI-API-Schlüssel landen nicht im Browser</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Matches code and <code>.env</code> files, templates included (languages and left-out paths in <code>data/code-paths.yml</code>, tests excluded), against <code>data/insecure-code.yml</code>: <code>dangerouslyAllowBrowser: true</code> and AI provider keys under a public prefix (<code>NEXT_PUBLIC_OPENAI_API_KEY</code>, <code>VITE_ANTHROPIC_KEY</code>, ...) fail; a server AI SDK (<code>openai</code>, <code>@anthropic-ai/sdk</code>, <code>@google/genai</code>, ...) imported in a file that runs in the browser (<code>&quot;use client&quot;</code>, Vue or Svelte component, <code>src/</code> of a Vite app; <code>client</code> in <code>data/code-paths.yml</code>) warns.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Call AI providers only from the server (API route, server action, edge function) and store the key as a secret without a public prefix. Revoke a key that was already shipped.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/llm-key-in-browser"><code>checks/security/llm-key-in-browser</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://platform.openai.com/docs/api-reference/authentication">platform.openai.com</a>, <a href="https://nextjs.org/docs/app/guides/environment-variables">nextjs.org</a>, <a href="https://vite.dev/guide/env-and-mode">vite.dev</a>, <a href="https://cwe.mitre.org/data/definitions/522.html">cwe.mitre.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-SUPPLY-002" data-module="security" data-scope="repository" data-severity="low" data-search="sec-supply-002 security/lockfile-drift manifest and lockfile agree manifest und lockfile passen zusammen cra art. 13(5) with annex i part ii(1), an accurate sbom (from 11 dec 2027) warns on lockfiles of two package managers in one folder and a `packagemanager` field that names another manager than the lockfile there (managers in `data/packages.yml`), and on dependencies of package.json and cargo.toml whose locked versions no longer match the manifest: the specifier pnpm recorded, the descriptor in yarn.lock, or for package-lock.json and cargo.lock a range none of the locked versions meets (`src/repo/semver.ts`); dependencies missing from the lockfile are left to `security/hallucinated-packages`.">
@@ -1252,6 +1320,23 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-CLIENTKEY-001" data-module="security" data-scope="repository" data-severity="critical" data-search="sec-clientkey-001 security/service-key-in-client server keys and admin sdks stay out of browser code server-schlüssel und admin-sdks nicht im browser-code art. 32 gdpr in files that run in the browser (`&quot;use client&quot;`, vue or svelte components, `src/` of a vite app, server paths left out; `client` in `data/code-paths.yml`) looks for the patterns in `data/insecure-code.yml`: the supabase `service_role` key or `auth.admin`, `firebase-admin`, the `stripe` server sdk or `stripe_secret_key`, and server secrets such as `database_url` or `jwt_secret`; skipped without browser code. secrets under a public prefix are left to `security/secrets`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-CLIENTKEY-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">critical</span></span></span>
+<span class="rule-title">Server keys and admin SDKs stay out of browser code</span>
+<span class="rule-title-de" lang="de">Server-Schlüssel und Admin-SDKs nicht im Browser-Code</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>In files that run in the browser (<code>&quot;use client&quot;</code>, Vue or Svelte components, <code>src/</code> of a Vite app, server paths left out; <code>client</code> in <code>data/code-paths.yml</code>) looks for the patterns in <code>data/insecure-code.yml</code>: the Supabase <code>service_role</code> key or <code>auth.admin</code>, <code>firebase-admin</code>, the <code>stripe</code> server SDK or <code>STRIPE_SECRET_KEY</code>, and server secrets such as <code>DATABASE_URL</code> or <code>JWT_SECRET</code>; skipped without browser code. Secrets under a public prefix are left to <code>security/secrets</code>.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Use admin SDKs and server keys only in server code (API route, server action, edge function). In the browser use the public key (Supabase anon, Stripe publishable) with row level security or server checks. Revoke keys that were shipped.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/service-key-in-client"><code>checks/security/service-key-in-client</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://supabase.com/docs/guides/api/api-keys">supabase.com</a>, <a href="https://firebase.google.com/docs/admin/setup">firebase.google.com</a>, <a href="https://docs.stripe.com/keys">docs.stripe.com</a>, <a href="https://nextjs.org/docs/app/guides/environment-variables">nextjs.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-EXP-003" data-module="security" data-scope="both" data-severity="medium" data-search="sec-exp-003 security/source-maps source maps do not expose the repository's code source maps legen den code des repositorys nicht offen  follows the `sourcemappingurl` of the site's own scripts (inline maps decoded, others requested on the same site up to `code.max_maps` in `data/thresholds.yml`) and matches each map's `sources` against the repository's files by their path endings (at least two parts, `node_modules` left out); a match warns, more so when the map carries `sourcescontent`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-EXP-003<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
@@ -1284,6 +1369,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/subresource-integrity"><code>checks/security/subresource-integrity</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/sri/#resource-integrity">w3.org</a>, <a href="https://www.w3.org/TR/sri/#the-integrity-attribute">w3.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-TLSOFF-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-tlsoff-001 security/tls-verification-off code verifies tls certificates code prüft tls-zertifikate art. 32 gdpr; bsi tr-02102-2 (certificate validation) matches code, scripts, workflows, dockerfiles and `.env` files (languages and left-out paths in `data/code-paths.yml`, tests excluded) line by line against the patterns in `data/insecure-code.yml` that turn certificate checks off: `rejectunauthorized: false`, `node_tls_reject_unauthorized=0`, `verify=false`, `insecureskipverify: true`, `curlopt_ssl_verifypeer` off, `verify_none`, `curl -k`, `wget --no-check-certificate`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-TLSOFF-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">Code verifies TLS certificates</span>
+<span class="rule-title-de" lang="de">Code prüft TLS-Zertifikate</span>
+<span class="rule-law">Art. 32 GDPR; BSI TR-02102-2 (certificate validation)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Matches code, scripts, workflows, Dockerfiles and <code>.env</code> files (languages and left-out paths in <code>data/code-paths.yml</code>, tests excluded) line by line against the patterns in <code>data/insecure-code.yml</code> that turn certificate checks off: <code>rejectUnauthorized: false</code>, <code>NODE_TLS_REJECT_UNAUTHORIZED=0</code>, <code>verify=False</code>, <code>InsecureSkipVerify: true</code>, <code>CURLOPT_SSL_VERIFYPEER</code> off, <code>VERIFY_NONE</code>, <code>curl -k</code>, <code>wget --no-check-certificate</code>.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Keep certificate checks on. For own or internal certificates, add the CA (for example NODE_EXTRA_CA_CERTS, verify=&quot;/path/ca.pem&quot;) instead of turning the check off.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/tls-verification-off"><code>checks/security/tls-verification-off</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html">bsi.bund.de</a>, <a href="https://cwe.mitre.org/data/definitions/295.html">cwe.mitre.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-TLS-002" data-module="security" data-scope="website" data-severity="high" data-search="sec-tls-002 security/tls tls certificate is valid and current tls-zertifikat ist gültig und aktuell art. 32 gdpr opens a tls connection to the host and reads protocol, trust and expiry date of the certificate, warning 14 days before expiry (`data/thresholds.yml`).">
@@ -1570,6 +1672,62 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/page-language"><code>checks/accessibility/page-language</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bfsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bfsgv/">gesetze-im-internet.de</a>, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">etsi.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html">w3.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+</div>
+</section>
+<section class="module" id="quality" data-module="quality">
+<h3>Code quality <small>3 rules</small></h3>
+<div class="rules">
+<details class="rule" id="QUAL-TEST-001" data-module="quality" data-scope="repository" data-severity="medium" data-search="qual-test-001 quality/hollow-tests tests can fail tests können scheitern no legal basis a green test run only proves something when the tests can fail. coding agents have been shown to edit tests until they pass. reads test files (`tests` in `data/code-paths.yml`) and warns for assertions that compare a constant with itself (`expect(true).tobe(true)`, `assert true`), an assertion inside a try whose catch does nothing, a forced pass (`process.exit(0)`, `outcome = &quot;passed&quot;`), test cases in a file without any assertion, `.only` and focused tests, and `--passwithnotests` in scripts and runner configs (patterns in `data/code-quality.yml`); skipped tests warn above the count and share in `data/thresholds.yml`.">
+<summary>
+<span class="rule-head"><span class="rule-id">QUAL-TEST-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Tests can fail</span>
+<span class="rule-title-de" lang="de">Tests können scheitern</span>
+<span class="rule-law none">No legal basis: A green test run only proves something when the tests can fail. Coding agents have been shown to edit tests until they pass.</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads test files (<code>tests</code> in <code>data/code-paths.yml</code>) and warns for assertions that compare a constant with itself (<code>expect(true).toBe(true)</code>, <code>assert True</code>), an assertion inside a try whose catch does nothing, a forced pass (<code>process.exit(0)</code>, <code>outcome = &quot;passed&quot;</code>), test cases in a file without any assertion, <code>.only</code> and focused tests, and <code>--passWithNoTests</code> in scripts and runner configs (patterns in <code>data/code-quality.yml</code>); skipped tests warn above the count and share in <code>data/thresholds.yml</code>.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Make each test check a property of the code that would differ when the code is wrong. Turn skipped and focused tests back on or delete them.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/quality/hollow-tests"><code>checks/quality/hollow-tests</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://arxiv.org/abs/2510.20270">arxiv.org</a>, <a href="https://metr.org/blog/2025-06-05-recent-reward-hacking/">metr.org</a>, <a href="https://www.anthropic.com/research/emergent-misalignment-reward-hacking">anthropic.com</a>, <a href="https://jestjs.io/docs/cli">jestjs.io</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="QUAL-CI-001" data-module="quality" data-scope="repository" data-severity="medium" data-search="qual-ci-001 quality/neutralized-ci ci checks can fail the run ci-prüfungen können den lauf scheitern lassen no legal basis a check that never fails reports nothing. muting tests, linters or scans moves errors into production. in `.github/workflows/*.yml` warns for `continue-on-error: true` and `if: false` on a step or job whose lines name a check (`check_words` in `data/code-quality.yml`, uploads and notifications left out); in scripts, workflows, makefiles and package.json for `|| true` or `|| exit 0` after a test, lint or audit command, `git commit --no-verify` outside workflows and a test script that does nothing; and for file-wide `@ts-nocheck`, bare `eslint-disable` or `# type: ignore` in the first lines of at least as many files and as large a share as `data/thresholds.yml` sets (languages and left-out paths in `data/code-paths.yml`).">
+<summary>
+<span class="rule-head"><span class="rule-id">QUAL-CI-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">CI checks can fail the run</span>
+<span class="rule-title-de" lang="de">CI-Prüfungen können den Lauf scheitern lassen</span>
+<span class="rule-law none">No legal basis: A check that never fails reports nothing. Muting tests, linters or scans moves errors into production.</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>In <code>.github/workflows/*.yml</code> warns for <code>continue-on-error: true</code> and <code>if: false</code> on a step or job whose lines name a check (<code>check_words</code> in <code>data/code-quality.yml</code>, uploads and notifications left out); in scripts, workflows, Makefiles and package.json for <code>|| true</code> or <code>|| exit 0</code> after a test, lint or audit command, <code>git commit --no-verify</code> outside workflows and a test script that does nothing; and for file-wide <code>@ts-nocheck</code>, bare <code>eslint-disable</code> or <code># type: ignore</code> in the first lines of at least as many files and as large a share as <code>data/thresholds.yml</code> sets (languages and left-out paths in <code>data/code-paths.yml</code>).</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Let check steps fail when they find errors; suppress known exceptions per rule or line, with a reason.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/quality/neutralized-ci"><code>checks/quality/neutralized-ci</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax">docs.github.com</a>, <a href="https://cwe.mitre.org/data/definitions/1164.html">cwe.mitre.org</a>, <a href="https://arxiv.org/abs/2510.20270">arxiv.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="QUAL-STUB-001" data-module="quality" data-scope="repository" data-severity="low" data-search="qual-stub-001 quality/placeholder-code no placeholder code in production paths kein platzhalter-code in produktionspfaden no legal basis generated code often looks finished where it only simulates. finding placeholders shows which features are not real yet. matches code outside tests, docs, examples and stories (languages and left-out paths in `data/code-paths.yml`), comments included, against `data/code-quality.yml`: `throw new error(&quot;not implemented&quot;)`, `panic(&quot;todo&quot;)`, `raise notimplementederror(&quot;todo&quot;)`, `pass  # todo`, `todo: implement`, elided code (`// ... rest of the code`), `// in a real app ...`, `// simulate api call`, lorem ipsum and imports of mock data; info with the files that have most finds first.">
+<summary>
+<span class="rule-head"><span class="rule-id">QUAL-STUB-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
+<span class="rule-title">No placeholder code in production paths</span>
+<span class="rule-title-de" lang="de">Kein Platzhalter-Code in Produktionspfaden</span>
+<span class="rule-law none">No legal basis: Generated code often looks finished where it only simulates. Finding placeholders shows which features are not real yet.</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Matches code outside tests, docs, examples and stories (languages and left-out paths in <code>data/code-paths.yml</code>), comments included, against <code>data/code-quality.yml</code>: <code>throw new Error(&quot;Not implemented&quot;)</code>, <code>panic(&quot;TODO&quot;)</code>, <code>raise NotImplementedError(&quot;TODO&quot;)</code>, <code>pass  # TODO</code>, <code>TODO: implement</code>, elided code (<code>// ... rest of the code</code>), <code>// In a real app ...</code>, <code>// Simulate API call</code>, lorem ipsum and imports of mock data; info with the files that have most finds first.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Implement each find or take the feature out of the interface until it is real. Keep sample data in tests and stories.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/quality/placeholder-code"><code>checks/quality/placeholder-code</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://cwe.mitre.org/data/definitions/546.html">cwe.mitre.org</a>, <a href="https://cwe.mitre.org/data/definitions/1164.html">cwe.mitre.org</a>, <a href="https://arxiv.org/abs/2510.20270">arxiv.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 </div>

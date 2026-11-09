@@ -1,0 +1,20 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: QUAL-TEST-001
+severity: medium
+title:
+  de: "Tests können scheitern"
+  en: "Tests can fail"
+value:
+  de: "Ein grüner Testlauf belegt nur dann etwas, wenn die Tests scheitern können. Coding-Agenten passen Tests nachweislich an, bis sie bestehen."
+  en: "A green test run only proves something when the tests can fail. Coding agents have been shown to edit tests until they pass."
+how: "Reads test files (`tests` in `data/code-paths.yml`) and warns for assertions that compare a constant with itself (`expect(true).toBe(true)`, `assert True`), an assertion inside a try whose catch does nothing, a forced pass (`process.exit(0)`, `outcome = \"passed\"`), test cases in a file without any assertion, `.only` and focused tests, and `--passWithNoTests` in scripts and runner configs (patterns in `data/code-quality.yml`); skipped tests warn above the count and share in `data/thresholds.yml`."
+fix_hint:
+  de: "Jeden Test eine Eigenschaft des Codes prüfen lassen, die bei einem Fehler anders wäre. Übersprungene und fokussierte Tests wieder aktivieren oder löschen."
+  en: "Make each test check a property of the code that would differ when the code is wrong. Turn skipped and focused tests back on or delete them."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://arxiv.org/abs/2510.20270
+  - https://metr.org/blog/2025-06-05-recent-reward-hacking/
+  - https://www.anthropic.com/research/emergent-misalignment-reward-hacking
+  - https://jestjs.io/docs/cli

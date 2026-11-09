@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: QUAL-STUB-001
+severity: low
+title:
+  de: "Kein Platzhalter-Code in Produktionspfaden"
+  en: "No placeholder code in production paths"
+value:
+  de: "Generierter Code sieht oft fertig aus, wo er nur simuliert. Platzhalter zu finden zeigt, welche Funktionen noch nicht echt sind."
+  en: "Generated code often looks finished where it only simulates. Finding placeholders shows which features are not real yet."
+how: "Matches code outside tests, docs, examples and stories (languages and left-out paths in `data/code-paths.yml`), comments included, against `data/code-quality.yml`: `throw new Error(\"Not implemented\")`, `panic(\"TODO\")`, `raise NotImplementedError(\"TODO\")`, `pass  # TODO`, `TODO: implement`, elided code (`// ... rest of the code`), `// In a real app ...`, `// Simulate API call`, lorem ipsum and imports of mock data; info with the files that have most finds first."
+fix_hint:
+  de: "Jede Fundstelle umsetzen oder die Funktion aus der Oberfläche nehmen, bis sie echt ist. Beispieldaten nur in Tests und Stories."
+  en: "Implement each find or take the feature out of the interface until it is real. Keep sample data in tests and stories."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://cwe.mitre.org/data/definitions/546.html
+  - https://cwe.mitre.org/data/definitions/1164.html
+  - https://arxiv.org/abs/2510.20270

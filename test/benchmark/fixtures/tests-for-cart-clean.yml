@@ -1,0 +1,49 @@
+prompt: "Write tests for the shopping cart (reviewed)"
+expect: []
+files:
+  package.json: |
+    { "name": "shop", "scripts": { "test": "jest", "lint": "eslint ." }, "devDependencies": { "jest": "^29.7.0" } }
+  src/cart.ts: |
+    export interface Item { id: string; price: number; qty: number }
+    export const total = (items: Item[]) => items.reduce((sum, i) => sum + i.price * i.qty, 0);
+    export const add = (items: Item[], item: Item) => [...items, item];
+  src/cart.test.ts: |
+    import { add, total } from "./cart";
+
+    describe("cart", () => {
+      it("sums price times quantity", () => {
+        expect(total([{ id: "a", price: 10, qty: 2 }, { id: "b", price: 1, qty: 3 }])).toBe(23);
+      });
+
+      it("adds an item without changing the old list", () => {
+        const before = [];
+        expect(add(before, { id: "b", price: 5, qty: 1 })).toHaveLength(1);
+        expect(before).toHaveLength(0);
+      });
+
+      it("throws on bad input", () => {
+        expect(() => total(null as never)).toThrow();
+      });
+    });
+  tests/test_tax.py: |
+    import pytest
+    from shop.tax import vat
+
+    def test_vat():
+        assert vat(100) == 19
+
+    @pytest.mark.skipif(True, reason="needs network")
+    def test_rates_online():
+        assert vat(1) > 0
+  .github/workflows/ci.yml: |
+    on: push
+    jobs:
+      test:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - run: npm ci
+          - run: npm test
+          - name: Upload coverage
+            uses: codecov/codecov-action@v4
+            continue-on-error: true

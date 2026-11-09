@@ -11,8 +11,13 @@ export type UiLanguage = (typeof LANGUAGES)[number];
 export const SEVERITIES = ["info", "low", "medium", "high", "critical"] as const;
 export type Severity = (typeof SEVERITIES)[number];
 
-/** SEC security, LEG-DE German law, LEG-EU EU law, A11Y accessibility, PRC prices, SUS sustainability. */
-const ID = /^(SEC|LEG-DE|LEG-EU|A11Y|PRC|SUS)-[A-Z0-9]+-\d{3}$/;
+/** SEC security, LEG-DE German law, LEG-EU EU law, A11Y accessibility, PRC prices, SUS sustainability, QUAL code quality. */
+const ID = /^(SEC|LEG-DE|LEG-EU|A11Y|PRC|SUS|QUAL)-[A-Z0-9]+-\d{3}$/;
+/**
+ * Groups whose rules have no legal basis by design (checks/<group>/). Each of their rules states its `value`
+ * instead, and none may name a `legal_basis`, so a reader never takes a finding there for a legal duty.
+ */
+export const NO_LEGAL_BASIS_GROUPS = ["quality"] as const;
 /** A rule whose review is older than this fails the tests, so legal texts get looked at again. */
 const REVIEW_DAYS = 365;
 
@@ -57,6 +62,11 @@ export interface Rule {
   severity: Severity;
   title: Localized;
   legal_basis?: Localized;
+  /**
+   * Why the rule is worth running when it has no legal basis: the benefit for the project, in one sentence.
+   * Required in NO_LEGAL_BASIS_GROUPS, never together with `legal_basis`. Shown as "No legal basis: <value>".
+   */
+  value?: Localized;
   /** One sentence: how check.ts detects it, naming the data files it uses. Shown in docs/checks.html. */
   how: string;
   fix_hint: Localized;
@@ -65,15 +75,17 @@ export interface Rule {
   meta: { last_reviewed: string; sources: string[] };
 }
 
+/** Loads checks/<group>/<name>/rule.yml and validates it, with the group taken from the path. */
 export function loadRule(file: string): Rule {
   const rule = loadYaml<Rule>(file);
-  const problems = validateRule(rule);
+  const group = file.split(/[\\/]/).at(-3);
+  const problems = validateRule(rule, new Date(), group);
   if (problems.length) throw new Error(`${file}: ${problems.join("; ")}`);
   return rule;
 }
 
-/** Returns what is wrong with a rule; empty when it is valid. */
-export function validateRule(rule: Rule, today = new Date()): string[] {
+/** Returns what is wrong with a rule; empty when it is valid. `group` is the folder below checks/. */
+export function validateRule(rule: Rule, today = new Date(), group?: string): string[] {
   const p: string[] = [];
   const text = (name: string, value: unknown, required = true) => {
     if (value === undefined && !required) return;
@@ -83,6 +95,12 @@ export function validateRule(rule: Rule, today = new Date()): string[] {
   if (!SEVERITIES.includes(rule?.severity)) p.push(`severity must be one of ${SEVERITIES.join(", ")}`);
   text("title", rule?.title);
   text("legal_basis", rule?.legal_basis, false);
+  text("value", rule?.value, false);
+  if (rule?.value !== undefined && rule?.legal_basis !== undefined) p.push("value is only for rules without legal_basis");
+  if ((NO_LEGAL_BASIS_GROUPS as readonly string[]).includes(group ?? "")) {
+    if (rule?.legal_basis !== undefined) p.push(`rules in ${group}/ have no legal_basis`);
+    if (rule?.value === undefined) p.push(`rules in ${group}/ need value: why the rule is worth running`);
+  }
   text("fix_hint", rule?.fix_hint);
   if (typeof rule?.how !== "string" || rule.how.trim().length < 20) p.push("how must say in one sentence how the check works");
   if (rule?.requires !== undefined && (!Array.isArray(rule.requires) || rule.requires.some((r) => !(r in SWITCHES)))) {

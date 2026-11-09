@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-TLSOFF-001
+severity: high
+title:
+  de: "Code prüft TLS-Zertifikate"
+  en: "Code verifies TLS certificates"
+legal_basis:
+  de: "Art. 32 DSGVO; BSI TR-02102-2 (Zertifikatsprüfung)"
+  en: "Art. 32 GDPR; BSI TR-02102-2 (certificate validation)"
+how: "Matches code, scripts, workflows, Dockerfiles and `.env` files (languages and left-out paths in `data/code-paths.yml`, tests excluded) line by line against the patterns in `data/insecure-code.yml` that turn certificate checks off: `rejectUnauthorized: false`, `NODE_TLS_REJECT_UNAUTHORIZED=0`, `verify=False`, `InsecureSkipVerify: true`, `CURLOPT_SSL_VERIFYPEER` off, `VERIFY_NONE`, `curl -k`, `wget --no-check-certificate`."
+fix_hint:
+  de: "Zertifikatsprüfung eingeschaltet lassen. Für eigene oder interne Zertifikate die CA hinterlegen (z. B. NODE_EXTRA_CA_CERTS, verify=\"/pfad/ca.pem\") statt die Prüfung abzuschalten."
+  en: "Keep certificate checks on. For own or internal certificates, add the CA (for example NODE_EXTRA_CA_CERTS, verify=\"/path/ca.pem\") instead of turning the check off."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html
+  - https://cwe.mitre.org/data/definitions/295.html

@@ -1,0 +1,69 @@
+# Which tracked files count as source code, in which language, and which paths the code checks leave out
+# (codeFiles() in src/repo/code.ts). Patterns are regular expressions on the path relative to the repository root,
+# with "/" as separator. Changing a list changes results: name this file in the commit message.
+
+# Language of a file: by extension, or by file name (`names`, matched against the whole file name), or by path.
+# `comment` lists the prefixes of a line that is only a comment; patterns skip such lines unless they ask for comments.
+languages:
+  js:
+    extensions: [".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts", ".vue", ".svelte", ".astro"]
+    comment: ["//", "/*", "*", "<!--"]
+  python:
+    extensions: [".py"]
+    comment: ["#"]
+  go:
+    extensions: [".go"]
+    comment: ["//", "/*", "*"]
+  php:
+    extensions: [".php"]
+    comment: ["//", "#", "/*", "*"]
+  ruby:
+    extensions: [".rb", ".rake"]
+    names: ["Gemfile", "Rakefile"]
+    comment: ["#"]
+  # Commands: shell scripts, Dockerfiles, Makefiles, CI configs and package.json scripts.
+  shell:
+    extensions: [".sh", ".bash", ".zsh"]
+    names: ["Dockerfile", "Containerfile", "Makefile", "package.json", ".gitlab-ci.yml", "Procfile"]
+    paths: ['^\.github/workflows/[^/]+\.ya?ml$', '(^|/)Dockerfile\.[\w.-]+$', '(^|/)[\w.-]+\.Dockerfile$']
+    comment: ["#"]
+  # Committed environment files, templates included (.env, .env.production, .env.example ...).
+  env:
+    paths: ['(^|/)\.env(\.[\w-]+)*$']
+    comment: ["#"]
+  # Framework settings that are neither code nor env files.
+  config:
+    names: ["application.properties", "application.yml", "application.yaml"]
+    paths: ['(^|/)application-[\w-]+\.(properties|ya?ml)$']
+    comment: ["#", "//"]
+
+# Paths no code check reads: dependencies and vendored code, build output, generated and minified files,
+# documentation and examples, test fixtures. Tests are named in `tests` and left out by every check but
+# the ones that look at tests.
+skip:
+  - '(^|/)(node_modules|vendor|bower_components|third_party|third-party|Pods|\.venv|venv|site-packages|\.yarn|\.pnpm-store)/'
+  - '(^|/)(dist|build|out|\.next|\.nuxt|\.svelte-kit|\.output|\.vercel|\.netlify|coverage|target|__pycache__|\.turbo|\.cache|storybook-static)/'
+  - '(^|/)(generated|__generated__|gen)/|\.(gen|generated|g)\.\w+$|\.d\.ts$|\.pb\.go$|_pb2\.py$'
+  - '\.min\.(js|css)$|\.bundle\.js$|\.map$|-lock\.(json|yaml)$|\.lock$'
+  - '(^|/)(docs?|documentation|examples?|samples?|demos?)/'
+  - '(^|/)(fixtures?|__fixtures__|testdata|__snapshots__|__mocks__)/'
+  - '\.(stories|story)\.\w+$'
+
+# Test files. Code checks skip them; quality/hollow-tests reads only them.
+tests:
+  - '(^|/)(__tests__|tests?|specs?|e2e|cypress|playwright)/'
+  - '(^|/)(test|spec)\.\w+$|\.(test|spec|e2e|cy)\.\w+$'
+  - '(^|/)test_[^/]+\.py$|_test\.(py|go)$|(^|/)conftest\.py$'
+  - '_spec\.rb$|_test\.rb$'
+  - 'Test\.php$'
+
+# Files that run in the browser. A file whose first statement is the directive below is a client component
+# (React Server Components). Vue and Svelte components run in the browser unless their name says server.
+# Files under `src/` next to a Vite config are a browser app unless the path names a server part.
+client:
+  directive: '^\s*["'']use client["'']'
+  # How many lines from the top are read for it: `source-code.directive_lines` in data/thresholds.yml.
+  components: '\.(vue|svelte)$'
+  server_names: '(^|[/.+])(server|api|functions|edge-functions|middleware|actions|route|lib/server|worker)([/.]|$)'
+  vite_config: '(^|/)vite\.config\.(js|ts|mjs|mts|cjs)$'
+

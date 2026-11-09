@@ -1,0 +1,37 @@
+prompt: "Write tests for the shopping cart and make CI green"
+expect: [quality/hollow-tests]
+files:
+  package.json: |
+    { "name": "shop", "scripts": { "test": "jest --passWithNoTests" }, "devDependencies": { "jest": "^29.7.0" } }
+  src/cart.ts: |
+    export interface Item { id: string; price: number; qty: number }
+    export const total = (items: Item[]) => items.reduce((sum, i) => sum + i.price * i.qty, 0);
+    export const add = (items: Item[], item: Item) => [...items, item];
+  src/cart.test.ts: |
+    import { add, total } from "./cart";
+
+    describe("cart", () => {
+      it("should calculate the total", () => {
+        const items = [{ id: "a", price: 10, qty: 2 }];
+        total(items);
+        expect(true).toBe(true);
+      });
+
+      it("should add an item", () => {
+        try {
+          expect(add([], { id: "b", price: 5, qty: 1 })).toHaveLength(2);
+        } catch (error) {
+          console.log(error);
+        }
+      });
+
+      it.skip("applies discounts", () => {
+        expect(total([])).toBe(0);
+      });
+    });
+  src/checkout.test.ts: |
+    import { total } from "./cart";
+
+    test("checkout renders", () => {
+      total([]);
+    });

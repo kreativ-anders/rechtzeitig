@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-LLMKEY-001
+severity: high
+title:
+  de: "KI-API-Schlüssel landen nicht im Browser"
+  en: "AI API keys stay out of the browser"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Matches code and `.env` files, templates included (languages and left-out paths in `data/code-paths.yml`, tests excluded), against `data/insecure-code.yml`: `dangerouslyAllowBrowser: true` and AI provider keys under a public prefix (`NEXT_PUBLIC_OPENAI_API_KEY`, `VITE_ANTHROPIC_KEY`, ...) fail; a server AI SDK (`openai`, `@anthropic-ai/sdk`, `@google/genai`, ...) imported in a file that runs in the browser (`\"use client\"`, Vue or Svelte component, `src/` of a Vite app; `client` in `data/code-paths.yml`) warns."
+fix_hint:
+  de: "KI-Anbieter nur vom Server aus aufrufen (API-Route, Server Action, Edge Function) und den Schlüssel ohne öffentliches Präfix als Secret hinterlegen. Einen bereits ausgelieferten Schlüssel widerrufen."
+  en: "Call AI providers only from the server (API route, server action, edge function) and store the key as a secret without a public prefix. Revoke a key that was already shipped."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://platform.openai.com/docs/api-reference/authentication
+  - https://nextjs.org/docs/app/guides/environment-variables
+  - https://vite.dev/guide/env-and-mode
+  - https://cwe.mitre.org/data/definitions/522.html

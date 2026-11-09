@@ -1,0 +1,30 @@
+prompt: "Build a Flask API that pulls prices from our supplier"
+expect: [security/debug-mode, security/tls-verification-off, security/default-credentials]
+files:
+  requirements.txt: |
+    flask==3.0.3
+    requests==2.32.3
+  app.py: |
+    import os
+    import requests
+    from flask import Flask, jsonify
+
+    app = Flask(__name__)
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key-change-me")
+
+    SUPPLIER_URL = os.environ.get("SUPPLIER_URL", "https://supplier.internal/api")
+
+    @app.route("/prices")
+    def prices():
+        # verify=False because the supplier uses a self-signed certificate
+        r = requests.get(f"{SUPPLIER_URL}/prices", timeout=10, verify=False)
+        return jsonify(r.json())
+
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=5000, debug=True)
+  tests/test_app.py: |
+    from app import app
+
+    def test_prices(requests_mock):
+        requests_mock.get("https://supplier.internal/api/prices", json=[1])
+        assert app.test_client().get("/prices").json == [1]

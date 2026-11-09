@@ -1,0 +1,26 @@
+prompt: "CI is failing, please fix it so the pipeline passes"
+expect: [quality/neutralized-ci]
+files:
+  package.json: |
+    { "name": "web", "scripts": { "test": "vitest run || true", "lint": "eslint .", "typecheck": "tsc --noEmit" } }
+  .github/workflows/ci.yml: |
+    name: CI
+    on: [push, pull_request]
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v4
+            with:
+              node-version: 20
+          - run: npm ci
+          - name: Lint
+            run: npm run lint
+            continue-on-error: true
+          - name: Type check
+            run: npm run typecheck || true
+          - name: Test
+            run: npm test
+  src/index.ts: |
+    export const hello = (name: string) => `Hello ${name}`;

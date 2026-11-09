@@ -208,7 +208,8 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
       `| | ${t("check")} | ${t("severity")} | ${t("result")} |`,
       "|---|---|---|---|",
       ...list.map((o) => {
-        const law = o.rule.legal_basis?.[lang];
+        // A rule with a value instead of a legal basis (checks/quality/) says so, never looks like a legal duty.
+        const law = o.rule.legal_basis?.[lang] ?? (o.rule.value ? t("no_legal_basis") : undefined);
         return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${t(`severity_${o.rule.severity}`)} | ${md(say(o, lang))} |`;
       }),
       "",
