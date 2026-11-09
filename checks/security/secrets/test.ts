@@ -1,11 +1,19 @@
+import { createHash } from "node:crypto";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { runRepoCheck } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
+// A random-looking string of `n` characters from `chars`, the same on every run.
+function noise(n: number, chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"): string {
+  const bytes = createHash("sha512").update(`${n}${chars}`).digest();
+  return Array.from({ length: n }, (_, i) => chars[(bytes[i % 64] + i * 7) % chars.length]).join("");
+}
+const hex = "0123456789abcdef";
+
 // Built at runtime so the repository itself contains no secret-looking strings.
-const stripe = ["sk", "live", "x".repeat(24)].join("_");
+const stripe = ["sk", "live", noise(24)].join("_");
 const jwt = (payload: object) =>
   ["eyJhbGciOiJIUzI1NiJ9", Buffer.from(JSON.stringify(payload)).toString("base64url"), "signature1234567"].join(".");
 
@@ -45,8 +53,76 @@ test("finds a service_role key after an anon key on the same line", async () => 
   assert.match(result.details?.[0] ?? "", /Supabase service_role key/);
 });
 
+// Prefixes split so that no file of this repository contains a token-like string.
+const tokens: Record<string, string> = {
+  "OpenAI API key": ["sk", "proj", noise(48)].join("-"),
+  "Anthropic API key": ["sk", "ant", "api03", noise(40)].join("-"),
+  "GitHub token": ["ghp", noise(36)].join("_"),
+  "GitLab token": ["glpat", noise(20)].join("-"),
+  "npm access token": ["npm", noise(36)].join("_"),
+  "Hugging Face token": ["hf", noise(34, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")].join("_"),
+  "Supabase secret key": ["sb", "secret", noise(32)].join("_"),
+  "Slack webhook": `https://${["hooks", "slack", "com"].join(".")}/services/${noise(44)}`,
+  "Discord webhook": `https://${["discord", "com"].join(".")}/api/webhooks/123456789012345678/${noise(64)}`,
+  "Shopify token or secret": ["shpat", noise(32, hex)].join("_"),
+  "DigitalOcean token": ["dop", "v1", noise(64, hex)].join("_"),
+  "Azure AD client secret": `${noise(3)}8${["Q", noise(34)].join("~")}`,
+  "Private key": `-----BEGIN ${"OPENSSH"} PRIVATE KEY-----`,
+};
+
+for (const [name, token] of Object.entries(tokens)) {
+  test(`fails for a ${name}`, async () => {
+    const result = await runRepoCheck(here, { "src/config.ts": `const value = "${token}";` });
+    assert.equal(result.status, "fail", `${name}: ${result.details?.join(" | ")}`);
+    assert.ok(result.details?.[0]?.startsWith(`src/config.ts:1: ${name} (`), result.details?.[0]);
+  });
+}
+
+test("fails for a Telegram bot token next to its name", async () => {
+  const result = await runRepoCheck(here, { ".env": `TELEGRAM_BOT_TOKEN=839201457:${["A", noise(34)].join("")}` });
+  assert.equal(result.status, "fail");
+  assert.match(result.details?.[0] ?? "", /Telegram bot token/);
+});
+
+test("passes for placeholders and documented examples", async () => {
+  const lines = [
+    `STRIPE_KEY=${["sk", "live", "x".repeat(24)].join("_")}`,
+    `AWS_ACCESS_KEY_ID=${["AKIA", "IOSFODNN7", "EXAMPLE"].join("")}`,
+    `OPENAI_API_KEY=${["sk", "proj", `your_key_here_${noise(40)}`].join("-")}`,
+  ];
+  const result = await runRepoCheck(here, { "README.md": lines.join("\n") });
+  assert.equal(result.status, "pass", result.details?.join(" | "));
+});
+
+test("warns for a random value under a secret-like name", async () => {
+  const result = await runRepoCheck(here, { "config/app.py": `JWT_SECRET = "${noise(32)}"` });
+  assert.equal(result.status, "warn");
+  assert.equal(result.raw.message.key, "possible");
+  assert.match(result.details?.[0] ?? "", /^config\/app\.py:1: Possible secret in an assignment/);
+});
+
+test("ignores references, short values and words under a secret-like name", async () => {
+  const lines = [
+    "apiKey: process.env.OPENAI_API_KEY,",
+    'password = os.environ["DB_PASSWORD"]',
+    "TOKEN=${{ secrets.DEPLOY_TOKEN }}",
+    'const token = "short";',
+    'secret: "this_is_not_a_real_secret_value"',
+    "API_KEY=",
+    'resetPasswordToken: "reset-password-token-route"',
+  ];
+  const result = await runRepoCheck(here, { "src/env.ts": lines.join("\n") });
+  assert.equal(result.status, "pass", result.details?.join(" | "));
+});
+
+test("names a known token once, not also as a generic find", async () => {
+  const result = await runRepoCheck(here, { ".env": `OPENAI_API_KEY=${tokens["OpenAI API key"]}` });
+  assert.equal(result.status, "fail");
+  assert.equal(result.details?.length, 1);
+});
+
 test("warns only for a key that may be meant to be public", async () => {
-  const google = ["AIza", "x".repeat(35)].join("");
+  const google = ["AIza", noise(35)].join("");
   const result = await runRepoCheck(here, { "src/map.ts": `const key = "${google}";` });
   assert.equal(result.status, "warn");
 });

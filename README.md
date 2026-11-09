@@ -37,7 +37,7 @@ More code is written with AI, and the same things keep slipping through: no impr
 | 🍪 **Privacy** | Cookies and trackers before consent, consent banner, third countries (GDPR, TDDDG) |
 | 🔒 **Security** | Headers, TLS, exposed files, mixed content, `security.txt` |
 | 📦 **Repository** | CycloneDX SBOM, known vulnerabilities, license conflicts, committed secrets, workflow risks |
-| 🌱 **Sustainability and accessibility** | Compression, caching, image formats, page language, autoplay |
+| 🌱 **Sustainability and accessibility** | Compression, caching, image formats, page language, autoplay, alt texts, form labels, contrast (selected axe-core rules) |
 
 Every check names its legal basis and links a primary source. Your code stays on the runner, there is no account and no paid tier.
 

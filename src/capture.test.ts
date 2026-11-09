@@ -15,6 +15,28 @@ const site = (html: string) => {
   return serve(dir);
 };
 
+test("runs the selected axe-core rules with JavaScript on, also under a strict CSP, and caps the elements", async () => {
+  const html = `<!doctype html><html lang="de"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'"><title>T</title></head>
+<body>${'<img src="data:,">'.repeat(30)}<button></button></body></html>`;
+  const s = await site(html);
+  const on = await (await browser).newContext();
+  const off = await (await browser).newContext({ javaScriptEnabled: false });
+  try {
+    const snap = await capture(on, s.url, true, 10_000);
+    const alt = snap.axe?.find((v) => v.rule === "image-alt");
+    assert.equal(alt?.count, 30);
+    assert.equal(alt?.targets.length, 20);
+    assert.ok(snap.axe?.some((v) => v.rule === "button-name"));
+    // A rule outside data/accessibility.yml does not run.
+    assert.ok(!snap.axe?.some((v) => v.rule === "region"));
+    assert.equal((await capture(off, s.url, false, 10_000)).axe, undefined);
+  } finally {
+    await on.close();
+    await off.close();
+    s.close();
+  }
+});
+
 test("text, links and link labels are capped", async () => {
   const s = await site(`<p>${"x ".repeat(150_000)}</p>${`<a href="/a">${"y".repeat(1000)}</a>`.repeat(3000)}`);
   const context = await (await browser).newContext({ javaScriptEnabled: false });

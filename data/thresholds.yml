@@ -1,5 +1,5 @@
-# Numbers checks decide by, in one place. One section per check (its path under checks/), plus `common`
-# and `repo` (reading the repository).
+# Numbers checks decide by, in one place. One section per check (its path under checks/), plus `common`,
+# `repo` (reading the repository) and `axe` (accessibility tests in the browser).
 # Changing a value changes results: mention it in the commit message.
 
 common:
@@ -12,6 +12,14 @@ repo:
   max_file_bytes: 1000000
   # Largest lockfile read (names in src/repo/lockfiles.ts). Lockfiles of large projects pass 1 MB.
   max_lockfile_bytes: 50000000
+
+# axe-core on the JavaScript load of each page (src/capture.ts, rules in data/accessibility.yml).
+axe:
+  # Longest time axe-core may run on one page, in milliseconds, at most the page timeout. A page that takes longer gets no
+  # accessibility results, and the accessibility checks skip it.
+  timeout_ms: 10000
+  # Elements kept per axe rule and page; the count of all of them is kept as well.
+  max_targets: 20
 
 # Reject button less prominent than the accept button. The authorities set no fixed numbers
 # (DSK OH Telemedien Rn. 125, EDPB Cookie Banner Taskforce Rn. 17), so these only flag clear cases.
@@ -31,6 +39,14 @@ privacy/cookie-lifetime:
   # measurement cookies (recommendation 2020-092, Art. 5), counted as the longest 13 calendar months.
   # Chrome caps cookies at 400 days, so the limit must stay below 400.
   max_days: 397
+
+security/secrets:
+  # Minimum Shannon entropy in bits per character of a find, for rules in data/secrets.yml with `entropy`.
+  # Values as in gitleaks: 3 for tokens with a fixed prefix, 3.5 for the generic assignment rule.
+  # A random hex string reaches about 3.7, base64 about 4.5 to 5; sk_live_xxxxxxxxxxxx stays near 2.
+  entropy:
+    token: 3
+    generic: 3.5
 
 security/tls:
   # Warn when the certificate expires in fewer days than this.

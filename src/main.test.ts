@@ -45,7 +45,8 @@ function onGitHub(event: object | undefined, ...args: string[]) {
     const repo = join(dir, "repo");
     mkdirSync(repo);
     writeFileSync(join(repo, "package-lock.json"), JSON.stringify({ packages: { "node_modules/lodash": { version: "4.17.20" } } }));
-    writeFileSync(join(repo, "config.js"), 'const key = "AKIAIOSFODNN7EXAMPLE";\n');
+    // Built at runtime; AWS's documented example key (ending in EXAMPLE) is not reported.
+    writeFileSync(join(repo, "config.js"), `const key = "${["AKIA", "Z7Q3MRT2XKWPL4NB"].join("")}";\n`);
     const eventPath = join(dir, "event.json");
     if (event) writeFileSync(eventPath, JSON.stringify(event));
     const summaryPath = join(dir, "summary.md");

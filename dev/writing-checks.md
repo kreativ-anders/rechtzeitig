@@ -72,7 +72,7 @@ The runner finds the check by itself. Nothing else needs to change.
 - Use `fail` when you are sure, `warn` when a heuristic may be wrong, `info` when a person has to judge, `skip` when the check does not apply.
 - Put evidence in `details`: the page, the host, the file and line. A reader should be able to fix the problem from the report alone.
 - No network access in checks. The crawler and the repository scan have already collected everything.
-- Keep secret-looking strings out of the repository, also in tests: build them at runtime (`["sk", "live", "x".repeat(24)].join("_")`).
+- Keep secret-looking strings out of the repository, also in tests: build them at runtime (`["sk", "live", noise(24)].join("_")`, see `checks/security/secrets/test.ts`). A body of one repeated character is a placeholder and no longer counts as a secret.
 
 ## What the website context gives you
 
@@ -90,6 +90,7 @@ The runner finds the check by itself. Nothing else needs to change.
 | `ctx.says(concept, text)` | Text contains a concept from `lang/*.yml` |
 | `ctx.probes`, `ctx.tls`, `ctx.dns`, `ctx.http`, `ctx.variant`, `ctx.countries` | Lookups without a browser |
 | `ctx.vendor(host)`, `ctx.trackingCookie(name)` | Entry from `data/third-parties.yml` |
+| `axeResult(ctx, rules)` | Result of the axe-core `rules` on all own pages (`js.axe`): skip, pass or warn with page and selector |
 
 ## Data files
 
@@ -98,7 +99,8 @@ The runner finds the check by itself. Nothing else needs to change.
 | `lang/<code>.yml` | Words. `links` concepts match link and button labels (the crawler opens matching links); `text` concepts match page text. Patterns run on normalized text: lowercase, `ä→ae ö→oe ü→ue ß→ss`. A new language is a new file with the same keys; a test checks this. Add the code to `examples/workflows/rechtzeitig.yml`. |
 | `data/third-parties.yml` | A service: hosts, country, whether it needs consent, how a privacy policy names it, its cookies, advice in every report language (`de`, `en`; the loader rejects a missing one). |
 | `data/probes.yml` | A path to request. `kind: file` with an `expect` pattern for files that must not be public, `kind: error` for error pages, `kind: public` for files that should be public and a check reads (`security.txt`). |
-| `data/secrets.yml` | A secret pattern with `fail` or `warn`. With `payload`, match group 1 is decoded as a JWT payload and must have the listed claims. |
+| `data/secrets.yml` | A secret pattern with `fail` or `warn` under `rules`, with `keywords` (lowercase, the line must contain one), a group named `secret`, and `entropy: token` (or `generic`) so placeholders drop out. With `allow`, a documented example; with `payload`, match group 1 is decoded as a JWT payload and must have the listed claims. A pattern adapted from gitleaks (MIT) is fine, it is named in `NOTICE`; never take detectors from AGPL projects such as trufflehog. |
+| `data/accessibility.yml` | An axe-core rule id for one of the accessibility checks. Only rules that map to one WCAG success criterion and rarely misfire. |
 | `data/licenses.yml` | A license pattern in one of the groups `agpl`, `gpl`, `restricted`, `permissive`. |
 | `data/update-tools.yml` | A Dependabot ecosystem name, a Renovate config path or a vulnerability scanner. |
 | `data/countries.yml`, `data/cookies.yml`, `data/leaks.yml`, `data/outdated-links.yml`, `data/outdated-laws.yml`, `data/hsts-preload.yml`, `data/subresource-integrity.yml`, `data/file-formats.yml`, `data/google-tags.yml`, `data/shop.yml`, `data/workflow-risks.yml` | Country groups, cookie name patterns, error page traces and version headers, links to closed services, repealed law names, HSTS-preloaded top-level domains, hosts whose files change under the same URL, file formats, Google tag endpoints and consent parameters, price and address field formats for the shop checks, risky workflow patterns. |

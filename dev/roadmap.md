@@ -51,7 +51,7 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 1. After a click on "reject": check that no tracker loads. The only check that would need a click.
 2. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
 3. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
-4. More unambiguous accessibility checks besides `accessibility/page-language` and `accessibility/autoplay-media` (selected axe-core rules: alt text, form labels, contrast) and the accessibility information for shops (BFSG, § 14 and Anlage 3) or the accessibility statement with feedback contact for public bodies (BITV 2.0 § 7), not a full axe-core run.
+4. The accessibility information for shops (BFSG, § 14 and Anlage 3) or the accessibility statement with feedback contact for public bodies (BITV 2.0 § 7). Selected axe-core rules run since the accessibility checks `alt-text`, `form-labels`, `control-names` and `contrast`; more rules only when they are as unambiguous.
 5. Forms that send to another site: receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO).
 6. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
 7. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.

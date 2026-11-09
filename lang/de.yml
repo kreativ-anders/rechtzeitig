@@ -190,6 +190,7 @@ text:
 # Every language file must define the same keys (test: src/lang.test.ts).
 messages:
   common:
+    axe_not_run: "axe-core lief auf keiner besuchten Seite: keine Seite lud mit JavaScript, oder axe-core wurde nicht rechtzeitig fertig."
     page_imprint: "Impressum"
     page_privacy: "Datenschutzerklärung"
     page_terms: "AGB"
@@ -629,6 +630,50 @@ messages:
     missing: "Die Startseite hat kein Attribut <html lang>. Screenreader müssen die Sprache dann raten."
     mismatch: 'Die Seite gibt lang="{lang}" an, der Scan nutzte aber {languages}. Beim Start des Scans die passende Sprache wählen.'
     declared: 'Die Seite gibt lang="{lang}" an.'
+  accessibility/alt-text:
+    none:
+      one: "axe-core fand kein Bild ohne Alternativtext auf {count} Seite."
+      other: "axe-core fand kein Bild ohne Alternativtext auf {count} Seiten."
+    found:
+      one: "{count} Bild ohne Alternativtext (axe-core)."
+      other: "{count} Bilder ohne Alternativtext (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "und {count} weiteres Element"
+      other: "und {count} weitere Elemente"
+  accessibility/form-labels:
+    none:
+      one: "axe-core fand kein Formularfeld ohne Beschriftung auf {count} Seite."
+      other: "axe-core fand kein Formularfeld ohne Beschriftung auf {count} Seiten."
+    found:
+      one: "{count} Formularfeld ohne Beschriftung (axe-core)."
+      other: "{count} Formularfelder ohne Beschriftung (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "und {count} weiteres Element"
+      other: "und {count} weitere Elemente"
+  accessibility/control-names:
+    none:
+      one: "axe-core fand kein Button, Link oder Frame ohne Namen auf {count} Seite."
+      other: "axe-core fand kein Button, Link oder Frame ohne Namen auf {count} Seiten."
+    found:
+      one: "{count} Button, Link oder Frame ohne Namen (axe-core)."
+      other: "{count} Buttons, Links oder Frames ohne Namen (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "und {count} weiteres Element"
+      other: "und {count} weitere Elemente"
+  accessibility/contrast:
+    none:
+      one: "axe-core fand kein Text mit zu wenig Kontrast auf {count} Seite."
+      other: "axe-core fand kein Text mit zu wenig Kontrast auf {count} Seiten."
+    found:
+      one: "{count} Textelement mit zu wenig Kontrast (axe-core)."
+      other: "{count} Textelemente mit zu wenig Kontrast (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "und {count} weiteres Element"
+      other: "und {count} weitere Elemente"
   accessibility/autoplay-media:
     no_videos: "Keine Videos auf den besuchten Seiten."
     no_autoplay:
@@ -811,6 +856,9 @@ messages:
     public_keys:
       one: "{count} Schlüssel gefunden, der absichtlich öffentlich sein kann. Prüfen, ob er eingeschränkt ist."
       other: "{count} Schlüssel gefunden, die absichtlich öffentlich sein können. Prüfen, ob jeder eingeschränkt ist."
+    possible:
+      one: "{count} Wert unter einem Namen wie secret, password oder token gefunden, der wie ein Secret aussieht. Prüfen und, falls echt, sperren."
+      other: "{count} Werte unter Namen wie secret, password oder token gefunden, die wie Secrets aussehen. Prüfen und, falls echt, sperren."
     none:
       one: "Keine Secrets in {count} gelesenen Datei gefunden."
       other: "Keine Secrets in {count} gelesenen Dateien gefunden."

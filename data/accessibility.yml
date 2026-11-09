@@ -1,0 +1,17 @@
+# axe-core rules that src/capture.ts runs on the JavaScript load of every visited page, per check.
+# Rule ids: https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md
+#
+# Only rules that map to one WCAG 2.1 success criterion (EN 301 549 clause 9.x) and rarely flag
+# something that is fine. Not a full axe-core run: rules that need a person to judge, best
+# practices and experimental rules stay out. Only violations count, never axe's "incomplete".
+# A new id here runs on the next scan; it must belong to one check below.
+
+rules:
+  # WCAG 1.1.1 Non-text content
+  accessibility/alt-text: [image-alt, input-image-alt, role-img-alt, area-alt, svg-img-alt]
+  # WCAG 4.1.2 Name, role, value: form fields
+  accessibility/form-labels: [label, select-name, aria-input-field-name]
+  # WCAG 4.1.2 Name, role, value and 2.4.4 Link purpose: buttons, links, frames
+  accessibility/control-names: [button-name, input-button-name, link-name, frame-title]
+  # WCAG 1.4.3 Contrast (minimum)
+  accessibility/contrast: [color-contrast]
