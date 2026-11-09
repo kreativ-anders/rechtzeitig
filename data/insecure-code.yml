@@ -1,6 +1,7 @@
 # Insecure patterns in source code, one section per check (its path under checks/), patterns per language
 # from data/code-paths.yml. Each pattern: `key` (message of the find), `pattern` (regular expression, run per line),
 # optional `flags`, `paths` (only these files), `not_paths`, `unless` (the same line also matching this is no find),
+# `unless_file` (the file also matching this anywhere is no find),
 # `comments: true` (also in comment lines), `whole: true` (run on the whole file), `level` (fail or warn; default fail).
 # A named group `name` is shown in the finding; nothing else of the line is. Test files, fixtures, vendored code and
 # docs are left out (data/code-paths.yml). Changing a pattern changes results: name this file in the commit message.
@@ -35,6 +36,8 @@ security/tls-verification-off:
   go:
     - key: insecure_skip_verify
       pattern: '\bInsecureSkipVerify\s*[:=]\s*true\b'
+      # crypto/tls: InsecureSkipVerify together with VerifyPeerCertificate or VerifyConnection is custom verification.
+      unless_file: '\b(?:VerifyPeerCertificate|VerifyConnection)\s*[:=]'
   php:
     - key: curl_verify
       pattern: '\bCURLOPT_SSL_VERIFY(?:PEER|HOST)\s*,\s*(?:false|0)\b'
@@ -135,7 +138,11 @@ security/default-credentials:
       pattern: '\b[gG]et[eE]nv\w*\(\s*[''"](?<name>(?:[A-Z0-9]+_)*(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY))[''"]\s*,\s*[''"`][^''"`\n]{2,}[''"`]'
       unless: '\b(?:PUBLIC|PUBLISHABLE|ANON)_'
     - key: literal_secret
-      pattern: '\b(?:secret|jwtSecret|sessionSecret|secretOrKey|secretOrPrivateKey|signingKey)\s*:\s*[''"`][^''"`\n$]{2,}[''"`]'
+      pattern: '\b(?:jwtSecret|sessionSecret|secretOrKey|secretOrPrivateKey|signingKey)\s*:\s*[''"`][^''"`\n$]{2,}[''"`]'
+    # A plain `secret:` whose value is the name of a secret variable (`secret: "GITHUB_TOKEN"` in projen and CI
+    # configs) refers to the secret and is no value. The keys above always hold the value itself.
+    - key: literal_secret
+      pattern: '\bsecret\s*:\s*(?![''"`](?:[A-Z0-9]+_)+(?:SECRET|SECRET_KEY|PASSWORD|PASSWD|PASS|PWD|TOKEN|API_KEY|PRIVATE_KEY|SALT|ACCESS_KEY|SIGNING_KEY|ENCRYPTION_KEY|APP_KEY)[''"`])[''"`][^''"`\n$]{2,}[''"`]'
     - key: literal_secret
       pattern: '\bjwt\.(?:sign|verify)\([^,\n]{1,200},\s*[''"`][^''"`\n]{2,}[''"`]'
     - key: demo_password

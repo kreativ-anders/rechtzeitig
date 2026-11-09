@@ -24,6 +24,7 @@ test("passes for verified connections, comments and tests", async () => {
     "test/api.test.ts": "const agent = new https.Agent({ rejectUnauthorized: false });",
     "app/auth.py": "jwt.decode(token, verify=False)",
     "scripts/get.sh": "curl -fsSL https://example.org/install.sh -o install.sh",
+    "pkg/tlsutil/client.go": "cfg.InsecureSkipVerify = true\ncfg.VerifyPeerCertificate = verifyAgainst(pool)",
   });
   assert.equal(result.status, "pass");
 });

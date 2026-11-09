@@ -1,0 +1,51 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/smaran9/softline-infotech.py
+  commit: 4a005caf534adcfee672394f6dae4d59eb15fa61
+  license: Apache-2.0
+  copyright: "Contributors of smaran9/softline-infotech.py"
+  paths:
+    "app.py": "app.py (lines 1-28, 618-626)"
+label: >-
+  Flask site: `app.secret_key = os.getenv("SECRET_KEY", "change_me_in_production")` falls back to a fixed
+  session key, and the entry point runs `app.run(debug=True)` (Werkzeug debugger).
+expect: [security/default-credentials, security/debug-mode]
+files:
+  "app.py": |2
+    from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+    import mysql.connector
+    import os
+    from werkzeug.utils import secure_filename
+    from werkzeug.security import check_password_hash, generate_password_hash
+    from functools import wraps
+    from datetime import datetime
+    from dotenv import load_dotenv
+
+    # Load environment variables from .env file
+    load_dotenv()
+
+    app = Flask(__name__)
+    UPLOAD_FOLDER = 'static/uploads'
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.secret_key = os.getenv("SECRET_KEY", "change_me_in_production")
+
+    # Ensure upload folder exists
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+    # ====== ADMIN CREDENTIALS (from environment variables) ======
+    ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "softline_admin")
+    ADMIN_PASSWORD_HASH = generate_password_hash(os.getenv("ADMIN_PASSWORD", "admin@123"))
+
+    # WhatsApp Business Number (from environment variables)
+    WHATSAPP_BUSINESS_NUMBER = os.getenv("WHATSAPP_BUSINESS_NUMBER", "919409415293")
+
+    # ====== DATABASE CONNECTION ======
+    def internal_error(error):
+        """Handle 500 errors"""
+        print(f"Internal server error: {error}")
+        return render_template("500.html", message="Internal server error"), 500
+
+    # ==================== RUN ====================
+    if __name__ == "__main__":
+        app.run(debug=True)
+

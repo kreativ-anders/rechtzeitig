@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Matches code (languages and left-out paths in `data/code-paths.yml`, tests excluded) against `data/insecure-code.yml`: a secret environment variable with a literal fallback (`process.env.JWT_SECRET ?? \"secret\"`, `os.getenv(\"SECRET_KEY\", \"dev\")`, `env('APP_KEY', '...')`, `ENV.fetch`), Django's `django-insecure-` key and literal JWT or session secrets fail; common demo passwords (`admin123`, `changeme`, ...) as password values warn. Only the variable name is shown."
+how: "Matches code (languages and left-out paths in `data/code-paths.yml`, tests excluded) against `data/insecure-code.yml`: a secret environment variable with a literal fallback (`process.env.JWT_SECRET ?? \"secret\"`, `os.getenv(\"SECRET_KEY\", \"dev\")`, `env('APP_KEY', '...')`, `ENV.fetch`), Django's `django-insecure-` key and literal JWT or session secrets fail (a plain `secret:` whose value is the name of a secret variable, such as `secret: \"GITHUB_TOKEN\"`, is a reference and left out); common demo passwords (`admin123`, `changeme`, ...) as password values warn. Only the variable name is shown."
 fix_hint:
   de: "Secrets ohne Ersatzwert lesen und beim Start abbrechen, wenn sie fehlen. Demo-Konten nur in Seeds für die Entwicklung anlegen, mit zufälligem Passwort."
   en: "Read secrets without a fallback and stop at startup when one is missing. Create demo accounts only in development seeds, with a random password."

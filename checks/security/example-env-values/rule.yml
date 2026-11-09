@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Reads committed `.env` templates (`.env.example`, `.env.sample`, ...; `templates` in `data/insecure-code.yml`) and warns for a secret-named variable whose value has letters and digits, no placeholder word and at least the length and Shannon entropy in `data/thresholds.yml`, and for a connection URL with a password to a host that is not local; shows only the variable name, never the value. Known key formats are also found by `security/secrets`."
+how: "Reads committed `.env` templates (`.env.example`, `.env.sample`, ..., in any letter case; `templates` in `data/insecure-code.yml`) and warns for a secret-named variable whose value has letters and digits, no placeholder word and at least the length and Shannon entropy in `data/thresholds.yml`, and for a connection URL with a password to a host that is not local; shows only the variable name, never the value. Known key formats are also found by `security/secrets`."
 fix_hint:
   de: "In Vorlagen nur Platzhalter eintragen (z. B. OPENAI_API_KEY=your-key-here). Einen echten Wert sofort widerrufen und aus der Git-Historie entfernen."
   en: "Put only placeholders into templates (for example OPENAI_API_KEY=your-key-here). Revoke a real value right away and remove it from the git history."

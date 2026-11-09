@@ -1,0 +1,22 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/restackio/boilerplate
+  commit: 66e22a1f91d0f892a1ed1767f0a2a7afcbb60e8f
+  license: Apache-2.0
+  copyright: "Contributors of restackio/boilerplate"
+  paths:
+    "apps/backend/.env.Example": "apps/backend/.env.Example"
+label: >-
+  Committed env template (named .env.Example) with PASSWORD_SALT set to a random-looking 43 character value: a
+  real salt in a public template (the value is replaced by a fake of the same length).
+expect: [security/example-env-values]
+files:
+  "apps/backend/.env.Example": |2
+    # OpenAI API key is optional at startup; configure per-workspace via Restack Cloud if needed.
+    # OPENAI_API_KEY=<your-openai-api-key>
+
+    # Password Encryption
+    PASSWORD_SALT={{key:43:11}}
+
+    # Custom MCP server url
+    RESTACK_ENGINE_MCP_ADDRESS=https://fb095f09f128.ngrok-free.app/mcp

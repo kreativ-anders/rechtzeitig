@@ -1,0 +1,91 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/uiters/office-supplies-backend
+  commit: 0b70d1d2f73a8c48191bf3a49140569ca7a2092f
+  license: MIT
+  copyright: "Copyright (c) Microsoft Corporation. All rights reserved."
+  paths:
+    "src/config/passport.ts": "src/config/passport.ts"
+label: >-
+  passport-jwt verifies tokens with `secretOrKey: 'JWT_SECRET'`: the string itself is the signing secret (no
+  process.env), so anyone who reads the repository can forge tokens. A default credential, even though it looks
+  like a variable name.
+expect: [security/default-credentials]
+files:
+  "src/config/passport.ts": |2
+    import passport from 'passport';
+    import passportLocal from 'passport-local';
+    import passportJwt from 'passport-jwt';
+
+    import { Request, Response, NextFunction } from 'express';
+    import { IUser } from '../models/user.model';
+    import { UserModel } from '../mongoose/user.mongoose';
+
+    const LocalStrategy = passportLocal.Strategy;
+
+    passport.serializeUser(function (user: IUser, done) {
+        done(null, user._id);
+    });
+
+    passport.deserializeUser((id, done) => {
+        UserModel.findById(id, (err, user: IUser) => {
+            done(err, user);
+        });
+    });
+
+    passport.use(
+        new LocalStrategy(function(username, password, done) {
+          UserModel.findOne({ email: username }, (err, user: IUser) => {
+            if (err) {
+              return done(err);
+            }
+            if (!user) {
+              return done(undefined, false, {
+                message: `Username: ${username} not found`
+              });
+            }
+            user.comparePassword(password, (err: Error, isMatch: boolean) => {
+              if (err) {
+                return done(err);
+              }
+              if (isMatch) {
+                return done(undefined, user);
+              }
+              return done(undefined, false, { message: "Invalid email or password" });
+            });
+          });
+        })
+      );
+
+
+    const JwtStrategy = passportJwt.Strategy;
+    const ExtractJwt = passportJwt.ExtractJwt;
+
+    const jwtOptions = {
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: 'JWT_SECRET',
+    };
+
+    passport.use(
+        new JwtStrategy(jwtOptions, async function (payload, done) {
+            try {
+                const user = await UserModel.findById(payload._id);
+                if (!user) {
+                    return done(null, false);
+                }
+                return done(null, user);
+            } catch (error) {
+                return done(error, false);
+            }
+        })
+    );
+
+    export const authLocal = passport.authenticate('local', { session: false });
+    export const authJwt = passport.authenticate('jwt', { session: false });
+
+    export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+        if (req.isAuthenticated()) {
+            return next();
+        }
+        return res.status(400).send('Have to login');
+    };

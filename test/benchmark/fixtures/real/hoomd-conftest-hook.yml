@@ -1,0 +1,52 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/glotzerlab/hoomd-blue
+  commit: 9abda87cfdd8d84e185f05704f6af2e9853d0510
+  license: BSD-3-Clause
+  copyright: "Copyright (c) 2009-2026 The Regents of the University of Michigan."
+  paths:
+    "hoomd/conftest.py": "hoomd/conftest.py (lines 796-812, 860-880)"
+label: >-
+  pytest conftest: `assert True` is the default body of an overridable hook (`final_check`) of a test base
+  class, not a test case; subclasses put their assertions there.
+expect: []
+files:
+  "hoomd/conftest.py": |2
+    class BaseCollectionsTest:
+        """Basic extensible test suite for collection classes.
+
+        This class and subclasses allow for extensive testing of list, tuple, dict,
+        and set like objects. Given that different data structure classes require
+        different specific in testing (see `to_base` for an example) these classes
+        can have class specific accommodations. However, this code smell is worth
+        the increase in testing and reduction in code.
+
+        For usage of this and subclasses see ``hoomd.pytest.test_collections.py``,
+        and the documentation of the provided methods.
+
+        Note:
+            This test suite isn't meant to contain class specific tests, merely
+            those of the given data structure. Class specific tests should be added
+            to the speceific test class for the tested class.
+
+            specific checks overwrite this. This is the main work horse for checks
+            in the suite.
+
+            Note:
+                For mapping types `is_equal` has to deal with the key values as
+                well.
+            """
+            return a is b
+
+        def final_check(self, test_collection):
+            """Perform any final assert on the collection like object.
+
+            For test that modify a collection this is called at the end to perform
+            any specific tests relevant to the currently tested class. For instance,
+            this can test that a synced list is kept up to date with modification.
+            """
+            assert True
+
+        _generator = Generator(numpy.random.default_rng(15656456))
+
+        @property

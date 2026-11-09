@@ -1,0 +1,39 @@
+# Real code, excerpt. Labelled by reading the code before the checks ran.
+source:
+  repo: https://github.com/Drowh/FrontQuiz
+  commit: 36a80c5ba29249268e3323647c5eee9e82d62c05
+  license: MIT
+  copyright: "Copyright (c) 2025 DrowDev"
+  paths:
+    "scripts/migrate-lessons.ts": "scripts/migrate-lessons.ts (lines 1-25)"
+label: >-
+  A Node migration script outside the frontend (dotenv, process.env) uses the service role key; it never runs in
+  the browser.
+expect: []
+files:
+  "scripts/migrate-lessons.ts": |2
+    import "dotenv/config";
+    import { createClient } from "@supabase/supabase-js";
+    import fs from "fs/promises";
+    import path from "path";
+    import { Category, Lesson } from "../frontend/src/types/lesson";
+
+    // Конфигурация Supabase
+    console.log("Environment variables:", {
+      url: process.env.VITE_SUPABASE_URL,
+      anonKey: process.env.VITE_SUPABASE_ANON_KEY,
+      serviceKey: process.env.VITE_SUPABASE_SERVICE_ROLE_KEY ? "exists" : "missing",
+    });
+
+    const supabaseUrl = process.env.VITE_SUPABASE_URL;
+    const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error("Missing Supabase credentials");
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Конфигурация файлов
+    const FILE_NAMES: Record<Category, string> = {
+      HTML: "lessonsHTML.json",
