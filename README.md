@@ -36,7 +36,7 @@ More code is written with AI, and the same things keep slipping through: no impr
 | ⚖️ **Legal** | Imprint, privacy policy, withdrawal, order and cancellation buttons (DDG, BGB) |
 | 🍪 **Privacy** | Cookies and trackers before consent, consent banner, third countries (GDPR, TDDDG) |
 | 🔒 **Security** | Headers, TLS, exposed files, mixed content, `security.txt` |
-| 📦 **Repository** | CycloneDX SBOM, known vulnerabilities, license conflicts, committed secrets, workflow risks |
+| 📦 **Repository** | CycloneDX SBOM, known vulnerabilities, license risks (copyleft, source-available, relicensed, AI models), committed secrets, workflow risks |
 | 🌱 **Sustainability and accessibility** | Compression, caching, image formats, page language, autoplay, alt texts, form labels, contrast (selected axe-core rules) |
 
 Every check names its legal basis and links a primary source. Your code stays on the runner, there is no account and no paid tier.

@@ -1,0 +1,104 @@
+# AI models whose license is not open source (legal/ai-model-licenses). Checked against the model card and the
+# license on the vendor's page or on huggingface.co on 2026-11-09; `source` names where.
+#
+#   ids:     patterns for Hugging Face model ids ("org/name"), matched case-insensitively against the whole id
+#   files:   optional patterns for weight file names (without folder), for files downloaded from that model
+#   license: license name as the vendor writes it
+#   kind:    noncommercial (no commercial use at all) or conditions (use allowed under conditions, such as
+#            a use policy, a user or revenue limit, or an attribution duty)
+#   terms:   message key in lang/*.yml (messages.legal/ai-model-licenses.terms_<terms>) with the main conditions
+#
+# Gemma 4 models are Apache-2.0 and not listed. Adding a model changes results: mention ai-models.yml in the
+# commit message.
+
+# Files that list models as data rather than use them, such as this file in a copy of rechtzeitig.
+skip_files: '(^|/)ai-models\.ya?ml$'
+
+# File extensions of model weights. Any such file outside fixtures is listed, matched or not.
+weight_files: '\.(safetensors|gguf|ggml|onnx|pt|pth|ckpt|tflite|mlmodel|keras)$'
+
+models:
+  - license: Llama 2 Community License
+    kind: conditions
+    terms: llama
+    ids: ['^meta-llama/Llama-2-']
+    source: https://www.llama.com/llama2/license/
+  - license: Meta Llama 3 Community License
+    kind: conditions
+    terms: llama
+    ids: ['^meta-llama/Meta-Llama-3-']
+    source: https://www.llama.com/llama3/license/
+  - license: Llama 3.1 Community License
+    kind: conditions
+    terms: llama
+    ids: ['^meta-llama/(Meta-)?Llama-3\.1-']
+    source: https://www.llama.com/llama3_1/license/
+  - license: Llama 3.2 Community License
+    kind: conditions
+    terms: llama
+    ids: ['^meta-llama/Llama-3\.2-']
+    source: https://www.llama.com/llama3_2/license/
+  - license: Llama 3.3 Community License
+    kind: conditions
+    terms: llama
+    ids: ['^meta-llama/Llama-3\.3-']
+    source: https://www.llama.com/llama3_3/license/
+  - license: Llama 4 Community License
+    kind: conditions
+    terms: llama
+    ids: ['^meta-llama/Llama-4-']
+    source: https://www.llama.com/llama4/license/
+  # GGUF and other conversions keep the model name: Llama-3.1-8B-Instruct-Q4_K_M.gguf, llama-2-7b.Q4_0.gguf.
+  - license: Llama Community License (version as in the file name)
+    kind: conditions
+    terms: llama
+    ids: []
+    files: ['^(meta-)?llama-?(2|3|3\.[0-9]|4)[-_.]']
+    source: https://www.llama.com/llama3_1/license/
+  - license: Gemma Terms of Use
+    kind: conditions
+    terms: gemma
+    ids: ['^google/(gemma-(2b|7b|1\.1-|2-|3-|3n-)|codegemma-|paligemma|recurrentgemma-|embeddinggemma-)']
+    files: ['^(code|pali|recurrent|embedding)?gemma-?(2b|7b|1\.1|2|3|3n)[-_.]']
+    source: https://ai.google.dev/gemma/terms
+  - license: CreativeML Open RAIL++-M
+    kind: conditions
+    terms: openrail
+    ids: ['^stabilityai/stable-diffusion-xl-(base|refiner)-1\.0$']
+    source: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/blob/main/LICENSE.md
+  - license: CreativeML OpenRAIL-M
+    kind: conditions
+    terms: openrail
+    ids: ['^(runwayml|CompVis|stable-diffusion-v1-5)/stable-diffusion-v1-[0-9]$']
+    source: https://huggingface.co/spaces/CompVis/stable-diffusion-license
+  - license: BigScience BLOOM RAIL 1.0
+    kind: conditions
+    terms: openrail
+    ids: ['^bigscience/bloomz?(-[0-9a-z.]+)?$']
+    source: https://huggingface.co/spaces/bigscience/license
+  - license: Stability AI Community License
+    kind: conditions
+    terms: stability
+    ids: ['^stabilityai/(stable-diffusion-3(\.5)?-|sdxl-turbo$)']
+    source: https://stability.ai/community-license-agreement
+  - license: CC-BY-NC-4.0
+    kind: noncommercial
+    terms: noncommercial
+    ids: ['^facebook/(nllb-200-|musicgen-|seamless-m4t-)', '^(CohereForAI|CohereLabs)/c4ai-command-r']
+    source: https://huggingface.co/facebook/nllb-200-distilled-600M
+  - license: FLUX.1 [dev] Non-Commercial License
+    kind: noncommercial
+    terms: noncommercial
+    ids: ['^black-forest-labs/FLUX\.1-(dev|Kontext-dev)$']
+    files: ['^flux1?[-_.]?(dev|kontext-dev)[-_.]']
+    source: https://huggingface.co/black-forest-labs/FLUX.1-dev/blob/main/LICENSE.md
+  - license: Coqui Public Model License 1.0.0
+    kind: noncommercial
+    terms: noncommercial
+    ids: ['^coqui/XTTS-v[12]$']
+    source: https://huggingface.co/coqui/XTTS-v2/blob/main/LICENSE.txt
+  - license: Mistral AI Non-Production License
+    kind: noncommercial
+    terms: nonproduction
+    ids: ['^mistralai/Codestral-22B-v0\.1$']
+    source: https://mistral.ai/licenses/MNPL-0.1.md

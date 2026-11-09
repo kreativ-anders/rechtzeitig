@@ -44,6 +44,12 @@ standards:
   - unicode.org
   - modelcontextprotocol.io
 
+# License stewards: the texts and official FAQs of the licenses they publish.
+licenses:
+  - gnu.org
+  - opensource.org
+  - apache.org
+
 # Vendor documentation, only for technical facts about that vendor's product.
 vendors:
   - osv.dev
@@ -57,3 +63,5 @@ vendors:
   - code.claude.com
   - docs.npmjs.com
   - doc.rust-lang.org
+  - llama.com
+  - ai.google.dev

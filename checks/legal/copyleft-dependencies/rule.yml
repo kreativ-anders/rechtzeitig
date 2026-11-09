@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-LIC-003
+severity: medium
+title:
+  de: "Copyleft-Abhängigkeiten passen zur Projektlizenz"
+  en: "Copyleft dependencies fit the project license"
+legal_basis:
+  de: "§§ 31, 69c UrhG; GPL-2.0 § 2, GPL-3.0 § 5"
+  en: "§§ 31, 69c UrhG (German Copyright Act); GPL-2.0 § 2, GPL-3.0 § 5"
+how: "Reads the SPDX expressions of production dependencies from lockfiles that carry licenses (`licenses_in_lockfile` in `data/ecosystems.yml`) and flags GPL or AGPL that no `OR` choice avoids when the project license is not GPL, and GPL-2.0-only against GPLv3, LGPL-3.0 or Apache-2.0; categories and linking exceptions come from `data/licenses.yml`, AGPL without a choice is left to legal/network-copyleft, dev dependencies and weak copyleft (LGPL, MPL, EPL) are not flagged, and without a single license read the rule is skipped."
+fix_hint:
+  de: "Wird die Software weitergegeben (App, Bibliothek, Browser-Bundle, Container-Image), muss das Gesamtwerk unter der GPL stehen. Abhängigkeit ersetzen, eine kommerzielle Lizenz erwerben oder das Projekt unter eine passende GPL-Version stellen. Nur intern genutzte Software wird nicht verbreitet. Technischer Hinweis, keine Rechtsberatung."
+  en: "If you ship the software (app, library, browser bundle, container image), the whole work must be under the GPL. Replace the dependency, buy a commercial license or put the project under a fitting GPL version. Software used only in-house is not distributed. A technical hint, not legal advice."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://www.gesetze-im-internet.de/urhg/__69c.html
+  - https://www.gesetze-im-internet.de/urhg/__31.html
+  - https://www.gnu.org/licenses/gpl-3.0.html
+  - https://www.gnu.org/licenses/license-list.html
+  - https://www.gnu.org/licenses/gpl-faq.html

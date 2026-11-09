@@ -18,8 +18,9 @@ unsupported:
   '^\.terraform\.lock\.hcl$': Terraform
   '^Chart\.lock$': Helm
 
-# Ecosystems whose lockfiles carry a license for each package (repo/licenses). For the others
-# the report says that their licenses were not checked.
+# Ecosystems whose lockfiles carry a license for each package (dependencyLicenses() in src/repo/licenses.ts).
+# For the others, and for lockfiles of these without a single license field (yarn.lock, package-lock.json v1),
+# legal/unknown-licenses says that their licenses were not checked.
 licenses_in_lockfile: [npm, composer]
 
 # Hosts of the public registries. Any other host in .npmrc, .yarnrc.yml, a lockfile or a requirements

@@ -1,0 +1,18 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-LIC-007
+severity: low
+title:
+  de: "Keine Abhängigkeit nach einem Lizenzwechsel"
+  en: "No dependency past a license change"
+legal_basis:
+  de: "§ 31 Abs. 1 UrhG"
+  en: "§ 31 (1) UrhG (German Copyright Act: rights of use)"
+how: "Compares the locked version of every production dependency, in every ecosystem, with the first version under a new license in `data/relicensing.yml` (checked entries with their source) and names the old license and an open fork."
+fix_hint:
+  de: "Neue Lizenz der genannten Version lesen. Passt sie nicht zu eurer Nutzung, auf der letzten Version unter der alten Lizenz bleiben (ohne neue Sicherheitsupdates) oder zum genannten Fork wechseln. Technischer Hinweis, keine Rechtsberatung."
+  en: "Read the new license of the named version. If it does not fit your use, stay on the last version under the old license (without new security fixes) or move to the named fork. A technical hint, not legal advice."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://www.gesetze-im-internet.de/urhg/__31.html
+  - https://spdx.org/licenses/BUSL-1.1.html

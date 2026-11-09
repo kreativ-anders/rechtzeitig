@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-LIC-002
+severity: low
+title:
+  de: "Eigene Lizenz ist eindeutig angegeben"
+  en: "The project's own license is clear"
+legal_basis:
+  de: "§ 31 UrhG"
+  en: "§ 31 UrhG (German Copyright Act: rights of use)"
+how: "Reads the license fields of package.json, composer.json, Cargo.toml and pyproject.toml in the root and the license files (LICENSE*, COPYING*, UNLICENSE, REUSE LICENSES/), checks the ids against `data/spdx.yml`, warns when manifests and files name different licenses, and compares MIT, ISC, 0BSD, BSD and Apache-2.0 texts word pair by word pair with `data/license-texts.yml`, with the limit in `data/thresholds.yml`."
+fix_hint:
+  de: "Eine Lizenz wählen, als SPDX-Kennung (z. B. MIT, GPL-3.0-or-later) in jedes Manifest schreiben und den unveränderten Lizenztext als LICENSE ablegen. Ohne Lizenz darf niemand den Code nutzen; für privaten Code ist das in Ordnung. Technischer Hinweis, keine Rechtsberatung."
+  en: "Pick one license, write its SPDX id (for example MIT, GPL-3.0-or-later) into every manifest and add the unchanged license text as LICENSE. Without a license nobody may use the code; that is fine for private code. A technical hint, not legal advice."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://www.gesetze-im-internet.de/urhg/__31.html
+  - https://spdx.org/licenses/
+  - https://docs.npmjs.com/cli/v11/configuring-npm/package-json

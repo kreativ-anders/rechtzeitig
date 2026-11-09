@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-LIC-008
+severity: low
+title:
+  de: "Lizenzen genutzter KI-Modelle sind bekannt"
+  en: "Licenses of AI models in use are known"
+legal_basis:
+  de: "§ 31 Abs. 1 UrhG; Lizenzbedingungen des Modells"
+  en: "§ 31 (1) UrhG (German Copyright Act); the model's license terms"
+how: "Finds Hugging Face model ids (`org/name`, huggingface.co URLs) in code and configuration outside fixtures, tests, lockfiles and `skip_files`, and model weight files by extension, and maps ids and file names with `data/ai-models.yml` to licenses that forbid commercial use (warn) or set conditions such as a use policy, a user or revenue limit or an attribution (info); weight files without a known name are listed with an unknown license."
+fix_hint:
+  de: "Lizenz des Modells lesen und mit eurer Nutzung abgleichen: Nicht-kommerzielle Modelle nicht im Produkt einsetzen; bei Llama etwa „Built with Llama“ anzeigen und die Nutzungsrichtlinie beachten (multimodale Llama-3.2- und Llama-4-Modelle: keine Lizenz für Unternehmen mit Sitz in der EU). Für Gewichte unbekannter Herkunft Quelle und Lizenz dokumentieren. Technischer Hinweis, keine Rechtsberatung."
+  en: "Read the model's license and compare it with your use: keep non-commercial models out of the product; with Llama, for example, show \"Built with Llama\" and follow the use policy (multimodal Llama 3.2 and Llama 4 models: no license for companies based in the EU). For weights of unknown origin, record source and license. A technical hint, not legal advice."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://www.gesetze-im-internet.de/urhg/__31.html
+  - https://www.llama.com/llama3_1/license/
+  - https://www.llama.com/llama4/use-policy/
+  - https://ai.google.dev/gemma/terms
+  - https://spdx.org/licenses/CC-BY-NC-4.0.html

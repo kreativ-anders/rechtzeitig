@@ -93,8 +93,25 @@
   <div id="list">
 <!-- checks:start -->
 <section class="module" id="legal" data-module="legal">
-<h3>Legal <small>16 rules</small></h3>
+<h3>Legal <small>22 rules</small></h3>
 <div class="rules">
+<details class="rule" id="LEG-DE-LIC-008" data-module="legal" data-scope="repository" data-severity="low" data-search="leg-de-lic-008 legal/ai-model-licenses licenses of ai models in use are known lizenzen genutzter ki-modelle sind bekannt § 31 (1) urhg (german copyright act); the model's license terms finds hugging face model ids (`org/name`, huggingface.co urls) in code and configuration outside fixtures, tests, lockfiles and `skip_files`, and model weight files by extension, and maps ids and file names with `data/ai-models.yml` to licenses that forbid commercial use (warn) or set conditions such as a use policy, a user or revenue limit or an attribution (info); weight files without a known name are listed with an unknown license.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-LIC-008<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
+<span class="rule-title">Licenses of AI models in use are known</span>
+<span class="rule-title-de" lang="de">Lizenzen genutzter KI-Modelle sind bekannt</span>
+<span class="rule-law">§ 31 (1) UrhG (German Copyright Act); the model's license terms</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Finds Hugging Face model ids (<code>org/name</code>, huggingface.co URLs) in code and configuration outside fixtures, tests, lockfiles and <code>skip_files</code>, and model weight files by extension, and maps ids and file names with <code>data/ai-models.yml</code> to licenses that forbid commercial use (warn) or set conditions such as a use policy, a user or revenue limit or an attribution (info); weight files without a known name are listed with an unknown license.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Read the model's license and compare it with your use: keep non-commercial models out of the product; with Llama, for example, show &quot;Built with Llama&quot; and follow the use policy (multimodal Llama 3.2 and Llama 4 models: no license for companies based in the EU). For weights of unknown origin, record source and license. A technical hint, not legal advice.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/ai-model-licenses"><code>checks/legal/ai-model-licenses</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__31.html">gesetze-im-internet.de</a>, <a href="https://www.llama.com/llama3_1/license/">llama.com</a>, <a href="https://www.llama.com/llama4/use-policy/">llama.com</a>, <a href="https://ai.google.dev/gemma/terms">ai.google.dev</a>, <a href="https://spdx.org/licenses/CC-BY-NC-4.0.html">spdx.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a button labeled &quot;verträge hier kündigen&quot; on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and &quot;jetzt kündigen&quot; (`cancel_confirm`) on its target page; info when it cannot be followed. subscriptions">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-BTN-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
@@ -111,6 +128,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/cancellation-button"><code>checks/legal/cancellation-button</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312k.html">gesetze-im-internet.de</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-LIC-003" data-module="legal" data-scope="repository" data-severity="medium" data-search="leg-de-lic-003 legal/copyleft-dependencies copyleft dependencies fit the project license copyleft-abhängigkeiten passen zur projektlizenz §§ 31, 69c urhg (german copyright act); gpl-2.0 § 2, gpl-3.0 § 5 reads the spdx expressions of production dependencies from lockfiles that carry licenses (`licenses_in_lockfile` in `data/ecosystems.yml`) and flags gpl or agpl that no `or` choice avoids when the project license is not gpl, and gpl-2.0-only against gplv3, lgpl-3.0 or apache-2.0; categories and linking exceptions come from `data/licenses.yml`, agpl without a choice is left to legal/network-copyleft, dev dependencies and weak copyleft (lgpl, mpl, epl) are not flagged, and without a single license read the rule is skipped.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-LIC-003<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Copyleft dependencies fit the project license</span>
+<span class="rule-title-de" lang="de">Copyleft-Abhängigkeiten passen zur Projektlizenz</span>
+<span class="rule-law">§§ 31, 69c UrhG (German Copyright Act); GPL-2.0 § 2, GPL-3.0 § 5</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the SPDX expressions of production dependencies from lockfiles that carry licenses (<code>licenses_in_lockfile</code> in <code>data/ecosystems.yml</code>) and flags GPL or AGPL that no <code>OR</code> choice avoids when the project license is not GPL, and GPL-2.0-only against GPLv3, LGPL-3.0 or Apache-2.0; categories and linking exceptions come from <code>data/licenses.yml</code>, AGPL without a choice is left to legal/network-copyleft, dev dependencies and weak copyleft (LGPL, MPL, EPL) are not flagged, and without a single license read the rule is skipped.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>If you ship the software (app, library, browser bundle, container image), the whole work must be under the GPL. Replace the dependency, buy a commercial license or put the project under a fitting GPL version. Software used only in-house is not distributed. A technical hint, not legal advice.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/copyleft-dependencies"><code>checks/legal/copyleft-dependencies</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/urhg/__31.html">gesetze-im-internet.de</a>, <a href="https://www.gnu.org/licenses/gpl-3.0.html">gnu.org</a>, <a href="https://www.gnu.org/licenses/license-list.html">gnu.org</a>, <a href="https://www.gnu.org/licenses/gpl-faq.html">gnu.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="LEG-EU-DSE-003" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-eu-dse-003 legal/form-privacy-notice forms link to the privacy policy formulare verweisen auf die datenschutzerklärung art. 13(1) gdpr for every form with email, name, phone, address or birth date fields, looks for a privacy link or wording (`privacy` in `lang/*.yml`) inside the form or its container. ignores login forms.">
@@ -164,23 +198,6 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-LIC-001" data-module="legal" data-scope="repository" data-severity="medium" data-search="leg-de-lic-001 legal/licenses dependency licenses fit the project lizenzen der abhängigkeiten passen zum projekt §§ 31, 69c urhg (german copyright act) compares licenses from the lockfiles that carry them (`licenses_in_lockfile` in `data/ecosystems.yml`, today npm and composer) with the project license (package.json, composer.json or license) using the groups in `data/licenses.yml`; an spdx `or` with a non-copyleft choice is not flagged, other ecosystems are named as not checked, and without a single license read the rule is skipped.">
-<summary>
-<span class="rule-head"><span class="rule-id">LEG-DE-LIC-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
-<span class="rule-title">Dependency licenses fit the project</span>
-<span class="rule-title-de" lang="de">Lizenzen der Abhängigkeiten passen zum Projekt</span>
-<span class="rule-law">§§ 31, 69c UrhG (German Copyright Act)</span>
-<span class="rule-more">How it is checked</span>
-</summary>
-<div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Compares licenses from the lockfiles that carry them (<code>licenses_in_lockfile</code> in <code>data/ecosystems.yml</code>, today npm and Composer) with the project license (package.json, composer.json or LICENSE) using the groups in <code>data/licenses.yml</code>; an SPDX <code>OR</code> with a non-copyleft choice is not flagged, other ecosystems are named as not checked, and without a single license read the rule is skipped.</dd></div>
-<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
-<div><dt>How to fix</dt><dd>Review the license of each flagged dependency; replace it, buy a license or license the project to match.</dd></div>
-<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/licenses"><code>checks/legal/licenses</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
-</dl></div>
-</details>
 <details class="rule" id="LEG-DE-IMP-003" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-de-imp-003 legal/links-on-all-pages imprint and privacy policy are linked on every page impressum und datenschutz auf jeder seite verlinkt § 5 ddg, art. 12 gdpr looks for imprint and privacy links on every visited page of the site.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-IMP-003<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
@@ -196,6 +213,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/links-on-all-pages"><code>checks/legal/links-on-all-pages</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/ddg/__5.html">gesetze-im-internet.de</a>, <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-LIC-004" data-module="legal" data-scope="repository" data-severity="high" data-search="leg-de-lic-004 legal/network-copyleft no network copyleft dependency without a source offer keine netzwerk-copyleft-abhängigkeit ohne quellcode-angebot §§ 31, 69c no. 4 urhg (german copyright act); agpl-3.0 § 13; eupl-1.2 art. 1, 5 reads the spdx expressions of production dependencies from lockfiles that carry licenses (`licenses_in_lockfile` in `data/ecosystems.yml`) and flags agpl, eupl and osl-3.0 (`network_copyleft` in `data/licenses.yml`) that no `or` choice avoids, unless the project itself is under such a license; without a single license read the rule is skipped.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-LIC-004<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">No network copyleft dependency without a source offer</span>
+<span class="rule-title-de" lang="de">Keine Netzwerk-Copyleft-Abhängigkeit ohne Quellcode-Angebot</span>
+<span class="rule-law">§§ 31, 69c No. 4 UrhG (German Copyright Act); AGPL-3.0 § 13; EUPL-1.2 Art. 1, 5</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the SPDX expressions of production dependencies from lockfiles that carry licenses (<code>licenses_in_lockfile</code> in <code>data/ecosystems.yml</code>) and flags AGPL, EUPL and OSL-3.0 (<code>network_copyleft</code> in <code>data/licenses.yml</code>) that no <code>OR</code> choice avoids, unless the project itself is under such a license; without a single license read the rule is skipped.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>With AGPL: if you modify the software and offer it to users over a network, you must offer them the source of your version (§ 13), for example with a link on the site. With EUPL, online access already counts as distribution. Libraries used unmodified usually do not trigger § 13; check whether you change them, else replace or license them commercially. A technical hint, not legal advice.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/network-copyleft"><code>checks/legal/network-copyleft</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__69c.html">gesetze-im-internet.de</a>, <a href="https://www.gnu.org/licenses/agpl-3.0.html">gnu.org</a>, <a href="https://eur-lex.europa.eu/eli/dec_impl/2017/863/oj">eur-lex.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="LEG-EU-ODR-001" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-eu-odr-001 legal/odr-link no link to the closed eu dispute platform kein link zur abgeschalteten os-plattform regulation (eu) 2024/3228 looks for links to or mentions of the closed eu dispute platform (`odr` in `data/outdated-links.yml`) on every visited page.">
@@ -319,6 +353,57 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="LEG-DE-LIC-002" data-module="legal" data-scope="repository" data-severity="low" data-search="leg-de-lic-002 legal/project-license the project's own license is clear eigene lizenz ist eindeutig angegeben § 31 urhg (german copyright act: rights of use) reads the license fields of package.json, composer.json, cargo.toml and pyproject.toml in the root and the license files (license*, copying*, unlicense, reuse licenses/), checks the ids against `data/spdx.yml`, warns when manifests and files name different licenses, and compares mit, isc, 0bsd, bsd and apache-2.0 texts word pair by word pair with `data/license-texts.yml`, with the limit in `data/thresholds.yml`.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-LIC-002<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
+<span class="rule-title">The project's own license is clear</span>
+<span class="rule-title-de" lang="de">Eigene Lizenz ist eindeutig angegeben</span>
+<span class="rule-law">§ 31 UrhG (German Copyright Act: rights of use)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the license fields of package.json, composer.json, Cargo.toml and pyproject.toml in the root and the license files (LICENSE*, COPYING*, UNLICENSE, REUSE LICENSES/), checks the ids against <code>data/spdx.yml</code>, warns when manifests and files name different licenses, and compares MIT, ISC, 0BSD, BSD and Apache-2.0 texts word pair by word pair with <code>data/license-texts.yml</code>, with the limit in <code>data/thresholds.yml</code>.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Pick one license, write its SPDX id (for example MIT, GPL-3.0-or-later) into every manifest and add the unchanged license text as LICENSE. Without a license nobody may use the code; that is fine for private code. A technical hint, not legal advice.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/project-license"><code>checks/legal/project-license</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__31.html">gesetze-im-internet.de</a>, <a href="https://spdx.org/licenses/">spdx.org</a>, <a href="https://docs.npmjs.com/cli/v11/configuring-npm/package-json">docs.npmjs.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-LIC-007" data-module="legal" data-scope="repository" data-severity="low" data-search="leg-de-lic-007 legal/relicensed-dependencies no dependency past a license change keine abhängigkeit nach einem lizenzwechsel § 31 (1) urhg (german copyright act: rights of use) compares the locked version of every production dependency, in every ecosystem, with the first version under a new license in `data/relicensing.yml` (checked entries with their source) and names the old license and an open fork.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-LIC-007<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
+<span class="rule-title">No dependency past a license change</span>
+<span class="rule-title-de" lang="de">Keine Abhängigkeit nach einem Lizenzwechsel</span>
+<span class="rule-law">§ 31 (1) UrhG (German Copyright Act: rights of use)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Compares the locked version of every production dependency, in every ecosystem, with the first version under a new license in <code>data/relicensing.yml</code> (checked entries with their source) and names the old license and an open fork.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Read the new license of the named version. If it does not fit your use, stay on the last version under the old license (without new security fixes) or move to the named fork. A technical hint, not legal advice.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/relicensed-dependencies"><code>checks/legal/relicensed-dependencies</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__31.html">gesetze-im-internet.de</a>, <a href="https://spdx.org/licenses/BUSL-1.1.html">spdx.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-LIC-005" data-module="legal" data-scope="repository" data-severity="medium" data-search="leg-de-lic-005 legal/source-available-dependencies no dependency with usage limits (source-available) keine abhängigkeit mit nutzungsbeschränkung (source-available) § 31 (1) urhg (german copyright act: rights of use limited in content) reads the spdx expressions of production dependencies from lockfiles that carry licenses (`licenses_in_lockfile` in `data/ecosystems.yml`) and flags busl, sspl, elastic, fsl, polyform, commons clause, non-commercial and proprietary licenses (`source_available` in `data/licenses.yml`) that no `or` choice avoids; without a single license read the rule is skipped.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-LIC-005<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">No dependency with usage limits (source-available)</span>
+<span class="rule-title-de" lang="de">Keine Abhängigkeit mit Nutzungsbeschränkung (Source-Available)</span>
+<span class="rule-law">§ 31 (1) UrhG (German Copyright Act: rights of use limited in content)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the SPDX expressions of production dependencies from lockfiles that carry licenses (<code>licenses_in_lockfile</code> in <code>data/ecosystems.yml</code>) and flags BUSL, SSPL, Elastic, FSL, PolyForm, Commons Clause, non-commercial and proprietary licenses (<code>source_available</code> in <code>data/licenses.yml</code>) that no <code>OR</code> choice avoids; without a single license read the rule is skipped.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>These licenses are not open source: they forbid, for example, production use, a competing offer or commercial use. Compare the license terms with your use; otherwise take the last open version, an open fork or a commercial license. A technical hint, not legal advice.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/source-available-dependencies"><code>checks/legal/source-available-dependencies</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__31.html">gesetze-im-internet.de</a>, <a href="https://opensource.org/osd">opensource.org</a>, <a href="https://spdx.org/licenses/BUSL-1.1.html">spdx.org</a>, <a href="https://spdx.org/licenses/SSPL-1.0.html">spdx.org</a>, <a href="https://spdx.org/licenses/Elastic-2.0.html">spdx.org</a>, <a href="https://spdx.org/licenses/CC-BY-NC-4.0.html">spdx.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="LEG-DE-AGB-001" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-de-agb-001 legal/terms-link terms and conditions are linked and reachable agb sind verlinkt und erreichbar § 312i(1) sentence 1 no. 4 and § 305(2) bgb (german civil code) finds the t&amp;c link on the start page (`terms` in `lang/*.yml`), loads it and checks http status and that it has text; warns without a link, since t&amp;cs are optional. sales">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-AGB-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
@@ -335,6 +420,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/terms-link"><code>checks/legal/terms-link</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312i.html">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bgb/__305.html">gesetze-im-internet.de</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="LEG-DE-LIC-006" data-module="legal" data-scope="repository" data-severity="low" data-search="leg-de-lic-006 legal/unknown-licenses every dependency's license is known lizenzen aller abhängigkeiten sind bekannt § 31 urhg (german copyright act: rights of use) lists production dependencies whose lockfile license (`licenses_in_lockfile` in `data/ecosystems.yml`) is missing, unlicensed, unknown, noassertion, `see license in`, a licenseref or no spdx id from `data/spdx.yml`, and names lockfiles without license data, unreadable lockfiles and package files without a parser (repocontext.coverage), so a gap is a skip or info, never a pass.">
+<summary>
+<span class="rule-head"><span class="rule-id">LEG-DE-LIC-006<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
+<span class="rule-title">Every dependency's license is known</span>
+<span class="rule-title-de" lang="de">Lizenzen aller Abhängigkeiten sind bekannt</span>
+<span class="rule-law">§ 31 UrhG (German Copyright Act: rights of use)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Lists production dependencies whose lockfile license (<code>licenses_in_lockfile</code> in <code>data/ecosystems.yml</code>) is missing, UNLICENSED, UNKNOWN, NOASSERTION, <code>SEE LICENSE IN</code>, a LicenseRef or no SPDX id from <code>data/spdx.yml</code>, and names lockfiles without license data, unreadable lockfiles and package files without a parser (RepoContext.coverage), so a gap is a skip or info, never a pass.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Look up the license of each listed dependency in its repository or registry. With npm, UNLICENSED means no rights of use. With &quot;SEE LICENSE IN&quot;, read the named text. Check ecosystems without license data in their lockfile with a separate tool. A technical hint, not legal advice.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/unknown-licenses"><code>checks/legal/unknown-licenses</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/urhg/__31.html">gesetze-im-internet.de</a>, <a href="https://spdx.org/licenses/">spdx.org</a>, <a href="https://docs.npmjs.com/cli/v11/configuring-npm/package-json">docs.npmjs.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="LEG-DE-BTN-002" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-btn-002 legal/withdrawal-button withdrawal button for online contracts widerrufsbutton für online-verträge § 356a bgb (german civil code, since 19 june 2026) finds a button labeled &quot;vertrag widerrufen&quot; on the start page (`withdraw` in `lang/*.yml`, else `withdraw_similar` on the visible text, which warns) and &quot;widerruf bestätigen&quot; (`withdraw_confirm`) on its target page; info when it cannot be followed. sales">

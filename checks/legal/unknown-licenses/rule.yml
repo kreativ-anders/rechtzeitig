@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-LIC-006
+severity: low
+title:
+  de: "Lizenzen aller Abhängigkeiten sind bekannt"
+  en: "Every dependency's license is known"
+legal_basis:
+  de: "§ 31 UrhG"
+  en: "§ 31 UrhG (German Copyright Act: rights of use)"
+how: "Lists production dependencies whose lockfile license (`licenses_in_lockfile` in `data/ecosystems.yml`) is missing, UNLICENSED, UNKNOWN, NOASSERTION, `SEE LICENSE IN`, a LicenseRef or no SPDX id from `data/spdx.yml`, and names lockfiles without license data, unreadable lockfiles and package files without a parser (RepoContext.coverage), so a gap is a skip or info, never a pass."
+fix_hint:
+  de: "Lizenz jeder genannten Abhängigkeit in ihrem Repository oder ihrer Registry nachlesen. UNLICENSED heißt bei npm: keine Nutzungsrechte. Bei „SEE LICENSE IN“ den verlinkten Text lesen. Ökosysteme ohne Lizenzdaten im Lockfile mit einem eigenen Werkzeug prüfen. Technischer Hinweis, keine Rechtsberatung."
+  en: "Look up the license of each listed dependency in its repository or registry. With npm, UNLICENSED means no rights of use. With \"SEE LICENSE IN\", read the named text. Check ecosystems without license data in their lockfile with a separate tool. A technical hint, not legal advice."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://www.gesetze-im-internet.de/urhg/__31.html
+  - https://spdx.org/licenses/
+  - https://docs.npmjs.com/cli/v11/configuring-npm/package-json
