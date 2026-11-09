@@ -1,0 +1,39 @@
+# Invisible Unicode characters that make text read differently by a person and by a program or model.
+# Used by security/agent-config-hidden-unicode. Code point ranges in hex, both ends included.
+# `where`: instructions = agent instruction files (data/agent-files.yml), code = source files below.
+# Changing a list changes results: mention it in the commit message.
+
+classes:
+  # Explicit bidirectional embeddings, overrides and isolates (Unicode UAX #9, section 2).
+  # They reorder how code is displayed without changing what runs: "Trojan Source", CVE-2021-42574.
+  bidi:
+    ranges: ['202A-202E', '2066-2069']
+    where: [instructions, code]
+  # Tags block (U+E0000-E007F): an invisible copy of ASCII. Text hidden this way reaches a model
+  # but not the reviewer. Only legitimate inside emoji subdivision flags (after U+1F3F4).
+  tags:
+    ranges: ['E0000-E007F']
+    where: [instructions, code]
+  # Zero-width space, joiners, word joiner and invisible operators. A byte order mark only at the start
+  # of a file and a zero-width joiner between two emoji are left out.
+  zero_width:
+    ranges: ['200B-200D', '2060-2064', 'FEFF', '180E']
+    where: [instructions]
+  # Directional marks: invisible in text without right-to-left script.
+  marks:
+    ranges: ['200E-200F', '061C']
+    where: [instructions]
+  # Variation selector supplement: hides bytes after a visible character ("emoji smuggling").
+  variation_selectors:
+    ranges: ['E0100-E01EF']
+    where: [instructions]
+
+# Emoji subdivision flags: U+1F3F4, tag characters, U+E007F.
+flag_base: '1F3F4'
+
+# Source files checked for the `code` classes, by extension. Workflows count as code too.
+code_extensions: [js, mjs, cjs, jsx, ts, mts, cts, tsx, vue, svelte, astro, py, pyi, rb, go, rs, java, kt, kts, scala, groovy, gradle, c, h, cc, cpp, cxx, hpp, hh, cs, fs, php, swift, m, mm, dart, lua, pl, pm, r, jl, ex, exs, erl, hs, clj, zig, nim, sol, sh, bash, zsh, ps1, sql, tf, hcl]
+
+# Test files are not checked for the `code` classes: tests of sanitizers and parsers contain these characters
+# on purpose (as found in public repositories). Instruction files are always checked.
+test_files: '(^|/)(tests?|__tests__|spec|testdata)/|\.(test|spec)\.[^/]+$|_test\.(go|py|rs)$|(^|/)test_[^/]+\.py$'

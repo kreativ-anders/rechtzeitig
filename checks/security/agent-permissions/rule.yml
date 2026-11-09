@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-AGENT-003
+severity: medium
+title:
+  de: "KI-Agenten bekommen keine Blanko-Rechte"
+  en: "AI agents get no blanket permissions"
+legal_basis:
+  de: "CRA Art. 13 Abs. 1 i. V. m. Anhang I Teil I Nr. 2 Buchst. b, d und j, sichere Voreinstellung, Schutz vor unbefugtem Zugriff, kleine Angriffsfläche (ab 11.12.2027); Art. 32 DSGVO"
+  en: "CRA Art. 13(1) with Annex I Part I(2)(b), (d) and (j), secure by default, protection against unauthorised access, limited attack surface (from 11 Dec 2027); Art. 32 GDPR"
+how: "Reads the committed agent config files in `data/agent-files.yml` and warns on Claude Code rules that allow every shell command (`Bash`, `Bash(*)`), `bypassPermissions`, `enableAllProjectMcpServers`, Codex with `approval_policy = \"never\"` and `danger-full-access`, MCP servers started with `npx`, `bunx`, `pnpm dlx` or `uvx` without a fixed version, remote MCP servers over `http://` outside localhost and filesystem servers given `/` or the home folder; in workflows, scripts, package.json and Dockerfiles it warns on flags that turn off every approval (`--dangerously-skip-permissions`, `--yolo`, ...)."
+fix_hint:
+  de: "Nur die Befehle erlauben, die der Agent braucht (etwa \"Bash(npm test)\"), Freigaben ohne Rückfrage nur in einer Sandbox oder einem Container ohne Secrets nutzen, MCP-Server mit fester Version starten (npx -y paket@1.2.3) und entfernte MCP-Server nur über https:// anbinden."
+  en: "Allow only the commands the agent needs (such as \"Bash(npm test)\"), skip approvals only in a sandbox or container without secrets, start MCP servers with a fixed version (npx -y package@1.2.3) and connect remote MCP servers only over https://."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj
+  - https://code.claude.com/docs/en/permissions
+  - https://code.claude.com/docs/en/settings
+  - https://modelcontextprotocol.io/docs/2025-11-25/tutorials/security/security_best_practices
+  - https://docs.npmjs.com/cli/v11/commands/npx

@@ -77,3 +77,16 @@ security/source-maps:
   # A source path matches a repository file only by an ending of at least this many parts (src/app.ts),
   # since a bare file name (index.ts) matches too many files.
   min_parts: 2
+
+security/agent-config-secrets:
+  # A literal value under a credential key counts as a secret from this length on (shorter ones are
+  # mostly flags or ids)...
+  min_length: 16
+  # ...and from this Shannon entropy in bits per character (placeholders like "aaaa…" stay below).
+  min_entropy: 3
+
+security/hallucinated-packages:
+  # Names shorter than this are not compared: short names are one letter apart by chance.
+  min_length: 5
+  # Largest Damerau-Levenshtein distance (one insertion, deletion, substitution or swap) that counts as a typo.
+  max_distance: 1

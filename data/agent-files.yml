@@ -1,0 +1,103 @@
+# Files that configure AI coding agents, and what in them gives an agent more than it should have.
+# Used by security/agent-config-secrets, security/agent-config-hidden-unicode and security/agent-permissions.
+# Paths are regular expressions on the repository path (with "/"), case-sensitive.
+# Changing a list changes results: mention it in the commit message.
+
+# Text an agent reads as instructions. Whatever stands in them, the agent may follow.
+instructions:
+  - '(^|/)(CLAUDE|AGENTS|AGENT|GEMINI)(\.local)?\.md$'
+  - '(^|/)\.cursorrules$'
+  - '(^|/)\.cursor/rules/'
+  - '(^|/)\.windsurfrules$'
+  - '(^|/)\.windsurf/rules/'
+  - '(^|/)\.clinerules(/|$)'
+  - '(^|/)\.roorules(-[\w-]+)?$'
+  - '(^|/)\.roo/rules(-[\w-]+)?/'
+  - '(^|/)\.github/copilot-instructions\.md$'
+  - '(^|/)\.github/instructions/.*\.instructions\.md$'
+  - '(^|/)\.github/(prompts|chatmodes|agents)/.*\.md$'
+  - '(^|/)\.claude/(commands|agents|skills|rules)/.*\.md$'
+  - '(^|/)\.gemini/(commands|styleguide)'
+  - '(^|/)\.continue/(rules|prompts)/'
+  - '(^|/)\.kiro/steering/'
+  - '(^|/)\.amazonq/rules/'
+  - '(^|/)\.junie/guidelines\.md$'
+  - '(^|/)\.augment-guidelines$'
+  - '(^|/)\.augment/rules/'
+  - '(^|/)\.trae/rules/'
+  - '(^|/)\.aider\.instructions\.md$'
+
+# Settings and MCP server files. They start programs and hold their environment.
+config:
+  - '(^|/)\.mcp\.json$'
+  - '(^|/)\.cursor/(mcp|cli)\.json$'
+  - '(^|/)\.vscode/mcp\.json$'
+  - '(^|/)claude_desktop_config\.json$'
+  - '(^|/)\.claude/settings(\.local)?\.json$'
+  - '(^|/)\.gemini/settings\.json$'
+  - '(^|/)\.codex/config\.toml$'
+  - '(^|/)\.windsurf/mcp(_config)?\.json$'
+  - '(^|/)mcp_config\.json$'
+  - '(^|/)\.continue/(config\.(json|ya?ml)|mcpServers/.*\.(json|ya?ml))$'
+  - '(^|/)\.roo/mcp\.json$'
+  - '(^|/)\.amazonq/(mcp|default)\.json$'
+  - '(^|/)\.kiro/settings/mcp\.json$'
+  - '(^|/)\.zed/settings\.json$'
+  - '(^|/)opencode\.jsonc?$'
+  - '(^|/)\.aider\.conf\.ya?ml$'
+
+# Keys under which MCP config files list their servers (Claude, Cursor, VS Code, Zed, opencode).
+mcp_server_keys: [mcpServers, servers, context_servers, mcp]
+
+# security/agent-config-secrets: a key that names a credential, holding a literal value.
+# Matched case-insensitively on the key, after camelCase is split with "_" (apiKey → api_Key).
+secret_key: '(^|[_.-])(api[_-]?key|apikey|token|secret|password|passwd|access[_-]?key|private[_-]?key|authorization|credentials?|bearer|auth)([_.-]|$)'
+# Keys that only describe a credential, never hold one.
+not_secret_key: '([_.-]|^)(url|uri|endpoint|path|file|dir|type|mode|method|header|name|env|var|helper|command|cmd|provider|scheme|id|limit|count|ttl|expiry|expires|length|max|min)$'
+# Values that stand for a credential instead of being one: references, placeholders, masks. Case-insensitive.
+placeholder: '^\$|\$\{[^}]*\}|^\{\{|^<|>$|^%|^\[|^env:|^op://|^vault:|^secret:|^sm://|xxxx|\*\*\*|\.\.\.|your[_-]|[_-]here$|example|placeholder|change[_-]?me|replace|insert|dummy|redacted|fake|^none$|^null$|0123456|1234567|abcdefg'
+# Command line flags that carry a credential in MCP server args: --api-key=VALUE or --api-key VALUE.
+secret_flag: '--(api[_-]?key|token|access[_-]?token|auth[_-]?token|password|secret|bearer)'
+
+# security/agent-permissions
+# Claude Code permission rules that allow every shell command (code.claude.com/docs/en/permissions).
+allow_all_rules: ['^Bash$', '^Bash\(\s*\*?\s*:?\s*\*\s*\)$', '^\*$']
+# Permission modes that skip every prompt, in settings files.
+bypass_modes: [bypassPermissions]
+# Flags that turn off every approval of an agent CLI. `agent` is required on the same line for flags that
+# other tools may use too.
+skip_flags:
+  - flag: '--dangerously-skip-permissions\b'
+  - flag: '--dangerously-bypass-approvals-and-sandbox\b'
+  - flag: '--permission-mode[= ]+["'']?bypassPermissions\b'
+  - flag: '--approval-mode[= ]+["'']?yolo\b'
+  - flag: '(^|\s)--yolo\b'
+    agent: '\b(gemini|codex|qwen|claude|cursor-agent|opencode|crush|amp)\b'
+# Files where such a flag runs unattended: workflows, scripts, task runners, containers.
+flag_files:
+  - '^\.github/workflows/.*\.ya?ml$'
+  - '(^|/)package\.json$'
+  - '\.(sh|bash|zsh|ps1)$'
+  - '(^|/)(Makefile|makefile|GNUmakefile|Justfile|justfile|Taskfile\.ya?ml|Procfile|Dockerfile|Containerfile)$'
+  - '(^|/)Dockerfile\.[\w.-]+$'
+  - '(^|/)\.devcontainer/.*\.json$'
+  - '(^|/)\.gitlab-ci\.ya?ml$'
+  - '(^|/)\.husky/'
+# Codex settings that remove approvals and the sandbox together (.codex/config.toml).
+codex_unsafe:
+  approval_policy: never
+  sandbox_mode: danger-full-access
+# Commands that download and start the newest version of a package each time.
+# `skip` are leading args before the package name; `pinned` tells a fixed version.
+runners:
+  npx: { skip: '^(-y|--yes|-q|--quiet|--prefer-offline|--prefer-online)$', pinned: '^(@[^/@]+/)?[^@]+@\d[\w.+-]*$' }
+  bunx: { skip: '^(-y|--yes|--bun)$', pinned: '^(@[^/@]+/)?[^@]+@\d[\w.+-]*$' }
+  pnpx: { skip: '^(-y|--yes)$', pinned: '^(@[^/@]+/)?[^@]+@\d[\w.+-]*$' }
+  uvx: { skip: '^(-q|--quiet|--refresh|--isolated|--no-cache|--offline)$', pinned: '^[^=@]+(==|@)\d[\w.+-]*$' }
+# Runners started as "pnpm dlx", "yarn dlx", "npm exec".
+runner_subcommands: { pnpm: dlx, yarn: dlx, npm: exec }
+# Remote MCP over plain HTTP is fine only on the same machine.
+loopback_hosts: [localhost, 127.0.0.1, '[::1]', 0.0.0.0, host.docker.internal]
+# MCP filesystem servers given the whole disk or the home folder.
+filesystem_server: '@modelcontextprotocol/server-filesystem'
+filesystem_roots: ['/', '~', '~/', '$HOME', '${HOME}', 'C:\', 'C:/', '/Users', '/home']

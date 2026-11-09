@@ -22,6 +22,7 @@ courts:
 authorities:
   - edpb.europa.eu
   - enisa.europa.eu
+  - nvd.nist.gov
   - commission.europa.eu
   - digital-strategy.ec.europa.eu
   - datenschutzkonferenz-online.de
@@ -40,6 +41,8 @@ standards:
   - cyclonedx.org
   - spdx.org
   - tc39.es
+  - unicode.org
+  - modelcontextprotocol.io
 
 # Vendor documentation, only for technical facts about that vendor's product.
 vendors:
@@ -51,3 +54,6 @@ vendors:
   - docs.github.com
   - hstspreload.org
   - thegreenwebfoundation.org
+  - code.claude.com
+  - docs.npmjs.com
+  - doc.rust-lang.org

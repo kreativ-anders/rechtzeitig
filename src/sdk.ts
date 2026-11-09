@@ -8,6 +8,8 @@ import { loadYaml } from "./data.ts";
 export { isWebUrl } from "./text.ts";
 export { MANIFESTS } from "./repo/lockfiles.ts";
 import { MANIFESTS } from "./repo/lockfiles.ts";
+export { DECLARING, declaredDependencies, lockfilesFor, ownName, pypiName, type Declared } from "./repo/manifests.ts";
+export { satisfies } from "./repo/semver.ts";
 
 export const STATUSES = ["pass", "warn", "fail", "info", "skip"] as const;
 export type Status = (typeof STATUSES)[number];

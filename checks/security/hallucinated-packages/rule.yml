@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-SUPPLY-001
+severity: medium
+title:
+  de: "Abhängigkeiten sind echte, installierte Pakete"
+  en: "Dependencies are real, installed packages"
+legal_basis:
+  de: "CRA Art. 13 Abs. 5 (Sorgfalt bei Komponenten Dritter) i. V. m. Anhang I Teil I Nr. 2 Buchst. a (ab 11.12.2027)"
+  en: "CRA Art. 13(5) (due diligence for third-party components) with Annex I Part I(2)(a) (from 11 Dec 2027)"
+how: "Reads the direct registry dependencies of package.json, composer.json, pubspec.yaml, Cargo.toml and pyproject.toml (`src/repo/manifests.ts`, `data/packages.yml`) and warns on names the parsed lockfile of that manifest does not contain (never installed, so possibly made up by an AI assistant), and on names one typo away from a popular package or an unscoped copy of a scoped one (lists and allowed look-alikes in `data/packages.yml`, distance and minimum length in `data/thresholds.yml`), also in pinned requirements files; nothing is looked up in a registry."
+fix_hint:
+  de: "Jeden gemeldeten Namen auf der Seite der Registry prüfen (Herausgeber, Alter, Downloads), Tippfehler korrigieren und danach den Paketmanager das Lockfile neu schreiben lassen (npm install, composer update, cargo update, uv lock)."
+  en: "Check each reported name on the registry's page (publisher, age, downloads), fix typos, then let the package manager rewrite the lockfile (npm install, composer update, cargo update, uv lock)."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj
+  - https://docs.npmjs.com/cli/v11/configuring-npm/package-lock-json
+  - https://docs.npmjs.com/threats-and-mitigations

@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-AGENT-004
+severity: high
+title:
+  de: "KI-Agenten in Workflows lesen keine fremden Texte mit Rechten"
+  en: "AI agents in workflows do not read outside text with privileges"
+legal_basis:
+  de: "CRA Art. 13 Abs. 1 i. V. m. Anhang I Teil I Nr. 2 Buchst. d, Schutz vor unbefugtem Zugriff (ab 11.12.2027); Art. 32 DSGVO"
+  en: "CRA Art. 13(1) with Annex I Part I(2)(d), protection against unauthorised access (from 11 Dec 2027); Art. 32 GDPR"
+how: "Reads `.github/workflows/*.yml` and, for steps that run an AI agent (actions and command lines in `data/workflow-risks.yml`) under a trigger an outsider can start (issues, comments, `pull_request_target`, ...) without a member check in `if:`, flags outside-controlled `${{ github.event.* }}` expressions (the `untrusted` list of `data/workflow-risks.yml`) in the step's `with:` or `env:`, as a failure when the step has secrets or the token may write, and `allowed_non_write_users: \"*\"`, as a failure when the token may write one of the `code_write_scopes`; expressions inside `run:` are left to `security/workflow-risks`."
+fix_hint:
+  de: "Dem Agenten keine Issue-, Kommentar- oder PR-Texte in den Prompt geben, oder den Job mit if: auf Mitglieder beschränken (github.event.comment.author_association == 'MEMBER'); permissions auf contents: read setzen und dem Agenten nur die Werkzeuge erlauben, die er braucht."
+  en: "Do not put issue, comment or pull request text into the agent's prompt, or limit the job to members with if: (github.event.comment.author_association == 'MEMBER'); set permissions to contents: read and allow the agent only the tools it needs."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj
+  - https://docs.github.com/en/actions/reference/security/secure-use
+  - https://code.claude.com/docs/en/github-actions

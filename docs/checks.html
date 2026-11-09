@@ -655,7 +655,7 @@
 </div>
 </section>
 <section class="module" id="security" data-module="security">
-<h3>Security <small>28 rules</small></h3>
+<h3>Security <small>34 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-DEPS-005" data-module="security" data-scope="repository" data-severity="low" data-search="sec-deps-005 security/actions-pinning github actions are pinned to a commit github actions sind auf einen commit gepinnt cra art. 13(5), due diligence for third-party components (from 11 dec 2027) reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit sha.">
 <summary>
@@ -672,6 +672,74 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/actions-pinning"><code>checks/security/actions-pinning</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-AGENT-002" data-module="security" data-scope="repository" data-severity="high" data-search="sec-agent-002 security/agent-config-hidden-unicode no hidden characters in agent rules and source code keine unsichtbaren zeichen in agenten-regeln und quellcode cra art. 13(1) with annex i part i(2)(f), integrity of programs and configuration (from 11 dec 2027); art. 32 gdpr reads agent instruction files (`data/agent-files.yml`) and source files and workflows (extensions in `data/hidden-unicode.yml`, test files left out) and flags, by the code point ranges in `data/hidden-unicode.yml`, bidirectional overrides and isolates (trojan source, cve-2021-42574) and unicode tag characters in both, and zero-width characters, directional marks and variation selector supplements in instruction files; a byte order mark at the start, a zero-width joiner between emoji and tags inside emoji flags are left out, and the hidden text is never shown.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-AGENT-002<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">No hidden characters in agent rules and source code</span>
+<span class="rule-title-de" lang="de">Keine unsichtbaren Zeichen in Agenten-Regeln und Quellcode</span>
+<span class="rule-law">CRA Art. 13(1) with Annex I Part I(2)(f), integrity of programs and configuration (from 11 Dec 2027); Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads agent instruction files (<code>data/agent-files.yml</code>) and source files and workflows (extensions in <code>data/hidden-unicode.yml</code>, test files left out) and flags, by the code point ranges in <code>data/hidden-unicode.yml</code>, bidirectional overrides and isolates (Trojan Source, CVE-2021-42574) and Unicode tag characters in both, and zero-width characters, directional marks and variation selector supplements in instruction files; a byte order mark at the start, a zero-width joiner between emoji and tags inside emoji flags are left out, and the hidden text is never shown.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Open the file in an editor that shows invisible characters, remove them and check who added them; the text may hold hidden instructions for the agent or reordered code.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/agent-config-hidden-unicode"><code>checks/security/agent-config-hidden-unicode</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-42574">nvd.nist.gov</a>, <a href="https://www.unicode.org/reports/tr9/">unicode.org</a>, <a href="https://www.unicode.org/charts/PDF/UE0000.pdf">unicode.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-AGENT-001" data-module="security" data-scope="repository" data-severity="critical" data-search="sec-agent-001 security/agent-config-secrets no credentials in ai agent and mcp config keine zugangsdaten in agenten- und mcp-konfiguration art. 32 gdpr reads the agent instruction and config files listed in `data/agent-files.yml` (claude.md, agents.md, .cursorrules, .mcp.json, .cursor/mcp.json, .vscode/mcp.json, .claude/settings.json, ...) line by line and flags keys matching the named patterns of `data/secrets.yml` (with their placeholder and entropy filters), literal values under credential keys (`env`, `headers`, `key=value`) and `--api-key`-style arguments; it leaves out `${var}` references and placeholders (`placeholder` in `data/agent-files.yml`, also counting sequences in documentation examples), and literal values must pass the length and entropy limits in `data/thresholds.yml`; it shows only the key name and the length, never the value.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-AGENT-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">critical</span></span></span>
+<span class="rule-title">No credentials in AI agent and MCP config</span>
+<span class="rule-title-de" lang="de">Keine Zugangsdaten in Agenten- und MCP-Konfiguration</span>
+<span class="rule-law">Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the agent instruction and config files listed in <code>data/agent-files.yml</code> (CLAUDE.md, AGENTS.md, .cursorrules, .mcp.json, .cursor/mcp.json, .vscode/mcp.json, .claude/settings.json, ...) line by line and flags keys matching the named patterns of <code>data/secrets.yml</code> (with their placeholder and entropy filters), literal values under credential keys (<code>env</code>, <code>headers</code>, <code>KEY=value</code>) and <code>--api-key</code>-style arguments; it leaves out <code>${VAR}</code> references and placeholders (<code>placeholder</code> in <code>data/agent-files.yml</code>, also counting sequences in documentation examples), and literal values must pass the length and entropy limits in <code>data/thresholds.yml</code>; it shows only the key name and the length, never the value.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Revoke the key and replace it with a reference such as &quot;env&quot;: {&quot;API_KEY&quot;: &quot;${API_KEY}&quot;}, or set it as a shell environment variable. Agent files end up in the model's context and in every clone.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/agent-config-secrets"><code>checks/security/agent-config-secrets</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://modelcontextprotocol.io/docs/2025-11-25/tutorials/security/security_best_practices">modelcontextprotocol.io</a>, <a href="https://code.claude.com/docs/en/mcp">code.claude.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-AGENT-003" data-module="security" data-scope="repository" data-severity="medium" data-search="sec-agent-003 security/agent-permissions ai agents get no blanket permissions ki-agenten bekommen keine blanko-rechte cra art. 13(1) with annex i part i(2)(b), (d) and (j), secure by default, protection against unauthorised access, limited attack surface (from 11 dec 2027); art. 32 gdpr reads the committed agent config files in `data/agent-files.yml` and warns on claude code rules that allow every shell command (`bash`, `bash(*)`), `bypasspermissions`, `enableallprojectmcpservers`, codex with `approval_policy = &quot;never&quot;` and `danger-full-access`, mcp servers started with `npx`, `bunx`, `pnpm dlx` or `uvx` without a fixed version, remote mcp servers over `http://` outside localhost and filesystem servers given `/` or the home folder; in workflows, scripts, package.json and dockerfiles it warns on flags that turn off every approval (`--dangerously-skip-permissions`, `--yolo`, ...).">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-AGENT-003<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">AI agents get no blanket permissions</span>
+<span class="rule-title-de" lang="de">KI-Agenten bekommen keine Blanko-Rechte</span>
+<span class="rule-law">CRA Art. 13(1) with Annex I Part I(2)(b), (d) and (j), secure by default, protection against unauthorised access, limited attack surface (from 11 Dec 2027); Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the committed agent config files in <code>data/agent-files.yml</code> and warns on Claude Code rules that allow every shell command (<code>Bash</code>, <code>Bash(*)</code>), <code>bypassPermissions</code>, <code>enableAllProjectMcpServers</code>, Codex with <code>approval_policy = &quot;never&quot;</code> and <code>danger-full-access</code>, MCP servers started with <code>npx</code>, <code>bunx</code>, <code>pnpm dlx</code> or <code>uvx</code> without a fixed version, remote MCP servers over <code>http://</code> outside localhost and filesystem servers given <code>/</code> or the home folder; in workflows, scripts, package.json and Dockerfiles it warns on flags that turn off every approval (<code>--dangerously-skip-permissions</code>, <code>--yolo</code>, ...).</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Allow only the commands the agent needs (such as &quot;Bash(npm test)&quot;), skip approvals only in a sandbox or container without secrets, start MCP servers with a fixed version (npx -y package@1.2.3) and connect remote MCP servers only over https://.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/agent-permissions"><code>checks/security/agent-permissions</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://code.claude.com/docs/en/permissions">code.claude.com</a>, <a href="https://code.claude.com/docs/en/settings">code.claude.com</a>, <a href="https://modelcontextprotocol.io/docs/2025-11-25/tutorials/security/security_best_practices">modelcontextprotocol.io</a>, <a href="https://docs.npmjs.com/cli/v11/commands/npx">docs.npmjs.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-AGENT-004" data-module="security" data-scope="repository" data-severity="high" data-search="sec-agent-004 security/agent-workflows ai agents in workflows do not read outside text with privileges ki-agenten in workflows lesen keine fremden texte mit rechten cra art. 13(1) with annex i part i(2)(d), protection against unauthorised access (from 11 dec 2027); art. 32 gdpr reads `.github/workflows/*.yml` and, for steps that run an ai agent (actions and command lines in `data/workflow-risks.yml`) under a trigger an outsider can start (issues, comments, `pull_request_target`, ...) without a member check in `if:`, flags outside-controlled `${{ github.event.* }}` expressions (the `untrusted` list of `data/workflow-risks.yml`) in the step's `with:` or `env:`, as a failure when the step has secrets or the token may write, and `allowed_non_write_users: &quot;*&quot;`, as a failure when the token may write one of the `code_write_scopes`; expressions inside `run:` are left to `security/workflow-risks`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-AGENT-004<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
+<span class="rule-title">AI agents in workflows do not read outside text with privileges</span>
+<span class="rule-title-de" lang="de">KI-Agenten in Workflows lesen keine fremden Texte mit Rechten</span>
+<span class="rule-law">CRA Art. 13(1) with Annex I Part I(2)(d), protection against unauthorised access (from 11 Dec 2027); Art. 32 GDPR</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads <code>.github/workflows/*.yml</code> and, for steps that run an AI agent (actions and command lines in <code>data/workflow-risks.yml</code>) under a trigger an outsider can start (issues, comments, <code>pull_request_target</code>, ...) without a member check in <code>if:</code>, flags outside-controlled <code>${{ github.event.* }}</code> expressions (the <code>untrusted</code> list of <code>data/workflow-risks.yml</code>) in the step's <code>with:</code> or <code>env:</code>, as a failure when the step has secrets or the token may write, and <code>allowed_non_write_users: &quot;*&quot;</code>, as a failure when the token may write one of the <code>code_write_scopes</code>; expressions inside <code>run:</code> are left to <code>security/workflow-risks</code>.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Do not put issue, comment or pull request text into the agent's prompt, or limit the job to members with if: (github.event.comment.author_association == 'MEMBER'); set permissions to contents: read and allow the agent only the tools it needs.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/agent-workflows"><code>checks/security/agent-workflows</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.github.com/en/actions/reference/security/secure-use">docs.github.com</a>, <a href="https://code.claude.com/docs/en/github-actions">code.claude.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-HDR-002" data-module="security" data-scope="website" data-severity="medium" data-search="sec-hdr-002 security/cookie-flags cookies use secure flags cookies nutzen sichere flags art. 32 gdpr checks secure on every cookie set without login (https sites, and always with `samesite=none`) and httponly on cookies whose name looks like a session (`data/cookies.yml`); cookies of other sites only give info.">
@@ -844,6 +912,23 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
+<details class="rule" id="SEC-SUPPLY-001" data-module="security" data-scope="repository" data-severity="medium" data-search="sec-supply-001 security/hallucinated-packages dependencies are real, installed packages abhängigkeiten sind echte, installierte pakete cra art. 13(5) (due diligence for third-party components) with annex i part i(2)(a) (from 11 dec 2027) reads the direct registry dependencies of package.json, composer.json, pubspec.yaml, cargo.toml and pyproject.toml (`src/repo/manifests.ts`, `data/packages.yml`) and warns on names the parsed lockfile of that manifest does not contain (never installed, so possibly made up by an ai assistant), and on names one typo away from a popular package or an unscoped copy of a scoped one (lists and allowed look-alikes in `data/packages.yml`, distance and minimum length in `data/thresholds.yml`), also in pinned requirements files; nothing is looked up in a registry.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-SUPPLY-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Dependencies are real, installed packages</span>
+<span class="rule-title-de" lang="de">Abhängigkeiten sind echte, installierte Pakete</span>
+<span class="rule-law">CRA Art. 13(5) (due diligence for third-party components) with Annex I Part I(2)(a) (from 11 Dec 2027)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the direct registry dependencies of package.json, composer.json, pubspec.yaml, Cargo.toml and pyproject.toml (<code>src/repo/manifests.ts</code>, <code>data/packages.yml</code>) and warns on names the parsed lockfile of that manifest does not contain (never installed, so possibly made up by an AI assistant), and on names one typo away from a popular package or an unscoped copy of a scoped one (lists and allowed look-alikes in <code>data/packages.yml</code>, distance and minimum length in <code>data/thresholds.yml</code>), also in pinned requirements files; nothing is looked up in a registry.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Check each reported name on the registry's page (publisher, age, downloads), fix typos, then let the package manager rewrite the lockfile (npm install, composer update, cargo update, uv lock).</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/hallucinated-packages"><code>checks/security/hallucinated-packages</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.npmjs.com/cli/v11/configuring-npm/package-lock-json">docs.npmjs.com</a>, <a href="https://docs.npmjs.com/threats-and-mitigations">docs.npmjs.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
 <details class="rule" id="SEC-HDR-006" data-module="security" data-scope="both" data-severity="medium" data-search="sec-hdr-006 security/headers-deployed security headers from the repository reach the site sicherheits-header aus dem repository kommen auf der website an art. 32 gdpr reads the headers that `vercel.json`, `firebase.json`, `netlify.toml`, `_headers` and `.htaccess` set for every path, keeps the security headers in `data/header-configs.yml`, and compares them with the start page's response headers (csp and referrer-policy also from &lt;meta&gt;): a header not sent warns, a different value gives info; nginx, `next.config` and helmet are not read.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-HDR-006<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
@@ -927,6 +1012,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/isolation-headers"><code>checks/security/isolation-headers</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/permissions-policy/#permissions-policy-http-header-field">w3.org</a>, <a href="https://html.spec.whatwg.org/multipage/browsers.html#the-coop-headers">html.spec.whatwg.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-SUPPLY-002" data-module="security" data-scope="repository" data-severity="low" data-search="sec-supply-002 security/lockfile-drift manifest and lockfile agree manifest und lockfile passen zusammen cra art. 13(5) with annex i part ii(1), an accurate sbom (from 11 dec 2027) warns on lockfiles of two package managers in one folder and a `packagemanager` field that names another manager than the lockfile there (managers in `data/packages.yml`), and on dependencies of package.json and cargo.toml whose locked versions no longer match the manifest: the specifier pnpm recorded, the descriptor in yarn.lock, or for package-lock.json and cargo.lock a range none of the locked versions meets (`src/repo/semver.ts`); dependencies missing from the lockfile are left to `security/hallucinated-packages`.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-SUPPLY-002<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
+<span class="rule-title">Manifest and lockfile agree</span>
+<span class="rule-title-de" lang="de">Manifest und Lockfile passen zusammen</span>
+<span class="rule-law">CRA Art. 13(5) with Annex I Part II(1), an accurate SBOM (from 11 Dec 2027)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Warns on lockfiles of two package managers in one folder and a <code>packageManager</code> field that names another manager than the lockfile there (managers in <code>data/packages.yml</code>), and on dependencies of package.json and Cargo.toml whose locked versions no longer match the manifest: the specifier pnpm recorded, the descriptor in yarn.lock, or for package-lock.json and Cargo.lock a range none of the locked versions meets (<code>src/repo/semver.ts</code>); dependencies missing from the lockfile are left to <code>security/hallucinated-packages</code>.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Pick one package manager and delete the other lockfiles; after each manifest change let the package manager rewrite the lockfile, and install in CI with npm ci, pnpm install --frozen-lockfile, yarn install --immutable or cargo build --locked.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/lockfile-drift"><code>checks/security/lockfile-drift</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.npmjs.com/cli/v11/commands/npm-ci">docs.npmjs.com</a>, <a href="https://doc.rust-lang.org/cargo/commands/cargo-build.html">doc.rust-lang.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-TLS-003" data-module="security" data-scope="website" data-severity="medium" data-search="sec-tls-003 security/mixed-content no unencrypted resources on https pages keine unverschlüsselten ressourcen auf https-seiten art. 32 gdpr lists `http://` requests made by pages of an https site.">

@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-AGENT-001
+severity: critical
+title:
+  de: "Keine Zugangsdaten in Agenten- und MCP-Konfiguration"
+  en: "No credentials in AI agent and MCP config"
+legal_basis:
+  de: "Art. 32 DSGVO"
+  en: "Art. 32 GDPR"
+how: "Reads the agent instruction and config files listed in `data/agent-files.yml` (CLAUDE.md, AGENTS.md, .cursorrules, .mcp.json, .cursor/mcp.json, .vscode/mcp.json, .claude/settings.json, ...) line by line and flags keys matching the named patterns of `data/secrets.yml` (with their placeholder and entropy filters), literal values under credential keys (`env`, `headers`, `KEY=value`) and `--api-key`-style arguments; it leaves out `${VAR}` references and placeholders (`placeholder` in `data/agent-files.yml`, also counting sequences in documentation examples), and literal values must pass the length and entropy limits in `data/thresholds.yml`; it shows only the key name and the length, never the value."
+fix_hint:
+  de: "Den Schlüssel widerrufen und durch eine Referenz ersetzen, etwa \"env\": {\"API_KEY\": \"${API_KEY}\"}, oder als Umgebungsvariable der Shell setzen. Agenten-Dateien landen im Kontext des Modells und in jedem Klon."
+  en: "Revoke the key and replace it with a reference such as \"env\": {\"API_KEY\": \"${API_KEY}\"}, or set it as a shell environment variable. Agent files end up in the model's context and in every clone."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2016/679/oj
+  - https://modelcontextprotocol.io/docs/2025-11-25/tutorials/security/security_best_practices
+  - https://code.claude.com/docs/en/mcp

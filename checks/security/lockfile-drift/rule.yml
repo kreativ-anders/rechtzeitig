@@ -1,0 +1,19 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: SEC-SUPPLY-002
+severity: low
+title:
+  de: "Manifest und Lockfile passen zusammen"
+  en: "Manifest and lockfile agree"
+legal_basis:
+  de: "CRA Art. 13 Abs. 5 i. V. m. Anhang I Teil II Nr. 1, zutreffende SBOM (ab 11.12.2027)"
+  en: "CRA Art. 13(5) with Annex I Part II(1), an accurate SBOM (from 11 Dec 2027)"
+how: "Warns on lockfiles of two package managers in one folder and a `packageManager` field that names another manager than the lockfile there (managers in `data/packages.yml`), and on dependencies of package.json and Cargo.toml whose locked versions no longer match the manifest: the specifier pnpm recorded, the descriptor in yarn.lock, or for package-lock.json and Cargo.lock a range none of the locked versions meets (`src/repo/semver.ts`); dependencies missing from the lockfile are left to `security/hallucinated-packages`."
+fix_hint:
+  de: "Einen Paketmanager festlegen und die Lockfiles der anderen löschen; nach jeder Änderung am Manifest den Paketmanager das Lockfile neu schreiben lassen und in CI mit npm ci, pnpm install --frozen-lockfile, yarn install --immutable oder cargo build --locked installieren."
+  en: "Pick one package manager and delete the other lockfiles; after each manifest change let the package manager rewrite the lockfile, and install in CI with npm ci, pnpm install --frozen-lockfile, yarn install --immutable or cargo build --locked."
+meta:
+  last_reviewed: "2026-11-09"
+  sources:
+  - https://eur-lex.europa.eu/eli/reg/2024/2847/oj
+  - https://docs.npmjs.com/cli/v11/commands/npm-ci
+  - https://doc.rust-lang.org/cargo/commands/cargo-build.html
