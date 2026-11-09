@@ -62,3 +62,7 @@ test("reads every Google tag endpoint", async () => {
   for (const url of urls) assert.equal((await runFake(here, requests(`${url}?gcs=G100`))).status, "pass", url);
   assert.equal((await runFake(here, requests("https://www.google.com/search?gcs=G111"))).status, "skip");
 });
+
+test("a tag path on a host that is not Google's does not count", async () => {
+  assert.equal((await runFake(here, requests("https://stats.example-cdn.com/g/collect?gcs=G111"))).status, "skip");
+});

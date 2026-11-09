@@ -59,7 +59,7 @@ test("a token that only looks like a JWT is no service_role key", async () => {
 test("skips fixtures, snapshots, lockfiles, minified files and source maps", async () => {
   const line = `const key = "${stripe}";`;
   const skipped = ["fixtures/a.ts", "src/fixture/a.ts", "test/__snapshots__/a.snap", "Cargo.lock", "package-lock.json", "pnpm-lock.yaml",
-    "dist/app.min.js", "dist/app.min.css", "dist/app.js.map"];
+    "src/app.min.js", "src/app.min.css", "src/app.js.map"];
   for (const file of skipped) assert.equal((await runRepoCheck(here, { [file]: line, "src/ok.ts": "ok" })).status, "pass", file);
   assert.equal((await runRepoCheck(here, { "src/fixtures.ts": line })).status, "fail");
 });

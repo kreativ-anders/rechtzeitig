@@ -74,3 +74,20 @@ test("stays fast on a long rules file without a match", async () => {
 test("skips without Supabase migrations or Firebase rules", async () => {
   assert.equal((await runRepoCheck(here, { "README.md": "x", "db/schema.sql": "create table a (id int);" })).status, "skip");
 });
+
+const secured = (policy: string) => ({
+  "supabase/migrations/1.sql": migration(`alter table public.profiles enable row level security;\n${policy};`),
+});
+
+test("finds open policies in any case and with check (true)", async () => {
+  assert.equal((await runRepoCheck(here, secured("CREATE POLICY p ON public.profiles USING (TRUE)"))).status, "warn");
+  assert.equal((await runRepoCheck(here, secured("create policy p on public.profiles for insert with check (true)"))).status, "warn");
+  assert.equal((await runRepoCheck(here, secured("create policy p on public.profiles using (auth.uid() = id)"))).status, "pass");
+});
+
+test("fails for Realtime Database rules open for reading or for writing", async () => {
+  for (const key of [".read", ".write"]) {
+    const result = await runRepoCheck(here, { "database.rules.json": JSON.stringify({ rules: { [key]: true } }) });
+    assert.equal(result.status, "fail", key);
+  }
+});

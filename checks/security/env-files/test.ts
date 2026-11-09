@@ -37,3 +37,16 @@ test("notes a missing .env rule in a monorepo without a root manifest", async ()
 test("only notes a missing .env rule when no .env is expected", async () => {
   assert.equal((await runRepoCheck(here, { ".gitignore": "node_modules\n", "package.json": "{}" })).status, "info");
 });
+
+test("templates with any of the usual suffixes are no committed secrets", async () => {
+  for (const suffix of ["example", "sample", "template", "dist", "defaults"]) {
+    assert.equal((await runRepoCheck(here, { [`.env.${suffix}`]: "KEY=", ".gitignore": ".env\n" })).status, "pass", suffix);
+  }
+});
+
+test("each usual .gitignore rule for .env counts", async () => {
+  for (const rule of [".env", "/.env", "**/.env", ".env*", ".env.*", ".env.local", "*.env"]) {
+    assert.equal((await runRepoCheck(here, { "package.json": "{}", ".gitignore": `node_modules\n${rule}\n` })).status, "pass", rule);
+  }
+  assert.equal((await runRepoCheck(here, { "package.json": "{}", ".gitignore": "node_modules\n.envrc\n" })).status, "info");
+});

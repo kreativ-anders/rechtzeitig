@@ -44,3 +44,7 @@ test("warns below 14 days left, not at 14 or more", async () => {
   assert.equal((await runFake(here, {}, tls({ daysLeft: 14 }))).status, "pass");
   assert.equal((await runFake(here, {}, tls({ daysLeft: 20 }))).status, "pass");
 });
+
+test("fails when the handshake failed", async () => {
+  assert.equal((await runFake(here, {}, tls({ protocol: "", authorized: false, error: "ECONNRESET" }))).status, "fail");
+});

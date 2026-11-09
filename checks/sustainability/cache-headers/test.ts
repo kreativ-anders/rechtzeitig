@@ -46,3 +46,7 @@ test("checks images and fonts too", async () => {
   assert.equal(await cachedFile(undefined, undefined, "image"), "warn");
   assert.equal(await cachedFile(undefined, undefined, "font"), "warn");
 });
+
+test("an Expires in the past is no cache lifetime", async () => {
+  assert.equal(await cachedFile(undefined, "Thu, 01 Jan 2015 00:00:00 GMT"), "warn");
+});
