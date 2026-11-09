@@ -1,0 +1,9 @@
+# Files in the repository that can hold the text of an imprint or a privacy policy
+# (legal/placeholder-legal-texts). The placeholder words themselves are in lang/*.yml `placeholder`.
+#
+# extensions: templates, pages, content and translation files. Code (.ts, .js) and data (.yml) are left out:
+#             they seldom hold page text and often hold example values (seed data, test helpers).
+# paths:      a regular expression for paths of legal pages; a file outside them is only read when the
+#             live page shows a placeholder, to find where it comes from.
+extensions: [html, htm, md, mdx, markdown, txt, tsx, jsx, vue, svelte, astro, php, twig, njk, liquid, hbs, ejs, erb, pug, json]
+paths: '(^|[/_.-])(impressum|imprint|datenschutz\w*|privacy[\w-]*|legal[-_]?notice|site[-_]?notice|anbieterkennzeichnung)([/_.-]|$)'

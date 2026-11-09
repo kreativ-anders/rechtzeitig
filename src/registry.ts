@@ -8,6 +8,8 @@ export interface Registry {
   trackingCookie(name: string): Vendor | undefined;
   /** Vendor whose `packages` match an npm package name. */
   packageVendor(name: string): Vendor | undefined;
+  /** Every vendor, in file order. */
+  vendors: Vendor[];
 }
 
 export function loadRegistry(): Registry {
@@ -27,6 +29,7 @@ export function loadRegistry(): Registry {
       return vendors.find((v) => v.hosts.some((vh) => hostIn(h, vh)));
     },
     trackingCookie: (name) => vendors.find((v) => v.cookieRules.some((re) => re.test(name))),
+    vendors,
     packageVendor: (name) => vendors.find((v) => (v.packages ?? []).some((p) => packageMatches(name, p))),
   };
 }

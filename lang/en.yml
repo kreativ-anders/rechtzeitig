@@ -143,6 +143,17 @@ text:
     - '\bi (don.?t|do not) (want to|like to) (save|support)\b'
     - '\bi.?d rather pay (the )?full price\b'
     - '\bi prefer (a )?worse\b'
+  # Template data left in an imprint or privacy policy (legal/placeholder-legal-texts). Only words no real
+  # provider uses.
+  placeholder:
+    - '\blorem ipsum\b'
+    - '\b(john|jane) doe\b'
+    - '\byour (company|business) name\b'
+    - '\b123 (main|example|fake) (st|st\.|street|road|ave|avenue)\b'
+    - '\[ ?(company name|company|your name|your company|name|full name|address|street|street address|city|zip|zip code|postcode|postal code|country|phone|phone number|e-?mail|e-?mail address|vat id|vat number|date|website|domain|controller) ?\]'
+    - '@(example|yourcompany|yourdomain|your-domain|yoursite|your-site)\.(com|org|net)\b'
+    - '\(555\) ?\d{3}-\d{4}'
+    - '\b555-01\d\d\b'
 
 # Report sentences. Checks return a key and parameters; {name} is replaced by a parameter.
 # A value with one/other is picked by the parameter count. Groups are check ids; `common` is shared.
@@ -985,3 +996,100 @@ messages:
     only_repo: "Only in the repository: {contact}"
     only_site: "Only on the site: {contact}"
     same: "The site serves the repository's security.txt, contact {contact}."
+  legal/placeholder-legal-texts:
+    live:
+      one: "{count} line of the live legal pages holds template data, so the details are missing."
+      other: "{count} lines of the live legal pages hold template data, so the details are missing."
+    on_page: '{page} at {where}: "{text}"'
+    source: "The live text comes from here: {text}"
+    no_source: "No content file of the repository holds this text: it comes from a CMS, a database or a generator."
+    repo_only: "Template data in a legal text: {text}. Not on the live pages."
+    in_repo:
+      one: "The live legal pages show no template data, but {count} line of the repository's legal texts does: a change not deployed yet, or a template the site does not use."
+      other: "The live legal pages show no template data, but {count} lines of the repository's legal texts do: a change not deployed yet, or a template the site does not use."
+    unread:
+      one: "No template data on the live legal pages; {count} legal text in the repository was too large to read or only a Git LFS pointer."
+      other: "No template data on the live legal pages; {count} legal texts in the repository were too large to read or only Git LFS pointers."
+    unread_file: "Not read: too large or only a Git LFS pointer."
+    none:
+      one: "No template data on the {count} legal page read, nor in the repository's legal texts."
+      other: "No template data on the {count} legal pages read, nor in the repository's legal texts."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  privacy/hosting-in-policy:
+    no_config: "No deploy file of a known hosting provider in the repository."
+    unconfirmed: "Deploy files for {names} in the repository, but the start page's headers do not show that provider: a CDN or proxy in front, or another host."
+    missing: "The site runs on {names} (deploy file and response header agree), but the privacy policy does not name it."
+    not_named: "Deploys to {name} ({country}), live header {header}: not named in the privacy policy."
+    no_transfer: "The privacy policy names {names}, but says nothing about transfers outside the EU/EEA."
+    third_country: "{name} is based in {country}, outside the EU/EEA."
+    named: "The privacy policy names the hosting provider: {names}."
+  privacy/tracking-ids-vs-consent:
+    no_ids: "No tag or account id of a known tracking service in the repository's code."
+    unread:
+      one: "No tracking id found, but {count} code file was too large to read or only a Git LFS pointer."
+      other: "No tracking id found, but {count} code files were too large to read or only Git LFS pointers."
+    before_consent:
+      one: "{count} tracking id from the repository is sent to its service before consent."
+      other: "{count} tracking ids from the repository are sent to their services before consent."
+    loaded: "{vendor} {id}: configured here, sent before consent on {page}."
+    not_seen: "{vendor} {id}: configured here, not loaded on the visited pages."
+    no_consent_tool:
+      one: "{count} tracking id in the code was not loaded on the visited pages, and neither the site nor the repository has a consent tool: pages not visited may load it without consent."
+      other: "{count} tracking ids in the code were not loaded on the visited pages, and neither the site nor the repository has a consent tool: pages not visited may load them without consent."
+    held_back:
+      one: "The {count} tracking id in the code was not sent before consent on the visited pages, and a consent tool exists."
+      other: "The {count} tracking ids in the code were not sent before consent on the visited pages, and a consent tool exists."
+    held: "{vendor} {id}: not sent before consent."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  privacy/consent-tool-not-active:
+    no_tool: "No consent tool in the repository (packages and loader scripts in data/consent-tools.yml)."
+    unread:
+      one: "No consent tool found, but {count} code file was too large to read or only a Git LFS pointer."
+      other: "No consent tool found, but {count} code files were too large to read or only Git LFS pointers."
+    active: "The repository has a consent tool, and the start page shows its banner."
+    nothing_loads: "The repository has a consent tool; the start page shows no banner, but no service that needs consent loads either."
+    not_loaded: "The repository loads a consent platform, but the site never contacted it and shows no banner, while {names} load without consent."
+    no_banner_platform: "{platforms} loads, but the scan saw no banner with an accept button, while {names} load. Check in a browser that the banner appears and blocks them."
+    no_banner_library: "A consent library is installed, but the start page shows no banner, while {names} load without consent."
+    script: "Loads a consent platform here."
+    package: "{package} is installed here."
+    tracker: "{name} loads on {pages}."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  privacy/form-receiver:
+    no_forms: "No form in the code or on the visited pages sends to another service."
+    unread:
+      one: "No form receiver found, but {count} code file was too large to read or only a Git LFS pointer."
+      other: "No form receiver found, but {count} code files were too large to read or only Git LFS pointers."
+    missing: "Forms send what visitors enter to {names}, but the privacy policy does not name them as recipients."
+    no_transfer: "The privacy policy names the form receivers, but says nothing about transfers outside the EU/EEA: {names}."
+    named: "The privacy policy names every form receiver: {names}."
+    in_code: "Sends a form to {name}."
+    form_to: "A form on {page} sends to {name}, named here."
+    form_to_site: "A form on {page} sends to {name}."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"
+  security/dev-build-deployed:
+    deployed: "The site runs a development server or debug build ({names}), and the repository starts it that way."
+    deployed_elsewhere: "The site runs a development server or debug build ({names}), but the repository starts a production server: check the build and start settings at the host."
+    start_only:
+      one: "{count} deploy file starts a development server. The visited pages show no dev traces; check that this file is not used in production."
+      other: "{count} deploy files start a development server. The visited pages show no dev traces; check that these files are not used in production."
+    unread:
+      one: "No dev traces on the site; {count} deploy file was too large to read or only a Git LFS pointer."
+      other: "No dev traces on the site; {count} deploy files were too large to read or only Git LFS pointers."
+    none: "No development server or debug build on the site or in the repository's start commands."
+    live: "{name} on the site: {where}"
+    start_command: "Starts a development server: {command}"
+    start_script: "npm start runs a development server: {command}"
+    setting: "Debug mode on: {setting}"
+    unread_file: "Not read: too large or only a Git LFS pointer."
+    more:
+      one: "and {count} more"
+      other: "and {count} more"

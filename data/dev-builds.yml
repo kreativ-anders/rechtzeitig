@@ -1,0 +1,46 @@
+# Development servers and debug builds (security/dev-build-deployed).
+#
+# live:     traces in the site's served HTML and scripts, request URLs and the bodies of the error probes
+#           (data/probes.yml) that only a dev server or a debug build sends. Regular expressions, case-sensitive.
+# deploy:   paths of files that say how the production server starts (Dockerfile, Procfile, platform configs).
+#           Files named for development (Dockerfile.dev, dev.Dockerfile) and Compose files are left out.
+# commands: start commands of a dev server, matched per line of those files and against package.json scripts.start.
+# settings: debug switches in settings files (`settings_files`), only counted together with a live trace.
+
+live:
+  - name: Vite dev server
+    pattern: '/@vite/client'
+  - name: Next.js dev server
+    pattern: '__nextjs_original-stack-frame|/_next/webpack-hmr|/_next/static/chunks/react-refresh\.js'
+  - name: webpack-dev-server
+    pattern: '\[webpack-dev-server\]|webpack-dev-server/client'
+  - name: React development build
+    pattern: 'react-dom\.development\.js|Download the React DevTools for a better development experience'
+  - name: Vue development build
+    pattern: 'You are running Vue in development mode'
+  - name: Django DEBUG page
+    pattern: 'because you have <code>DEBUG = True</code>|because you have DEBUG = True in your Django settings'
+  - name: Werkzeug debugger
+    pattern: 'Werkzeug Debugger|__debugger__=yes'
+
+deploy: '(^|/)(Dockerfile|Containerfile|[\w-]+\.Dockerfile|Procfile|fly\.toml|render\.ya?ml|railway\.(json|toml)|app\.ya?ml|nixpacks\.toml)$'
+deploy_dev: '(^|/)(dev|development)[.-]|[.-](dev|development|local)(\.|$)'
+
+commands:
+  - '\b(npm|pnpm|yarn|bun)\s+(run\s+)?dev\b'
+  - '\b(next|nuxi?|astro|remix)\s+dev\b'
+  - '\bvite\b(?![.\-/@])(?!\s+(build|preview|optimize)\b)'
+  - '\bwebpack(-dev-server\b|\s+serve\b)'
+  - '\breact-scripts\s+start\b'
+  - '\bvue-cli-service\s+serve\b'
+  - '\bng\s+serve\b'
+  - '\bflask\s+run\b.*--debug\b'
+  - '\bmanage\.py\s+runserver\b'
+  - '\bphp\s+artisan\s+serve\b'
+
+settings_files: '(^|/)(settings(/[\w-]+)?\.py|\.env|\.env\.production|config\.py)$'
+settings:
+  - '^\s*DEBUG\s*=\s*True\b'
+  - '^\s*(FLASK_DEBUG\s*=\s*1|FLASK_ENV\s*=\s*development)\b'
+  - '^\s*APP_DEBUG\s*=\s*true\b'
+  - '\bapp\.run\([^)]*debug\s*=\s*True'

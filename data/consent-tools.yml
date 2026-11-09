@@ -1,0 +1,32 @@
+# Consent tools in the repository (privacy/consent-tool-not-active, privacy/tracking-ids-vs-consent).
+# Hosted consent platforms on the site are the vendors with `purpose: consent management` in data/third-parties.yml.
+#
+# packages: npm packages of consent libraries and platform SDKs; a trailing * matches a prefix.
+# scripts:  regular expressions for lines that load a hosted consent platform (its loader URL), case-insensitive.
+# files:    extensions of files that can load a script or hold a tag id: templates, code and config.
+# env:      a regular expression for tracked .env files, which often hold tag ids.
+
+packages:
+  - vanilla-cookieconsent
+  - cookieconsent
+  - klaro
+  - react-cookie-consent
+  - tarteaucitronjs
+  - '@usercentrics/*'
+  - react-cookiebot
+  - '@consent-manager/*'
+
+scripts:
+  - 'consent\.cookiebot\.(com|eu)/uc\.js'
+  - '(app|web\.cmp)\.usercentrics\.eu/'
+  - 'cdn\.cookielaw\.org/'
+  - 'cdn\.consentmanager\.net/'
+  - 'cdn-cookieyes\.com/'
+  - 'cdn\.iubenda\.com/cs/'
+  - 'cdn\.cookie-script\.com/'
+  - 'consent\.cookiefirst\.com/'
+  - 'cmp\.osano\.com/'
+  - '/ccm19\.js\b'
+
+files: [html, htm, js, mjs, cjs, jsx, ts, tsx, vue, svelte, astro, php, twig, liquid, hbs, njk, erb, ejs, pug, json, yml, yaml, toml]
+env: '(^|/)\.env(\.[\w-]+)?$'

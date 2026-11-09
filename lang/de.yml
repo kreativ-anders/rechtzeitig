@@ -184,6 +184,20 @@ text:
     - '\bich (moechte|will) (nicht|kein\w*) (sparen|profitieren|unterstuetzen)\b'
     - '\bich (zahle|bezahle) lieber (den )?vollen? preis\b'
     - '\bich bevorzuge (ein |eine )?schlechtere'
+  # Template data left in an imprint or privacy policy (legal/placeholder-legal-texts). Only words no real
+  # provider uses: "Mustermann" alone is a real surname, a register number like "HRB 12345" exists at many courts.
+  placeholder:
+    - '\b(max|erika) mustermann\b'
+    - '\bmuster(strasse|str\.|weg|allee|gasse|platz)\b'
+    - '\b(musterstadt|musterhausen|musterdorf|musterort)\b'
+    - '\bmuster(firma|unternehmen|gmbh|ag)\b'
+    - '\blorem ipsum\b'
+    - '\[ ?(firmenname|firma|name|vor- und nachname|vorname|nachname|ihr name|name des unternehmens|ihr unternehmen|strasse|strasse und hausnummer|adresse|anschrift|plz|ort|plz und ort|stadt|telefon|telefonnummer|e-?mail|e-?mail-adresse|ust-?id(nr\.?)?|umsatzsteuer-id|handelsregister|registernummer|registergericht|datum|website|domain|verantwortliche[rn]?) ?\]'
+    - '@(example|beispiel|muster|mustermann|musterfirma|ihre-?domain|ihrefirma)\.(com|org|net|de)\b'
+    - '(\+49|0049) ?(\(0\) ?)?123 ?456'
+    - '\b0123 ?[/-]? ?456 ?78'
+    - '\b01234 ?[/-]? ?56789'
+    - '\bde ?123 ?456 ?789\b'
 
 # Report sentences. Checks return a key and parameters; {name} is replaced by a parameter.
 # A value with one/other is picked by the parameter count. Groups are check ids; `common` is shared.
@@ -1026,3 +1040,100 @@ messages:
     only_repo: "Nur im Repository: {contact}"
     only_site: "Nur auf der Website: {contact}"
     same: "Die Website liefert die security.txt aus dem Repository aus, Kontakt {contact}."
+  legal/placeholder-legal-texts:
+    live:
+      one: "{count} Zeile der Rechtstexte auf der Website enthält Vorlagendaten, die Angaben fehlen also."
+      other: "{count} Zeilen der Rechtstexte auf der Website enthalten Vorlagendaten, die Angaben fehlen also."
+    on_page: '{page} unter {where}: „{text}“'
+    source: "Der Text auf der Website kommt von hier: {text}"
+    no_source: "Keine Inhaltsdatei im Repository enthält diesen Text: Er kommt aus einem CMS, einer Datenbank oder einem Generator."
+    repo_only: "Vorlagendaten in einem Rechtstext: {text}. Nicht auf der Website."
+    in_repo:
+      one: "Die Rechtstexte auf der Website zeigen keine Vorlagendaten, aber {count} Zeile der Rechtstexte im Repository: eine noch nicht veröffentlichte Änderung oder eine Vorlage, die die Website nicht nutzt."
+      other: "Die Rechtstexte auf der Website zeigen keine Vorlagendaten, aber {count} Zeilen der Rechtstexte im Repository: eine noch nicht veröffentlichte Änderung oder eine Vorlage, die die Website nicht nutzt."
+    unread:
+      one: "Keine Vorlagendaten auf der Website; {count} Rechtstext im Repository war zu groß oder nur ein Git-LFS-Zeiger."
+      other: "Keine Vorlagendaten auf der Website; {count} Rechtstexte im Repository waren zu groß oder nur Git-LFS-Zeiger."
+    unread_file: "Nicht gelesen: zu groß oder nur ein Git-LFS-Zeiger."
+    none:
+      one: "Keine Vorlagendaten auf der {count} gelesenen Rechtsseite und in den Rechtstexten des Repositorys."
+      other: "Keine Vorlagendaten auf den {count} gelesenen Rechtsseiten und in den Rechtstexten des Repositorys."
+    more:
+      one: "und {count} weitere"
+      other: "und {count} weitere"
+  privacy/hosting-in-policy:
+    no_config: "Keine Deploy-Datei eines bekannten Hosters im Repository."
+    unconfirmed: "Deploy-Dateien für {names} im Repository, aber die Header der Startseite zeigen diesen Hoster nicht: ein CDN oder Proxy davor oder ein anderer Hoster."
+    missing: "Die Website läuft bei {names} (Deploy-Datei und Antwort-Header stimmen überein), aber die Datenschutzerklärung nennt ihn nicht."
+    not_named: "Deploy zu {name} ({country}), Header {header} auf der Website: nicht in der Datenschutzerklärung genannt."
+    no_transfer: "Die Datenschutzerklärung nennt {names}, sagt aber nichts zu Übermittlungen außerhalb der EU/des EWR."
+    third_country: "{name} sitzt in {country}, außerhalb der EU/des EWR."
+    named: "Die Datenschutzerklärung nennt den Hoster: {names}."
+  privacy/tracking-ids-vs-consent:
+    no_ids: "Keine Tag- oder Konto-ID eines bekannten Tracking-Dienstes im Code des Repositorys."
+    unread:
+      one: "Keine Tracking-ID gefunden, aber {count} Code-Datei war zu groß oder nur ein Git-LFS-Zeiger."
+      other: "Keine Tracking-ID gefunden, aber {count} Code-Dateien waren zu groß oder nur Git-LFS-Zeiger."
+    before_consent:
+      one: "{count} Tracking-ID aus dem Repository geht vor der Einwilligung an ihren Dienst."
+      other: "{count} Tracking-IDs aus dem Repository gehen vor der Einwilligung an ihre Dienste."
+    loaded: "{vendor} {id}: hier eingetragen, vor der Einwilligung gesendet auf {page}."
+    not_seen: "{vendor} {id}: hier eingetragen, auf den besuchten Seiten nicht geladen."
+    no_consent_tool:
+      one: "{count} Tracking-ID im Code wurde auf den besuchten Seiten nicht geladen, und weder die Website noch das Repository hat ein Consent-Tool: Nicht besuchte Seiten laden sie womöglich ohne Einwilligung."
+      other: "{count} Tracking-IDs im Code wurden auf den besuchten Seiten nicht geladen, und weder die Website noch das Repository hat ein Consent-Tool: Nicht besuchte Seiten laden sie womöglich ohne Einwilligung."
+    held_back:
+      one: "Die {count} Tracking-ID im Code wurde auf den besuchten Seiten nicht vor der Einwilligung gesendet, und ein Consent-Tool ist vorhanden."
+      other: "Die {count} Tracking-IDs im Code wurden auf den besuchten Seiten nicht vor der Einwilligung gesendet, und ein Consent-Tool ist vorhanden."
+    held: "{vendor} {id}: nicht vor der Einwilligung gesendet."
+    more:
+      one: "und {count} weitere"
+      other: "und {count} weitere"
+  privacy/consent-tool-not-active:
+    no_tool: "Kein Consent-Tool im Repository (Pakete und Ladeskripte aus data/consent-tools.yml)."
+    unread:
+      one: "Kein Consent-Tool gefunden, aber {count} Code-Datei war zu groß oder nur ein Git-LFS-Zeiger."
+      other: "Kein Consent-Tool gefunden, aber {count} Code-Dateien waren zu groß oder nur Git-LFS-Zeiger."
+    active: "Das Repository hat ein Consent-Tool, und die Startseite zeigt sein Banner."
+    nothing_loads: "Das Repository hat ein Consent-Tool; die Startseite zeigt kein Banner, lädt aber auch keinen einwilligungspflichtigen Dienst."
+    not_loaded: "Das Repository lädt eine Consent-Plattform, aber die Website hat sie nie kontaktiert und zeigt kein Banner, während {names} ohne Einwilligung laden."
+    no_banner_platform: "{platforms} lädt, aber der Scan fand kein Banner mit Zustimmen-Button, während {names} laden. Im Browser prüfen, ob das Banner erscheint und sie blockiert."
+    no_banner_library: "Eine Consent-Bibliothek ist installiert, aber die Startseite zeigt kein Banner, während {names} ohne Einwilligung laden."
+    script: "Lädt hier eine Consent-Plattform."
+    package: "{package} ist hier installiert."
+    tracker: "{name} lädt auf {pages}."
+    more:
+      one: "und {count} weitere"
+      other: "und {count} weitere"
+  privacy/form-receiver:
+    no_forms: "Kein Formular im Code oder auf den besuchten Seiten sendet an einen anderen Dienst."
+    unread:
+      one: "Kein Formular-Empfänger gefunden, aber {count} Code-Datei war zu groß oder nur ein Git-LFS-Zeiger."
+      other: "Kein Formular-Empfänger gefunden, aber {count} Code-Dateien waren zu groß oder nur Git-LFS-Zeiger."
+    missing: "Formulare senden die Eingaben der Besucher an {names}, aber die Datenschutzerklärung nennt sie nicht als Empfänger."
+    no_transfer: "Die Datenschutzerklärung nennt die Formular-Empfänger, sagt aber nichts zu Übermittlungen außerhalb der EU/des EWR: {names}."
+    named: "Die Datenschutzerklärung nennt jeden Formular-Empfänger: {names}."
+    in_code: "Sendet ein Formular an {name}."
+    form_to: "Ein Formular auf {page} sendet an {name}, hier eingetragen."
+    form_to_site: "Ein Formular auf {page} sendet an {name}."
+    more:
+      one: "und {count} weitere"
+      other: "und {count} weitere"
+  security/dev-build-deployed:
+    deployed: "Die Website läuft auf einem Entwicklungsserver oder Debug-Build ({names}), und das Repository startet sie so."
+    deployed_elsewhere: "Die Website läuft auf einem Entwicklungsserver oder Debug-Build ({names}), aber das Repository startet einen Produktionsserver: Build- und Starteinstellungen beim Hoster prüfen."
+    start_only:
+      one: "{count} Deploy-Datei startet einen Entwicklungsserver. Die besuchten Seiten zeigen keine Spuren davon; prüfen, dass diese Datei nicht in Produktion genutzt wird."
+      other: "{count} Deploy-Dateien starten einen Entwicklungsserver. Die besuchten Seiten zeigen keine Spuren davon; prüfen, dass diese Dateien nicht in Produktion genutzt werden."
+    unread:
+      one: "Keine Entwicklungsspuren auf der Website; {count} Deploy-Datei war zu groß oder nur ein Git-LFS-Zeiger."
+      other: "Keine Entwicklungsspuren auf der Website; {count} Deploy-Dateien waren zu groß oder nur Git-LFS-Zeiger."
+    none: "Kein Entwicklungsserver oder Debug-Build auf der Website oder in den Startbefehlen des Repositorys."
+    live: "{name} auf der Website: {where}"
+    start_command: "Startet einen Entwicklungsserver: {command}"
+    start_script: "npm start startet einen Entwicklungsserver: {command}"
+    setting: "Debug-Modus an: {setting}"
+    unread_file: "Nicht gelesen: zu groß oder nur ein Git-LFS-Zeiger."
+    more:
+      one: "und {count} weitere"
+      other: "und {count} weitere"

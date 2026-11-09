@@ -1,0 +1,71 @@
+# Hosting providers, recognized from both sides (privacy/hosting-in-policy):
+# a deploy file in the repository and a response header of the live start page. One side alone is no finding.
+#
+# files:    regular expressions for repository paths that deploy to the provider
+# contains: optional regular expression the file must contain (for generic names like app.yaml or CNAME)
+# headers:  response header name → regular expression for its value, case-insensitive ('' = any value)
+# country:  ISO code of the group that processes the data, as in data/third-parties.yml
+# names:    how a privacy policy would name the provider, as whole words
+
+- name: Vercel
+  files: ['(^|/)vercel\.json$']
+  headers: { x-vercel-id: '', server: '^vercel$' }
+  country: US
+  names: [vercel]
+
+- name: Netlify
+  files: ['(^|/)netlify\.toml$']
+  headers: { x-nf-request-id: '', server: '^netlify' }
+  country: US
+  names: [netlify]
+
+- name: Fly.io
+  files: ['(^|/)fly\.toml$']
+  headers: { fly-request-id: '', server: '^fly/' }
+  country: US
+  names: [fly.io]
+
+- name: Render
+  files: ['(^|/)render\.ya?ml$']
+  headers: { rndr-id: '', x-render-origin-server: '' }
+  country: US
+  names: [render.com, render services]
+
+- name: Railway
+  files: ['(^|/)railway\.(json|toml)$']
+  headers: { x-railway-request-id: '', server: '^railway' }
+  country: US
+  names: [railway]
+
+- name: Cloudflare
+  files: ['(^|/)wrangler\.(toml|json|jsonc)$']
+  headers: { cf-ray: '', server: '^cloudflare$' }
+  country: US
+  names: [cloudflare]
+
+- name: Heroku
+  files: ['^Procfile$', '(^|/)app\.json$']
+  contains: 'heroku|^web:'
+  headers: { via: 'vegur|heroku-router' }
+  country: US
+  names: [heroku, salesforce]
+
+- name: Google Cloud
+  files: ['(^|/)app\.ya?ml$']
+  contains: '^runtime:'
+  headers: { server: '^google frontend$' }
+  country: US
+  names: [google cloud, app engine]
+
+- name: AWS Amplify
+  files: ['(^|/)amplify\.ya?ml$']
+  headers: { x-amz-cf-id: '' }
+  country: US
+  names: [amazon web services, aws, amplify]
+
+- name: GitHub Pages
+  files: ['(^|/)CNAME$', '^\.github/workflows/.*\.ya?ml$']
+  contains: '^[a-z0-9.-]+\.[a-z]{2,}\s*$|actions/deploy-pages@'
+  headers: { x-github-request-id: '', server: '^github\.com$' }
+  country: US
+  names: [github]
