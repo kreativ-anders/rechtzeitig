@@ -12,12 +12,15 @@ export default defineCrossCheck({
     }
     if (!ids.size) return unread.length ? info(msg("unread", { count: unread.length })) : skip(msg("no_ids"));
 
-    // Website side: requests made without any click carry the id, so the tag ran before consent.
+    // Website side: requests made without any click carry the id, so the tag ran before consent. Some tags send
+    // the id only later (analytics.js loads first): then the served code with the id and a request to the vendor count.
     const requests = siteRequests(ctx);
+    const served = ctx.code.map((c) => c.body);
     const before: Finding[] = [];
     const notSeen: Finding[] = [];
     for (const [id, at] of ids) {
-      const hit = requests.find((r) => r.url.includes(id));
+      const toVendor = requests.find((r) => ctx.vendor(r.host)?.name === at.vendor.name);
+      const hit = requests.find((r) => r.url.includes(id)) ?? (toVendor && served.some((b) => b.includes(id)) ? toVendor : undefined);
       const where = { file: at.file, line: at.line, params: { vendor: at.vendor.name, id } };
       if (hit) before.push({ ...where, key: "loaded", params: { ...where.params, page: hit.page } });
       else notSeen.push({ ...where, key: "not_seen" });

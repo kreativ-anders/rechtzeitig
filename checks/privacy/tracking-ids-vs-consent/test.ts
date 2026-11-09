@@ -26,6 +26,13 @@ test("passes when the id is not loaded and the repository has a consent tool", a
   assert.equal(result.status, "pass");
 });
 
+test("fails when the served code carries the id and the vendor's script loads, without the id in a URL", async () => {
+  const ua = ["UA", "12875225", "1"].join("-");
+  const head = `<script>ga('create', '${ua}', 'auto');</script><script async src="https://www.google-analytics.com/analytics.js"></script>`;
+  const result = await runCrossCheck(here, await page(head), { "src/index.tsx": `ga('create', '${ua}', 'auto');` });
+  assert.equal(result.status, "fail");
+});
+
 test("ignores placeholder ids without a digit, tests and Markdown", async () => {
   const files = {
     "src/config.ts": 'export const GA = "G-XXXXXXXXXX";',

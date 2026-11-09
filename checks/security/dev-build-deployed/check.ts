@@ -1,14 +1,14 @@
 import { FIXTURES, capped, defineCrossCheck, fail, info, loadYaml, msg, pass, siteRequests, warn, type Finding, type RepoContext } from "../../../src/sdk.ts";
 
 const DATA = loadYaml<{
-  live: Array<{ name: string; pattern: string }>;
+  live: Array<{ name: string; in: Array<"script" | "document" | "request" | "probe">; pattern: string }>;
   deploy: string;
   deploy_dev: string;
   commands: string[];
   settings_files: string;
   settings: string[];
 }>("data/dev-builds.yml");
-const LIVE = DATA.live.map((l) => ({ name: l.name, re: new RegExp(l.pattern) }));
+const LIVE = DATA.live.map((l) => ({ name: l.name, in: l.in, re: new RegExp(l.pattern) }));
 const DEPLOY = new RegExp(DATA.deploy);
 const DEPLOY_DEV = new RegExp(DATA.deploy_dev, "i");
 const COMMANDS = DATA.commands.map((c) => new RegExp(c));
@@ -61,12 +61,13 @@ export default defineCrossCheck({
     // Website side: traces only a dev server or a debug build sends, in served code, request URLs and error probes.
     const live: Finding[] = [];
     const sources = [
-      ...ctx.code.filter((c) => !ctx.isThirdParty(new URL(c.url).hostname)).map((c) => ({ where: ctx.short(c.url), text: c.body })),
-      ...siteRequests(ctx).filter((r) => !ctx.isThirdParty(r.host)).map((r) => ({ where: r.page, text: r.url })),
-      ...ctx.probes.filter((p) => p.kind === "error").map((p) => ({ where: p.path, text: p.body })),
+      ...ctx.code.filter((c) => !ctx.isThirdParty(new URL(c.url).hostname)).map((c) => ({ kind: c.type, where: ctx.short(c.url), text: c.body })),
+      ...siteRequests(ctx).filter((r) => !ctx.isThirdParty(r.host)).map((r) => ({ kind: "request" as const, where: r.page, text: r.url })),
+      ...ctx.probes.filter((p) => p.kind === "error").map((p) => ({ kind: "probe" as const, where: p.path, text: p.body })),
     ];
-    for (const { name, re } of LIVE) {
-      const hit = sources.find((s) => re.test(s.text));
+    for (const { name, in: kinds, re } of LIVE) {
+      if (live.some((l) => l.params?.name === name)) continue;
+      const hit = sources.find((s) => kinds.includes(s.kind) && re.test(s.text));
       if (hit) live.push({ key: "live", params: { name, where: hit.where } });
     }
     const { start, settings, unread } = repoEvidence(repo);

@@ -1,27 +1,60 @@
 # Development servers and debug builds (security/dev-build-deployed).
 #
-# live:     traces in the site's served HTML and scripts, request URLs and the bodies of the error probes
-#           (data/probes.yml) that only a dev server or a debug build sends. Regular expressions, case-sensitive.
+# live:     traces that only a dev server or a debug build sends. Regular expressions, case-sensitive, each with
+#           where it counts (`in`): script (served JavaScript of the site), document (served HTML), request (URLs
+#           the pages requested on the site itself), probe (bodies of the error paths in data/probes.yml).
+#           A trace counts only in the form the tool emits it, not as a quoted string: a playground, a filter or a
+#           docs page can name the same words.
 # deploy:   paths of files that say how the production server starts (Dockerfile, Procfile, platform configs).
 #           Files named for development (Dockerfile.dev, dev.Dockerfile) and Compose files are left out.
 # commands: start commands of a dev server, matched per line of those files and against package.json scripts.start.
 # settings: debug switches in settings files (`settings_files`), only counted together with a live trace.
+#
+# Every trace was found in the tool's own published source on 2026-11-09 (named per entry), and not in its
+# production build where one exists.
 
 live:
+  # vite@6.3.5 dist/node/constants.js: CLIENT_PUBLIC_PATH = "/@vite/client", the script the dev server injects.
   - name: Vite dev server
-    pattern: '/@vite/client'
+    in: [request]
+    pattern: '/@vite/client$'
+  - name: Vite dev server
+    in: [document]
+    pattern: '<script[^>]{0,200}\ssrc=["''][^"''<>]{0,200}/@vite/client["'']'
+  # next@15.5.4 dist/client/dev/hot-reloader/app/use-websocket.js ("/_next/webpack-hmr"),
+  # dist/next-devtools/shared/stack-frame.js ("__nextjs_original-stack-frame"); both only in dev code.
   - name: Next.js dev server
-    pattern: '__nextjs_original-stack-frame|/_next/webpack-hmr|/_next/static/chunks/react-refresh\.js'
+    in: [script]
+    pattern: '__nextjs_original-stack-frame|/_next/webpack-hmr'
+  # webpack-dev-server@5.2.0 client/index.js: "[webpack-dev-server] Failed to get current script source.",
+  # "webpack-dev-server-hot=false".
   - name: webpack-dev-server
-    pattern: '\[webpack-dev-server\]|webpack-dev-server/client'
+    in: [script]
+    pattern: '\[webpack-dev-server\] Failed to get current script source|webpack-dev-server-hot=false'
+  # react-dom@18.3.1 umd/react-dom.development.js (the file name), cjs/react-dom.development.js
+  # ('%cDownload the React DevTools ' + 'for a better…'), react-dom@19.1.0 cjs/react-dom-client.development.js
+  # (one string); not in react-dom.production.min.js 18.3.1 or react-dom-client.production.js 19.1.0.
   - name: React development build
-    pattern: 'react-dom\.development\.js|Download the React DevTools for a better development experience'
+    in: [request]
+    pattern: '/react-dom\.development\.js(\?|$)'
+  - name: React development build
+    in: [script]
+    pattern: '%cDownload the React DevTools (["''] ?\+ ?["''])?for a better development experience'
+  # vue@2.7.16 dist/vue.js (not vue.min.js): "You are running Vue in development mode.\n" + "Make sure to turn on
+  # production mode…"; vue@3.5.13 dist/vue.global.js: `You are running a development build of Vue.\nMake sure to use
+  # the production build (*.prod.js)…`.
   - name: Vue development build
-    pattern: 'You are running Vue in development mode'
+    in: [script]
+    pattern: 'You are running Vue in development mode\.(\\n)?["''`]?\s*\+?\s*["''`]?Make sure to turn on production mode|You are running a development build of Vue\.\s*(\\n)?\s*Make sure to use the production build'
+  # django main: django/views/templates/technical_404.html and technical_500.html.
   - name: Django DEBUG page
-    pattern: 'because you have <code>DEBUG = True</code>|because you have DEBUG = True in your Django settings'
+    in: [probe]
+    pattern: 'because you have <code>DEBUG = True</code>'
+  # werkzeug main: src/werkzeug/debug/tbtools.py ("<title>%(title)s // Werkzeug Debugger</title>",
+  # "?__debugger__=yes&amp;cmd=resource").
   - name: Werkzeug debugger
-    pattern: 'Werkzeug Debugger|__debugger__=yes'
+    in: [probe, document]
+    pattern: '// Werkzeug Debugger</title>|\?__debugger__=yes&amp;cmd=resource'
 
 deploy: '(^|/)(Dockerfile|Containerfile|[\w-]+\.Dockerfile|Procfile|fly\.toml|render\.ya?ml|railway\.(json|toml)|app\.ya?ml|nixpacks\.toml)$'
 deploy_dev: '(^|/)(dev|development)[.-]|[.-](dev|development|local)(\.|$)'

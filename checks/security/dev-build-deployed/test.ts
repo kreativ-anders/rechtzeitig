@@ -25,3 +25,15 @@ test("gives info for a deploy file with a dev command, and ignores dev Dockerfil
   const quiet = { "Dockerfile.dev": "CMD npm run dev", "package.json": '{"scripts":{"start":"vite"}}', "settings.py": "DEBUG = True" };
   assert.equal((await runCrossCheck(here, await clean(), quiet)).status, "pass");
 });
+
+// vuejs.org's playground filters console messages by their first words; a docs page shows the Vite tag as text.
+const served = (js: string, html = "Hi") =>
+  siteFromFiles({ "index.html": `<html><head><script src="/app.js"></script></head><body>${html}</body></html>`, "app.js": js });
+
+test("counts a trace only in the form the tool emits it, not quoted by a playground or a docs page", async () => {
+  const filter = "if (msg.includes('You are running a development build of Vue') || msg.includes('You are running Vue in development mode')) return;";
+  const docs = "<pre><code>&lt;script type=\"module\" src=\"http://localhost:5173/@vite/client\"&gt;&lt;/script&gt;</code></pre>";
+  assert.equal((await runCrossCheck(here, await served(filter, docs), { "README.md": "x" })).status, "pass");
+  const vue3 = "console.info(`You are running a development build of Vue.\nMake sure to use the production build (*.prod.js) when deploying for production.`);";
+  assert.equal((await runCrossCheck(here, await served(vue3), { "README.md": "x" })).status, "warn");
+});

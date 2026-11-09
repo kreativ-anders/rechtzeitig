@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Looks for traces of a dev server or debug build (`live` in `data/dev-builds.yml`: Vite client, Next.js and webpack HMR, React and Vue development builds, Django DEBUG page, Werkzeug debugger) in the site's served code, request URLs and error probes, and for dev start commands in deploy files and `package.json` start scripts and debug switches in settings files (`commands`, `settings` there): both sides fail, only the site warns, only a deploy file gives info."
+how: "Looks for traces of a dev server or debug build (`live` in `data/dev-builds.yml`: Vite client, Next.js and webpack HMR, React and Vue development builds, Django DEBUG page, Werkzeug debugger), each only where and in the form the tool emits it (served scripts, HTML, request URLs or error probes), and for dev start commands in deploy files and `package.json` start scripts and debug switches in settings files (`commands`, `settings` there): both sides fail, only the site warns, only a deploy file gives info."
 fix_hint:
   de: "In Produktion den Build ausliefern (zum Beispiel next build und next start, vite build mit statischem Hosting, gunicorn statt runserver) und den Debug-Modus abschalten (DEBUG=False, APP_DEBUG=false)."
   en: "Serve the production build (for example next build and next start, vite build with static hosting, gunicorn instead of runserver) and turn debug mode off (DEBUG=False, APP_DEBUG=false)."

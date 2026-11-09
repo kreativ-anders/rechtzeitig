@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§ 25 Abs. 1 TDDDG; Art. 6 Abs. 1 lit. a DSGVO"
   en: "§ 25(1) TDDDG; Art. 6(1)(a) GDPR"
-how: "Finds tag and account ids of tracking services in the repository's templates, code, config and tracked .env files (`ids` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and looks for each in the URLs the visited pages requested without a click: sent fails with the line, an id not loaded warns only when neither the site (banner, consent platform) nor the repository (packages, loader scripts in `data/consent-tools.yml`) has a consent tool."
+how: "Finds tag and account ids of tracking services in the repository's templates, code, config and tracked .env files (`ids` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and looks for each in the URLs the visited pages requested without a click, or in their served code while the vendor was contacted: loaded fails with the line, an id not loaded warns only when neither the site (banner, consent platform) nor the repository (packages, loader scripts in `data/consent-tools.yml`) has a consent tool."
 fix_hint:
   de: "Das Tag erst nach der Einwilligung laden, zum Beispiel über das Consent-Tool (Skript-Blocking) oder Google Consent Mode mit Standard \"denied\" und ohne Cookies vorher."
   en: "Load the tag only after consent, for example through the consent tool (script blocking) or Google Consent Mode with default \"denied\" and no cookies before."
