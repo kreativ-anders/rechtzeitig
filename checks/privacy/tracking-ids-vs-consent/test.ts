@@ -41,3 +41,8 @@ test("ignores placeholder ids without a digit, tests and Markdown", async () => 
   };
   assert.equal((await runCrossCheck(here, await page(gtag), files)).status, "skip");
 });
+
+test("gives info, not pass, when it found no id but could not read some code", async () => {
+  const result = await runCrossCheck(here, await page(), { "src/app.js": "console.log(1);", "src/big.js": "x".repeat(1_100_000) });
+  assert.equal(result.status, "info");
+});

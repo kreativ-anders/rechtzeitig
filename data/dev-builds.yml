@@ -67,7 +67,7 @@ commands:
   - '\breact-scripts\s+start\b'
   - '\bvue-cli-service\s+serve\b'
   - '\bng\s+serve\b'
-  - '\bflask\s+run\b.*--debug\b'
+  - '\bflask\s+run\b[^\n]{0,200}?--debug\b'
   - '\bmanage\.py\s+runserver\b'
   - '\bphp\s+artisan\s+serve\b'
 

@@ -30,3 +30,8 @@ test("passes when the banner shows, or nothing needs consent", async () => {
 test("skips without a consent tool in the repository", async () => {
   assert.equal((await runCrossCheck(here, await page(tracker), { "README.md": "cookiebot is great" })).status, "skip");
 });
+
+test("gives info, not skip, when it found no consent tool but could not read some code", async () => {
+  const result = await runCrossCheck(here, await page(tracker), { "src/app.js": "console.log(1);", "src/big.js": "x".repeat(1_100_000) });
+  assert.equal(result.status, "info");
+});
