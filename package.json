@@ -12,7 +12,8 @@
     "test": "node --test \"checks/**/test.ts\" \"src/**/*.test.ts\"",
     "typecheck": "tsc",
     "docs": "node src/docs.ts",
-    "drift": "node src/drift.ts"
+    "drift": "node src/drift.ts",
+    "mutate": "node dev/mutate.ts"
   },
   "dependencies": {
     "playwright": "1.64.1",
