@@ -27,7 +27,7 @@ jobs:
         with:
           persist-credentials: false
       # Pinned to a release. Dependabot can move the pin: https://rechtzeitig.dev/#updates
-      - uses: kreativ-anders/rechtzeitig@d9de84278219846e0c9d8a263c83030dfe0dc5ea # v0.5.0
+      - uses: kreativ-anders/rechtzeitig@1fdc6884213f11eb9828d4c3e2ae44e9f5978573 # v0.5.1
         with:
           # Start page of your site. Without url only the repository is checked.
           # url: https://www.example.de/
