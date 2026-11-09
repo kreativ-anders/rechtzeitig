@@ -25,7 +25,10 @@ const CONTROL = /[\u0000-\u001f\u007f-\u009f\u2028-\u202e\u2066-\u2069]+/g;
  */
 export function oneLine(text: string, max = 300): string {
   const s = String(text).replace(CONTROL, " ").trim();
-  return s.length > max ? `${s.slice(0, max - 1)}…` : s;
+  if (s.length <= max) return s;
+  // Never cut between the two halves of an emoji or another character outside the BMP.
+  const cut = /[\ud800-\udbff]/.test(s[max - 2] ?? "") ? max - 2 : max - 1;
+  return `${s.slice(0, cut)}…`;
 }
 
 /** URL without the #hash, used as the key for visited pages. */
