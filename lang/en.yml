@@ -149,6 +149,7 @@ text:
 # Every language file must define the same keys (test: src/lang.test.ts).
 messages:
   common:
+    axe_not_run: "axe-core did not run on any visited page: no page loaded with JavaScript, or axe-core did not finish in time."
     page_imprint: "imprint (Impressum)"
     page_privacy: "privacy policy (Datenschutzerklärung)"
     page_terms: "terms and conditions (AGB)"
@@ -588,6 +589,50 @@ messages:
     missing: "The start page has no <html lang> attribute. Screen readers then have to guess the language."
     mismatch: 'The page declares lang="{lang}", but the scan used {languages}. Pick the matching language when you start the scan.'
     declared: 'The page declares lang="{lang}".'
+  accessibility/alt-text:
+    none:
+      one: "axe-core found no image without a text alternative on {count} page."
+      other: "axe-core found no image without a text alternative on {count} pages."
+    found:
+      one: "{count} image without a text alternative (axe-core)."
+      other: "{count} images without a text alternative (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "and {count} more element"
+      other: "and {count} more elements"
+  accessibility/form-labels:
+    none:
+      one: "axe-core found no form field without a label on {count} page."
+      other: "axe-core found no form field without a label on {count} pages."
+    found:
+      one: "{count} form field without a label (axe-core)."
+      other: "{count} form fields without a label (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "and {count} more element"
+      other: "and {count} more elements"
+  accessibility/control-names:
+    none:
+      one: "axe-core found no button, link or frame without a name on {count} page."
+      other: "axe-core found no button, link or frame without a name on {count} pages."
+    found:
+      one: "{count} button, link or frame without a name (axe-core)."
+      other: "{count} buttons, links or frames without a name (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "and {count} more element"
+      other: "and {count} more elements"
+  accessibility/contrast:
+    none:
+      one: "axe-core found no text with too little contrast on {count} page."
+      other: "axe-core found no text with too little contrast on {count} pages."
+    found:
+      one: "{count} text element with too little contrast (axe-core)."
+      other: "{count} text elements with too little contrast (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "and {count} more element"
+      other: "and {count} more elements"
   accessibility/autoplay-media:
     no_videos: "No videos on the visited pages."
     no_autoplay:
@@ -770,6 +815,9 @@ messages:
     public_keys:
       one: "{count} key found that may be public by design. Check that it is restricted."
       other: "{count} keys found that may be public by design. Check that each is restricted."
+    possible:
+      one: "{count} value under a name like secret, password or token looks like a secret. Check it and, if real, revoke it."
+      other: "{count} values under names like secret, password or token look like secrets. Check them and, if real, revoke them."
     none:
       one: "No secrets found in {count} file read."
       other: "No secrets found in {count} files read."

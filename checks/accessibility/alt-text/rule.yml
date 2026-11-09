@@ -1,0 +1,20 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: A11Y-ALT-001
+severity: medium
+title:
+  de: "Bilder haben einen Alternativtext"
+  en: "Images have a text alternative"
+legal_basis:
+  de: "BFSG mit § 3 BFSGV; EN 301 549 V3.2.1 Nr. 9.1.1.1 (WCAG 2.1 Erfolgskriterium 1.1.1)"
+  en: "BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.1.1.1 (WCAG 2.1 success criterion 1.1.1)"
+how: "Runs the axe-core rules listed for `accessibility/alt-text` in `data/accessibility.yml` on every visited own page with JavaScript on, inside the browser and without sending anything, and lists images, image buttons, image maps and SVG or ARIA images without a text alternative, with page and CSS selector; it only warns, since the BFSG does not apply to every site."
+fix_hint:
+  de: "Jedem informativen Bild ein alt-Attribut mit seinem Inhalt geben, dekorativen Bildern alt=\"\". Bildbuttons (input type=image) und Bereiche von Image-Maps brauchen ebenfalls alt, SVG- und role=img-Grafiken ein aria-label oder title. Pflicht nach BFSG für Dienstleistungen im elektronischen Geschäftsverkehr mit Verbrauchern seit 28.06.2025, außer für Kleinstunternehmen; für alle Besucher sinnvoll."
+  en: "Give every informative image an alt attribute that says what it shows, decorative images alt=\"\". Image buttons (input type=image) and image map areas need alt too, SVG and role=img graphics an aria-label or title. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor."
+meta:
+  last_reviewed: "2026-11-08"
+  sources:
+  - https://www.gesetze-im-internet.de/bfsg/
+  - https://www.gesetze-im-internet.de/bfsgv/
+  - https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf
+  - https://www.w3.org/WAI/WCAG21/Understanding/non-text-content.html

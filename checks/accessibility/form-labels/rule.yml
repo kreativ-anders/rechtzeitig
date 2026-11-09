@@ -1,0 +1,20 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: A11Y-FORM-001
+severity: medium
+title:
+  de: "Formularfelder haben eine Beschriftung"
+  en: "Form fields have a label"
+legal_basis:
+  de: "BFSG mit § 3 BFSGV; EN 301 549 V3.2.1 Nr. 9.4.1.2 (WCAG 2.1 Erfolgskriterium 4.1.2)"
+  en: "BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.4.1.2 (WCAG 2.1 success criterion 4.1.2)"
+how: "Runs the axe-core rules listed for `accessibility/form-labels` in `data/accessibility.yml` on every visited own page with JavaScript on, inside the browser and without sending anything, and lists input fields, text areas, select boxes and ARIA input fields without an accessible name, with page and CSS selector; it only warns, since the BFSG does not apply to every site."
+fix_hint:
+  de: "Jedes Feld mit einem <label for> verbinden oder ihm ein aria-label geben. Pflicht nach BFSG für Dienstleistungen im elektronischen Geschäftsverkehr mit Verbrauchern seit 28.06.2025, außer für Kleinstunternehmen; für alle Besucher sinnvoll."
+  en: "Connect every field to a <label for> or give it an aria-label. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor."
+meta:
+  last_reviewed: "2026-11-08"
+  sources:
+  - https://www.gesetze-im-internet.de/bfsg/
+  - https://www.gesetze-im-internet.de/bfsgv/
+  - https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf
+  - https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html

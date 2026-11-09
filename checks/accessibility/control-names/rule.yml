@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: A11Y-NAME-001
+severity: medium
+title:
+  de: "Buttons, Links und Frames haben einen Namen"
+  en: "Buttons, links and frames have a name"
+legal_basis:
+  de: "BFSG mit § 3 BFSGV; EN 301 549 V3.2.1 Nr. 9.4.1.2 und 9.2.4.4 (WCAG 2.1 Erfolgskriterien 4.1.2 und 2.4.4)"
+  en: "BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clauses 9.4.1.2 and 9.2.4.4 (WCAG 2.1 success criteria 4.1.2 and 2.4.4)"
+how: "Runs the axe-core rules listed for `accessibility/control-names` in `data/accessibility.yml` on every visited own page with JavaScript on, inside the browser and without sending anything, and lists buttons, links and iframes without an accessible name, such as icon buttons without text, with page and CSS selector; it only warns, since the BFSG does not apply to every site."
+fix_hint:
+  de: "Buttons und Links, die nur ein Icon zeigen, einen sichtbaren Text oder ein aria-label geben; jedem iframe ein title-Attribut. Pflicht nach BFSG für Dienstleistungen im elektronischen Geschäftsverkehr mit Verbrauchern seit 28.06.2025, außer für Kleinstunternehmen; für alle Besucher sinnvoll."
+  en: "Give buttons and links that only show an icon a visible text or an aria-label, and every iframe a title attribute. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor."
+meta:
+  last_reviewed: "2026-11-08"
+  sources:
+  - https://www.gesetze-im-internet.de/bfsg/
+  - https://www.gesetze-im-internet.de/bfsgv/
+  - https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf
+  - https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html
+  - https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context.html

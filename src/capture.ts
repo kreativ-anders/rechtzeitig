@@ -1,7 +1,10 @@
-import type { BrowserContext, Request as PlaywrightRequest } from "playwright";
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import type { BrowserContext, Page as PlaywrightPage, Request as PlaywrightRequest } from "playwright";
+import { loadYaml } from "./data.ts";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage, isWebUrl, normalize } from "./text.ts";
-import { cookieKey, type Area, type Checkbox, type Form, type Image, type Link, type Request, type Snapshot, type Style, type Subresource, type Video } from "./sdk.ts";
+import { cookieKey, type Area, type Checkbox, type Form, type Image, type Link, type Request, type Snapshot, type Style, type AxeViolation, type Subresource, type Video } from "./sdk.ts";
 
 interface RawLink {
   href: string | null;
@@ -191,6 +194,51 @@ function toLink(raw: RawLink): Link {
 
 const toForm = (raw: RawForm): Form => ({ ...raw, links: raw.links.map(toLink) });
 
+// ---------- axe-core
+
+const AXE_RULES = [...new Set(Object.values(loadYaml<{ rules: Record<string, string[]> }>("data/accessibility.yml").rules).flat())];
+const AXE = loadYaml<{ axe: { timeout_ms: number; max_targets: number } }>("data/thresholds.yml").axe;
+let axeSource: string | undefined;
+// axe-core's own build, unchanged, with its license header. Read once, on the first page that needs it.
+const axeScript = () => (axeSource ??= readFileSync(createRequire(import.meta.url).resolve("axe-core/axe.min.js"), "utf8"));
+
+/**
+ * Runs the selected axe-core rules in the page and returns their violations, or undefined when axe
+ * failed or ran out of time. page.evaluate is not bound by the page's CSP and loads nothing from the
+ * network. The page can tamper with what axe returns, so every value is checked and capped here.
+ */
+async function runAxe(page: PlaywrightPage, ms: number): Promise<AxeViolation[] | undefined> {
+  const options = {
+    runOnly: { type: "rule", values: AXE_RULES },
+    resultTypes: ["violations"],
+    iframes: false,
+    elementRef: false,
+    ancestry: false,
+    xpath: false,
+    performanceTimer: false,
+  };
+  const script = `(async () => {\n${axeScript()}\n;const r = await axe.run(document, ${JSON.stringify(options)});
+    return r.violations.map((v) => ({ rule: v.id, count: v.nodes.length, targets: v.nodes.slice(0, ${AXE.max_targets}).map((n) => n.target.join(" ")) }));
+  })()`;
+  const [deadline, stop] = timeoutAfter(ms, "axe-core did not finish in time");
+  try {
+    const raw: unknown = await Promise.race([page.evaluate(script), deadline]);
+    if (!Array.isArray(raw)) return undefined;
+    return raw
+      .filter((v) => v && AXE_RULES.includes(v.rule) && Number.isFinite(v.count) && Array.isArray(v.targets))
+      .slice(0, AXE_RULES.length)
+      .map((v) => ({
+        rule: String(v.rule),
+        count: Math.max(0, Math.round(v.count)),
+        targets: v.targets.slice(0, AXE.max_targets).map((t: unknown) => String(t).slice(0, 300)),
+      }));
+  } catch {
+    return undefined;
+  } finally {
+    stop();
+  }
+}
+
 const IDLE = 5000;
 const MAX_REQUESTS = 5000;
 
@@ -234,6 +282,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     const response = await page.goto(url, { waitUntil: "load", timeout });
     if (js) await page.waitForLoadState("networkidle", { timeout: idle }).catch(() => {});
     const dom = await page.evaluate(readDom);
+    const axe = js ? await runAxe(page, Math.min(AXE.timeout_ms, timeout)) : undefined;
     const storage = js
       ? await page.evaluate(() => {
           try {
@@ -264,10 +313,11 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       subresources: dom.subresources,
       images: dom.images,
       videos: dom.videos,
+      ...(axe && { axe }),
     };
   };
   // page.evaluate has no timeout: a page that never yields (while (true) {}) would block the scan forever.
-  const [deadline, stop] = timeoutAfter(2 * timeout + idle, "page did not finish loading in time");
+  const [deadline, stop] = timeoutAfter(2 * timeout + idle + (js ? Math.min(AXE.timeout_ms, timeout) : 0), "page did not finish loading in time");
   try {
     return await Promise.race([load(), deadline]);
   } catch (e) {

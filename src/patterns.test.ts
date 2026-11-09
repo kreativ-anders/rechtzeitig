@@ -11,7 +11,8 @@ const data = (file: string) => loadYaml<Array<Record<string, string>>>(`data/${f
 // Loading also compiles every language pattern; an invalid one throws here.
 const all = loadLanguages(availableLanguages());
 const patterns: Array<[string, RegExp]> = [
-  ...data("secrets.yml").map((r): [string, RegExp] => [`secrets.yml ${r.name}`, new RegExp(r.pattern)]),
+  ...loadYaml<{ rules: Array<{ name: string; pattern: string; allow?: string }> }>("data/secrets.yml").rules
+    .flatMap((r): Array<[string, RegExp]> => [[`secrets.yml ${r.name}`, new RegExp(r.pattern)], ...(r.allow ? [[`secrets.yml ${r.name} allow`, new RegExp(r.allow)] as [string, RegExp]] : [])]),
   ...loadYaml<{ patterns: string[] }>("data/leaks.yml").patterns.map((p): [string, RegExp] => [`leaks.yml ${p}`, new RegExp(p)]),
   ...Object.entries(loadYaml<Record<string, string[]>>("data/cookies.yml"))
     .flatMap(([group, list]) => list.map((p): [string, RegExp] => [`cookies.yml ${group}`, new RegExp(p, "i")])),

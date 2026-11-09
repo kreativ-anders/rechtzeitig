@@ -391,6 +391,15 @@ export interface Snapshot {
   subresources: Subresource[];
   images: Image[];
   videos: Video[];
+  /** axe-core violations of the rules in data/accessibility.yml (JavaScript on only). Missing when axe did not run or did not finish. */
+  axe?: AxeViolation[];
+}
+
+/** One axe-core rule that failed on a page: how many elements, and the CSS selectors of the first few (data/thresholds.yml `axe.max_targets`). */
+export interface AxeViolation {
+  rule: string;
+  count: number;
+  targets: string[];
 }
 
 export interface Page {
@@ -568,4 +577,22 @@ const MAX_LISTED = loadYaml<{ common: { max_listed: number } }>("data/thresholds
 export function capped(details: Finding[]): Finding[] {
   if (details.length <= MAX_LISTED) return details;
   return [...details.slice(0, MAX_LISTED), { key: "more", params: { count: details.length - MAX_LISTED } }];
+}
+
+// ---------- Accessibility
+
+/**
+ * Result of a check built on axe-core: the violations of `rules` (its list in data/accessibility.yml)
+ * on all visited own pages with JavaScript on. Skip when axe ran on none of them, warn with one
+ * `node` finding per element (rule, page, selector), otherwise pass. The check's messages need
+ * `none` and `found` (with `count`), `node` (`rule`, `page`, `target`) and `more`.
+ */
+export function axeResult(ctx: ScanContext, rules: string[]): Result {
+  const pages = ctx.sitePages.filter((p) => p.js.axe);
+  if (!pages.length) return skip(msg("axe_not_run"));
+  const hits = pages.flatMap((p) => (p.js.axe ?? []).filter((v) => rules.includes(v.rule)).map((v) => ({ ...v, page: ctx.short(p.url) })));
+  if (!hits.length) return pass(msg("none", { count: pages.length }));
+  const count = hits.reduce((n, v) => n + v.count, 0);
+  const details = hits.flatMap((v) => v.targets.map((target): Finding => ({ key: "node", params: { rule: v.rule, page: v.page, target } })));
+  return warn(msg("found", { count }), capped(details));
 }
