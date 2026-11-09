@@ -74,7 +74,6 @@
 <tr><td><a href="checks.html#LEG-DE-AGB-001">Terms and conditions are linked and reachable</a><br><small>LEG-DE-AGB-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-WDR-001">Withdrawal instructions with the model form and a pointer to the withdrawal function</a><br><small>LEG-DE-WDR-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
-<tr><td><a href="checks.html#LEG-EU-DSE-005">Privacy policy names transfers outside the EU</a><br><small>LEG-EU-DSE-005</small></td><td>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to ipinfo.io (opt-in)</a></td></tr>
 <tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
 <tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
 </tbody></table></div>
@@ -650,18 +649,18 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-007" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-007 privacy/hosting-in-policy privacy policy names the hosting provider datenschutzerklärung nennt den hoster art. 13(1)(e) and (f), art. 28, art. 44 gdpr finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy; outside the eea (`data/countries.yml`) without third-country wording gives info, one side alone is a skip.">
+<details class="rule" id="LEG-EU-DSE-007" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-007 privacy/hosting-in-policy privacy policy names the hosting provider datenschutzerklärung nennt den hoster art. 13(1)(e), art. 28 gdpr finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy; one side alone is a skip. whether a transfer outside the eu/eea is covered is leg-eu-dse-005, which needs no repository.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-007<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names the hosting provider</span>
 <span class="rule-title-de" lang="de">Datenschutzerklärung nennt den Hoster</span>
-<span class="rule-law">Art. 13(1)(e) and (f), Art. 28, Art. 44 GDPR</span>
+<span class="rule-law">Art. 13(1)(e), Art. 28 GDPR</span>
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds the hosting provider when a deploy file in the repository (<code>files</code>, <code>contains</code> in <code>data/hosting.yml</code>) and a response header of the live start page (<code>headers</code> there) agree, then looks for its <code>names</code> as whole words in the privacy policy; outside the EEA (<code>data/countries.yml</code>) without third-country wording gives info, one side alone is a skip.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds the hosting provider when a deploy file in the repository (<code>files</code>, <code>contains</code> in <code>data/hosting.yml</code>) and a response header of the live start page (<code>headers</code> there) agree, then looks for its <code>names</code> as whole words in the privacy policy; one side alone is a skip. Whether a transfer outside the EU/EEA is covered is LEG-EU-DSE-005, which needs no repository.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
-<div><dt>How to fix</dt><dd>Name the hosting provider as processor with address, purpose (serving the site, server logs) and legal basis; for a provider outside the EU, the basis of the transfer (for example the Data Privacy Framework or standard contractual clauses).</dd></div>
+<div><dt>How to fix</dt><dd>Name the hosting provider as processor with address, purpose (serving the site, server logs) and legal basis.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/hosting-in-policy"><code>checks/privacy/hosting-in-policy</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
@@ -684,23 +683,21 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr, ecj c-311/18 (schrems ii) gets the country of each third-party service (`country` in `data/third-parties.yml`, else ipinfo) and, for countries outside the eea (`data/countries.yml`), looks for `third_country` wording in the privacy policy; info when no country is known. ipinfo-token">
+<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr, ecj c-311/18 (schrems ii) takes the company country of the site's own hosting provider from the start page's response headers (`headers`, `country` in `data/hosting.yml`) and of each third-party service (`country` in `data/third-parties.yml`), the ip country from ipinfo only with `ipinfo-token` for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the eea (`data/countries.yml`) looks for `third_country` wording in the privacy policy; whether the policy names the host at all is leg-eu-dse-007.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-005<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names transfers outside the EU</span>
 <span class="rule-title-de" lang="de">Datenschutzerklärung nennt Übermittlungen außerhalb der EU</span>
-<span class="sends" title="Data leaves the runner, see workflow.html#data">Sends data to ipinfo.io (opt-in)</span>
 <span class="rule-law">Art. 13(1)(f), Art. 44 ff. GDPR, ECJ C-311/18 (Schrems II)</span>
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Gets the country of each third-party service (<code>country</code> in <code>data/third-parties.yml</code>, else IPinfo) and, for countries outside the EEA (<code>data/countries.yml</code>), looks for <code>third_country</code> wording in the privacy policy; info when no country is known.</dd></div>
+<div><dt>How it is checked</dt><dd>Takes the company country of the site's own hosting provider from the start page's response headers (<code>headers</code>, <code>country</code> in <code>data/hosting.yml</code>) and of each third-party service (<code>country</code> in <code>data/third-parties.yml</code>), the IP country from IPinfo only with <code>ipinfo-token</code> for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the EEA (<code>data/countries.yml</code>) looks for <code>third_country</code> wording in the privacy policy; whether the policy names the host at all is LEG-EU-DSE-007.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
-<div><dt>Runs when</dt><dd>Opt-in: only when the secret <code>IPINFO_TOKEN</code> is set (input <code>ipinfo-token</code>, token from ipinfo.io). Without it the check is skipped and nothing is sent.</dd></div>
-<div><dt>How to fix</dt><dd>Name the country and the safeguard for each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses).</dd></div>
+<div><dt>How to fix</dt><dd>Name the country and the safeguard for the hosting provider and each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses).</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-country"><code>checks/privacy/third-country</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62018CJ0311">eur-lex.europa.eu</a>, <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023D1795">eur-lex.europa.eu</a>, <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62023TJ0553">eur-lex.europa.eu</a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg, lg münchen i 3 o 17493/20 (google fonts) records every request to another site while loading pages without clicks, groups hosts by vendor from `data/third-parties.yml` (else by domain); `consent: required` vendors fail, others warn.">

@@ -165,6 +165,51 @@ export const startCheckboxes = (ctx: ScanContext): Checkbox[] =>
  */
 export const startSnapshot = (ctx: ScanContext): Snapshot => (ctx.start.noJs.status > 0 ? ctx.start.noJs : ctx.start.js);
 
+// ---------- Hosting providers (data/hosting.yml)
+
+/** A hosting provider from data/hosting.yml, with its patterns compiled. */
+export interface HostingProvider {
+  name: string;
+  /** Repository paths that deploy to it; empty for a provider known only by its headers. */
+  files: string[];
+  contains?: string;
+  headers: Record<string, string>;
+  /** ISO country of the group that processes the data. */
+  country: string;
+  /** How a privacy policy would name it, as whole words. */
+  names: string[];
+  fileRes: RegExp[];
+  containsRe?: RegExp;
+  headerRes: Array<readonly [string, RegExp]>;
+}
+
+/** Every provider of data/hosting.yml, in file order. */
+export const HOSTING: HostingProvider[] = loadYaml<Array<Omit<HostingProvider, "fileRes" | "containsRe" | "headerRes">>>("data/hosting.yml").map((h) => ({
+  ...h,
+  files: h.files ?? [],
+  fileRes: (h.files ?? []).map((f) => new RegExp(f)),
+  containsRe: h.contains ? new RegExp(h.contains, "im") : undefined,
+  headerRes: Object.entries(h.headers).map(([name, value]) => [name.toLowerCase(), new RegExp(value, "i")] as const),
+}));
+
+/** Name of the first response header of the start page (both loads) that marks this provider; undefined when none does. */
+export function hostingHeader(ctx: ScanContext, provider: HostingProvider): string | undefined {
+  const headers = { ...ctx.start.js.headers, ...ctx.start.noJs.headers };
+  return provider.headerRes.find(([name, re]) => headers[name] !== undefined && re.test(headers[name]))?.[0];
+}
+
+/**
+ * The provider that serves the start page, told by its response headers: the first match in data/hosting.yml.
+ * Platforms come before plain CDNs there, so GitHub Pages wins over the Fastly in front of it.
+ */
+export function siteHosting(ctx: ScanContext): { provider: HostingProvider; header: string } | undefined {
+  for (const provider of HOSTING) {
+    const header = hostingHeader(ctx, provider);
+    if (header) return { provider, header };
+  }
+  return undefined;
+}
+
 // ---------- Legal pages
 
 /** Pages every site must link. `concept` is the lang/*.yml `links` key, `check` the rule that looks for the link. */

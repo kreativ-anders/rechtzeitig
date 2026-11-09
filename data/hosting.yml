@@ -1,16 +1,21 @@
-# Hosting providers, recognized from both sides (privacy/hosting-in-policy):
-# a deploy file in the repository and a response header of the live start page. One side alone is no finding.
+# Hosting providers. privacy/hosting-in-policy recognizes them from both sides, a deploy file in the repository
+# and a response header of the live start page (one side alone is no finding), and asks whether the policy names them.
+# privacy/third-country takes the first entry whose header the start page sends and asks whether the policy covers
+# the transfer outside the EU/EEA. Platforms come before plain CDNs, so GitHub Pages wins over the Fastly in front of it.
 #
-# files:    regular expressions for repository paths that deploy to the provider
+# files:    regular expressions for repository paths that deploy to the provider; [] = known by its headers only
 # contains: optional regular expression the file must contain (for generic names like app.yaml or CNAME)
 # headers:  response header name → regular expression for its value, case-insensitive ('' = any value)
-# country:  ISO code of the group that processes the data, as in data/third-parties.yml
+# country:  ISO code of the group that processes the data, as in data/third-parties.yml, checked on the provider's
+#           own legal page (URL per entry, 2026-11-09). An EU contracting entity of a US group still counts as US.
 # names:    how a privacy policy would name the provider, as whole words
 #
 # Every header was seen in a real response of a site on that provider (curl -sI, 2026-11-09); the site is named
-# per entry. A provider whose header could not be confirmed is not listed (AWS Amplify: CloudFront headers only).
+# per entry. A provider whose header could not be confirmed is not listed (AWS Amplify sends CloudFront headers only,
+# so its sites count as Amazon Web Services below).
 
 # Seen on https://vercel.com: server: Vercel, x-vercel-id: fra1::…
+# Company: Vercel Inc., Covina, CA, USA (https://vercel.com/legal/privacy-policy)
 - name: Vercel
   files: ['(^|/)vercel\.json$']
   headers: { x-vercel-id: '', server: '^vercel$' }
@@ -18,6 +23,7 @@
   names: [vercel]
 
 # Seen on https://www.netlify.com: server: Netlify, x-nf-request-id: 01M…
+# Company: Netlify, Inc., San Francisco, CA, USA (https://www.netlify.com/privacy/)
 - name: Netlify
   files: ['(^|/)netlify\.toml$']
   headers: { x-nf-request-id: '', server: '^netlify' }
@@ -25,6 +31,7 @@
   names: [netlify]
 
 # Seen on https://fly.io: server: Fly/366e4bf88 (2026-10-27), fly-request-id: 01M…-fra
+# Company: Fly.io, Inc., San Francisco, CA, USA, California law (https://fly.io/legal/terms-of-service/)
 - name: Fly.io
   files: ['(^|/)fly\.toml$']
   headers: { fly-request-id: '', server: '^fly/' }
@@ -32,6 +39,7 @@
   names: [fly.io]
 
 # Seen on https://render.com: rndr-id: 7b15…, x-render-origin-server: Render
+# Company: Render Services, Inc., San Francisco, CA, USA (https://render.com/terms)
 - name: Render
   files: ['(^|/)render\.ya?ml$']
   headers: { rndr-id: '', x-render-origin-server: '' }
@@ -39,6 +47,7 @@
   names: [render.com, render services]
 
 # Seen on https://railway.com: server: railway-hikari, x-railway-request-id: 9rlT…, x-railway-edge: ber1
+# Company: Railway Corporation, San Francisco, CA, USA (https://railway.com/legal/terms)
 - name: Railway
   files: ['(^|/)railway\.(json|toml)$']
   headers: { x-railway-request-id: '', server: '^railway' }
@@ -46,6 +55,7 @@
   names: [railway]
 
 # Seen on https://www.cloudflare.com: server: cloudflare, cf-ray: a57d…-FRA
+# Company: Cloudflare, Inc., San Francisco, CA, USA (https://www.cloudflare.com/privacypolicy/)
 - name: Cloudflare
   files: ['(^|/)wrangler\.(toml|json|jsonc)$']
   headers: { cf-ray: '', server: '^cloudflare$' }
@@ -53,6 +63,7 @@
   names: [cloudflare]
 
 # Seen on https://python-getting-started.herokuapp.com: server: Heroku, via: 2.0 heroku-router
+# Company: Salesforce, Inc., San Francisco, CA, USA (https://www.heroku.com/policy/)
 - name: Heroku
   files: ['^Procfile$', '(^|/)app\.json$']
   contains: 'heroku|^web:'
@@ -61,6 +72,8 @@
   names: [heroku, salesforce]
 
 # Seen on https://golang-org.appspot.com: server: Google Frontend
+# Company: Google LLC, USA; EMEA customers contract with Google Cloud EMEA Limited, Ireland
+# (https://cloud.google.com/terms/google-entity)
 - name: Google Cloud
   files: ['(^|/)app\.ya?ml$']
   contains: '^runtime:'
@@ -69,9 +82,38 @@
   names: [google cloud, app engine]
 
 # Seen on https://pages.github.com: server: GitHub.com, x-github-request-id: 0FB8:…
+# Company: GitHub, Inc., San Francisco, CA, USA, together with GitHub B.V., Amsterdam
+# (https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)
 - name: GitHub Pages
   files: ['(^|/)CNAME$', '^\.github/workflows/.*\.ya?ml$']
   contains: '^[a-z0-9.-]+\.[a-z]{2,}\s*$|actions/deploy-pages@'
   headers: { x-github-request-id: '', server: '^github\.com$' }
   country: US
   names: [github]
+
+# Known by headers only, no deploy file tells them apart: a CDN or bucket in front of the site.
+
+# Seen on https://bund.dev: server: AmazonS3, via: 1.1 8eb3….cloudfront.net (CloudFront), x-amz-cf-id: zYbj…
+# Company: Amazon Web Services, Inc., Seattle, WA, USA; EMEA customers contract with Amazon Web Services EMEA SARL,
+# Luxembourg (https://aws.amazon.com/agreement/)
+- name: Amazon Web Services
+  files: []
+  headers: { x-amz-cf-id: '', via: '\(cloudfront\)', server: '^amazons3$' }
+  country: US
+  names: [amazon web services, aws, cloudfront]
+
+# Seen on https://t3n.de: via: 1.1 varnish, x-served-by: cache-fra-eddf8230026-FRA, cache-muc13928-MUC
+# Company: Fastly, Inc., San Francisco, CA, USA (https://www.fastly.com/privacy)
+- name: Fastly
+  files: []
+  headers: { x-fastly-request-id: '', x-served-by: '^cache-[a-z0-9-]+-[a-z]{3}\b' }
+  country: US
+  names: [fastly]
+
+# Seen on https://www.prototypefund.de: server: BunnyCDN-DE1-1332, cdn-pullzone: 5647320, cdn-requestid: 1f67…
+# Company: BunnyWay d.o.o., Ljubljana, Slovenia (https://bunny.net/privacy/)
+- name: bunny.net
+  files: []
+  headers: { server: '^bunnycdn-', cdn-pullzone: '' }
+  country: SI
+  names: [bunny.net, bunnycdn, bunnyway]

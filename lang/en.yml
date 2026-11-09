@@ -130,6 +130,7 @@ text:
     - '\bdata privacy framework\b'
     - '\badequacy decision\b'
     - '\bstandard contractual clauses\b'
+    - '\boutside (of )?the (eu|european union|eea|european economic area)\b'
   consent_optional:
     - '\bstatistic'
     - '\banalytic'
@@ -477,12 +478,17 @@ messages:
       one: "{count} Google tag request reports storage as denied. It still reaches Google before consent; see \"No third-party servers before consent\"."
       other: "{count} Google tag requests report storage as denied. They still reach Google before consent; see \"No third-party servers before consent\"."
   privacy/third-country:
-    country_unknown: "Country unknown for {names}."
+    country_unknown: "Country unknown for {names}: not in data/third-parties.yml, and no IP country (that lookup needs ipinfo-token)."
     no_services: "No third-party service contacted."
+    host: "Hosting provider {name}, company based in {country} (response header {header})."
+    host_by_ip: "The server {host} is in {country} by its IP address (IPinfo). That can be an edge server; the provider's seat decides."
+    host_unknown: "Hosting provider not recognized from the response headers (data/hosting.yml); its country was not checked."
+    host_not_covered: "The site is hosted by {name} ({country}), outside the EU/EEA, but the privacy policy does not mention third countries."
+    host_ip_outside: "The server {host} is in {country} by its IP address and the privacy policy does not mention third countries; check where the hosting provider is based."
     all_unknown:
       one: "Country unknown for the only third-party service; transfers outside the EU/EEA could not be checked."
       other: "Country unknown for all {count} third-party services; transfers outside the EU/EEA could not be checked."
-    none_outside: "No service outside the EU/EEA detected."
+    none_outside: "No hosting provider or service outside the EU/EEA detected."
     covered: "The privacy policy covers transfers outside the EU/EEA."
     not_covered:
       one: "{count} service outside the EU/EEA, but the privacy policy does not mention third countries."
@@ -1262,8 +1268,6 @@ messages:
     unconfirmed: "Deploy files for {names} in the repository, but the start page's headers do not show that provider: a CDN or proxy in front, or another host."
     missing: "The site runs on {names} (deploy file and response header agree), but the privacy policy does not name it."
     not_named: "Deploys to {name} ({country}), live header {header}: not named in the privacy policy."
-    no_transfer: "The privacy policy names {names}, but says nothing about transfers outside the EU/EEA."
-    third_country: "{name} is based in {country}, outside the EU/EEA."
     named: "The privacy policy names the hosting provider: {names}."
   privacy/tracking-ids-vs-consent:
     no_ids: "No tag or account id of a known tracking service in the repository's code."

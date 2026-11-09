@@ -98,15 +98,15 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     if (opts.offline) return { url, start, pages, probes, countries: {}, ...served };
 
     const site = siteOf(new URL(finalUrl).hostname);
-    const thirdParty = [...new Set(pages.flatMap((p) => [...p.noJs.requests, ...p.js.requests].map((r) => r.host)))]
-      .filter((h) => siteOf(h) !== site)
-      .slice(0, MAX_COUNTRY_LOOKUPS);
+    // The start page's own host too: privacy/third-country falls back to its IP country when data/hosting.yml does not know the provider.
+    const thirdParty = [...new Set(pages.flatMap((p) => [...p.noJs.requests, ...p.js.requests].map((r) => r.host)))].filter((h) => siteOf(h) !== site);
+    const lookups = [new URL(url).hostname, ...thirdParty].slice(0, MAX_COUNTRY_LOOKUPS);
     const [http, variant, tls, dns, found, green] = await Promise.all([
       plainHttp(finalUrl, opts.timeout, trusted),
       hostVariant(finalUrl, opts.timeout),
       tlsInfo(finalUrl, opts.timeout, trusted),
       emailDns(finalUrl),
-      countries(thirdParty, opts.ipinfoToken, opts.timeout),
+      countries(lookups, opts.ipinfoToken, opts.timeout),
       opts.greenHosting ? greenHosting(finalUrl, opts.timeout) : undefined,
     ]);
     return { url, start, pages, probes, countries: found, http, variant, tls, dns, green, ...served };
