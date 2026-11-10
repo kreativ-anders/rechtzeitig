@@ -2,15 +2,38 @@
 
 rechtzeitig is a CI tool for technical decision makers. The core is the repository and the live website together: findings that only a scan of both can give, such as a tracking id in the code that loads before consent or a hosting provider the privacy policy does not name. Each side also has its own checks. The website scan reads the start page, the legal pages and a small sample of other pages (`max-pages`), not the whole site. German comes first, but every word of a report comes from `lang/*.yml`, so a new language is one new file.
 
-Items are listed in order of priority.
+Sections are ordered by urgency: "Now" comes before the next release, "Next" is new checks in order of value per effort, "Later" has no date. Within a section, items are in order of priority.
 
-## Next: hardening
+## Now: audit of 2026-11-10
 
-Open points from the audit of 2026-11-03, after the fixes.
+Confirmed defects from the read-only audit of v0.5.1 (790 tests green, no critical or high security issue). Each one lets a scan report less than it saw, so they come before new checks. Order of work; every fix lands with the regression test it names, and `fail-on: fail` is only a dependable gate once 1 to 5 are done.
+
+1. Capture completeness. `sitePages` in `src/context.ts` keeps only pages whose JavaScript load succeeded, so evidence of a successful load without JavaScript is dropped when the other load fails, and checks pass on absent evidence. Keep what either load observed, and let checks that need the JavaScript load say "incomplete" instead of "pass". Eleven checks read `sitePages`. Then review the other "no evidence means pass" paths with the same model.
+2. Production status of a vulnerable package over all lockfiles. `security/vulnerabilities` resolves a package by its first component entry; a development entry in one lockfile hides a production entry in another. Group by purl, production if any occurrence is, keep every source. Test both lockfile orders.
+3. Package identity in `yarn.lock`: aliases resolve to the package they point at, for the SBOM and the OSV query (#41).
+4. Database state in migration order: `DISABLE ROW LEVEL SECURITY`, `DROP TABLE` and recreation change the result of `databaseRules()` in `src/sdk.ts`; today an earlier enable counts forever. Tests: enable→disable, disable→enable, drop→recreate.
+5. Visible consent controls. The capture records whether a control is visible and enabled; `consent-reject` requires a visible reject, and `consent-equal-choice` does not pass when the comparison could not run. Tests: `display:none`, `visibility:hidden`, hidden ancestor, disabled, a visible pair.
+6. Fixed version per release branch: pick the OSV range that contains the installed version, or show none (#43).
+7. Domain boundaries: `siteOf()` on Public Suffix List data including private suffixes (#42). Then test its consumers: third-party requests, `sitePages`, source maps.
+8. Collection bounds: `CodeCollector` in `src/capture.ts` reserves a slot before it awaits a body, so concurrent responses cannot pass `max_files`, and oversized bodies are cut before they are fully read.
+9. Runtime freshness: rule loading at scan time no longer throws on a review date older than a year; the age check stays in the tests (#44).
+10. Docs: the push trigger snippet in `docs/workflow.html` (#45) and the README sentence that calls the cross-checks planned (#46).
+11. Measure peak memory of `scanRepo()` on a large repository before deciding on an aggregate budget (#47). A browser smoke test for the website (#48).
+
+## Now: hardening
+
+Open points from the audit of 2026-11-03, after the fixes. Still open after the audit of 2026-11-10.
 
 1. `step-security/harden-runner` with an egress allowlist in `test.yml`. No workflow uses it yet.
 2. Pins in `examples/workflows/` moved automatically. Dependabot's `github-actions` ecosystem reads only `.github/workflows/` and `action.yml`; the release workflow moves the rechtzeitig pin there, and `src/pinning.test.ts` fails when another pin drifts from `action.yml` and `.github/workflows/`.
 3. Require signed commits on `main`. The ruleset on `main` already requires pull requests and the `test` and `drift` checks and blocks force pushes; the release workflow does not push to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
+
+## Next: limits of a pass
+
+Feedback: a pass on a content rule reads as "complete", but a scan finds terms, links and fields, not whether they are right. An imprint with mail, phone and postcode is not a complete imprint; a privacy policy that names a retention period does not say the period fits; a consent tool that works does not make the consent valid; a database rule in the repository may differ from the live database.
+
+1. A `limits` field in every `rule.yml`: one sentence on what a pass does not mean. Shown in `docs/checks.html` and, for legal and privacy rules, next to the pass in the report. A test fails when a legal or privacy rule has none.
+2. A short section in the report and in `docs/` on what no scan can check (content correctness, organizational duties, live configuration the site does not expose), next to "Not run" and the repository coverage.
 
 ## Next: repository
 
@@ -35,17 +58,6 @@ Ordered by value per effort. The first six need only a new `data/*.yml` and the 
 17. MCP servers in Codex `config.toml` (`[mcp_servers.*]`) for `agent-permissions`; today only its approval and sandbox settings are read.
 18. More code patterns on `data/insecure-code.yml`, each with a benchmark case: auth bypass flags (`SKIP_AUTH`, `NODE_ENV` checks in auth middleware), unsafe HTML (`dangerouslySetInnerHTML`, `v-html` with variables), personal data in logs (`console.log(req.body)`), SQL built from strings.
 19. Visible suppressions: a committed file lists rule id, path, a mandatory reason and an expiry date; suppressed findings stay in the report and in SARIF as "suppressed" with the reason, and a suppression without a reason or past its date counts as a finding. Nothing can drop a finding silently.
-
-## Next: ecosystems
-
-Feedback: the checks are broad, but support for other technical ecosystems should grow. Lockfile parsers cover several ecosystems already; the open question is how deep the checks go into each framework's own configuration, beyond reading dependencies. Targets: Flutter/Dart, Java (Maven, Gradle), .NET (NuGet), Python, Docker, Kubernetes, Terraform. Several items above belong here too: 4 (Dockerfile and Compose), 12 (license data), 14 (infrastructure code), 7 (runtimes past their end of life). Each step needs a parser or a `data/*.yml`, and a fixture per rule.
-
-1. Flutter and Firebase configuration, not only `pubspec.lock`: `firebase.json`, `google-services.json` and `GoogleService-Info.plist` (project, region, enabled services), Firestore and Storage rules in the app's repository, Firebase Analytics, Crashlytics and Performance enabled by default, Android permissions and iOS usage descriptions (`AndroidManifest.xml`, `Info.plist`) against the SDKs used, App Tracking Transparency, cleartext traffic allowed. Third-party SDKs of Dart packages in `data/third-parties.yml` (item 4 of "repository and website together").
-2. Parsers for the lockfiles listed as `unsupported` in `data/ecosystems.yml`: NuGet (`packages.lock.json`, `*.csproj`), Maven (`pom.xml`), Gradle (`gradle.lockfile`), Pipenv, PDM and Poetry, then Bundler, CocoaPods, Swift and Hex. Each parser feeds the SBOM, the vulnerability check and `hallucinated-packages`.
-3. Depth per ecosystem, the same questions in each: debug or cleartext settings in production config (Spring Boot actuator and `application.properties`, Django `DEBUG` and `ALLOWED_HOSTS`, ASP.NET `appsettings.json`), secrets in those files, unverifiable install sources (item 2 of "repository"), runtimes past their end of life (item 7).
-4. Docker and Compose (item 4 of "repository") and Kubernetes manifests and Helm charts: containers running as root, `privileged`, host paths, missing resource limits, secrets in `ConfigMap`, `:latest` images.
-5. Terraform (item 14 of "repository"): open security groups, public buckets, unencrypted storage, regions outside the EU where personal data is stored (Art. 44 DSGVO), state files in the repository, provider versions from `.terraform.lock.hcl`.
-6. License data for these ecosystems (item 12 of "repository"): Maven Central, NuGet, PyPI and pub.dev through their official APIs, behind a switch.
 
 ## Next: repository and website together
 
@@ -92,14 +104,18 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 26. With `sales: true`: price reductions shown other than as a struck-through price, such as "-20 %" labels, checked for the 30-day lowest price (§ 11 PAngV).
 27. Visit the T&Cs and withdrawal pages only with `sales: true`, so they do not use up `max-pages` on sites without a shop.
 
-## Next: limits of a pass
+## Later: ecosystems
 
-Feedback: a pass on a content rule reads as "complete", but a scan finds terms, links and fields, not whether they are right. An imprint with mail, phone and postcode is not a complete imprint; a privacy policy that names a retention period does not say the period fits; a consent tool that works does not make the consent valid; a database rule in the repository may differ from the live database.
+Feedback: the checks are broad, but support for other technical ecosystems should grow. Lockfile parsers cover several ecosystems already; the open question is how deep the checks go into each framework's own configuration, beyond reading dependencies. Targets: Flutter/Dart, Java (Maven, Gradle), .NET (NuGet), Python, Docker, Kubernetes, Terraform. Several items above belong here too: 4 (Dockerfile and Compose), 12 (license data), 14 (infrastructure code), 7 (runtimes past their end of life). Each step needs a parser or a `data/*.yml`, and a fixture per rule.
 
-1. A `limits` field in every `rule.yml`: one sentence on what a pass does not mean. Shown in `docs/checks.html` and, for legal and privacy rules, next to the pass in the report. A test fails when a legal or privacy rule has none.
-2. A short section in the report and in `docs/` on what no scan can check (content correctness, organizational duties, live configuration the site does not expose), next to "Not run" and the repository coverage.
+1. Flutter and Firebase configuration, not only `pubspec.lock`: `firebase.json`, `google-services.json` and `GoogleService-Info.plist` (project, region, enabled services), Firestore and Storage rules in the app's repository, Firebase Analytics, Crashlytics and Performance enabled by default, Android permissions and iOS usage descriptions (`AndroidManifest.xml`, `Info.plist`) against the SDKs used, App Tracking Transparency, cleartext traffic allowed. Third-party SDKs of Dart packages in `data/third-parties.yml` (item 4 of "repository and website together").
+2. Parsers for the lockfiles listed as `unsupported` in `data/ecosystems.yml`: NuGet (`packages.lock.json`, `*.csproj`), Maven (`pom.xml`), Gradle (`gradle.lockfile`), Pipenv, PDM and Poetry, then Bundler, CocoaPods, Swift and Hex. Each parser feeds the SBOM, the vulnerability check and `hallucinated-packages`.
+3. Depth per ecosystem, the same questions in each: debug or cleartext settings in production config (Spring Boot actuator and `application.properties`, Django `DEBUG` and `ALLOWED_HOSTS`, ASP.NET `appsettings.json`), secrets in those files, unverifiable install sources (item 2 of "repository"), runtimes past their end of life (item 7).
+4. Docker and Compose (item 4 of "repository") and Kubernetes manifests and Helm charts: containers running as root, `privileged`, host paths, missing resource limits, secrets in `ConfigMap`, `:latest` images.
+5. Terraform (item 14 of "repository"): open security groups, public buckets, unencrypted storage, regions outside the EU where personal data is stored (Art. 44 DSGVO), state files in the repository, provider versions from `.terraform.lock.hcl`.
+6. License data for these ecosystems (item 12 of "repository"): Maven Central, NuGet, PyPI and pub.dev through their official APIs, behind a switch.
 
-## Next: fix
+## Later: fix
 
 Feedback: detect, then fix, then monitor. Monitor is the hosted service under "Commercialization". Fix stays in the runner and stays free. The line: fixes for technical findings only, never generated legal texts, since writing an imprint or privacy policy for a user would be legal advice.
 
@@ -107,7 +123,7 @@ Feedback: detect, then fix, then monitor. Monitor is the hosted service under "C
 2. Deterministic fixes for technical findings as a patch or pull request, opt-in: actions pinned to a commit, `.env` files in `.gitignore`, security headers in the hosting config. The next run checks the fix.
 3. Legal findings keep a `fix_hint` and their sources, no generated text.
 
-## Next: integrations
+## Later: integrations
 
 Feedback: GitHub Actions is a good start, but in the long run rechtzeitig should reach other places where code is written and built. The scan itself (`src/main.ts`, `CLI_OPTIONS`) does not depend on GitHub; the action, the step summary, annotations and SARIF upload do. Everything here stays free and open, and the report JSON stays the interface.
 
@@ -117,7 +133,7 @@ Feedback: GitHub Actions is a good start, but in the long run rechtzeitig should
 4. Other CI systems without own work: a documented example for any runner that can run the container (Jenkins, Azure DevOps, CircleCI).
 5. IDE integration: findings with file and line from the report JSON or SARIF shown in the editor, for the repository checks only. Starts with a documented way to open the SARIF file in VS Code; an own extension only if that is not enough.
 
-## Later
+## Later: other
 
 - Repository checks with a high false-positive risk or no legal basis: admin routes without an auth check, license headers of other projects, Google Tag Manager exports, repository health (LICENSE file, maintenance, CI).
 - More report languages.
