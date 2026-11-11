@@ -18,6 +18,7 @@ GitHub Action that scans a website and its repository for German legal basics, s
 | Lockfile parsers | `src/repo/lockfiles.ts` |
 | Package files without a parser, registries, ecosystems with license data | `data/ecosystems.yml` |
 | Allowed source domains for `meta.sources` | `data/source-domains.yml` |
+| Public Suffix List (what counts as one site), MPL-2.0 | `data/public-suffixes.dat`, refreshed with `npm run refresh-suffixes` |
 | Periodic review of rule sources | `.claude/skills/review-sources/` |
 | Check that rule docs and sources match the code | `.claude/skills/check-rule-docs/` |
 | Inputs of the action | `action.yml`, documented in `docs/workflow.html` (all) and `docs/getting-started.html` (first setup, opt-ins); command line options in `src/options.ts`; set in the example or commented in `FILE_ONLY` of `src/inputs.test.ts` |
