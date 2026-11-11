@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { capture } from "./capture.ts";
+import { capture, CodeCollector } from "./capture.ts";
+import { loadYaml } from "./sdk.ts";
 import { serve, testBrowser } from "../test/helpers.ts";
 
 const browser = testBrowser();
@@ -88,4 +89,45 @@ test("records subresources, images, videos, cookie expiry and banner button styl
     await context.close();
     s.close();
   }
+});
+
+// Audit 2026-11-10: concurrent responses must not pass max_files while their bodies are still being read.
+
+const LIMIT = loadYaml<{ code: { max_files: number; max_file_chars: number } }>("data/thresholds.yml").code;
+type Fake = Parameters<CodeCollector["take"]>[0];
+const response = (url: string, body: string | Error, headers: Record<string, string> = {}) =>
+  ({
+    url: () => url,
+    status: () => 200,
+    headers: () => headers,
+    text: () => new Promise<string>((done, fail) => setTimeout(() => (body instanceof Error ? fail(body) : done(body)), 5)),
+  }) as unknown as Fake;
+
+test("CodeCollector keeps at most max_files of concurrent responses and counts the rest", async () => {
+  const code = new CodeCollector();
+  const total = LIMIT.max_files + 20;
+  await Promise.all(Array.from({ length: total }, (_, i) => code.take(response(`https://example.de/${i}.js`, "x"), "script")));
+  assert.equal(code.files.length, LIMIT.max_files);
+  assert.equal(code.skipped, total - LIMIT.max_files);
+});
+
+test("CodeCollector frees the slot of a failed read and keeps each URL once", async () => {
+  const code = new CodeCollector();
+  await Promise.all([
+    code.take(response("https://example.de/broken.js", new Error("gone")), "script"),
+    code.take(response("https://example.de/a.js", "a"), "script"),
+    code.take(response("https://example.de/a.js", "a"), "script"),
+  ]);
+  assert.deepEqual(code.files.map((f) => f.url), ["https://example.de/a.js"]);
+  assert.equal(code.skipped, 0);
+  await Promise.all(Array.from({ length: LIMIT.max_files }, (_, i) => code.take(response(`https://example.de/${i}.js`, "x"), "script")));
+  assert.equal(code.files.length, LIMIT.max_files);
+});
+
+test("CodeCollector does not read a body announced larger than max_file_chars can hold", async () => {
+  const code = new CodeCollector();
+  const big = { "content-length": String(LIMIT.max_file_chars * 4 + 1) };
+  await code.take(response("https://example.de/big.js", "x", big), "script");
+  assert.equal(code.files.length, 0);
+  assert.equal(code.skipped, 1);
 });

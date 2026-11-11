@@ -408,6 +408,7 @@ messages:
   privacy/consent-equal-choice:
     no_banner: "No consent banner found on the start page."
     no_reject: "The banner has no reject button on the first layer (see privacy/consent-reject)."
+    not_compared: "Accept and reject buttons were found, but their rendered size could not be read. Nothing was compared."
     shaming: "\"{text}\": the refusal is worded to make users feel bad."
     smaller: "\"{reject}\" has only {percent} % of the area of \"{accept}\"."
     smaller_font: "\"{reject}\" uses a {reject_size} px font, \"{accept}\" {accept_size} px."
@@ -462,6 +463,10 @@ messages:
       one: "{count} cookie or storage entry set before consent. Without consent, only strictly necessary ones are allowed."
       other: "{count} cookies or storage entries set before consent. Without consent, only strictly necessary ones are allowed."
     none: "No cookies or local storage before consent."
+    incomplete:
+      one: "No cookies seen without JavaScript, but {count} page did not load with JavaScript. Cookies and storage set by scripts are unknown there."
+      other: "No cookies seen without JavaScript, but {count} pages did not load with JavaScript. Cookies and storage set by scripts are unknown there."
+    js_failed: "{page}: load with JavaScript failed ({error})"
   privacy/google-consent-mode:
     no_requests: "No Google measurement or ads tag sent a request before consent."
     request: "{request} on {page}, gcs={gcs}"
@@ -499,6 +504,10 @@ messages:
     consent_required: "Loaded before consent: {names}. Each visit sends the visitor's IP address to them."
     check_basis: "Contacted before consent: {names}. Check the legal basis and name them in the privacy policy."
     none: "Only the site's own servers are contacted before consent."
+    incomplete:
+      one: "Only the site's own servers were contacted without JavaScript, but {count} page did not load with JavaScript. Requests made by scripts are unknown there."
+      other: "Only the site's own servers were contacted without JavaScript, but {count} pages did not load with JavaScript. Requests made by scripts are unknown there."
+    js_failed: "{page}: load with JavaScript failed ({error})"
   privacy/vendors-in-privacy-policy:
     no_services: "The site uses no third-party services before consent."
     missing:

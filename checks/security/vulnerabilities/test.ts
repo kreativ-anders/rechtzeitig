@@ -41,3 +41,16 @@ test("warns when OSV could not be asked", async () => {
   assert.equal(result.status, "warn");
   assert.match(result.message, /timeout/);
 });
+
+// Audit 2026-11-10: a development entry in one lockfile must not hide a production entry in another.
+for (const [dev, prod] of [["a", "z"], ["z", "a"]]) {
+  test(`production in ${prod}/ wins over development in ${dev}/`, async () => {
+    const both = {
+      [`${dev}/package-lock.json`]: npmLock({ lodash: { version: "4.17.20", dev: true } }),
+      [`${prod}/package-lock.json`]: npmLock({ lodash: "4.17.20" }),
+    };
+    const result = await runRepoCheck(here, both, { osv: "ok", vulnerabilities: [vuln("pkg:npm/lodash@4.17.20", "HIGH")] });
+    assert.equal(result.status, "fail");
+    assert.equal(result.raw.details?.[0].file, `${prod}/package-lock.json`);
+  });
+}

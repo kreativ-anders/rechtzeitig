@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§ 25 TDDDG, BGH I ZR 7/16 (Cookie-Einwilligung II)"
   en: "§ 25 TDDDG (German Telecommunications Digital Services Data Protection Act), BGH I ZR 7/16 (Cookie-Einwilligung II)"
-how: "Lists cookies and localStorage set while loading the site without clicks; matches names against `data/third-parties.yml`."
+how: "Lists cookies and localStorage set while loading the site without clicks, from both loads; matches names against `data/third-parties.yml`, and warns instead of passing when a page did not load with JavaScript."
 fix_hint:
   de: "Nur unbedingt erforderliche Cookies sofort setzen, alle anderen erst nach Einwilligung."
   en: "Set only strictly necessary cookies right away, all others only after consent."

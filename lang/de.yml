@@ -452,6 +452,7 @@ messages:
   privacy/consent-equal-choice:
     no_banner: "Kein Consent-Banner auf der Startseite gefunden."
     no_reject: "Das Banner hat keinen Ablehnen-Button auf der ersten Ebene (siehe privacy/consent-reject)."
+    not_compared: "Annehmen- und Ablehnen-Button gefunden, aber ihre dargestellte Größe ließ sich nicht lesen. Nichts wurde verglichen."
     shaming: "„{text}“: die Ablehnung ist abwertend formuliert."
     smaller: "„{reject}“ hat nur {percent} % der Fläche von „{accept}“."
     smaller_font: "„{reject}“ hat {reject_size} px Schrift, „{accept}“ {accept_size} px."
@@ -506,6 +507,10 @@ messages:
       one: "{count} Cookie oder Speichereintrag vor der Einwilligung gesetzt. Ohne Einwilligung sind nur unbedingt erforderliche erlaubt."
       other: "{count} Cookies oder Speichereinträge vor der Einwilligung gesetzt. Ohne Einwilligung sind nur unbedingt erforderliche erlaubt."
     none: "Keine Cookies und kein lokaler Speicher vor der Einwilligung."
+    incomplete:
+      one: "Ohne JavaScript keine Cookies gesehen, aber {count} Seite ließ sich mit JavaScript nicht laden. Was Skripte dort an Cookies und Speicher setzen, ist unbekannt."
+      other: "Ohne JavaScript keine Cookies gesehen, aber {count} Seiten ließen sich mit JavaScript nicht laden. Was Skripte dort an Cookies und Speicher setzen, ist unbekannt."
+    js_failed: "{page}: Laden mit JavaScript fehlgeschlagen ({error})"
   privacy/google-consent-mode:
     no_requests: "Kein Google-Mess- oder Werbe-Tag hat vor der Einwilligung eine Anfrage gesendet."
     request: "{request} auf {page}, gcs={gcs}"
@@ -543,6 +548,10 @@ messages:
     consent_required: "Vor der Einwilligung geladen: {names}. Jeder Besuch übermittelt dorthin die IP-Adresse."
     check_basis: "Vor der Einwilligung kontaktiert: {names}. Rechtsgrundlage prüfen und in der Datenschutzerklärung nennen."
     none: "Vor der Einwilligung werden nur eigene Server kontaktiert."
+    incomplete:
+      one: "Ohne JavaScript nur eigene Server kontaktiert, aber {count} Seite ließ sich mit JavaScript nicht laden. Welche Anfragen Skripte dort senden, ist unbekannt."
+      other: "Ohne JavaScript nur eigene Server kontaktiert, aber {count} Seiten ließen sich mit JavaScript nicht laden. Welche Anfragen Skripte dort senden, ist unbekannt."
+    js_failed: "{page}: Laden mit JavaScript fehlgeschlagen ({error})"
   privacy/vendors-in-privacy-policy:
     no_services: "Die Website nutzt vor der Einwilligung keine Drittanbieter-Dienste."
     missing:

@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Splits `supabase/**/*.sql` into statements and compares `create table` in the public schema with `enable row level security`; looks for `if true` and test mode (`request.time < timestamp.date(...)`) in Firebase rules."
+how: "Splits `supabase/**/*.sql` into statements and follows `create table` in the public schema, `enable` and `disable row level security` and `drop table` in migration order, so the last statement about a table decides; looks for `if true` and test mode (`request.time < timestamp.date(...)`) in Firebase rules."
 fix_hint:
   de: "Row Level Security für jede Tabelle aktivieren und Regeln mit \"if true\" oder Testmodus-Datum durch Prüfungen auf den angemeldeten Nutzer ersetzen."
   en: "Enable row level security on every table and replace \"if true\" and test-mode rules with checks on the signed-in user."

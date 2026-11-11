@@ -479,7 +479,7 @@
 <section class="module" id="privacy" data-module="privacy">
 <h3>Privacy and consent <small>16 rules</small></h3>
 <div class="rules">
-<details class="rule" id="LEG-EU-CNS-007" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-007 privacy/consent-equal-choice rejecting is as visible as accepting in the consent banner ablehnen ist im consent-banner so sichtbar wie zustimmen § 25 tdddg, art. 4(11) and art. 7 gdpr in the start page's banner with javascript, compares the largest accept button (`consent_accept`) with the largest reject button (`consent_reject`) and warns when reject has under half the area, under 80 % of the font size, or a wcag contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/thresholds.yml`), or when a banner button uses shaming words (`consent_shaming`).">
+<details class="rule" id="LEG-EU-CNS-007" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-007 privacy/consent-equal-choice rejecting is as visible as accepting in the consent banner ablehnen ist im consent-banner so sichtbar wie zustimmen § 25 tdddg, art. 4(11) and art. 7 gdpr in the start page's banner with javascript, compares the largest visible, enabled accept button (`consent_accept`) with the largest visible, enabled reject button (`consent_reject`), skips when their size cannot be read, and warns when reject has under half the area, under 80 % of the font size, or a wcag contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/thresholds.yml`), or when a banner button uses shaming words (`consent_shaming`).">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-007<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Rejecting is as visible as accepting in the consent banner</span>
@@ -488,7 +488,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>In the start page's banner with JavaScript, compares the largest accept button (<code>consent_accept</code>) with the largest reject button (<code>consent_reject</code>) and warns when reject has under half the area, under 80 % of the font size, or a WCAG contrast below 3:1 while accept reaches 4.5:1 (thresholds in <code>data/thresholds.yml</code>), or when a banner button uses shaming words (<code>consent_shaming</code>).</dd></div>
+<div><dt>How it is checked</dt><dd>In the start page's banner with JavaScript, compares the largest visible, enabled accept button (<code>consent_accept</code>) with the largest visible, enabled reject button (<code>consent_reject</code>), skips when their size cannot be read, and warns when reject has under half the area, under 80 % of the font size, or a WCAG contrast below 3:1 while accept reaches 4.5:1 (thresholds in <code>data/thresholds.yml</code>), or when a banner button uses shaming words (<code>consent_shaming</code>).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Show &quot;Reject all&quot; in the same size, font and readability as &quot;Accept all&quot;, with a neutral label.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-equal-choice"><code>checks/privacy/consent-equal-choice</code></a></dd></div>
@@ -513,7 +513,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-CNS-003" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-003 privacy/consent-reject consent banner can be rejected on the first layer consent-banner lässt sich auf der ersten ebene ablehnen § 25 tdddg, art. 7(3) gdpr in dialogs, cookie containers and shadow roots of the start page, looks for an accept button (`consent_accept`) without a reject button (`consent_reject`).">
+<details class="rule" id="LEG-EU-CNS-003" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-003 privacy/consent-reject consent banner can be rejected on the first layer consent-banner lässt sich auf der ersten ebene ablehnen § 25 tdddg, art. 7(3) gdpr in dialogs, cookie containers and shadow roots of the start page, looks for an accept button (`consent_accept`) without a visible, enabled reject button (`consent_reject`); hidden or disabled controls do not count.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-003<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Consent banner can be rejected on the first layer</span>
@@ -522,7 +522,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>In dialogs, cookie containers and shadow roots of the start page, looks for an accept button (<code>consent_accept</code>) without a reject button (<code>consent_reject</code>).</dd></div>
+<div><dt>How it is checked</dt><dd>In dialogs, cookie containers and shadow roots of the start page, looks for an accept button (<code>consent_accept</code>) without a visible, enabled reject button (<code>consent_reject</code>); hidden or disabled controls do not count.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Offer an equal &quot;Reject all&quot; button right next to &quot;Accept all&quot;.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-reject"><code>checks/privacy/consent-reject</code></a></dd></div>
@@ -581,7 +581,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-CNS-002" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-002 privacy/cookies-before-consent no cookies before consent keine cookies vor einwilligung § 25 tdddg (german telecommunications digital services data protection act), bgh i zr 7/16 (cookie-einwilligung ii) lists cookies and localstorage set while loading the site without clicks; matches names against `data/third-parties.yml`.">
+<details class="rule" id="LEG-EU-CNS-002" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-002 privacy/cookies-before-consent no cookies before consent keine cookies vor einwilligung § 25 tdddg (german telecommunications digital services data protection act), bgh i zr 7/16 (cookie-einwilligung ii) lists cookies and localstorage set while loading the site without clicks, from both loads; matches names against `data/third-parties.yml`, and warns instead of passing when a page did not load with javascript.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-002<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">No cookies before consent</span>
@@ -590,7 +590,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Lists cookies and localStorage set while loading the site without clicks; matches names against <code>data/third-parties.yml</code>.</dd></div>
+<div><dt>How it is checked</dt><dd>Lists cookies and localStorage set while loading the site without clicks, from both loads; matches names against <code>data/third-parties.yml</code>, and warns instead of passing when a page did not load with JavaScript.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Set only strictly necessary cookies right away, all others only after consent.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/cookies-before-consent"><code>checks/privacy/cookies-before-consent</code></a></dd></div>
@@ -700,7 +700,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg, lg münchen i 3 o 17493/20 (google fonts) records every request to another site while loading pages without clicks, groups hosts by vendor from `data/third-parties.yml` (else by domain); `consent: required` vendors fail, others warn.">
+<details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg, lg münchen i 3 o 17493/20 (google fonts) records every request to another site while loading pages without clicks, groups hosts by vendor from `data/third-parties.yml` (else by domain); `consent: required` vendors fail, others warn, and a page that did not load with javascript warns instead of passing.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">No third-party servers before consent</span>
@@ -709,7 +709,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Records every request to another site while loading pages without clicks, groups hosts by vendor from <code>data/third-parties.yml</code> (else by domain); <code>consent: required</code> vendors fail, others warn.</dd></div>
+<div><dt>How it is checked</dt><dd>Records every request to another site while loading pages without clicks, groups hosts by vendor from <code>data/third-parties.yml</code> (else by domain); <code>consent: required</code> vendors fail, others warn, and a page that did not load with JavaScript warns instead of passing.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-parties-before-consent"><code>checks/privacy/third-parties-before-consent</code></a></dd></div>
@@ -892,7 +892,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DBAI-001" data-module="security" data-scope="repository" data-severity="critical" data-search="sec-dbai-001 security/database-rules database rules do not open data to everyone datenbankregeln öffnen keine daten für alle art. 32 gdpr splits `supabase/**/*.sql` into statements and compares `create table` in the public schema with `enable row level security`; looks for `if true` and test mode (`request.time &lt; timestamp.date(...)`) in firebase rules.">
+<details class="rule" id="SEC-DBAI-001" data-module="security" data-scope="repository" data-severity="critical" data-search="sec-dbai-001 security/database-rules database rules do not open data to everyone datenbankregeln öffnen keine daten für alle art. 32 gdpr splits `supabase/**/*.sql` into statements and follows `create table` in the public schema, `enable` and `disable row level security` and `drop table` in migration order, so the last statement about a table decides; looks for `if true` and test mode (`request.time &lt; timestamp.date(...)`) in firebase rules.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DBAI-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">critical</span></span></span>
 <span class="rule-title">Database rules do not open data to everyone</span>
@@ -901,7 +901,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Splits <code>supabase/**/*.sql</code> into statements and compares <code>create table</code> in the public schema with <code>enable row level security</code>; looks for <code>if true</code> and test mode (<code>request.time &lt; timestamp.date(...)</code>) in Firebase rules.</dd></div>
+<div><dt>How it is checked</dt><dd>Splits <code>supabase/**/*.sql</code> into statements and follows <code>create table</code> in the public schema, <code>enable</code> and <code>disable row level security</code> and <code>drop table</code> in migration order, so the last statement about a table decides; looks for <code>if true</code> and test mode (<code>request.time &lt; timestamp.date(...)</code>) in Firebase rules.</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Enable row level security on every table and replace &quot;if true&quot; and test-mode rules with checks on the signed-in user.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/database-rules"><code>checks/security/database-rules</code></a></dd></div>
@@ -1402,7 +1402,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DEPS-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-deps-001 security/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i part i(2)(a) and part ii(2) (from 11 dec 2027) sends the package urls of all locked components to the osv api and loads details for up to 100 issues; high and critical issues in production dependencies fail. vulnerabilities">
+<details class="rule" id="SEC-DEPS-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-deps-001 security/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i part i(2)(a) and part ii(2) (from 11 dec 2027) sends the package urls of all locked components to the osv api and loads details for up to 100 issues; high and critical issues fail when any lockfile uses the package in production. vulnerabilities">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">No dependencies with known vulnerabilities</span>
@@ -1412,7 +1412,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues; high and critical issues in production dependencies fail.</dd></div>
+<div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues; high and critical issues fail when any lockfile uses the package in production.</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>Runs when</dt><dd>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Update the affected packages to at least the fixed version shown.</dd></div>

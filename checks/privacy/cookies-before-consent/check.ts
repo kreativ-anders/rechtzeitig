@@ -1,4 +1,4 @@
-import { defineCheck, fail, info, msg, pass, siteCookies, warn, type Finding } from "../../../src/sdk.ts";
+import { defineCheck, fail, info, jsFailedPages, msg, pass, siteCookies, warn, type Finding } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
@@ -19,6 +19,8 @@ export default defineCheck({
     if (tracking.length) return fail(msg("tracking", { count: tracking.length }), details);
     if (foreign.length) return warn(msg("third_party", { count: foreign.length }), details);
     if (details.length) return info(msg("review", { count: details.length }), details);
+    // Without the load with JavaScript, cookies and storage set by scripts are unknown: no pass on missing evidence.
+    if (ctx.jsFailed.length) return warn(msg("incomplete", { count: ctx.jsFailed.length }), jsFailedPages(ctx));
     return pass(msg("none"));
   },
 });
