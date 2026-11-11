@@ -21,6 +21,8 @@ flowchart LR
 4. `src/net.ts` keeps the scan off private networks. `publicAddresses()` resolves a host once and allows it only if every address is public; the connection then uses exactly these addresses (`pinned()`), so a DNS answer that changes in between (rebinding) cannot reach the runner's network. Requests without a browser use it directly, with redirects followed by hand and checked per hop. The browser connects only through `publicProxy()`, a local SOCKS5 proxy that does the same for every page, redirect, subresource and WebSocket. The host of the input URL is always allowed, so local dev servers and test fixtures work.
 5. `src/context.ts` wraps everything in a read-only `ScanContext` with helpers.
 
+A "site" everywhere above (own pages, same-site crawling, source maps, `isThirdParty`, SPF and DMARC) is the registrable domain from `siteOf()` in `src/text.ts`: the longest matching rule of the Public Suffix List plus one label, wildcard and exception rules included. The list, ICANN and private section (so `shop.azurewebsites.net` and `tracker.azurewebsites.net` are two sites), is kept unmodified under MPL-2.0 in `data/public-suffixes.dat` and refreshed with `npm run refresh-suffixes`; it is read once, on the first call. IP addresses, hosts without a dot and public suffixes themselves stay as they are; an unknown TLD counts as one label.
+
 Both loads happen without interaction, so every request and cookie in the context happened before consent. Comparing the two loads shows what needs JavaScript.
 
 ## Repository

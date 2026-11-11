@@ -2,7 +2,7 @@
 // For every commit in a range, not counting merges:
 //   - checks/<module>/<name>/check.ts changed       → that rule.yml changed too
 //   - messages of a rule in lang/*.yml changed      → that rule.yml changed too
-//   - data/<file>.yml changed                       → the commit message names <file>.yml
+//   - data/<file>.yml or .dat changed               → the commit message names that file
 // A commit that knowingly leaves the docs as they are says why in a line "Docs-unchanged: <reason>".
 //
 //   node src/drift.ts [base] [head]     (default origin/main HEAD; an empty or unknown base checks only head)
@@ -29,7 +29,7 @@ export function problems(c: Commit): string[] {
   for (const f of c.files) {
     const check = /^checks\/([^/]+\/[^/]+)\/check\.ts$/.exec(f);
     if (check && !changed.has(`checks/${check[1]}/rule.yml`)) found.add(`${f} changed, checks/${check[1]}/rule.yml not`);
-    const data = /^data\/([^/]+\.yml)$/.exec(f);
+    const data = /^data\/([^/]+\.(?:yml|dat))$/.exec(f);
     if (data && !c.message.includes(data[1])) found.add(`${f} changed, the commit message does not name ${data[1]}`);
   }
   for (const scope of c.langScopes) {

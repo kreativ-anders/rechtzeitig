@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { domainToASCII } from "node:url";
+
 /**
  * Normalizes text before matching, so language patterns stay simple:
  * lowercase, ä→ae ö→oe ü→ue ß→ss, accents removed, invisible characters removed, single spaces.
@@ -38,19 +41,53 @@ export function withoutHash(url: string): string {
   return u.href;
 }
 
-// Suffixes under which every subdomain is a different owner.
-const SHARED_SUFFIXES = new Set([
-  "co.uk", "org.uk", "ac.uk", "com.au", "co.at", "or.at", "co.nz", "co.jp", "com.br",
-  "github.io", "gitlab.io", "netlify.app", "vercel.app", "pages.dev", "web.app", "herokuapp.com",
-]);
+// Public Suffix List (data/public-suffixes.dat, MPL-2.0), ICANN and private section, refreshed by
+// `npm run refresh-suffixes`. Read on first use, so modules that never compare hosts do not pay for it.
+const SUFFIX_FILE = new URL("../data/public-suffixes.dat", import.meta.url);
+let suffixes: { rules: Set<string>; wildcards: Set<string>; exceptions: Set<string> } | undefined;
 
-/** Registrable domain of a host ("www.example.de" → "example.de"). Good enough for first/third-party decisions. */
+/** Unicode labels as URL.hostname gives them (punycode); ASCII stays as it is. */
+const toAscii = (host: string) => (/[^\x00-\x7f]/.test(host) ? domainToASCII(host) || host : host);
+
+function suffixRules() {
+  if (suffixes) return suffixes;
+  const rules = new Set<string>();
+  const wildcards = new Set<string>();
+  const exceptions = new Set<string>();
+  for (const raw of readFileSync(SUFFIX_FILE, "utf8").split("\n")) {
+    const line = raw.trim().split(/\s/)[0];
+    if (!line || line.startsWith("//")) continue;
+    if (line.startsWith("!")) exceptions.add(toAscii(line.slice(1)));
+    else if (line.startsWith("*.")) wildcards.add(toAscii(line.slice(2)));
+    else rules.add(toAscii(line));
+  }
+  return (suffixes = { rules, wildcards, exceptions });
+}
+
+/** Number of labels of the longest public suffix of `labels` (PSL algorithm; unknown TLDs count as one label). */
+function suffixLength(labels: string[]): number {
+  const { rules, wildcards, exceptions } = suffixRules();
+  for (let i = 0; i < labels.length; i++) {
+    const name = labels.slice(i).join(".");
+    // An exception rule wins: its suffix is the rule minus its first label.
+    if (exceptions.has(name)) return labels.length - i - 1;
+    // A wildcard rule "*.ck" matches one more label than "ck".
+    if (i > 0 && wildcards.has(name)) return labels.length - i + 1;
+    if (rules.has(name)) return labels.length - i;
+  }
+  return 1;
+}
+
+/**
+ * Registrable domain of a host ("www.example.de" → "example.de", "shop.azurewebsites.net" stays): the longest
+ * public suffix plus one label. IP addresses, single labels and public suffixes themselves stay as they are.
+ */
 export function siteOf(host: string): string {
   const h = host.toLowerCase().replace(/\.$/, "");
   if (!h.includes(".") || /^[\d.]+$/.test(h) || h.includes(":")) return h;
-  const parts = h.split(".");
-  const lastTwo = parts.slice(-2).join(".");
-  return SHARED_SUFFIXES.has(lastTwo) ? parts.slice(-3).join(".") : lastTwo;
+  const labels = toAscii(h).split(".");
+  const keep = suffixLength(labels) + 1;
+  return keep > labels.length ? labels.join(".") : labels.slice(-keep).join(".");
 }
 
 /** true for http:// and https:// URLs. */

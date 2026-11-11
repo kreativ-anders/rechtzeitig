@@ -14,7 +14,8 @@
     "typecheck": "tsc",
     "docs": "node src/docs.ts",
     "drift": "node src/drift.ts",
-    "mutate": "node dev/mutate.ts"
+    "mutate": "node dev/mutate.ts",
+    "refresh-suffixes": "node dev/public-suffixes.ts"
   },
   "dependencies": {
     "axe-core": "4.14.0",
