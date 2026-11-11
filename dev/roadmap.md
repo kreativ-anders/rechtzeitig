@@ -6,19 +6,20 @@ Sections are ordered by urgency: "Now" comes before the next release, "Next" is 
 
 ## Now: audit of 2026-11-10
 
-Confirmed defects from the read-only audit of v0.5.1 (790 tests green, no critical or high security issue). Each one lets a scan report less than it saw, so they come before new checks. Order of work; every fix lands with the regression test it names, and `fail-on: fail` is only a dependable gate once 1 to 5 are done.
+Open defects from the read-only audit of v0.5.1. The five that let a scan pass on missing or contradicting evidence are fixed (#50). Every fix lands with a regression test.
 
-1. Capture completeness. `sitePages` in `src/context.ts` keeps only pages whose JavaScript load succeeded, so evidence of a successful load without JavaScript is dropped when the other load fails, and checks pass on absent evidence. Keep what either load observed, and let checks that need the JavaScript load say "incomplete" instead of "pass". Eleven checks read `sitePages`. Then review the other "no evidence means pass" paths with the same model.
-2. Production status of a vulnerable package over all lockfiles. `security/vulnerabilities` resolves a package by its first component entry; a development entry in one lockfile hides a production entry in another. Group by purl, production if any occurrence is, keep every source. Test both lockfile orders.
-3. Package identity in `yarn.lock`: aliases resolve to the package they point at, for the SBOM and the OSV query (#41).
-4. Database state in migration order: `DISABLE ROW LEVEL SECURITY`, `DROP TABLE` and recreation change the result of `databaseRules()` in `src/sdk.ts`; today an earlier enable counts forever. Tests: enable→disable, disable→enable, drop→recreate.
-5. Visible consent controls. The capture records whether a control is visible and enabled; `consent-reject` requires a visible reject, and `consent-equal-choice` does not pass when the comparison could not run. Tests: `display:none`, `visibility:hidden`, hidden ancestor, disabled, a visible pair.
-6. Fixed version per release branch: pick the OSV range that contains the installed version, or show none (#43).
-7. Domain boundaries: `siteOf()` on Public Suffix List data including private suffixes (#42). Then test its consumers: third-party requests, `sitePages`, source maps.
-8. Collection bounds: `CodeCollector` in `src/capture.ts` reserves a slot before it awaits a body, so concurrent responses cannot pass `max_files`, and oversized bodies are cut before they are fully read.
-9. Runtime freshness: rule loading at scan time no longer throws on a review date older than a year; the age check stays in the tests (#44).
-10. Docs: the push trigger snippet in `docs/workflow.html` (#45) and the README sentence that calls the cross-checks planned (#46).
-11. Measure peak memory of `scanRepo()` on a large repository before deciding on an aggregate budget (#47). A browser smoke test for the website (#48).
+1. Other "no evidence means pass" paths: review every check that passes when a list is empty, with the model of #50 (`observedPages`, `jsFailed`): no pass when the evidence it needs was not collected.
+2. Package identity in `yarn.lock`: aliases resolve to the package they point at, for the SBOM and the OSV query (#41).
+3. Fixed version per release branch: pick the OSV range that contains the installed version, or show none (#43).
+4. Domain boundaries: `siteOf()` on Public Suffix List data including private suffixes (#42). Then test its consumers: third-party requests, `sitePages`, source maps.
+5. Runtime freshness: rule loading at scan time no longer throws on a review date older than a year; the age check stays in the tests (#44).
+6. Collection bounds for bodies without Content-Length (#55), and every lockfile of a vulnerable package in its finding (#56).
+7. Docs: the push trigger snippet in `docs/workflow.html` (#45) and the README sentence that calls the cross-checks planned (#46).
+8. Measure peak memory of `scanRepo()` on a large repository before deciding on an aggregate budget (#47). A browser smoke test for the website (#48).
+
+## Now: language of the scanned site
+
+Found on rechtzeitig.dev. Legal pages in another language than the report are missed (#52), and the legal pages of the version in the scan language are not followed through hreflang (#53).
 
 ## Now: hardening
 
@@ -104,6 +105,20 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 26. With `sales: true`: price reductions shown other than as a struck-through price, such as "-20 %" labels, checked for the 30-day lowest price (§ 11 PAngV).
 27. Visit the T&Cs and withdrawal pages only with `sales: true`, so they do not use up `max-pages` on sites without a shop.
 
+## Next: data sources
+
+Open data that would sharpen existing and planned checks. Only data under MIT, Apache-2.0, BSD, MPL-2.0 (kept in its own file with its notice), CC0 or CC-BY may be copied, with attribution in the header of the `data/*.yml` file and in NOTICE; GPL, AGPL, LGPL, EUPL, CC-BY-SA and non-commercial data never, ideas only. Each import gets a refresh script and a test.
+
+1. Third-party vendors in `data/third-parties.yml`: about 49 today. Grow it with payment, analytics, newsletter and support services common in Germany (Mollie, Klarna and similar), each with hosts, `packages:` and country (#40).
+2. Cookie names per vendor from the Open Cookie Database (Apache-2.0) for `data/third-parties.yml` `cookies:` and `data/cookies.yml`.
+3. Library signatures and versions from retire.js `jsrepository.json` (Apache-2.0) for client-side libraries in the served bundle (item 14 of "website", item 6 of "repository and website together").
+4. More patterns for `data/secrets.yml` from the gitleaks rules (MIT), each with a benchmark case.
+5. Workflow patterns for `security/workflow-risks` from the zizmor audits (MIT), reimplemented (item 6 of "repository").
+6. Probe paths and matchers for exposed files from the exposure templates of nuclei-templates (MIT), passive GET only, for `data/probes.yml`.
+7. Supabase lint rules (splinter, license to verify) for `databaseRules()`, reimplemented statically.
+8. End-of-life dates of runtimes from endoflife.date (license to verify) for item 7 of "repository".
+9. License categories from the ScanCode LicenseDB (CC-BY-4.0) for `data/licenses.yml`.
+
 ## Later: ecosystems
 
 Feedback: the checks are broad, but support for other technical ecosystems should grow. Lockfile parsers cover several ecosystems already; the open question is how deep the checks go into each framework's own configuration, beyond reading dependencies. Targets: Flutter/Dart, Java (Maven, Gradle), .NET (NuGet), Python, Docker, Kubernetes, Terraform. Several items above belong here too: 4 (Dockerfile and Compose), 12 (license data), 14 (infrastructure code), 7 (runtimes past their end of life). Each step needs a parser or a `data/*.yml`, and a fixture per rule.
@@ -156,6 +171,8 @@ Free, in this repository:
 
 Paid, a hosted service in its own repository, for what the Security tab does not cover: private repositories without GitHub Code Security, many sites at once, sites without GitHub, and readers without a GitHub account.
 
+- A health summary per site: one technical score, the number of findings with high priority, and a status per group (security, privacy, legal, accessibility). Labeled as a technical summary, never as a legal rating.
+- History of each finding over the runs: when it first appeared, since which commit, when it was fixed, whether it came back, and which new risks came in with an update. This turns the weekly scan into monitoring.
 - Dashboard with the history of runs: trends, what is new, what was fixed.
 - One view over many sites and repositories, for agencies with client projects.
 - Notifications (mail, Slack, Teams) on new findings only, which needs stored state.
