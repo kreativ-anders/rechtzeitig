@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runCheck, runFake } from "../../../test/helpers.ts";
+import { fakeLink, runCheck, runFake } from "../../../test/helpers.ts";
 import type { Link } from "../../../src/sdk.ts";
 
 const here = import.meta.dirname;
@@ -89,4 +89,20 @@ test("compares the largest visible buttons, ignoring ones without size or style"
   const result = await runFake(here, { links: [hidden, plain, button("Alle akzeptieren"), button("Alle ablehnen")] });
   assert.equal(result.status, "pass");
   assert.equal(result.raw.message.params?.accept, "Alle akzeptieren");
+});
+
+// Audit 2026-11-10: a reject button the visitor cannot see or use is never "equal".
+for (const fixture of ["reject-display-none", "reject-visibility-hidden", "reject-hidden-ancestor", "reject-disabled"]) {
+  test(`does not pass when the only reject button is not usable (${fixture})`, async () => {
+    assert.notEqual((await runCheck(here, fixture)).status, "pass");
+  });
+}
+
+test("passes for a visible reject button of the same size", async () => {
+  assert.equal((await runCheck(here, "reject-visible")).status, "pass");
+});
+
+test("does not pass when the buttons have no rendered size", async () => {
+  const banner = [fakeLink("Alle akzeptieren", null, "banner"), fakeLink("Alle ablehnen", null, "banner")];
+  assert.equal((await runFake(here, { links: banner })).status, "skip");
 });

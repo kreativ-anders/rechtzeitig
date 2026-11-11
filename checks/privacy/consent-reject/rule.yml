@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§ 25 TDDDG, Art. 7 Abs. 3 DSGVO"
   en: "§ 25 TDDDG, Art. 7(3) GDPR"
-how: "In dialogs, cookie containers and shadow roots of the start page, looks for an accept button (`consent_accept`) without a reject button (`consent_reject`)."
+how: "In dialogs, cookie containers and shadow roots of the start page, looks for an accept button (`consent_accept`) without a visible, enabled reject button (`consent_reject`); hidden or disabled controls do not count."
 fix_hint:
   de: "Einen gleichwertigen Button \"Alle ablehnen\" direkt neben \"Alle akzeptieren\" anbieten."
   en: "Offer an equal \"Reject all\" button right next to \"Accept all\"."

@@ -36,7 +36,8 @@ const largest = (links: Link[]) => links.filter((l) => l.style && area(l.style) 
 
 export default defineCheck({
   run(ctx) {
-    const banner = ctx.start.js.links.filter((l) => l.area === "banner");
+    // A control the visitor cannot see or use is no choice.
+    const banner = ctx.start.js.links.filter((l) => l.area === "banner" && !l.hidden);
     const accept = ctx.links("consent_accept", banner);
     if (!accept.length) return skip(msg("no_banner"));
     const isAccept = new Set(accept);
@@ -49,6 +50,8 @@ export default defineCheck({
 
     const yes = largest(accept);
     const no = largest(reject);
+    // Without the rendered size of both buttons nothing was compared: no pass on missing evidence.
+    if (reject.length && !(yes?.style && no?.style) && !details.length) return skip(msg("not_compared"));
     if (yes?.style && no?.style) {
       const names = { accept: yes.text, reject: no.text };
       const ratio = area(no.style) / area(yes.style);

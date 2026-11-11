@@ -91,3 +91,47 @@ test("fails for Realtime Database rules open for reading or for writing", async 
     assert.equal(result.status, "fail", key);
   }
 });
+
+// Audit 2026-11-10: the last statement about a table decides, in the order the migrations run.
+test("fails when a later migration disables row level security", async () => {
+  const files = {
+    "supabase/migrations/20260101_init.sql": "create table public.records (id int);\nalter table public.records enable row level security;",
+    "supabase/migrations/20260201_open.sql": "alter table public.records disable row level security;",
+  };
+  const result = await runRepoCheck(here, files);
+  assert.equal(result.status, "fail");
+  assert.deepEqual(result.raw.details?.map((d) => d.params?.table), ["records"]);
+});
+
+test("passes when a later migration enables row level security again", async () => {
+  const files = {
+    "supabase/migrations/20260101_init.sql": "create table public.records (id int);\nalter table records disable row level security;",
+    "supabase/migrations/20260201_fix.sql": "alter table records enable row level security;",
+  };
+  assert.equal((await runRepoCheck(here, files)).status, "pass");
+});
+
+test("a table dropped and created again starts without row level security", async () => {
+  const sql = [
+    "create table public.records (id int);",
+    "alter table public.records enable row level security;",
+    "drop table if exists public.records;",
+    "create table public.records (id int, name text);",
+  ].join("\n");
+  const result = await runRepoCheck(here, { "supabase/migrations/1.sql": sql });
+  assert.equal(result.status, "fail");
+  assert.equal(result.raw.details?.[0].line, 4);
+});
+
+test("a dropped table without row level security is no longer reported", async () => {
+  const sql = "create table public.tmp (id int);\ndrop table public.tmp;";
+  assert.equal((await runRepoCheck(here, { "supabase/migrations/1.sql": sql })).status, "pass");
+});
+
+test("migrations run in name order, not in listing order", async () => {
+  const files = {
+    "supabase/migrations/20260201_open.sql": "alter table public.records disable row level security;",
+    "supabase/migrations/20260101_init.sql": "create table public.records (id int);\nalter table public.records enable row level security;",
+  };
+  assert.equal((await runRepoCheck(here, files)).status, "fail");
+});

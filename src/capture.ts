@@ -13,6 +13,7 @@ interface RawLink {
   area: Area;
   button: boolean;
   style?: Style;
+  hidden?: true;
 }
 
 interface RawForm {
@@ -82,6 +83,13 @@ function readDom(): Dom {
       return "";
     }
   };
+  // Rendered and operable: not display:none, visibility:hidden or opacity 0 (also through an ancestor), not disabled.
+  const usable = (el: Element): boolean => {
+    const visible = typeof el.checkVisibility === "function"
+      ? el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, opacityProperty: true, visibilityProperty: true } as CheckVisibilityOptions)
+      : el.getClientRects().length > 0;
+    return visible && !(el as HTMLButtonElement).disabled && el.getAttribute("aria-disabled") !== "true";
+  };
   const toRaw = (el: Element): RawLink => {
     const isLink = el instanceof HTMLAnchorElement;
     const text = ((el as HTMLElement).innerText || (el as HTMLInputElement).value || el.textContent || "").trim().slice(0, MAX.label);
@@ -90,6 +98,7 @@ function readDom(): Dom {
     const area = areaOf(el);
     const raw: RawLink = { href: isLink ? (el as HTMLAnchorElement).href : null, text, extra, area, button: !isLink };
     if (area === "banner") raw.style = styleOf(el);
+    if (!usable(el)) raw.hidden = true;
     return raw;
   };
   const LINKS = "a[href], button, [role=button], input[type=submit], input[type=button]";
@@ -189,6 +198,7 @@ function toLink(raw: RawLink): Link {
     area: raw.area,
     button: raw.button,
     ...(raw.style && { style: raw.style }),
+    ...(raw.hidden && { hidden: true as const }),
   };
 }
 
@@ -255,19 +265,25 @@ const CODE = loadYaml<{ code: { max_file_chars: number; max_files: number } }>("
  */
 export class CodeCollector {
   readonly files: ServedCode[] = [];
-  /** Not kept because `max_files` was reached. */
+  /** Not kept because `max_files` was reached, or because the announced body is too large to read. */
   skipped = 0;
   private seen = new Set<string>();
+  /** Slots taken by bodies still being read, so concurrent responses cannot pass `max_files`. */
+  private reserved = 0;
 
   async take(res: PlaywrightResponse, type: ServedCode["type"]): Promise<void> {
     const url = res.url();
     if (!isWebUrl(url) || this.seen.has(url) || res.status() < 200 || res.status() >= 300) return;
     this.seen.add(url);
-    if (this.files.length >= CODE.max_files) {
+    // A UTF-8 character has at most 4 bytes: a body announced larger than that cannot fit max_file_chars, so it is not read.
+    const length = Number(res.headers()["content-length"]);
+    if (this.files.length + this.reserved >= CODE.max_files || length > CODE.max_file_chars * 4) {
       this.skipped++;
       return;
     }
+    this.reserved++; // taken before the await, released after it
     const body = await res.text().catch(() => undefined);
+    this.reserved--;
     if (body === undefined) return;
     this.files.push({ url, type, body: body.slice(0, CODE.max_file_chars), truncated: body.length > CODE.max_file_chars });
   }

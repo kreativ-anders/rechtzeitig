@@ -8,7 +8,11 @@ export default defineRepoCheck({
     if (!repo.osv.startsWith("ok")) return warn(msg("osv_error", { error: repo.osv }));
     if (!repo.vulnerabilities.length) return pass(msg("none", { count: repo.components.length }));
 
-    const component = (purl: string) => repo.components.find((c) => c.purl === purl);
+    // The same package can be locked in several lockfiles; it counts as production when any of them uses it there.
+    const component = (purl: string) => {
+      const all = repo.components.filter((c) => c.purl === purl);
+      return all.find((c) => !c.dev) ?? all[0];
+    };
     const details = repo.vulnerabilities.map((v): Finding => {
       const c = component(v.purl);
       return {

@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO, CRA Anhang I Teil I Nr. 2 lit. a und Teil II Nr. 2 (ab 11.12.2027)"
   en: "Art. 32 GDPR, CRA Annex I Part I(2)(a) and Part II(2) (from 11 Dec 2027)"
-how: "Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues; high and critical issues in production dependencies fail."
+how: "Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues; high and critical issues fail when any lockfile uses the package in production."
 requires: [vulnerabilities]
 fix_hint:
   de: "Betroffene Pakete mindestens auf die genannte Version mit Fix aktualisieren."

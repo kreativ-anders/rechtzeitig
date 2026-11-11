@@ -19,3 +19,14 @@ test("finds a banner inside a shadow root", async () => {
 test("skips without a banner", async () => {
   assert.equal((await runCheck(here, "none")).status, "skip");
 });
+
+// Audit 2026-11-10: a reject button the visitor cannot see or use does not count.
+for (const fixture of ["reject-display-none", "reject-visibility-hidden", "reject-hidden-ancestor", "reject-disabled"]) {
+  test(`fails when the only reject button is not usable (${fixture})`, async () => {
+    assert.equal((await runCheck(here, fixture)).status, "fail");
+  });
+}
+
+test("passes for a visible reject button next to accept", async () => {
+  assert.equal((await runCheck(here, "reject-visible")).status, "pass");
+});

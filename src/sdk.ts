@@ -290,7 +290,11 @@ export function requiredButton(ctx: ScanContext, rule: ButtonRule): Result {
 
 /** Every request made by the site's own pages, both loads. */
 export const siteRequests = (ctx: ScanContext): Array<Request & { page: string }> =>
-  ctx.sitePages.flatMap((p) => [...p.noJs.requests, ...p.js.requests].map((r) => ({ ...r, page: ctx.short(p.url) })));
+  ctx.observedPages.flatMap((p) => [...p.noJs.requests, ...p.js.requests].map((r) => ({ ...r, page: ctx.short(p.url) })));
+
+/** One finding per page whose load with JavaScript failed (key `js_failed`, params `page`, `error`). */
+export const jsFailedPages = (ctx: ScanContext): Finding[] =>
+  ctx.jsFailed.map((p) => ({ key: "js_failed", params: { page: ctx.short(p.url), error: p.js.error ?? String(p.js.status) } }));
 
 /** A third-party service the site's pages contacted. */
 export interface Service {
@@ -323,7 +327,7 @@ export const cookieKey = (c: { name: string; domain: string }) => `${c.name}@${c
 /** Cookies set on the site's own pages, both loads, once per name and domain, with the first page that set it. */
 export function siteCookies(ctx: ScanContext): Array<Cookie & { page: string }> {
   const cookies = new Map<string, Cookie & { page: string }>();
-  for (const p of ctx.sitePages) {
+  for (const p of ctx.observedPages) {
     for (const c of [...p.noJs.cookies, ...p.js.cookies]) {
       if (!cookies.has(cookieKey(c))) cookies.set(cookieKey(c), { ...c, page: ctx.short(p.url) });
     }
@@ -438,6 +442,8 @@ export interface Link {
   button: boolean;
   /** Rendered size and colors, only for buttons and links in the banner area (consent banners). */
   style?: Style;
+  /** Not rendered (display:none, visibility:hidden, opacity 0, also through an ancestor) or disabled: a visitor cannot use it. */
+  hidden?: true;
 }
 
 /** Rendered box of an element: CSS pixels, computed colors as rgb()/rgba(), background taken from the first non-transparent ancestor. */
@@ -637,8 +643,12 @@ export interface ScanContext {
   start: Page;
   /** All visited pages, start page first. Can include legal pages on other sites. */
   pages: Page[];
-  /** Visited pages on the start page's own site that loaded. Use these for requests and cookies. */
+  /** Visited pages on the start page's own site whose load with JavaScript succeeded. Use these for what the rendered page shows. */
   sitePages: Page[];
+  /** Visited pages on the own site where at least one of the two loads succeeded. Use these for requests and cookies. */
+  observedPages: Page[];
+  /** Pages of `observedPages` whose load with JavaScript failed: what JavaScript would have set or sent is unknown there. */
+  jsFailed: Page[];
   /** Start page over plain http://. Missing in tests. */
   http?: { status: number; location: string } | { error: string };
   /** The other host variant (www. added or removed). Missing in tests. */
@@ -911,7 +921,10 @@ export function consentOnSite(ctx: ScanContext): { banner: boolean; platforms: s
 // Each runs on one SQL statement, anchored at its start, so no pattern spans two statements.
 const NAME = String.raw`(?:"?(\w+)"?\s*\.\s*)?"?(\w+)"?`; // optional schema, table
 const CREATE = new RegExp(String.raw`^\s*create\s+(?:unlogged\s+)?table\s+(?:if\s+not\s+exists\s+)?${NAME}`, "i");
-const ENABLE = new RegExp(String.raw`^\s*alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?${NAME}\s+enable\s+row\s+level\s+security\b`, "i");
+// Group 3: enable or disable. "force" and "no force" change nothing for the API role and match nothing.
+const RLS = new RegExp(String.raw`^\s*alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?${NAME}\s+(enable|disable)\s+row\s+level\s+security\b`, "i");
+// Only the first table of "drop table a, b" is read.
+const DROP = new RegExp(String.raw`^\s*drop\s+table\s+(?:if\s+exists\s+)?${NAME}`, "i");
 const POLICY = /^\s*create\s+policy\b/i;
 const ALLOW_ALL = /\b(using|with\s+check)\s*\(\s*true\s*\)/i;
 const OPEN_RULE = /\ballow\b[\w, \t]{1,200}:\s*if\s+true\s*;/;
@@ -953,7 +966,8 @@ export interface DatabaseRules {
 
 /** Reads Supabase migrations and Firebase rules: public tables without row level security, rules open to everyone. */
 export function databaseRules(repo: RepoContext): DatabaseRules {
-  const sql = repo.files.filter((f) => /(^|\/)supabase\/.*\.sql$/.test(f));
+  // Migrations run in the order of their names (timestamps); the last statement about a table decides.
+  const sql = repo.files.filter((f) => /(^|\/)supabase\/.*\.sql$/.test(f)).sort();
   const rules = repo.files.filter((f) => /(^|\/)(firestore|storage)\.rules$|(^|\/)database\.rules\.json$/.test(f));
   const unread = [...sql, ...rules].filter((f) => repo.read(f) === undefined);
   // Table → where it is created first.
@@ -962,10 +976,19 @@ export function databaseRules(repo: RepoContext): DatabaseRules {
   let openPolicies = 0;
   for (const { file, text: statement, line } of sql.flatMap((file) => statements(repo.read(file) ?? "").map((s) => ({ file, ...s })))) {
     const create = CREATE.exec(statement);
-    const enable = ENABLE.exec(statement);
+    const rls = RLS.exec(statement);
+    const drop = DROP.exec(statement);
     // Only the public schema is exposed through the Supabase API by default.
-    if (create && tableName(create).startsWith("public.") && !created.has(tableName(create))) created.set(tableName(create), { file, line });
-    if (enable) secured.add(tableName(enable));
+    if (create && tableName(create).startsWith("public.") && !created.has(tableName(create))) {
+      created.set(tableName(create), { file, line });
+      secured.delete(tableName(create)); // a new table starts without row level security
+    }
+    if (rls?.[3].toLowerCase() === "enable") secured.add(tableName(rls));
+    if (rls?.[3].toLowerCase() === "disable") secured.delete(tableName(rls));
+    if (drop) {
+      created.delete(tableName(drop));
+      secured.delete(tableName(drop));
+    }
     if (POLICY.test(statement) && ALLOW_ALL.test(statement)) openPolicies++;
   }
   const problems: Finding[] = [...created]

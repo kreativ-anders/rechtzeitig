@@ -9,7 +9,7 @@ title:
 legal_basis:
   de: "§ 25 TDDDG, Art. 4 Nr. 11 und Art. 7 DSGVO"
   en: "§ 25 TDDDG, Art. 4(11) and Art. 7 GDPR"
-how: "In the start page's banner with JavaScript, compares the largest accept button (`consent_accept`) with the largest reject button (`consent_reject`) and warns when reject has under half the area, under 80 % of the font size, or a WCAG contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/thresholds.yml`), or when a banner button uses shaming words (`consent_shaming`)."
+how: "In the start page's banner with JavaScript, compares the largest visible, enabled accept button (`consent_accept`) with the largest visible, enabled reject button (`consent_reject`), skips when their size cannot be read, and warns when reject has under half the area, under 80 % of the font size, or a WCAG contrast below 3:1 while accept reaches 4.5:1 (thresholds in `data/thresholds.yml`), or when a banner button uses shaming words (`consent_shaming`)."
 fix_hint:
   de: "\"Alle ablehnen\" in gleicher Größe, Schrift und Lesbarkeit wie \"Alle akzeptieren\" anbieten und neutral beschriften."
   en: "Show \"Reject all\" in the same size, font and readability as \"Accept all\", with a neutral label."

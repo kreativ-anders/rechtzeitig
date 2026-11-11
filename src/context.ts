@@ -2,7 +2,7 @@ import { matchLinks, patternsFor, type Language } from "./lang.ts";
 import type { Registry } from "./registry.ts";
 import { isWebUrl, normalize, siteOf, withoutHash } from "./text.ts";
 import type { CrawlData } from "./crawl.ts";
-import { loaded, pageLinks, type Page, type ScanContext } from "./sdk.ts";
+import { loaded, pageLinks, type Page, type ScanContext, type Snapshot } from "./sdk.ts";
 
 export interface ContextOptions {
   languages: string[];
@@ -20,6 +20,9 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
   }
   const site = siteOf(new URL(data.url).hostname);
   const page = (u: string | null) => (isWebUrl(u) ? byUrl.get(withoutHash(u)) : undefined);
+  // A page belongs to the site by where the load that succeeded ended up, the one with JavaScript first.
+  const own = (s: Snapshot) => loaded(s) && siteOf(new URL(s.finalUrl).hostname) === site;
+  const observedPages = data.pages.filter((p) => (loaded(p.js) ? own(p.js) : own(p.noJs)));
 
   const ctx: ScanContext = {
     ...data,
@@ -31,7 +34,9 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
     languages: opts.languages,
     subscriptions: opts.subscriptions,
     sales: opts.sales,
-    sitePages: data.pages.filter((p) => loaded(p.js) && siteOf(new URL(p.js.finalUrl).hostname) === site),
+    sitePages: observedPages.filter((p) => loaded(p.js)),
+    observedPages,
+    jsFailed: observedPages.filter((p) => !loaded(p.js)),
     page,
     links: (concept, from) => matchLinks(lang, concept, Array.isArray(from) ? from : from.links),
     says: (concept, text) => {
