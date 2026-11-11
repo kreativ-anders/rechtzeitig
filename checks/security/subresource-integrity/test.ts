@@ -5,10 +5,15 @@ import { runCheck, runFake } from "../../../test/helpers.ts";
 const here = import.meta.dirname;
 const file = (url: string, integrity = false) => ({ url, type: "script" as const, integrity });
 
-test("passes when other sites' files carry a hash, and names the tag manager as excluded", async () => {
+test("a tag manager without a hash warns too, with how to fix it", async () => {
   const result = await runCheck(here, "signed");
-  assert.equal(result.status, "pass");
-  assert.deepEqual(result.raw.details?.map((d) => d.params?.host), ["www.googletagmanager.com"]);
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.raw.details?.map((d) => d.key), ["script", "moving"]);
+  assert.equal(result.raw.details?.[1].params?.host, "www.googletagmanager.com");
+});
+
+test("passes when every file of another site carries a hash", async () => {
+  assert.equal((await runFake(here, { subresources: [file("https://cdn.example.com/lib.js", true)] })).status, "pass");
 });
 
 test("warns for scripts and stylesheets from other sites without integrity, as written in the HTML", async () => {
@@ -26,11 +31,11 @@ test("passes without files from other sites, and counts subdomains of the site a
   assert.equal((await runFake(here, { subresources })).status, "pass");
 });
 
-test("leaves out services whose files change, with their subdomains", async () => {
+test("services whose files change warn, each with how to fix it, also on subdomains", async () => {
   const subresources = [file("https://js.stripe.com/v3/"), file("https://consent.cookiebot.com/uc.js")];
   const result = await runFake(here, { subresources });
-  assert.equal(result.status, "pass");
-  assert.equal(result.details.length, 2);
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.raw.details?.map((d) => d.key), ["script", "script", "moving", "moving"]);
 });
 
 test("skips when no page of the site loaded", async () => {

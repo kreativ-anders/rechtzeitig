@@ -1351,21 +1351,21 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-HDR-003" data-module="security" data-scope="website" data-severity="low" data-search="sec-hdr-003 security/subresource-integrity scripts and stylesheets from other sites carry an integrity hash skripte und stylesheets anderer websites haben einen integritäts-hash art. 32 gdpr lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the html of the site's own pages (load without javascript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same url (`data/subresource-integrity.yml`).">
+<details class="rule" id="SEC-HDR-003" data-module="security" data-scope="website" data-severity="medium" data-search="sec-hdr-003 security/subresource-integrity scripts and stylesheets from other sites carry an integrity hash skripte und stylesheets anderer websites haben einen integritäts-hash art. 32 gdpr lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the html of the site's own pages (load without javascript) that point to another site and have no integrity attribute; for services whose files change under the same url (`data/subresource-integrity.yml`) it adds how to fix them without a hash.">
 <summary>
-<span class="rule-head"><span class="rule-id">SEC-HDR-003<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
+<span class="rule-head"><span class="rule-id">SEC-HDR-003<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Scripts and stylesheets from other sites carry an integrity hash</span>
 <span class="rule-title-de" lang="de">Skripte und Stylesheets anderer Websites haben einen Integritäts-Hash</span>
 <span class="rule-law">Art. 32 GDPR</span>
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same URL (<code>data/subresource-integrity.yml</code>).</dd></div>
+<div><dt>How it is checked</dt><dd>Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute; for services whose files change under the same URL (<code>data/subresource-integrity.yml</code>) it adds how to fix them without a hash.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
-<div><dt>How to fix</dt><dd>Load fixed versions of other sites' files with integrity=&quot;sha384-…&quot; and crossorigin=&quot;anonymous&quot; (most CDNs show the hash), or host the file yourself.</dd></div>
+<div><dt>How to fix</dt><dd>Load fixed versions of other sites' files with integrity=&quot;sha384-…&quot; and crossorigin=&quot;anonymous&quot; (most CDNs show the hash), or host the file yourself. For services that change their file under the same URL, host a pinned copy or accept the risk knowingly.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/subresource-integrity"><code>checks/security/subresource-integrity</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a>, <a href="https://www.w3.org/TR/sri/#resource-integrity">w3.org</a>, <a href="https://www.w3.org/TR/sri/#the-integrity-attribute">w3.org</a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-11">2026-11-11</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-TLSOFF-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-tlsoff-001 security/tls-verification-off code verifies tls certificates code prüft tls-zertifikate art. 32 gdpr; bsi tr-02102-2 (certificate validation) matches code, scripts, workflows, dockerfiles and `.env` files (languages and left-out paths in `data/code-paths.yml`, tests excluded) line by line against the patterns in `data/insecure-code.yml` that turn certificate checks off: `rejectunauthorized: false`, `node_tls_reject_unauthorized=0`, `verify=false`, `insecureskipverify: true` (unless the file sets `verifypeercertificate` or `verifyconnection`, go's custom verification), `curlopt_ssl_verifypeer` off, `verify_none`, `curl -k`, `wget --no-check-certificate`.">

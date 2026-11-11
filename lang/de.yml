@@ -658,7 +658,7 @@ messages:
       other: "{count} von {total} Skripten und Stylesheets anderer Websites haben keinen Integritäts-Hash. Werden diese Websites kompromittiert, läuft veränderter Code auf Ihren Seiten."
     script: "Skript {url}"
     stylesheet: "Stylesheet {url}"
-    moving: "Ausgenommen: {host} ändert seine Dateien unter derselben URL, ein Hash würde sie blockieren."
+    moving: "{host} ändert seine Dateien unter derselben URL, ein Hash würde sie blockieren. Eine feste Kopie selbst hosten oder das Risiko bewusst tragen."
     more:
       one: "und {count} weitere Datei"
       other: "und {count} weitere Dateien"

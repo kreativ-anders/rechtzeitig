@@ -614,7 +614,7 @@ messages:
       other: "{count} of {total} scripts and stylesheets from other sites have no integrity hash. If those sites are compromised, changed code runs on your pages."
     script: "Script {url}"
     stylesheet: "Stylesheet {url}"
-    moving: "Left out: {host} changes its files under the same URL, so a hash would break them."
+    moving: "{host} changes its files under the same URL, so a hash would break them. Host a pinned copy yourself, or accept the risk knowingly."
     more:
       one: "and {count} more file"
       other: "and {count} more files"
