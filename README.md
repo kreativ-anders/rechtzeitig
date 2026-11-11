@@ -25,7 +25,7 @@
 
 More code is written with AI, and the same things keep slipping through: no imprint (Impressum), trackers that load before consent, API keys in the repository, Supabase tables without row level security, missing security headers, outdated packages. rechtzeitig catches them where you already work:
 
-- **Repository and live site.** It reads what visitors never see (lockfiles, workflows, keys, database rules) and what they get (HTML, scripts, cookies, headers, TLS, DNS), in one run and one report. Checks that compare the two directly are [planned](dev/roadmap.md).
+- **Repository and live site.** It reads what visitors never see (lockfiles, workflows, keys, database rules) and what they get (HTML, scripts, cookies, headers, TLS, DNS), in one run and one report. Thirteen checks [compare the two directly](https://rechtzeitig.dev/checks.html#both); they run when the job has both a checkout and a `url`.
 - **Continuous.** Run it weekly or on every push, so a new tracker, an expiring certificate or a newly published vulnerability shows up in the next run.
 - **Private where it should be.** Private repositories get the full report on the run page. Public ones show only counts by default; the findings go to the Security tab, which only people with write access see, where GitHub allows the upload.
 

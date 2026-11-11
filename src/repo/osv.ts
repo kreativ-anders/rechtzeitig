@@ -2,6 +2,7 @@
 
 import type { Component, Vulnerability } from "../sdk.ts";
 import { errorMessage } from "../text.ts";
+import { compareLoose } from "./semver.ts";
 
 const API = "https://api.osv.dev/v1";
 const BATCH = 1000;
@@ -13,8 +14,13 @@ export interface OsvVuln {
   id: string;
   summary?: string;
   details?: string;
-  affected?: Array<{ package?: { name?: string }; ranges?: Array<{ events?: Array<{ fixed?: string }> }> }>;
+  affected?: Array<{ package?: { name?: string }; ranges?: OsvRange[] }>;
   database_specific?: { severity?: string };
+}
+
+export interface OsvRange {
+  type?: string;
+  events?: Array<{ introduced?: string; fixed?: string; last_affected?: string; limit?: string }>;
 }
 
 interface OsvBatch {
@@ -48,8 +54,10 @@ export async function queryOsv(components: Component[]): Promise<{ vulnerabiliti
 
 function toVulnerability(id: string, component: Component, d: OsvVuln | undefined): Vulnerability {
   if (!d) return { id, purl: component.purl, summary: "", severity: "" };
-  const affected = d.affected?.find((a) => a.package?.name?.toLowerCase() === component.name.toLowerCase());
-  const fixed = affected?.ranges?.flatMap((r) => r.events ?? []).find((e) => e.fixed)?.fixed;
+  const ranges = (d.affected ?? [])
+    .filter((a) => a.package?.name?.toLowerCase() === component.name.toLowerCase())
+    .flatMap((a) => a.ranges ?? []);
+  const fixed = ranges.map((r) => fixedFor(component.version, r)).find((f) => f);
   return {
     id,
     purl: component.purl,
@@ -57,6 +65,30 @@ function toVulnerability(id: string, component: Component, d: OsvVuln | undefine
     severity: String(d.database_specific?.severity ?? "").toUpperCase(),
     fixed,
   };
+}
+
+/**
+ * The fixed version of the interval in `range` that contains `version`. undefined for GIT ranges,
+ * versions that cannot be compared, a version outside every interval, or an interval without a fix,
+ * so the message never shows the fix of another release branch.
+ */
+export function fixedFor(version: string, range: OsvRange): string | undefined {
+  if (range.type !== "ECOSYSTEM" && range.type !== "SEMVER") return undefined;
+  const events: Array<{ kind: "introduced" | "fixed" | "last_affected"; at: string }> = [];
+  for (const e of range.events ?? []) {
+    for (const kind of ["introduced", "fixed", "last_affected"] as const) {
+      if (typeof e?.[kind] === "string") events.push({ kind, at: e[kind] });
+    }
+  }
+  // "0" is below every version, also ones of another shape.
+  const cmp = (a: string, b: string) => (a === b ? 0 : a === "0" ? -1 : b === "0" ? 1 : compareLoose(a, b));
+  if (events.some((e) => cmp(e.at, version) === undefined)) return undefined;
+  events.sort((a, b) => cmp(a.at, b.at)!);
+  // The last introduced at or below the version opens its interval; the next fixed or last_affected closes it.
+  const start = events.findLastIndex((e) => e.kind === "introduced" && cmp(e.at, version)! <= 0);
+  if (start < 0) return undefined;
+  const end = events.slice(start + 1).find((e) => e.kind !== "introduced");
+  return end?.kind === "fixed" && cmp(version, end.at)! < 0 ? end.at : undefined;
 }
 
 /** GET without a body, POST with one. Throws on a non-OK answer. */

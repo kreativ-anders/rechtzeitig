@@ -115,3 +115,22 @@ export function satisfies(version: string, range: string, flavor: "npm" | "cargo
   }
   return parsed ? false : undefined;
 }
+
+/**
+ * Order of two versions with any number of numeric dot segments ("v" and "+build" ignored, missing
+ * segments count as 0), a pre-release after "-" before its release. undefined if either has another shape.
+ */
+export function compareLoose(a: string, b: string): number | undefined {
+  const split = (s: string) => {
+    const m = /^v?(\d+(?:\.\d+)*)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/.exec(s.trim());
+    return m ? { nums: m[1].split(".").map(Number), pre: m[2] ?? "" } : undefined;
+  };
+  const x = split(a);
+  const y = split(b);
+  if (!x || !y) return undefined;
+  for (let i = 0; i < Math.max(x.nums.length, y.nums.length); i++) {
+    const d = (x.nums[i] ?? 0) - (y.nums[i] ?? 0);
+    if (d) return d;
+  }
+  return comparePre(x.pre, y.pre);
+}
