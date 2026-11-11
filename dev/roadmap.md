@@ -6,13 +6,11 @@ Sections are ordered by urgency: "Now" comes before the next release, "Next" is 
 
 ## Now: audit of 2026-11-10
 
-Open defects from the read-only audit of v0.5.1. The five that let a scan pass on missing or contradicting evidence are fixed (#50). Every fix lands with a regression test.
+Open defects from the read-only audit of v0.5.1. The five that let a scan pass on missing or contradicting evidence are fixed (#50), and #41 to #46 are fixed (#59, #61, #62). Every fix lands with a regression test.
 
 1. Other "no evidence means pass" paths: review every check that passes when a list is empty, with the model of #50 (`observedPages`, `jsFailed`): no pass when the evidence it needs was not collected.
-2. Domain boundaries: `siteOf()` on Public Suffix List data including private suffixes (#42). Then test its consumers: third-party requests, `sitePages`, source maps.
-3. Runtime freshness: rule loading at scan time no longer throws on a review date older than a year; the age check stays in the tests (#44).
-4. Collection bounds for bodies without Content-Length (#55), and every lockfile of a vulnerable package in its finding (#56).
-5. Measure peak memory of `scanRepo()` on a large repository before deciding on an aggregate budget (#47). A browser smoke test for the website (#48).
+2. Collection bounds for bodies without Content-Length (#55), and every lockfile of a vulnerable package in its finding (#56).
+3. Measure peak memory of `scanRepo()` on a large repository before deciding on an aggregate budget (#47). A browser smoke test for the website (#48).
 
 ## Now: language of the scanned site
 
