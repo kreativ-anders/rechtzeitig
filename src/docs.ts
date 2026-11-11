@@ -5,7 +5,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { SEVERITIES, switchSpec, type Rule, type Switch } from "./rules.ts";
+import { SEVERITIES, reviewProblems, switchSpec, type Rule, type Switch } from "./rules.ts";
 import { SCOPES, loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } from "./runner.ts";
 
 const CHECKS_PAGE = new URL("../docs/checks.html", import.meta.url);
@@ -237,6 +237,9 @@ export function fill(doc: string, name: string, html: string): string {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const checks = await loadChecks();
+  // Maintenance only: a scan loads rules regardless of their age, the docs are not published with a stale one.
+  const stale = checks.flatMap((c) => reviewProblems(c.rule).map((p) => `checks/${c.id}/rule.yml: ${p}`));
+  if (stale.length) throw new Error(stale.join("\n"));
   const page = readFileSync(CHECKS_PAGE, "utf8");
   writeFileSync(CHECKS_PAGE, fill(fill(page, "checks", checksHtml(checks)), "switches", switchesHtml(checks)));
   writeFileSync(WORKFLOW_PAGE, fill(readFileSync(WORKFLOW_PAGE, "utf8"), "switches", switchesHtml(checks)));

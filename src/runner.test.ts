@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
-import { LANGUAGES, SWITCHES, validateRule, type Rule, type Switch } from "./rules.ts";
+import { LANGUAGES, SWITCHES, reviewProblems, validateRule, type Rule, type Switch } from "./rules.ts";
 import { checksHtml, crossChecksHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, scopeCountHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, defineCrossCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
@@ -18,26 +18,40 @@ test("every check has a folder id and a valid rule.yml with a unique id", async 
 });
 
 test("the rule validator rejects broken rules", () => {
-  assert.deepEqual(validateRule(rule, new Date("2026-11-03")), []);
+  assert.deepEqual(validateRule(rule), []);
   assert.match(validateRule({ ...rule, id: "imprint" }).join(), /does not match/);
   assert.match(validateRule({ ...rule, title: { de: "t" } as Rule["title"] }).join(), /title\.en is missing/);
-  assert.match(validateRule(rule, new Date("2028-01-01")).join(), /older than 365 days/);
+  assert.deepEqual(validateRule({ ...rule, meta: { ...rule.meta, last_reviewed: "2020-01-01" } }), [], "the age of a review is not a structural problem");
   assert.match(validateRule({ ...rule, meta: { ...rule.meta, sources: [] } }).join(), /needs at least one source/);
-  const cited = (url: string) => validateRule({ ...rule, meta: { ...rule.meta, sources: [url] } }, new Date("2026-11-03"));
+  const cited = (url: string) => validateRule({ ...rule, meta: { ...rule.meta, sources: [url] } });
   assert.deepEqual(cited("https://www.gesetze-im-internet.de/bgb/__312k.html"), []);
   assert.match(cited("https://some-law-blog.example/cookies").join(), /not from a domain in data\/source-domains\.yml/);
   assert.match(cited("https://eur-lex.europa.eu.evil.example/").join(), /not from a domain/);
 });
 
+test("every rule was reviewed within a year (maintenance check, not part of a scan)", async () => {
+  assert.deepEqual(reviewProblems(rule, new Date("2026-11-03")), []);
+  assert.match(reviewProblems(rule, new Date("2028-01-01")).join(), /older than 365 days/);
+  const stale = (await loadChecks()).flatMap((c) => reviewProblems(c.rule).map((p) => `${c.id}: ${p}`));
+  assert.deepEqual(stale, []);
+});
+
+// #44: a pinned release must keep scanning after its review dates are a year old.
+test("loading the checks does not depend on the date", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: new Date("2099-01-01") });
+  const checks = await loadChecks();
+  assert.ok(checks.length > 0);
+  assert.ok(checks.every((c) => reviewProblems(c.rule).length > 0), "the clock is in the future, so every review counts as old");
+});
+
 test("a quality rule states its value instead of a legal basis, and no rule has both", async () => {
-  const day = new Date("2026-11-03");
   const value = { de: "Nutzen", en: "Benefit" };
   const law = { de: "Art. 32 DSGVO", en: "Art. 32 GDPR" };
-  assert.deepEqual(validateRule({ ...rule, value }, day, "quality"), []);
-  assert.match(validateRule(rule, day, "quality").join(), /need value/);
-  assert.match(validateRule({ ...rule, value, legal_basis: law }, day, "quality").join(), /have no legal_basis/);
-  assert.match(validateRule({ ...rule, value, legal_basis: law }, day, "security").join(), /value is only for rules without legal_basis/);
-  assert.match(validateRule({ ...rule, value: { de: "x" } as Rule["value"] }, day).join(), /value\.en is missing/);
+  assert.deepEqual(validateRule({ ...rule, value }, "quality"), []);
+  assert.match(validateRule(rule, "quality").join(), /need value/);
+  assert.match(validateRule({ ...rule, value, legal_basis: law }, "quality").join(), /have no legal_basis/);
+  assert.match(validateRule({ ...rule, value, legal_basis: law }, "security").join(), /value is only for rules without legal_basis/);
+  assert.match(validateRule({ ...rule, value: { de: "x" } as Rule["value"] }).join(), /value\.en is missing/);
   const quality = (await loadChecks()).filter((c) => moduleOf(c.id) === "quality");
   assert.ok(quality.length > 0 && quality.every((c) => c.rule.value && !c.rule.legal_basis));
   // The card says so, never a bare "Technical" that could read like a duty by omission.

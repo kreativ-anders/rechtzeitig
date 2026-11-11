@@ -18,8 +18,11 @@ const ID = /^(SEC|LEG-DE|LEG-EU|A11Y|PRC|SUS|QUAL)-[A-Z0-9]+-\d{3}$/;
  * instead, and none may name a `legal_basis`, so a reader never takes a finding there for a legal duty.
  */
 export const NO_LEGAL_BASIS_GROUPS = ["quality"] as const;
-/** A rule whose review is older than this fails the tests, so legal texts get looked at again. */
-const REVIEW_DAYS = 365;
+/**
+ * A rule whose review is older than this fails the project's tests and `npm run docs` (reviewProblems), so legal
+ * texts get looked at again. A scan never fails on it: a pinned release keeps working after a year.
+ */
+export const REVIEW_DAYS = 365;
 
 /** Domains a source may come from (data/source-domains.yml): primary sources only. */
 const SOURCE_DOMAINS = Object.values(loadYaml<Record<string, string[]>>("data/source-domains.yml")).flat();
@@ -76,17 +79,23 @@ export interface Rule {
   meta: { last_reviewed: string; sources: string[] };
 }
 
-/** Loads checks/<group>/<name>/rule.yml and validates it, with the group taken from the path. */
+/**
+ * Loads checks/<group>/<name>/rule.yml and validates its structure, with the group taken from the path.
+ * The age of the review is not checked here (see reviewProblems), so a scan never stops because of the date.
+ */
 export function loadRule(file: string): Rule {
   const rule = loadYaml<Rule>(file);
   const group = file.split(/[\\/]/).at(-3);
-  const problems = validateRule(rule, new Date(), group);
+  const problems = validateRule(rule, group);
   if (problems.length) throw new Error(`${file}: ${problems.join("; ")}`);
   return rule;
 }
 
-/** Returns what is wrong with a rule; empty when it is valid. `group` is the folder below checks/. */
-export function validateRule(rule: Rule, today = new Date(), group?: string): string[] {
+/**
+ * Returns what is wrong with the structure of a rule; empty when it is valid. `group` is the folder below checks/.
+ * Independent of the date: the age of the review is reviewProblems.
+ */
+export function validateRule(rule: Rule, group?: string): string[] {
   const p: string[] = [];
   const text = (name: string, value: unknown, required = true) => {
     if (value === undefined && !required) return;
@@ -109,7 +118,6 @@ export function validateRule(rule: Rule, today = new Date(), group?: string): st
   }
   const reviewed = new Date(rule?.meta?.last_reviewed ?? "");
   if (Number.isNaN(reviewed.getTime())) p.push("meta.last_reviewed must be a date (YYYY-MM-DD)");
-  else if ((today.getTime() - reviewed.getTime()) / DAY > REVIEW_DAYS) p.push(`meta.last_reviewed is older than ${REVIEW_DAYS} days`);
   if (!Array.isArray(rule?.meta?.sources)) p.push("meta.sources must be a list");
   // Every rule needs evidence: a law for a legal basis, a standard or guideline for a technical rule.
   if (Array.isArray(rule?.meta?.sources) && !rule.meta.sources.length) p.push("meta.sources needs at least one source");
@@ -117,4 +125,11 @@ export function validateRule(rule: Rule, today = new Date(), group?: string): st
     if (!officialSource(url)) p.push(`source ${url} is not from a domain in data/source-domains.yml`);
   }
   return p;
+}
+
+/** Maintenance check, run by the tests and `npm run docs`, never by a scan: a review older than REVIEW_DAYS on `today`. */
+export function reviewProblems(rule: Rule, today = new Date()): string[] {
+  const reviewed = new Date(rule?.meta?.last_reviewed ?? "");
+  if (Number.isNaN(reviewed.getTime())) return [];
+  return (today.getTime() - reviewed.getTime()) / DAY > REVIEW_DAYS ? [`meta.last_reviewed is older than ${REVIEW_DAYS} days`] : [];
 }
