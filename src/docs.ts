@@ -67,7 +67,7 @@ export function sendsBadge(input: Switch, link = true): string {
 export function runsWhen(input: Switch): string {
   const s = switchSpec(input);
   if (s.secret) return `Opt-in: only when the secret <code>${s.secret}</code> is set (input <code>${input}</code>, token from ${esc(s.service ?? "")}). Without it the check is skipped and nothing is sent.`;
-  if (s.default) return `On by default; sends data to ${esc(s.service ?? "")}. Turn it off with <code>${input}: false</code>.`;
+  if (s.service) return `Opt-in: only with <code>${input}: true</code>, which sends data to ${esc(s.service)}. Without it the check is skipped and nothing is sent.`;
   return `Opt-in: only with <code>${input}: true</code>.`;
 }
 

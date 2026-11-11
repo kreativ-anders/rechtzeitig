@@ -26,14 +26,14 @@ function run(...args: string[]) {
   }
 }
 
-test("vulnerabilities=false skips the OSV lookup", () => {
-  const result = run("--vulnerabilities", "false", "--report-language", "en");
+test("the OSV lookup is opt-in: off by default, nothing sent", () => {
+  const result = run("--report-language", "en");
   assert.equal(result.status, "skip");
-  assert.match(result.message, /turned off/);
+  assert.match(result.message, /^Opt-in: runs only with the input vulnerabilities: true.*Nothing was sent\./);
 });
 
-test("the OSV lookup runs by default", () => {
-  const result = run();
+test("vulnerabilities=true runs the OSV lookup", () => {
+  const result = run("--vulnerabilities", "true");
   assert.equal(result.status, "warn");
   assert.match(result.message, /network used/);
 });
@@ -109,11 +109,11 @@ test("sarif writes the findings with places even when report-visibility hides th
 });
 
 test("empty inputs use their defaults, as on schedule and push runs without the dialog", () => {
-  // Every option the action passes, empty. The vulnerability lookup is on by default, so it tries the network,
+  // Every option the action passes, empty. The vulnerability lookup is opt-in, so nothing is sent,
   // and the report is in German, the default language (an empty language used to give an English report).
   const empty = ["language", "report-language", "subscriptions", "sales", "fail-on", "max-pages", "vulnerabilities",
     "green-hosting", "require-sandbox", "report-visibility", "sarif"].flatMap((o) => [`--${o}`, ""]);
   const result = run(...empty);
-  assert.equal(result.status, "warn");
-  assert.match(result.message, /^OSV-Abfrage fehlgeschlagen: .*network used/);
+  assert.equal(result.status, "skip");
+  assert.match(result.message, /^Opt-in: läuft nur mit dem Input vulnerabilities: true/);
 });

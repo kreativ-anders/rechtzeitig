@@ -37,7 +37,7 @@
 <a class="skip" href="#content">Skip to content</a>
 <header class="top"><div class="top-inner">
   <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><path d="M20.03 22.21C20.03 21.3 19.64 20.4 19 19.6C19.85 18.86 20.68 17.85 20.68 16.59C20.68 13.76 18.81 12.84 16.24 11.58C15.18 11.07 14.5 10.66 14.5 9.58C14.5 8.38 15.02 7.3 16.33 7.3C17.53 7.3 17.83 7.86 17.83 8.36C17.83 8.73 17.5 8.75 17.5 9.46C17.5 9.72 17.9 10.64 18.88 10.64C19.41 10.64 20.17 10.13 20.17 9.49C20.17 7.53 18.49 6.5 16.24 6.5C15.14 6.5 14.06 6.84 13.3 7.53C12.54 8.22 12.11 9.28 12.11 10.04C12.11 11 12.43 11.78 12.91 12.38C12.08 13.09 11.32 14.1 11.32 15.28C11.32 17.09 12.24 18.29 14.79 19.71C15.97 20.35 17.5 21.2 17.5 22.38C17.5 23.91 16.75 24.7 15.71 24.7C14.38 24.7 14.15 23.78 14.15 23.62C14.15 23.29 14.52 23.11 14.52 22.51C14.52 22.26 14.01 21.34 13.05 21.34C12.54 21.34 11.83 21.87 11.83 22.47C11.83 24.49 14.08 25.5 15.76 25.5C18.91 25.5 20.03 23.8 20.03 22.21ZM13.35 12.86C13.67 13.16 14.01 13.37 14.33 13.53C17.39 14.93 18.91 15.76 18.91 17.69C18.91 18.22 18.79 18.68 18.52 19.07C17.92 18.49 17.16 17.96 16.31 17.57C13.78 16.36 13.09 15.3 13.09 14.17C13.09 13.69 13.16 13.25 13.35 12.86Z"/></svg>rechtzeitig<span class="visually-hidden"> home</span></a>
-  <nav class="nav" aria-label="Main"><ul><li><a href="workflow.html" aria-current="page">Workflow</a></li><li><a href="checks.html">Checks</a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
+  <nav class="nav" aria-label="Main"><ul><li><a href="getting-started.html">Get started</a></li><li><a href="workflow.html" aria-current="page">Workflow</a></li><li><a href="checks.html">Checks</a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
   <nav class="langs" aria-label="Language"><a href="workflow.html" hreflang="en" lang="en" aria-current="page"><span aria-hidden="true">EN</span><span class="visually-hidden">English: Workflow</span></a><a href="de/" hreflang="de" lang="de"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch: Startseite</span></a></nav>
   <fieldset class="theme" hidden><legend>Colour theme</legend><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Light"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Light</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dark</span></label></fieldset>
 </div></header>
@@ -72,9 +72,16 @@
 language: de
 sales: false
 subscriptions: false
-fail-on: fail # red when a check fails</code></pre>
+fail-on: fail # red when a check fails
+vulnerabilities: "false" # opt-in, see Data that leaves the runner
+green-hosting: "false"   # opt-in</code></pre>
+        <p>Step by step, with what each opt-in sends: <a href="getting-started.html">Get started</a>.</p>
         <p>A failing check turns the run red, and GitHub notifies the person who last changed the <code>cron</code> line. The first run often is red; set <code>fail-on: never</code> for quiet runs until the findings are fixed. In a public repository, GitHub turns the schedule off after 60 days without activity.</p>
-        <p>To also run on each push, add <code>push: branches: [main]</code>. Never use <code>pull_request_target</code>, see <a href="#safe">Safe use</a>.</p>
+        <p>To also run on each push, add a <code>push</code> trigger under <code>on:</code>:</p>
+        <pre><code>on:
+  push:
+    branches: [main]</code></pre>
+        <p>Never use <code>pull_request_target</code>, see <a href="#safe">Safe use</a>.</p>
       </section>
 
       <section id="inputs">
@@ -93,8 +100,8 @@ fail-on: fail # red when a check fails</code></pre>
             <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Pages to visit at most.</td></tr>
             <tr><td><code>repository</code></td><td>workspace</td><td>Folder with the checked-out repository (lockfiles, workflows, configs). Needs <code>actions/checkout</code> before <span class="wm">rechtzeitig</span>.</td></tr>
             <tr><td><code>ipinfo-token</code></td><td>empty</td><td>Opt-in. Token from the secret <code>IPINFO_TOKEN</code>. The <a href="checks.html#LEG-EU-DSE-005">third-country check</a> runs without it, from the countries in <code>data/hosting.yml</code> and <code>data/third-parties.yml</code>; with it, it also looks up the IP country of servers that data does not know, see <a href="#secrets">Secrets</a>.</td></tr>
-            <tr><td><code>vulnerabilities</code></td><td><code>true</code></td><td>Looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a>. <code>false</code> skips the check and sends nothing.</td></tr>
-            <tr><td><code>green-hosting</code></td><td><code>true</code></td><td>Asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the host runs on green energy (sends the host name). <code>false</code> skips the <a href="checks.html#SUS-HOST-001">check</a> and sends nothing.</td></tr>
+            <tr><td><code>vulnerabilities</code></td><td><code>false</code></td><td>Opt-in. <code>true</code> looks up known vulnerabilities of locked components at <a href="https://osv.dev">osv.dev</a> and sends the name and version of every component. Off, the <a href="checks.html#SEC-DEPS-001">check</a> is skipped and nothing is sent.</td></tr>
+            <tr><td><code>green-hosting</code></td><td><code>false</code></td><td>Opt-in. <code>true</code> asks the <a href="https://www.thegreenwebfoundation.org">Green Web Foundation</a> whether the host runs on green energy and sends the host name. Off, the <a href="checks.html#SUS-HOST-001">check</a> is skipped and nothing is sent.</td></tr>
             <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>Stops the scan when Chrome cannot start with its sandbox. <code>false</code> scans without it, see <a href="#safe">Safe use</a>.</td></tr>
             <tr><td><code>report-visibility</code></td><td><code>auto</code></td><td>How much the run shows: <code>auto</code> or <code>full</code>, see <a href="#report">The report</a>.</td></tr>
             <tr><td><code>sarif-upload</code></td><td><code>auto</code></td><td>Shows the findings in the Security tab where GitHub allows it. <code>auto</code> skips with a notice otherwise, <code>true</code> warns, <code>false</code> never uploads, see <a href="#security-tab">Security tab</a>.</td></tr>
@@ -120,8 +127,8 @@ fail-on: fail # red when a check fails</code></pre>
 <tr><td><a href="checks.html#LEG-DE-AGB-001">Terms and conditions are linked and reachable</a><br><small>LEG-DE-AGB-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-BTN-002">Withdrawal button for online contracts</a><br><small>LEG-DE-BTN-002</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
 <tr><td><a href="checks.html#LEG-DE-WDR-001">Withdrawal instructions with the model form and a pointer to the withdrawal function</a><br><small>LEG-DE-WDR-001</small></td><td>Opt-in: only with <code>sales: true</code>.</td></tr>
-<tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>On by default; sends data to api.osv.dev. Turn it off with <code>vulnerabilities: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
-<tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>On by default; sends data to api.thegreenwebfoundation.org. Turn it off with <code>green-hosting: false</code>.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
+<tr><td><a href="checks.html#SEC-DEPS-001">No dependencies with known vulnerabilities</a><br><small>SEC-DEPS-001</small></td><td>Opt-in: only with <code>vulnerabilities: true</code>, which sends data to api.osv.dev. Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to api.osv.dev</a></td></tr>
+<tr><td><a href="checks.html#SUS-HOST-001">Site runs on green hosting</a><br><small>SUS-HOST-001</small></td><td>Opt-in: only with <code>green-hosting: true</code>, which sends data to api.thegreenwebfoundation.org. Without it the check is skipped and nothing is sent.<br><a class="sends" href="workflow.html#data">Sends data to api.thegreenwebfoundation.org</a></td></tr>
 </tbody></table></div>
 <!-- switches:end -->
         <h3 id="checkout">Repository checkout</h3>
@@ -198,15 +205,16 @@ fail-on: fail # red when a check fails</code></pre>
 
       <section id="data">
         <h2><span class="par">§ 8</span>Data that leaves the runner</h2>
-        <p>Besides your website (its pages, the paths in <code>data/probes.yml</code> and the source maps its own scripts point to, up to <code>code.max_maps</code>) and the GitHub API of your repository (the Security tab upload, off with <code>sarif-upload: false</code>), <span class="wm">rechtzeitig</span> sends data only to:</p>
+        <p>By default nothing about your project leaves the runner except to your own website and to GitHub. The scan contacts your website (its pages, the paths in <code>data/probes.yml</code>, the source maps its own scripts point to, up to <code>code.max_maps</code>), asks the runner's DNS resolver about its domain (SPF, DMARC, MX), and uses the GitHub API of your repository for the Security tab upload (off with <code>sarif-upload: false</code>). Every other service is opt-in:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
           <tbody>
-            <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Name and version of all locked components, for example <code>pkg:npm/lodash@4.17.21</code>, including internal packages</td><td>By default, when the repository is scanned. Turn it off with <code>vulnerabilities: false</code></td></tr>
+            <tr><td><a class="sends" href="https://osv.dev">api.osv.dev</a></td><td>Name and version of all locked components, for example <code>pkg:npm/lodash@4.17.21</code>, including internal packages</td><td>Only with <code>vulnerabilities: true</code>, when the repository is scanned</td></tr>
             <tr><td><a class="sends" href="https://ipinfo.io">ipinfo.io</a></td><td>IP addresses of the site's own server and of the third-party servers it contacts</td><td>Only when <code>IPINFO_TOKEN</code> is set</td></tr>
-            <tr><td><a class="sends" href="https://www.thegreenwebfoundation.org">api.thegreenwebfoundation.org</a></td><td>Host name of the start page, for example <code>www.example.de</code></td><td>By default, when a website is scanned. Turn it off with <code>green-hosting: false</code></td></tr>
+            <tr><td><a class="sends" href="https://www.thegreenwebfoundation.org">api.thegreenwebfoundation.org</a></td><td>Host name of the start page, for example <code>www.example.de</code></td><td>Only with <code>green-hosting: true</code>, when a website is scanned</td></tr>
           </tbody>
         </table></div>
+        <p>Setting up the action downloads software but sends nothing about your project: Node 24 through <code>actions/setup-node</code>, the npm packages of <span class="wm">rechtzeitig</span> from registry.npmjs.org and, only with a <code>url</code>, Chromium from the Playwright download servers and its system libraries from the runner's package mirror. On a runner with an egress allowlist, allow these hosts, your website and the opt-in services you turn on.</p>
       </section>
 
       <section id="safe">

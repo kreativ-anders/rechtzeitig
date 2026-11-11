@@ -35,3 +35,6 @@ jobs:
           # Opt-in: the third-country check runs only with the secret IPINFO_TOKEN (free at ipinfo.io).
           # Without the secret it is skipped and nothing is sent to IPinfo.
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
+          # Opt-in lookups, on for this repository: components to api.osv.dev, the host name to the Green Web Foundation.
+          vulnerabilities: "true"
+          green-hosting: "true"

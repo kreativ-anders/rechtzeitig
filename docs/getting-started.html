@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q=' https://api.pirsch.io; style-src 'self'; img-src 'self' data:; connect-src https://api.pirsch.io; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Get started: first scan in ten minutes · rechtzeitig</title>
+<meta name="description" content="Add the rechtzeitig GitHub Action to a repository, choose what may leave the runner, and read the first report. Every lookup at an outside service is opt-in.">
+<link rel="canonical" href="https://rechtzeitig.dev/getting-started.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rechtzeitig">
+<meta property="og:title" content="Get started: first scan in ten minutes · rechtzeitig">
+<meta property="og:description" content="Add the rechtzeitig GitHub Action to a repository, choose what may leave the runner, and read the first report. Every lookup at an outside service is opt-in.">
+<meta property="og:url" content="https://rechtzeitig.dev/getting-started.html">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://rechtzeitig.dev/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="rechtzeitig checks your repository, and optionally your website, for German and EU legal basics and security. The source code stays on your runner.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+<script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="site.js" defer></script>
+<script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="w5NWUb6qKUHLnm9YxdgaEAxd7PflSnf6"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/getting-started.html#webpage", "url": "https://rechtzeitig.dev/getting-started.html", "name": "Get started: first scan in ten minutes", "description": "Add the rechtzeitig GitHub Action to a repository, choose what may leave the runner, and read the first report. Every lookup at an outside service is opt-in.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb"}, "headline": "Get started: first scan in ten minutes", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-11"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Get started", "item": "https://rechtzeitig.dev/getting-started.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top"><div class="top-inner">
+  <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/><path d="M20.03 22.21C20.03 21.3 19.64 20.4 19 19.6C19.85 18.86 20.68 17.85 20.68 16.59C20.68 13.76 18.81 12.84 16.24 11.58C15.18 11.07 14.5 10.66 14.5 9.58C14.5 8.38 15.02 7.3 16.33 7.3C17.53 7.3 17.83 7.86 17.83 8.36C17.83 8.73 17.5 8.75 17.5 9.46C17.5 9.72 17.9 10.64 18.88 10.64C19.41 10.64 20.17 10.13 20.17 9.49C20.17 7.53 18.49 6.5 16.24 6.5C15.14 6.5 14.06 6.84 13.3 7.53C12.54 8.22 12.11 9.28 12.11 10.04C12.11 11 12.43 11.78 12.91 12.38C12.08 13.09 11.32 14.1 11.32 15.28C11.32 17.09 12.24 18.29 14.79 19.71C15.97 20.35 17.5 21.2 17.5 22.38C17.5 23.91 16.75 24.7 15.71 24.7C14.38 24.7 14.15 23.78 14.15 23.62C14.15 23.29 14.52 23.11 14.52 22.51C14.52 22.26 14.01 21.34 13.05 21.34C12.54 21.34 11.83 21.87 11.83 22.47C11.83 24.49 14.08 25.5 15.76 25.5C18.91 25.5 20.03 23.8 20.03 22.21ZM13.35 12.86C13.67 13.16 14.01 13.37 14.33 13.53C17.39 14.93 18.91 15.76 18.91 17.69C18.91 18.22 18.79 18.68 18.52 19.07C17.92 18.49 17.16 17.96 16.31 17.57C13.78 16.36 13.09 15.3 13.09 14.17C13.09 13.69 13.16 13.25 13.35 12.86Z"/></svg>rechtzeitig<span class="visually-hidden"> home</span></a>
+  <nav class="nav" aria-label="Main"><ul><li><a href="getting-started.html" aria-current="page">Get started</a></li><li><a href="workflow.html">Workflow</a></li><li><a href="checks.html">Checks</a></li><li><a href="https://github.com/kreativ-anders/rechtzeitig">GitHub</a></li></ul></nav>
+  <nav class="langs" aria-label="Language"><a href="getting-started.html" hreflang="en" lang="en" aria-current="page"><span aria-hidden="true">EN</span><span class="visually-hidden">English: Get started</span></a><a href="de/" hreflang="de" lang="de"><span aria-hidden="true">DE</span><span class="visually-hidden">Deutsch: Startseite</span></a></nav>
+  <fieldset class="theme" hidden><legend>Colour theme</legend><input type="radio" name="theme" id="theme-light" value="light"><label for="theme-light" title="Light"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg><span class="visually-hidden">Light</span></label><input type="radio" name="theme" id="theme-dark" value="dark"><label for="theme-dark" title="Dark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.6 10.1A6 6 0 0 1 5.9 2.4a6 6 0 1 0 7.7 7.7z"/></svg><span class="visually-hidden">Dark</span></label></fieldset>
+</div></header>
+
+<main id="content">
+  <h1>Get started</h1>
+  <p class="lead">From an empty repository to a first report in about ten minutes. Nothing about your project leaves the runner unless you turn it on.</p>
+
+  <div class="doc">
+    <nav class="toc" aria-labelledby="toc-title">
+      <h2 id="toc-title">On this page</h2>
+      <ol>
+        <li><a href="#add">Add the workflow</a></li>
+        <li><a href="#what">Say what to scan</a></li>
+        <li><a href="#opt-in">Decide what may leave the runner</a></li>
+        <li><a href="#first-run">Start the first run</a></li>
+        <li><a href="#next">Keep it running</a></li>
+      </ol>
+    </nav>
+
+    <div>
+      <section id="add">
+        <h2><span class="par">§ 1</span>Add the workflow</h2>
+        <p>Copy the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository. It pins a release by its commit SHA, checks out the repository without keeping the token (<code>persist-credentials: false</code>) and needs no secret.</p>
+        <p class="note">Never run it on <code>pull_request_target</code>. See <a href="workflow.html#safe">Safe use</a>.</p>
+      </section>
+
+      <section id="what">
+        <h2><span class="par">§ 2</span>Say what to scan</h2>
+        <p>Set these in the <code>with:</code> block. Everything else can stay as it is.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Input</th><th scope="col">Set it to</th></tr></thead>
+          <tbody>
+            <tr><td><code>url</code></td><td>Your start page, for example <code>https://www.example.de/</code>. Leave it out to scan only the repository.</td></tr>
+            <tr><td><code>language</code></td><td>Language of the site: <code>de</code>, <code>en</code> or <code>de,en</code>.</td></tr>
+            <tr><td><code>sales</code></td><td><code>true</code> if consumers buy or sign contracts on the site.</td></tr>
+            <tr><td><code>subscriptions</code></td><td><code>true</code> if visitors can sign up for subscriptions.</td></tr>
+          </tbody>
+        </table></div>
+        <p>All inputs: <a href="workflow.html#inputs">Inputs</a>.</p>
+      </section>
+
+      <section id="opt-in">
+        <h2><span class="par">§ 3</span>Decide what may leave the runner</h2>
+        <p>Your source code never leaves the runner. The scan talks to your website and to GitHub. Lookups at other services are off until you turn them on, so the default run sends nothing about your project to a third party. Each one runs a check that is skipped without it.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Turn on with</th><th scope="col">Sends</th><th scope="col">To</th><th scope="col">Runs</th></tr></thead>
+          <tbody>
+            <tr><td><code>vulnerabilities: "true"</code></td><td>Name and version of every locked component, internal packages included</td><td>api.osv.dev</td><td><a href="checks.html#SEC-DEPS-001">Known vulnerabilities</a> and the vulnerabilities in the SBOM</td></tr>
+            <tr><td><code>green-hosting: "true"</code></td><td>Host name of the start page</td><td>api.thegreenwebfoundation.org</td><td><a href="checks.html#SUS-HOST-001">Green hosting</a></td></tr>
+            <tr><td>secret <code>IPINFO_TOKEN</code></td><td>IP addresses of your server and of the servers it contacts</td><td>ipinfo.io</td><td>IP countries in the <a href="checks.html#LEG-EU-DSE-005">third-country check</a></td></tr>
+          </tbody>
+        </table></div>
+        <p>The vulnerability lookup is the one most projects want. If your security team reviews outside connections, show them this table and <a href="workflow.html#data">Data that leaves the runner</a>, which also lists what the setup downloads.</p>
+      </section>
+
+      <section id="first-run">
+        <h2><span class="par">§ 4</span>Start the first run</h2>
+        <p>Commit the file, then open <span class="ui">Actions → rechtzeitig → Run workflow</span>. A run with a website takes a few minutes.</p>
+        <ul>
+          <li>Private repository: the full report is on the run page, and in the artifact <code>rechtzeitig-report</code>.</li>
+          <li>Public repository: the run page shows only counts; the findings go to the <span class="ui">Security</span> tab, which only people with write access see.</li>
+        </ul>
+        <p>The first run is often red. Set <code>fail-on: never</code> until the findings are fixed. More: <a href="workflow.html#report">The report</a>, <a href="workflow.html#fail-on">fail-on</a>.</p>
+      </section>
+
+      <section id="next">
+        <h2><span class="par">§ 5</span>Keep it running</h2>
+        <p>The example runs every Monday, so a new tracker, an expiring certificate or a newly published vulnerability shows up a week later at most. Set <code>fail-on: fail</code> once the first findings are fixed. Add Dependabot for <code>github-actions</code> to get each new release as a pull request, see <a href="workflow.html#updates">Updates</a>.</p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer><div class="inner">
+  <p class="disclaimer">Findings are technical risk hints with location and legal basis, not legal advice.</p>
+  <nav aria-label="Legal and source"><ul>
+    <li><a href="imprint.html">Imprint <span lang="de">(Impressum)</span></a></li>
+    <li><a href="privacy.html">Privacy policy <span lang="de">(Datenschutz)</span></a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig">Source</a></li>
+    <li><a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/LICENSE">Apache-2.0</a></li>
+  </ul></nav>
+</div></footer>
+</body>
+</html>

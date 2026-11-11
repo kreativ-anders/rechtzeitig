@@ -69,7 +69,7 @@ const checks = selectModules(allChecks, modules);
 // A check of both scopes needs both scans.
 const wantsRepo = checks.some((c) => scopeOf(c.check) !== "website");
 const wantsWeb = checks.some((c) => scopeOf(c.check) !== "repository");
-// vulnerabilities=false sends nothing to api.osv.dev; the vulnerabilities rule then skips.
+// Opt-in: without vulnerabilities=true nothing goes to api.osv.dev; the vulnerabilities rule then skips.
 const osv = enabled.includes("vulnerabilities");
 // A scan that breaks (no browser, no sandbox, unreadable repository) ends with a message, not a stack trace.
 const failed = (e: unknown) => exit(errorMessage(e));
@@ -81,7 +81,7 @@ const web = url && wantsWeb
       sales: enabled.includes("sales"),
       maxPages: Number(values["max-pages"]) || 10,
       ipinfoToken: process.env.IPINFO_TOKEN || undefined,
-      // green-hosting=false sends nothing to the Green Web Foundation; the rule then skips.
+      // Opt-in: without green-hosting=true nothing goes to the Green Web Foundation; the rule then skips.
       greenHosting: enabled.includes("green-hosting"),
       unsandboxed: values["require-sandbox"] === "false",
       onWarning: (w) => warnings.push(w),

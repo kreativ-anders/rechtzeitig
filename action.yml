@@ -37,11 +37,11 @@ inputs:
     description: Optional IPinfo token (secret IPINFO_TOKEN). Opt-in IP country lookup for the third-country check (LEG-EU-DSE-005), for servers not in data/hosting.yml or data/third-parties.yml. Empty = the check uses that data only and nothing is sent to IPinfo.
     default: ""
   vulnerabilities:
-    description: true to look up known vulnerabilities of locked components at api.osv.dev. false = send nothing, skip the rule.
-    default: "true"
+    description: Opt-in. true sends the name and version of every locked component to api.osv.dev to look up known vulnerabilities. false = send nothing, skip the rule.
+    default: "false"
   green-hosting:
-    description: true to ask api.thegreenwebfoundation.org whether the site's host runs on green energy. Sends the host name only. false = send nothing, skip the rule.
-    default: "true"
+    description: Opt-in. true asks api.thegreenwebfoundation.org whether the site's host runs on green energy and sends the host name only. false = send nothing, skip the rule.
+    default: "false"
   require-sandbox:
     description: true = stop when Chrome cannot start with its sandbox. false = then scan without it, only for sites you trust.
     default: "true"

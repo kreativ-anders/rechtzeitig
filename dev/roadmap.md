@@ -52,7 +52,7 @@ Ordered by value per effort. The first six need only a new `data/*.yml` and the 
 10. Third-party hosts in templates and styles without a website scan, as a warning. With a URL, `privacy/google-fonts-source` covers Google Fonts.
 11. SBOM fields as BSI TR-03183-2 asks: hashes, supplier, dependency graph (CRA Annex I Part II).
 12. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go, and yarn.lock). Needs a registry API, so a switch. `legal/unknown-licenses` names them as not checked today.
-13. Registry lookup for `security/hallucinated-packages`: ask each registry's official API (npm registry, PyPI JSON API, crates.io, Packagist, pub.dev) whether a declared name exists and when it was first published, so a made-up or days-old name is a finding even when it is locked. Only package names leave the runner. On by default with an opt-out input (`registry-lookups: false`), listed in `SWITCHES` and in "Data that leaves the runner". The offline part (names missing from the lockfile, look-alikes of popular names) is done.
+13. Registry lookup for `security/hallucinated-packages`: ask each registry's official API (npm registry, PyPI JSON API, crates.io, Packagist, pub.dev) whether a declared name exists and when it was first published, so a made-up or days-old name is a finding even when it is locked. Only package names leave the runner. Opt-in like every outside lookup (`registry-lookups: true`), listed in `SWITCHES`, in "Data that leaves the runner" and in `docs/getting-started.html`. The offline part (names missing from the lockfile, look-alikes of popular names) is done.
 14. Infrastructure code: Terraform security groups open to `0.0.0.0/0`, public buckets, privileged Kubernetes pods.
 15. More license rules: SPDX headers per file and vendored files under a foreign license (REUSE), NOTICE duties of Apache-2.0 dependencies, font files and their licenses. More entries in `data/relicensing.yml` where the change differs per release branch (Vault, Consul, Nomad, Packer), which needs version ranges.
 16. A parser for `bun.lock` (JSON with comments). Without it, `hallucinated-packages` and `lockfile-drift` skip folders with a Bun lockfile, which projects from AI app builders often have next to `package-lock.json`.
@@ -179,6 +179,13 @@ Paid, a hosted service in its own repository, for what the Security tab does not
 - Accepting a finding with a reason, and a record of who did it and when.
 - Reports for clients (PDF), team access and roles.
 - Scheduled scans without an own workflow, also for sites without GitHub.
+
+Distribution, where the action and later the hosted dashboard app are found:
+
+- GitHub Marketplace: the action now, the dashboard as a GitHub App once it exists.
+- Repository topics (`impressum`, `dsgvo`, `gdpr`, `tdddg`, `security-headers`, `sbom`, `cyclonedx`, `github-action`).
+- Sitemap of rechtzeitig.dev in Google Search Console and Bing Webmaster Tools.
+- A listing in the CycloneDX Tool Center.
 
 Rules:
 
