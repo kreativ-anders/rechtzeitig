@@ -50,8 +50,9 @@ export const SWITCHES = {
   "ipinfo-token": { secret: "IPINFO_TOKEN", service: "ipinfo.io" },
   subscriptions: { default: false },
   sales: { default: false },
-  vulnerabilities: { default: true, service: "api.osv.dev" },
-  "green-hosting": { default: true, service: "api.thegreenwebfoundation.org" },
+  // Every lookup at an outside service is opt-in: off unless the input is true or the secret is set.
+  vulnerabilities: { default: false, service: "api.osv.dev" },
+  "green-hosting": { default: false, service: "api.thegreenwebfoundation.org" },
 } as const satisfies Record<string, { secret: string; service: string } | { default: boolean; service?: string }>;
 export type Switch = keyof typeof SWITCHES;
 /** One switch with every field optional, so callers need no cast. */

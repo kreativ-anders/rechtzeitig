@@ -43,6 +43,12 @@ jobs:
           # Opt-in: with the secret IPINFO_TOKEN (free at ipinfo.io) the third-country check also looks up IP countries.
           # Without the secret it uses the countries in its data and nothing is sent to IPinfo.
           ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
+          # Opt-in: true sends the name and version of every locked component, internal packages included,
+          # to api.osv.dev to find known vulnerabilities. false = nothing is sent and the check is skipped.
+          vulnerabilities: "false"
+          # Opt-in: true sends the site's host name to api.thegreenwebfoundation.org for the green hosting check.
+          # false = nothing is sent and the check is skipped.
+          green-hosting: "false"
           # Optional, shown with their defaults:
           # How much of the report the run shows. auto = full if private, counts if public.
           # full = everything, also on a public repository, where anyone can read it.
@@ -56,9 +62,5 @@ jobs:
           # report-language: ""
           # Pages to visit at most.
           # max-pages: "10"
-          # false sends no component list to api.osv.dev and skips the vulnerability rule.
-          # vulnerabilities: "true"
-          # false sends no host name to api.thegreenwebfoundation.org and skips the green hosting rule.
-          # green-hosting: "true"
           # false scans without Chrome's sandbox where the runner has none. Only for sites you trust.
           # require-sandbox: "true"

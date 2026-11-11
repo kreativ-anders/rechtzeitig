@@ -104,8 +104,6 @@ const FILE_ONLY: Record<string, string> = {
   modules: "the default runs all checks",
   "report-language": "the default follows language",
   "max-pages": "rarely changes",
-  vulnerabilities: "data protection setting, on by default",
-  "green-hosting": "data protection setting, on by default",
   "require-sandbox": "safety setting, should stay on",
 };
 
@@ -158,4 +156,15 @@ test("this repository's workflow has the same job permissions as the example", (
   // The SARIF upload needs security-events: write, in private repositories also actions: read.
   assert.equal(example.permissions["security-events"], "write");
   assert.equal(example.permissions.actions, "read");
+});
+
+test("every lookup at an outside service is opt-in, and the example shows it turned off", () => {
+  for (const [input, spec] of Object.entries(SWITCHES) as [string, { service?: string; default?: boolean; secret?: string }][]) {
+    if (!spec.service) continue;
+    if (spec.secret) continue; // runs only when the user sets the secret
+    assert.equal(spec.default, false, `${input}: SWITCHES default must be false`);
+    assert.equal(action.inputs[input].default, "false", `${input}: action.yml default must be "false"`);
+    // Set in the example, so whoever copies it sees the decision and makes it consciously.
+    assert.equal(String(example.with[input]), "false", `${input}: the example sets it to "false"`);
+  }
 });
