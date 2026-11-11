@@ -15,14 +15,14 @@ export default defineCheck({
       (s) => s.url,
     ).filter((s) => isWebUrl(s.url) && ctx.isThirdParty(new URL(s.url).hostname));
     if (!files.length) return pass(msg("no_foreign"));
-    const unsigned = files.filter((s) => !s.integrity);
-    const excluded = unsigned.filter((s) => moving(new URL(s.url).hostname));
-    const missing = unsigned.filter((s) => !excluded.includes(s));
-    const note: Finding[] = unique(excluded, (s) => new URL(s.url).hostname).map((s) => ({
+    // Every file without a hash counts, also from services that change their files under the same URL:
+    // the risk is the same. For those the finding says how to fix it, since a hash would break them.
+    const missing = files.filter((s) => !s.integrity);
+    if (!missing.length) return pass(msg("signed", { count: files.length }));
+    const note: Finding[] = unique(missing.filter((s) => moving(new URL(s.url).hostname)), (s) => new URL(s.url).hostname).map((s) => ({
       key: "moving",
       params: { host: new URL(s.url).hostname },
     }));
-    if (!missing.length) return pass(msg("signed", { count: files.length - excluded.length }), note);
     const details: Finding[] = capped(missing.map((s) => ({ key: s.type, params: { url: s.url } })));
     return warn(msg("unsigned", { count: missing.length, total: files.length }), [...details, ...note]);
   },

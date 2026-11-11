@@ -1,6 +1,6 @@
 # Hosts of other sites whose scripts and stylesheets change under the same URL, so an integrity
 # hash would block them after the next update. Used by security/subresource-integrity: files from
-# these hosts are named as excluded, never as missing. A host counts with all its subdomains.
+# these hosts still count as missing a hash; the finding adds how to fix them without one. A host counts with all its subdomains.
 # Add a host only when the vendor serves a changing file on purpose (loader, tag manager, consent
 # tool, payment or captcha widget, CSS built per browser), not when it merely publishes no hashes.
 moving:

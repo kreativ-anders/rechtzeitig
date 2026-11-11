@@ -119,8 +119,8 @@
 <li class="topic-rule" id="SEC-HDR-003">
 <h3><a href="checks.html#SEC-HDR-003">Scripts and stylesheets from other sites carry an integrity hash</a></h3>
 <p class="rule-meta"><span class="rule-id">SEC-HDR-003</span> · <span class="rule-law">Art. 32 GDPR</span></p>
-<p><span class="report-label">How it is checked</span> Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute, and leaves out services whose files change under the same URL (<code>data/subresource-integrity.yml</code>).</p>
-<p><span class="report-label">Fix</span> Load fixed versions of other sites' files with integrity=&quot;sha384-…&quot; and crossorigin=&quot;anonymous&quot; (most CDNs show the hash), or host the file yourself.</p>
+<p><span class="report-label">How it is checked</span> Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute; for services whose files change under the same URL (<code>data/subresource-integrity.yml</code>) it adds how to fix them without a hash.</p>
+<p><span class="report-label">Fix</span> Load fixed versions of other sites' files with integrity=&quot;sha384-…&quot; and crossorigin=&quot;anonymous&quot; (most CDNs show the hash), or host the file yourself. For services that change their file under the same URL, host a pinned copy or accept the risk knowingly.</p>
 </li>
 <li class="topic-rule" id="SEC-TLS-002">
 <h3><a href="checks.html#SEC-TLS-002">TLS certificate is valid and current</a></h3>
