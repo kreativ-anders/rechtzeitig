@@ -138,21 +138,54 @@ function pnpmReachable(lock: PnpmLock): Set<string> {
   return new Set([...seen].map((k) => k.replace(/\(.*$/, "")));
 }
 
+/**
+ * Yarn classic and Berry. An entry header lists descriptors ("alias@npm:lodash@^4", lodash@^4.17.0);
+ * the package name comes from Berry's `resolution`, else from an `npm:` alias target, else from the
+ * first descriptor. Other protocols (file:, link:, git URLs) keep the name before their "@".
+ */
 function yarnLock(text: string): Parsed[] {
   const out: Parsed[] = [];
-  let name = "";
+  let entry: { descriptors: string[]; version?: string; resolution?: string } | undefined;
+  const flush = () => {
+    const name = entry && yarnName(entry.descriptors, entry.resolution);
+    if (name && entry?.version && !entry.version.includes("use.local")) out.push({ ecosystem: "npm", name, version: entry.version, dev: false });
+    entry = undefined;
+  };
   for (const line of text.split("\n")) {
-    if (/^\S.*:$/.test(line) && !line.startsWith("__metadata")) {
-      const spec = line.replace(/:$/, "").split(",")[0].trim().replace(/^"|"$/g, "");
-      name = spec.slice(0, spec.indexOf("@", 1));
+    if (/^\S.*:$/.test(line) && !line.startsWith("#")) {
+      flush();
+      if (!line.startsWith("__metadata")) entry = { descriptors: line.slice(0, -1).split(",").map((d) => d.trim().replace(/^"|"$/g, "")) };
+      continue;
     }
-    const version = /^\s+version:?\s+"?([^"\s]+)"?/.exec(line)?.[1];
-    if (name && version && !version.includes("use.local")) {
-      out.push({ ecosystem: "npm", name, version, dev: false });
-      name = "";
-    }
+    if (!entry) continue;
+    entry.version ??= /^ {2}version:?\s+"?([^"\s]+)"?/.exec(line)?.[1];
+    entry.resolution ??= /^ {2}resolution:\s+"?([^"\s]+)"?/.exec(line)?.[1];
   }
+  flush();
   return out;
+}
+
+/** "name@range" or "@scope/name@range" split at the "@" that ends the name. */
+function splitIdent(spec: string): [string, string] | undefined {
+  const at = spec.indexOf("@", 1);
+  return at > 0 ? [spec.slice(0, at), spec.slice(at + 1)] : undefined;
+}
+
+const NPM_NAME = /^(?:@[\w.~-]+\/)?[\w.~-]+$/;
+
+function yarnName(descriptors: string[], resolution: string | undefined): string | undefined {
+  // Berry: resolution: "lodash@npm:4.17.20" names the package, also for aliases.
+  if (resolution) return splitIdent(resolution)?.[0];
+  for (const d of descriptors) {
+    const range = splitIdent(d)?.[1];
+    if (!range?.startsWith("npm:")) continue;
+    // Classic alias: npm:lodash@4.17.20, npm:@scope/pkg@1.0.0 or npm:lodash. A bare range (Berry's npm:^4) keeps the name.
+    const target = range.slice(4);
+    const inner = splitIdent(target)?.[0];
+    if (inner) return inner;
+    if (NPM_NAME.test(target) && !/^\d/.test(target)) return target;
+  }
+  return splitIdent(descriptors[0] ?? "")?.[0];
 }
 
 interface ComposerPackage { name: string; version: string | number; license?: string[] }
