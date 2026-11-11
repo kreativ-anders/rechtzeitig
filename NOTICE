@@ -37,6 +37,12 @@ into the scanned pages. axe-core is an unmodified npm dependency licensed under 
 
 ---
 
+data/public-suffixes.dat is the Public Suffix List (https://publicsuffix.org/list/public_suffix_list.dat), copied
+unmodified below a short header and refreshed by dev/public-suffixes.ts. It is licensed under the Mozilla Public
+License 2.0 (https://mozilla.org/MPL/2.0/); the file carries its notice.
+
+---
+
 test/benchmark/fixtures/real/ contains short, unmodified excerpts of the following projects (credentials replaced by
 generated values), used as test data only. Each is under the license named, whose text is in the project's repository;
 the MIT License text is above.

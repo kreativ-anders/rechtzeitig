@@ -700,7 +700,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg, lg münchen i 3 o 17493/20 (google fonts) records every request to another site while loading pages without clicks, groups hosts by vendor from `data/third-parties.yml` (else by domain); `consent: required` vendors fail, others warn, and a page that did not load with javascript warns instead of passing.">
+<details class="rule" id="LEG-EU-CNS-001" data-module="privacy" data-scope="website" data-severity="high" data-search="leg-eu-cns-001 privacy/third-parties-before-consent no third-party servers before consent keine fremden server vor einwilligung art. 6(1) gdpr, § 25 tdddg, lg münchen i 3 o 17493/20 (google fonts) records every request to another site (registrable domain by the public suffix list in `data/public-suffixes.dat`, so tenants of shared hosts like azurewebsites.net differ) while loading pages without clicks, groups hosts by vendor from `data/third-parties.yml` (else by domain); `consent: required` vendors fail, others warn, and a page that did not load with javascript warns instead of passing.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">No third-party servers before consent</span>
@@ -709,7 +709,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Records every request to another site while loading pages without clicks, groups hosts by vendor from <code>data/third-parties.yml</code> (else by domain); <code>consent: required</code> vendors fail, others warn, and a page that did not load with JavaScript warns instead of passing.</dd></div>
+<div><dt>How it is checked</dt><dd>Records every request to another site (registrable domain by the Public Suffix List in <code>data/public-suffixes.dat</code>, so tenants of shared hosts like azurewebsites.net differ) while loading pages without clicks, groups hosts by vendor from <code>data/third-parties.yml</code> (else by domain); <code>consent: required</code> vendors fail, others warn, and a page that did not load with JavaScript warns instead of passing.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-parties-before-consent"><code>checks/privacy/third-parties-before-consent</code></a></dd></div>

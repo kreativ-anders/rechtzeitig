@@ -21,6 +21,8 @@ test("changed messages of a rule need its rule.yml", () => {
 test("a changed data file is named in the commit message", () => {
   assert.deepEqual(problems(commit(["data/third-parties.yml"])), ["data/third-parties.yml changed, the commit message does not name third-parties.yml"]);
   assert.deepEqual(problems(commit(["data/third-parties.yml"], "✨ Add Plausible to third-parties.yml")), []);
+  assert.deepEqual(problems(commit(["data/public-suffixes.dat"])), ["data/public-suffixes.dat changed, the commit message does not name public-suffixes.dat"]);
+  assert.deepEqual(problems(commit(["data/public-suffixes.dat"], "🔄 Refresh public-suffixes.dat")), []);
 });
 
 test("Docs-unchanged with a reason accepts the commit, without a reason it does not", () => {

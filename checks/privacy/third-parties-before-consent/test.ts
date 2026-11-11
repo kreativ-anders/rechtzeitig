@@ -43,3 +43,18 @@ test("no pass when the load with JavaScript failed", async () => {
   const result = await runFake(here, start.noJs, { start, pages: [start] });
   assert.equal(result.status, "warn");
 });
+
+// #42: tenants of a shared hosting suffix are different sites, not one first party.
+test("a request to another tenant of a shared hosting suffix counts as third party", async () => {
+  const start = fakePage("https://shop.azurewebsites.net/", { requests: [{ url: "https://tracker.azurewebsites.net/pixel.gif", host: "tracker.azurewebsites.net", type: "image" }] });
+  const result = await runFake(here, start.js, { url: start.url, start, pages: [start] });
+  assert.equal(result.status, "warn");
+  assert.match(result.message, /tracker\.azurewebsites\.net/);
+});
+
+test("a request to another registration under co.za counts as third party", async () => {
+  const start = fakePage("https://www.shop.co.za/", { requests: [{ url: "https://cdn.tracker.co.za/t.js", host: "cdn.tracker.co.za", type: "script" }] });
+  const result = await runFake(here, start.js, { url: start.url, start, pages: [start] });
+  assert.equal(result.status, "warn");
+  assert.match(result.message, /tracker\.co\.za/);
+});
