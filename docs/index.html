@@ -280,6 +280,36 @@ kreativ-anders/rechtzeitig@4578635acd60d75a3f4a06e637d1ed789d4a3c31
 50 checks
 <!-- count-website:end --></span></h3><p>Imprint, privacy policy, cookies before consent, <a href="security.html">security headers and TLS</a>, accessibility basics, <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton</a>, and the served JavaScript bundles and source maps (<a href="checks.html#SEC-SECRETS-003">keys in the shipped JS</a>, <a href="checks.html#SEC-EXP-003">exposed source code</a>). Runs when you set a <code>url</code>.</p></li>
     </ul>
+    <!-- group-counts:start -->
+<ul class="group-counts"><li><a href="checks.html#legal">Legal <span class="count">22</span></a></li><li><a href="checks.html#privacy">Privacy and consent <span class="count">16</span></a></li><li><a href="checks.html#security">Security <span class="count">40</span></a></li><li><a href="checks.html#sustainability">Sustainability <span class="count">7</span></a></li><li><a href="checks.html#accessibility">Accessibility <span class="count">6</span></a></li><li><a href="checks.html#quality">Code quality <span class="count">3</span></a></li></ul>
+<!-- group-counts:end -->
+    <figure class="report">
+      <div class="report-head">
+        <p class="report-target">rechtzeitig: https://rechtzeitig.dev/ + repository rechtzeitig</p>
+      </div>
+      <ol class="report-rows">
+        <li class="report-row">
+          <span class="status s-fail">fail</span>
+          <div class="report-check"><span class="report-scope">Repository</span><span class="report-title">No secrets in the repository</span><span class="report-law"><a class="rule-id" href="checks.html#SEC-SECRETS-001">SEC-SECRETS-001</a> · Art. 32 GDPR</span></div>
+          <span class="sev" data-level="5"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>critical</span></span>
+          <div class="report-result">
+            <p>1 secret found. Revoke it, then remove it from the code and the git history.</p>
+            <ul><li>src/main.test.ts:48: AWS access key (AKIA… (20 chars))</li></ul>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-warn">warn</span>
+          <div class="report-check"><span class="report-scope">Website</span><span class="report-title">No third-party servers before consent</span><span class="report-law"><a class="rule-id" href="checks.html#LEG-EU-CNS-001">LEG-EU-CNS-001</a> · Art. 6(1) GDPR, § 25 TDDDG, LG München I 3 O 17493/20 (Google Fonts)</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>high</span></span>
+          <div class="report-result">
+            <p>Contacted before consent: Pirsch. Check the legal basis and name them in the privacy policy.</p>
+            <ul><li>Pirsch (api.pirsch.io) on /, /imprint.html, /privacy.html …</li></ul>
+            <p class="report-fix"><span class="report-label">Fix</span> Host fonts, scripts and libraries yourself; load embeds (videos, maps) only after a click or consent.</p>
+          </div>
+        </li>
+      </ol>
+      <figcaption>Two results from a real run on rechtzeitig.dev and its repository, 7 November 2026, shortened. The key is the example key from the AWS documentation.</figcaption>
+    </figure>
   </section>
 
   <section id="legal" aria-labelledby="legal-title">

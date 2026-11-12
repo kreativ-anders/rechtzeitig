@@ -225,6 +225,36 @@ kreativ-anders/rechtzeitig@4578635acd60d75a3f4a06e637d1ed789d4a3c31
 50 Prüfungen
 <!-- count-website:end --></span></h3><p>Impressum, Datenschutzerklärung, Cookies vor der Einwilligung, <a href="../security.html" hreflang="en">Security-Header und TLS</a>, Grundlagen der Barrierefreiheit, <a href="kuendigungsbutton.html">Kündigungsbutton</a>. Läuft, wenn Sie eine <code>url</code> angeben, und die ausgelieferten JavaScript-Bundles und Source Maps (<a href="../checks.html#SEC-SECRETS-003" hreflang="en">Schlüssel im ausgelieferten JS</a>, <a href="../checks.html#SEC-EXP-003" hreflang="en">offener Quellcode</a>).</p></li>
     </ul>
+    <!-- group-counts:start -->
+<ul class="group-counts"><li><a href="../checks.html#legal" hreflang="en">Legal <span class="count">22</span></a></li><li><a href="../checks.html#privacy" hreflang="en">Privacy and consent <span class="count">16</span></a></li><li><a href="../checks.html#security" hreflang="en">Security <span class="count">40</span></a></li><li><a href="../checks.html#sustainability" hreflang="en">Sustainability <span class="count">7</span></a></li><li><a href="../checks.html#accessibility" hreflang="en">Accessibility <span class="count">6</span></a></li><li><a href="../checks.html#quality" hreflang="en">Code quality <span class="count">3</span></a></li></ul>
+<!-- group-counts:end -->
+    <figure class="report">
+      <div class="report-head">
+        <p class="report-target">rechtzeitig: https://rechtzeitig.dev/ + repository rechtzeitig</p>
+      </div>
+      <ol class="report-rows">
+        <li class="report-row">
+          <span class="status s-fail">fail</span>
+          <div class="report-check"><span class="report-scope">Repository</span><span class="report-title">Keine Geheimnisse im Repository</span><span class="report-law"><a class="rule-id" href="../checks.html#SEC-SECRETS-001" hreflang="en">SEC-SECRETS-001</a> · Art. 32 DSGVO</span></div>
+          <span class="sev" data-level="5"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>kritisch</span></span>
+          <div class="report-result">
+            <p>1 Secret gefunden. Sperren, dann aus Code und Git-Historie entfernen.</p>
+            <ul><li>src/main.test.ts:48: AWS access key (AKIA… (20 Zeichen))</li></ul>
+          </div>
+        </li>
+        <li class="report-row">
+          <span class="status s-warn">warn</span>
+          <div class="report-check"><span class="report-scope">Website</span><span class="report-title">Keine fremden Server vor Einwilligung</span><span class="report-law"><a class="rule-id" href="../checks.html#LEG-EU-CNS-001" hreflang="en">LEG-EU-CNS-001</a> · Art. 6 Abs. 1 DSGVO, § 25 TDDDG, LG München I 3 O 17493/20 (Google Fonts)</span></div>
+          <span class="sev" data-level="4"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Schwere: </span>hoch</span></span>
+          <div class="report-result">
+            <p>Vor der Einwilligung kontaktiert: Pirsch. Rechtsgrundlage prüfen und in der Datenschutzerklärung nennen.</p>
+            <ul><li>Pirsch (api.pirsch.io) auf /, /imprint.html, /privacy.html …</li></ul>
+            <p class="report-fix"><span class="report-label">Behebung</span> Schriften, Skripte und Bibliotheken selbst hosten; Einbettungen (Videos, Karten) erst nach Klick oder Einwilligung laden.</p>
+          </div>
+        </li>
+      </ol>
+      <figcaption>Zwei Ergebnisse aus einem echten Lauf auf rechtzeitig.dev und seinem Repository am 7. November 2026, gekürzt. Der Schlüssel ist der Beispielschlüssel aus der AWS-Dokumentation.</figcaption>
+    </figure>
   </section>
 
   <section id="legal" aria-labelledby="legal-title">

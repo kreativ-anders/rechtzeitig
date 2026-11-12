@@ -151,6 +151,16 @@ export function heroChecksHtml(checks: LoadedCheck[], lang: Lang = "en"): string
     : `<a class="button secondary" href="checks.html">See all ${checks.length} checks</a>`;
 }
 
+/** Counts by group for the summary strip above the example report, each linking to its group on checks.html. */
+export function groupCountsHtml(checks: LoadedCheck[], lang: Lang = "en"): string {
+  const link = (module: string) => (lang === "de" ? `../checks.html#${module}" hreflang="en` : `checks.html#${module}`);
+  return `<ul class="group-counts">${Object.entries(MODULES)
+    .map(([module, heading]) => ({ module, heading, n: checks.filter((c) => moduleOf(c.id) === module).length }))
+    .filter((g) => g.n)
+    .map((g) => `<li><a href="${link(g.module)}">${g.heading} <span class="count">${g.n}</span></a></li>`)
+    .join("")}</ul>`;
+}
+
 /** Checks that read the website and the repository together, most severe first: the core of rechtzeitig. */
 export const crossChecks = (checks: LoadedCheck[]) =>
   checks.filter((c) => scopeOf(c.check) === "both").sort((a, b) => SEVERITIES.indexOf(b.rule.severity) - SEVERITIES.indexOf(a.rule.severity) || a.rule.id.localeCompare(b.rule.id));
@@ -249,6 +259,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (!pinned) throw new Error("examples/workflows/rechtzeitig.yml: no pinned SHA in uses:");
   for (const [path, lang] of [[INDEX_PAGE, "en"], [INDEX_PAGE_DE, "de"]] as const) {
     let doc = readFileSync(path, "utf8");
+    doc = fill(doc, "group-counts", groupCountsHtml(checks, lang));
     doc = fill(doc, "pinned-uses", `kreativ-anders/rechtzeitig@${pinned}`);
     doc = fill(doc, "hero-checks", heroChecksHtml(checks, lang));
     doc = fill(doc, "reviewed", reviewedHtml(checks, lang));
