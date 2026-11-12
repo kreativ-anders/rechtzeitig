@@ -347,6 +347,69 @@
   country: US
   packages: ['@paypal/*']
 
+- name: Mollie
+  hosts: [js.mollie.com, api.mollie.com]
+  purpose: payment
+  consent: check
+  country: NL
+  packages: ['@mollie/api-client']
+
+- name: Klarna
+  hosts: [js.klarna.com, x.klarnacdn.net, api.klarna.com]
+  purpose: payment
+  consent: check
+  country: SE
+
+- name: Adyen
+  hosts: [checkoutshopper-live.adyen.com, checkoutshopper-test.adyen.com]
+  purpose: payment
+  consent: check
+  country: NL
+  packages: ['@adyen/adyen-web', '@adyen/api-library']
+
+- name: Unzer
+  hosts: [js.unzer.com, api.unzer.com]
+  purpose: payment
+  consent: check
+  country: DE
+
+- name: PAYONE
+  hosts: [secure.pay1.de, api.pay1.de, cdn.pay1.de]
+  purpose: payment
+  consent: check
+  country: DE
+  names: [payone, pay1]
+  packages: [pcp-client-javascript-sdk, pcp-server-nodejs-sdk]
+
+- name: Amazon Pay
+  hosts: [static-eu.payments-amazon.com, static-na.payments-amazon.com, static-fe.payments-amazon.com]
+  purpose: payment
+  consent: check
+  country: US
+  names: [amazon pay, amazon payments]
+
+- name: Paddle
+  hosts: [cdn.paddle.com, api.paddle.com, checkout.paddle.com]
+  purpose: payment
+  consent: check
+  country: GB
+  packages: ['@paddle/paddle-js', '@paddle/paddle-node-sdk']
+
+- name: Lemon Squeezy
+  hosts: [app.lemonsqueezy.com]
+  purpose: payment
+  consent: check
+  country: US
+  names: [lemon squeezy, lemonsqueezy]
+  packages: ['@lemonsqueezy/lemonsqueezy.js']
+
+- name: SumUp
+  hosts: [checkout.sumup.com, api.sumup.com]
+  purpose: payment
+  consent: check
+  country: GB
+  packages: ['@sumup/sdk']
+
 - name: Sentry
   hosts: [sentry.io, sentry-cdn.com]
   purpose: error tracking

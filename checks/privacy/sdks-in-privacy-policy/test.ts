@@ -41,3 +41,10 @@ test("skips without a privacy policy, and without a package.json", async () => {
   assert.equal((await runCrossCheck(here, "none", repo)).status, "skip");
   assert.equal((await runCrossCheck(here, "named", { "README.md": "x" })).status, "skip");
 });
+
+// Issue #40: payment SDKs from data/third-parties.yml are matched against the policy.
+test("warns for a Mollie SDK the policy does not name", async () => {
+  const result = await runCrossCheck(here, "unnamed", { "package.json": pkg({ "@mollie/api-client": "^4.0.0" }) });
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["package.json:4: Mollie (payment) via @mollie/api-client, not named in the privacy policy"]);
+});
