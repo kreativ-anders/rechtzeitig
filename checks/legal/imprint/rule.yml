@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§ 5 DDG"
   en: "§ 5 DDG (German Digital Services Act)"
-how: "Finds the imprint link on the start page (`imprint`), loads it and checks HTTP status and that it has text."
+how: "Finds the imprint link on the start page or its hreflang version in the scan language (`imprint`), loads it and checks HTTP status and that it has text."
 fix_hint:
   de: "Impressum auf jeder Seite verlinken, z. B. im Footer mit der Beschriftung \"Impressum\"."
   en: "Link the imprint from every page, for example in the footer, labeled \"Impressum\"."

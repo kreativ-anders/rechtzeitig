@@ -24,6 +24,8 @@ export interface CrawlData {
   /** Final URL of the start page. */
   url: string;
   start: Page;
+  /** The start page's version in a scan language, when it announces one via hreflang and that page was visited. */
+  langPage?: Page;
   pages: Page[];
   probes: Probe[];
   countries: Record<string, string>;
@@ -47,7 +49,9 @@ const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_
 
 /**
  * Visits the start page, every page a language pack calls a legal page (imprint, privacy, ...),
- * then a sample of same-site pages, up to maxPages. Each page is loaded twice: JavaScript off and on.
+ * then a sample of same-site pages, up to maxPages. When the start page announces an alternate in the
+ * scan language (hreflang) on the same site, that version is visited too and its legal links are read first.
+ * Each page is loaded twice: JavaScript off and on.
  */
 export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlData> {
   // The host the user asked for is trusted, also when it is local (dev servers, test fixtures).
@@ -79,7 +83,18 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     const url = start.js.finalUrl || startUrl;
     const pages = [start];
     const seen = new Set([withoutHash(startUrl), withoutHash(url)]);
-    const queue = [...legalTargets(start, opts.lang), ...sampleTargets(start.js)];
+    // A start page in another language that announces the scan language (hreflang): read the legal pages of that version.
+    let langPage: Page | undefined;
+    const alternate = hreflangTarget(start, opts.lang.codes, seen);
+    // Only the same site and only within max-pages: another domain would put a foreign site into every check.
+    const sameSite = alternate && siteOf(new URL(alternate).hostname) === siteOf(new URL(url).hostname);
+    if (alternate && sameSite && pages.length < opts.maxPages && (await isPublicHost(new URL(alternate).hostname, trusted))) {
+      langPage = await visit(alternate);
+      pages.push(langPage);
+      seen.add(withoutHash(langPage.url));
+      if (langPage.js.finalUrl) seen.add(withoutHash(langPage.js.finalUrl));
+    }
+    const queue = [...(langPage ? legalTargets(langPage, opts.lang) : []), ...legalTargets(start, opts.lang), ...sampleTargets(start.js)];
     for (const url of queue) {
       if (pages.length >= opts.maxPages) break;
       const key = withoutHash(url);
@@ -95,7 +110,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     const probes = await probe(new URL(finalUrl).origin, opts.userAgent, opts.timeout, trusted);
     const maps = await sourceMaps(code.files, siteOf(new URL(finalUrl).hostname), opts.userAgent, opts.timeout, trusted);
     const served = { code: code.files, codeSkipped: code.skipped, sourceMaps: maps };
-    if (opts.offline) return { url, start, pages, probes, countries: {}, ...served };
+    if (opts.offline) return { url, start, langPage, pages, probes, countries: {}, ...served };
 
     const site = siteOf(new URL(finalUrl).hostname);
     // The start page's own host too: privacy/third-country falls back to its IP country when data/hosting.yml does not know the provider.
@@ -109,12 +124,24 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       countries(lookups, opts.ipinfoToken, opts.timeout),
       opts.greenHosting ? greenHosting(finalUrl, opts.timeout) : undefined,
     ]);
-    return { url, start, pages, probes, countries: found, http, variant, tls, dns, green, ...served };
+    return { url, start, langPage, pages, probes, countries: found, http, variant, tls, dns, green, ...served };
   } finally {
     await noJs.close();
     await js.close();
     proxy.close();
   }
+}
+
+/**
+ * The start page's alternate in one of the scan languages (`<link rel="alternate" hreflang>`), when it
+ * points to another page. An exact language match ("de") wins over a regional one ("de-AT").
+ */
+function hreflangTarget(start: Page, codes: string[], self: Set<string>): string | undefined {
+  const alternates = { ...start.noJs.alternates, ...start.js.alternates };
+  const keys = Object.keys(alternates).filter((k) => codes.includes(k) || codes.includes(k.split("-")[0]));
+  const key = keys.find((k) => codes.includes(k)) ?? keys[0];
+  const href = key ? alternates[key] : undefined;
+  return href && isWebUrl(href) && !self.has(withoutHash(href)) ? href : undefined;
 }
 
 function legalTargets(start: Page, lang: Language): string[] {

@@ -26,6 +26,7 @@ interface RawForm {
 
 interface Dom {
   lang: string;
+  alternates: Record<string, string>;
   meta: Record<string, string>;
   text: string;
   links: RawLink[];
@@ -145,8 +146,17 @@ function readDom(): Dom {
     meta[name] ??= el.getAttribute("content") ?? "";
   }
 
+  // Language alternates of the page: hreflang in lowercase → absolute URL.
+  const alternates: Record<string, string> = {};
+  for (const el of all(document, "link[rel~=alternate i][hreflang][href]")) {
+    const lang = (el.getAttribute("hreflang") ?? "").trim().toLowerCase();
+    const href = urlOf(el.getAttribute("href"));
+    if (lang && href) alternates[lang] = href;
+  }
+
   return {
     lang: document.documentElement.getAttribute("lang") ?? "",
+    alternates,
     meta,
     text: (document.body?.innerText ?? "").slice(0, MAX.text),
     links: all(document, LINKS).slice(0, MAX.links).map(toRaw),
@@ -254,7 +264,7 @@ const MAX_REQUESTS = 5000;
 
 /** A load that got nothing: status 0, no content. */
 export const emptySnapshot = (finalUrl: string): Snapshot => ({
-  status: 0, finalUrl, headers: {}, meta: {}, lang: "", text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
+  status: 0, finalUrl, headers: {}, meta: {}, lang: "", alternates: {}, text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
 });
 
 const CODE = loadYaml<{ code: { max_file_chars: number; max_files: number } }>("data/thresholds.yml").code;
@@ -349,6 +359,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       headers: response?.headers() ?? {},
       meta: dom.meta,
       lang: dom.lang,
+      alternates: dom.alternates,
       text: dom.text,
       links: dom.links.map(toLink),
       forms: dom.forms.map(toForm),

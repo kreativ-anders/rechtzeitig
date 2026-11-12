@@ -2,7 +2,7 @@ import { matchLinks, patternsFor, type Language } from "./lang.ts";
 import type { Registry } from "./registry.ts";
 import { isWebUrl, normalize, siteOf, withoutHash } from "./text.ts";
 import type { CrawlData } from "./crawl.ts";
-import { loaded, pageLinks, type Page, type ScanContext, type Snapshot } from "./sdk.ts";
+import { loaded, pageLinks, unique, type Page, type ScanContext, type Snapshot } from "./sdk.ts";
 
 export interface ContextOptions {
   languages: string[];
@@ -56,7 +56,9 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
       return !!p && new RegExp(`(^|[^a-z0-9])${p}($|[^a-z0-9])`).test(normalize(text));
     },
     legalPage: (concept) => {
-      const found = ctx.links(concept, pageLinks(data.start)).filter((l) => isWebUrl(l.href));
+      // Links of the start page's version in a scan language (hreflang) first, then of the start page itself.
+      const starts = data.langPage ? [data.langPage, data.start] : [data.start];
+      const found = unique(starts.flatMap((p) => ctx.links(concept, pageLinks(p))), (l) => `${l.href}\n${l.label}`).filter((l) => isWebUrl(l.href));
       if (!found.length) return undefined;
       const link = found.find((l) => loaded(page(l.href)?.js)) ?? found[0];
       return { link, page: page(link.href) };

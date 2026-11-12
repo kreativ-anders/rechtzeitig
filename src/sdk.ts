@@ -538,6 +538,8 @@ export interface Snapshot {
   meta: Record<string, string>;
   /** Value of <html lang>. */
   lang: string;
+  /** <link rel="alternate" hreflang> entries of the page: hreflang in lowercase → absolute URL. */
+  alternates: Record<string, string>;
   /** Visible text, as a user would read it. */
   text: string;
   /** Links and buttons, including those in open shadow roots (consent banners). */
