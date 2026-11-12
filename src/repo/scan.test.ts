@@ -110,3 +110,24 @@ test("coverage names large, binary and LFS files, lockfiles that gave nothing an
   ]);
   assert.equal(repo?.read("huge.txt"), undefined);
 });
+
+// Issue #47: the first pass keeps no text; reads go through an LRU bounded by repo.cache_bytes and re-read evicted files.
+test("LRU cache: a budget smaller than two files still returns the right text for every file", async () => {
+  const root = mkdtempSync(join(tmpdir(), "rechtzeitig-lru-"));
+  writeFileSync(join(root, "a.txt"), "aaaa");
+  writeFileSync(join(root, "b.txt"), "bbbbbb");
+  const repo = await scanRepo(root, { osv: false, cacheBytes: 5 }); // smaller than a.txt + b.txt
+  assert.equal(repo?.read("a.txt"), "aaaa");
+  assert.equal(repo?.read("b.txt"), "bbbbbb", "b evicted a, both still readable");
+  assert.equal(repo?.read("a.txt"), "aaaa", "a was re-read after its eviction");
+});
+
+test("LRU cache: many small files stay readable, large and binary unchanged", async () => {
+  const root = mkdtempSync(join(tmpdir(), "rechtzeitig-lru-many-"));
+  for (let i = 0; i < 200; i++) writeFileSync(join(root, `f${i}.txt`), `content-${i}-`.repeat(20));
+  writeFileSync(join(root, "huge.txt"), "x".repeat(2_000_000));
+  const repo = await scanRepo(root, { osv: false, cacheBytes: 1000 });
+  for (let i = 0; i < 200; i++) assert.equal(repo?.read(`f${i}.txt`), `content-${i}-`.repeat(20), `f${i}.txt re-read correctly`);
+  assert.equal(repo?.read("huge.txt"), undefined);
+  assert.deepEqual(repo?.coverage.large, ["huge.txt"]);
+});
