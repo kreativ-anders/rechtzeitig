@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 13 Abs. 1 lit. e und f, Art. 28, Art. 44 DSGVO"
   en: "Art. 13(1)(e) and (f), Art. 28, Art. 44 GDPR"
-how: "Finds form backends in the repository's templates, code and config (`forms` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and forms on the visited pages whose action host the repository names, then looks for each receiver's `names` as whole words in the privacy policy; a receiver outside the EEA (`data/countries.yml`) without third-country wording gives info."
+how: "Finds form backends in the repository's templates, code and config (`forms` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and forms on the visited pages whose action host the repository names, then looks for each receiver's `names` as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); a receiver outside the EEA (`data/countries.yml`) without third-country wording gives info."
 fix_hint:
   de: "Den Formular-Dienst als Empfänger (Auftragsverarbeiter) mit Zweck, Rechtsgrundlage, Speicherdauer und Sitzland nennen, bei Sitz außerhalb der EU mit der Grundlage der Übermittlung. Oder das Formular an den eigenen Server senden."
   en: "Name the form service as recipient (processor) with purpose, legal basis, storage period and country, for a provider outside the EU with the basis of the transfer. Or send the form to your own server."

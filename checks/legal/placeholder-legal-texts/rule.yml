@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§ 5 Abs. 1 DDG; Art. 13 Abs. 1 lit. a DSGVO"
   en: "§ 5(1) DDG (German Digital Services Act); Art. 13(1)(a) GDPR"
-how: "Looks for template data (`placeholder` in `lang/*.yml`: Max Mustermann, Musterstraße, Lorem ipsum, [Firmenname], example.com addresses, +49 123 456…, DE123456789) line by line in the live imprint and privacy policy (found via the link words of every language in `lang/*.yml`) and in the repository's legal page files (extensions and paths in `data/legal-texts.yml`); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing."
+how: "Looks for template data (`placeholder` in `lang/*.yml`: Max Mustermann, Musterstraße, Lorem ipsum, [Firmenname], example.com addresses, +49 123 456…, DE123456789) line by line in the live imprint and privacy policy (linked from the start page or its hreflang version in the scan language, using the link words of every language in `lang/*.yml`) and in the repository's legal page files (extensions and paths in `data/legal-texts.yml`); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing."
 fix_hint:
   de: "Die Vorlagendaten durch die echten Angaben des Anbieters ersetzen (Name, ladungsfähige Anschrift, E-Mail, Telefon, Register, USt-IdNr.) und neu veröffentlichen."
   en: "Replace the template data with the provider's real details (name, postal address, email, phone, register, VAT ID) and deploy again."

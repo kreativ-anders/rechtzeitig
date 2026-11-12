@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 13 Abs. 1 lit. e DSGVO"
   en: "Art. 13(1)(e) GDPR"
-how: "For every contacted third-party service, looks for its name (`names` in `data/third-parties.yml`, else its domain) as a whole word in the privacy policy."
+how: "For every contacted third-party service, looks for its name (`names` in `data/third-parties.yml`, else its domain) as a whole word in the privacy policy (linked from the start page or its hreflang version in the scan language)."
 fix_hint:
   de: "Jeden eingebundenen Dienst mit Zweck und Rechtsgrundlage in der Datenschutzerklärung aufführen."
   en: "List every embedded service with purpose and legal basis in the privacy policy."
