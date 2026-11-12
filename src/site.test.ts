@@ -64,6 +64,26 @@ test("every page's header seal is the one in index.html, drawn as a path without
   for (const f of ["index.html", "de/index.html"]) assert.ok(read(f).match(/<svg class="mark"[^>]*>(.*?)<\/svg>/)?.[1] === path, `${f}: the stamp's § is the seal's path`);
 });
 
+test("the pinned SHA on the start pages is the one in examples/workflows/rechtzeitig.yml", () => {
+  const example = readFileSync(new URL("../examples/workflows/rechtzeitig.yml", import.meta.url), "utf8");
+  const sha = example.match(/kreativ-anders\/rechtzeitig@([0-9a-f]{40})/)?.[1];
+  assert.ok(sha, "the example workflow pins a SHA");
+  for (const f of ["index.html", "de/index.html"]) {
+    assert.ok(read(f).includes(`kreativ-anders/rechtzeitig@${sha}`), `${f}: pinned-uses filled with the example workflow's SHA`);
+  }
+});
+
+test("the start pages have the configurator: hidden until site.js, one URL field, live preview, privacy note", () => {
+  for (const f of ["index.html", "de/index.html"]) {
+    const html = read(f);
+    const form = html.match(/<form class="configurator"[^>]*>/)?.[0] ?? "";
+    assert.ok(form.includes("hidden"), `${f}: hidden without JavaScript`);
+    assert.ok(/<input[^>]*type="url"/.test(html), `${f}: one URL field`);
+    assert.ok(html.includes('id="cfg-preview"'), `${f}: live preview`);
+    assert.match(html, /class="cfg-note"/, `${f}: the note that the URL is never sent`);
+  }
+});
+
 test("the product name in page text is set as the wordmark", () => {
   // Heuristic: every "rechtzeitig" in visible text is the product, unless it sits in <head>, the header,
   // code, pre, svg, the decorative stamp, a GitHub UI label (.ui) or the report's target line, or is part of

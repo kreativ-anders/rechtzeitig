@@ -275,27 +275,41 @@ const CODE = loadYaml<{ code: { max_file_chars: number; max_files: number } }>("
  */
 export class CodeCollector {
   readonly files: ServedCode[] = [];
-  /** Not kept because `max_files` was reached, or because the announced body is too large to read. */
+  /** Not kept because `max_files` was reached, or because the body is larger than `max_file_chars` can hold. */
   skipped = 0;
   private seen = new Set<string>();
   /** Slots taken by bodies still being read, so concurrent responses cannot pass `max_files`. */
   private reserved = 0;
 
-  async take(res: PlaywrightResponse, type: ServedCode["type"]): Promise<void> {
+  private readonly maxChars: number;
+
+  constructor(maxChars = CODE.max_file_chars) {
+    this.maxChars = maxChars;
+  }
+
+  async take(res: PlaywrightResponse, type: ServedCode["type"], bytesOf?: (url: string) => number | undefined | Promise<number | undefined>): Promise<void> {
     const url = res.url();
     if (!isWebUrl(url) || this.seen.has(url) || res.status() < 200 || res.status() >= 300) return;
     this.seen.add(url);
-    // A UTF-8 character has at most 4 bytes: a body announced larger than that cannot fit max_file_chars, so it is not read.
-    const length = Number(res.headers()["content-length"]);
-    if (this.files.length + this.reserved >= CODE.max_files || length > CODE.max_file_chars * 4) {
+    if (this.files.length + this.reserved >= CODE.max_files) {
       this.skipped++;
       return;
     }
-    this.reserved++; // taken before the await, released after it
+    this.reserved++; // taken before the awaits, released after them
+    // Wait until the body has fully arrived, then count its bytes: a chunked response has no Content-Length announcing the size.
+    const announced = Number(res.headers()["content-length"]);
+    const counted = bytesOf ? await bytesOf(url) : undefined;
+    const bytes = counted ?? (Number.isFinite(announced) ? announced : undefined);
+    // A UTF-8 character has at most 4 bytes: a body larger than that cannot fit max_file_chars, so it is not read.
+    if (bytes !== undefined && bytes > this.maxChars * 4) {
+      this.reserved--;
+      this.skipped++;
+      return;
+    }
     const body = await res.text().catch(() => undefined);
     this.reserved--;
     if (body === undefined) return;
-    this.files.push({ url, type, body: body.slice(0, CODE.max_file_chars), truncated: body.length > CODE.max_file_chars });
+    this.files.push({ url, type, body: body.slice(0, this.maxChars), truncated: body.length > this.maxChars });
   }
 }
 
@@ -308,12 +322,40 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
   const page = await context.newPage();
   const bodies: Promise<void>[] = [];
   // With the cache off, every page answers with its own headers, and checks see each file as a first visit would.
-  await context.newCDPSession(page).then((cdp) => cdp.send("Network.setCacheDisabled", { cacheDisabled: true })).catch(() => {});
+  // The CDP session also counts the bytes as they arrive, so a body without Content-Length is bounded as well.
+  const received = new Map<string, number>();
+  const bodyDone = new Map<string, Promise<void>>();
+  const bodyResolve = new Map<string, () => void>();
+  const cdp = await context.newCDPSession(page).catch(() => undefined);
+  if (cdp) {
+    const byRequest = new Map<string, string>();
+    await cdp.send("Network.enable").catch(() => {});
+    await cdp.send("Network.setCacheDisabled", { cacheDisabled: true }).catch(() => {});
+    cdp.on("Network.responseReceived", (e) => {
+      if (isWebUrl(e.response.url)) byRequest.set(e.requestId, e.response.url);
+    });
+    cdp.on("Network.dataReceived", (e) => {
+      const url = byRequest.get(e.requestId);
+      if (url) received.set(url, (received.get(url) ?? 0) + e.dataLength);
+    });
+    const finish = (requestId: string) => {
+      const url = byRequest.get(requestId);
+      if (url) bodyResolve.get(url)?.();
+    };
+    cdp.on("Network.loadingFinished", (e) => finish(e.requestId));
+    cdp.on("Network.loadingFailed", (e) => finish(e.requestId));
+  }
+  const bytesOf = async (url: string): Promise<number | undefined> => {
+    await bodyDone.get(url);
+    return received.get(url);
+  };
   const requests: Snapshot["requests"] = [];
   const pending = new Map<PlaywrightRequest, Request>();
   page.on("request", (r) => {
     const u = r.url();
     if (!isWebUrl(u) || requests.length >= MAX_REQUESTS) return;
+    // The body's byte count is awaited per URL, so the promise exists from the request on (the response event may come first).
+    if (!bodyDone.has(u)) bodyDone.set(u, new Promise<void>((done) => bodyResolve.set(u, done)));
     const entry: Request = { url: u, host: new URL(u).hostname, type: r.resourceType() };
     requests.push(entry);
     pending.set(r, entry);
@@ -330,7 +372,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     if (h["content-encoding"]) entry.contentEncoding = h["content-encoding"].toLowerCase();
     const length = Number(h["content-length"]);
     if (h["content-length"] && Number.isFinite(length)) entry.contentLength = length;
-    if (code && (entry.type === "script" || entry.type === "document")) bodies.push(code.take(res, entry.type));
+    if (code && (entry.type === "script" || entry.type === "document")) bodies.push(code.take(res, entry.type, bytesOf));
   });
   const before = new Set((await context.cookies()).map(cookieKey));
   const load = async (): Promise<Snapshot> => {

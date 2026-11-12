@@ -316,6 +316,21 @@ footer a:hover { color: var(--ink); }
 .button:active { transform: scale(0.97); }
 .button.secondary { background: var(--sheet); color: var(--seal); }
 .button.secondary:hover { background: var(--seal-soft); }
+/* Configurator in the hero: URL field with a live workflow preview, shown by site.js */
+.configurator { margin: 1.25rem 0 0; max-width: 34rem; }
+.configurator label { font-weight: 600; font-size: 0.95rem; }
+.configurator input {
+  width: 100%;
+  margin: 0.35rem 0 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+}
+.configurator input:focus-visible { outline: 2px solid var(--seal); outline-offset: 1px; }
+.configurator .cfg-note { color: var(--muted); font-size: 0.8rem; margin: 0.4rem 0 0; }
 .hero-note { margin: 0; color: var(--muted); font-size: 0.9rem; }
 
 /* A place in GitHub's interface, e.g. Actions → Run workflow */

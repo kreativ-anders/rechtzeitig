@@ -9,6 +9,7 @@ import { SEVERITIES, reviewProblems, switchSpec, type Rule, type Switch } from "
 import { SCOPES, loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } from "./runner.ts";
 
 const CHECKS_PAGE = new URL("../docs/checks.html", import.meta.url);
+const EXAMPLE_WORKFLOW = new URL("../examples/workflows/rechtzeitig.yml", import.meta.url);
 const WORKFLOW_PAGE = new URL("../docs/workflow.html", import.meta.url);
 const INDEX_PAGE = new URL("../docs/index.html", import.meta.url);
 const INDEX_PAGE_DE = new URL("../docs/de/index.html", import.meta.url);
@@ -253,9 +254,13 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const page = readFileSync(CHECKS_PAGE, "utf8");
   writeFileSync(CHECKS_PAGE, fill(fill(page, "checks", checksHtml(checks)), "switches", switchesHtml(checks)));
   writeFileSync(WORKFLOW_PAGE, fill(readFileSync(WORKFLOW_PAGE, "utf8"), "switches", switchesHtml(checks)));
+  // The pinned SHA on the start pages comes from the one source of truth, the example workflow.
+  const pinned = readFileSync(EXAMPLE_WORKFLOW, "utf8").match(/uses:\s*kreativ-anders\/rechtzeitig@([0-9a-f]{40})/)?.[1];
+  if (!pinned) throw new Error("examples/workflows/rechtzeitig.yml: no pinned SHA in uses:");
   for (const [path, lang] of [[INDEX_PAGE, "en"], [INDEX_PAGE_DE, "de"]] as const) {
     let doc = readFileSync(path, "utf8");
     doc = fill(doc, "group-counts", groupCountsHtml(checks, lang));
+    doc = fill(doc, "pinned-uses", `kreativ-anders/rechtzeitig@${pinned}`);
     doc = fill(doc, "hero-checks", heroChecksHtml(checks, lang));
     doc = fill(doc, "reviewed", reviewedHtml(checks, lang));
     doc = fill(doc, "cross-checks", crossChecksHtml(checks, lang));

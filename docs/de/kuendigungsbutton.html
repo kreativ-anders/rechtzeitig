@@ -83,7 +83,7 @@
 <li class="topic-rule" id="LEG-DE-WDR-001">
 <h3><a href="../checks.html#LEG-DE-WDR-001" hreflang="en">Widerrufsbelehrung mit Muster-Widerrufsformular und Hinweis auf die Widerrufsfunktion</a></h3>
 <p class="rule-meta"><span class="rule-id">LEG-DE-WDR-001</span> · <span class="rule-law">Art. 246a § 1 Abs. 2 Satz 1 Nr. 1 EGBGB mit Anlage 2, § 356a BGB (seit 19.06.2026)</span></p>
-<p><span class="report-label">So wird geprüft</span> <span lang="en">Opens the withdrawal instructions linked from the start page or its hreflang version in the scan language (<code>withdrawal_info</code> in <code>lang/*.yml</code>), else the T&amp;Cs when they contain them (<code>withdrawal_instruction</code>), and warns without the model form in the text or a link (<code>model_form</code>) or without a note on where the withdrawal function is (<code>withdraw_function_hint</code>).</span></p>
+<p><span class="report-label">So wird geprüft</span> <span lang="en">Opens the withdrawal instructions linked from the start page or its hreflang version in the scan language (<code>withdrawal_info</code>, link words of every language in <code>lang/*.yml</code>), else the T&amp;Cs when they contain them (<code>withdrawal_instruction</code>), and warns without the model form in the text or a link (<code>model_form</code>) or without a note on where the withdrawal function is (<code>withdraw_function_hint</code>).</span></p>
 <p><span class="report-label">Läuft</span> nur mit <code>sales: true</code>.</p>
 <p><span class="report-label">Behebung</span> Eine Widerrufsbelehrung nach dem Muster der Anlage 1 EGBGB verlinken, mit dem Muster-Widerrufsformular der Anlage 2 und dem Satz, wo die Widerrufsfunktion „Vertrag widerrufen“ zu finden ist („Sie können Ihr Widerrufsrecht auch online unter … ausüben“).</p>
 </li>
@@ -97,7 +97,7 @@
 <li class="topic-rule" id="LEG-DE-AGB-001">
 <h3><a href="../checks.html#LEG-DE-AGB-001" hreflang="en">AGB sind verlinkt und erreichbar</a></h3>
 <p class="rule-meta"><span class="rule-id">LEG-DE-AGB-001</span> · <span class="rule-law">§ 312i Abs. 1 Satz 1 Nr. 4 BGB, § 305 Abs. 2 BGB</span></p>
-<p><span class="report-label">So wird geprüft</span> <span lang="en">Finds the T&amp;C link on the start page or its hreflang version in the scan language (<code>terms</code> in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text; warns without a link, since T&amp;Cs are optional.</span></p>
+<p><span class="report-label">So wird geprüft</span> <span lang="en">Finds the T&amp;C link on the start page or its hreflang version in the scan language (<code>terms</code>, link words of every language in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text; warns without a link, since T&amp;Cs are optional.</span></p>
 <p><span class="report-label">Läuft</span> nur mit <code>sales: true</code>.</p>
 <p><span class="report-label">Behebung</span> AGB auf der Startseite und im Bestellablauf verlinken, z. B. im Footer mit „AGB“. Kunden müssen sie bei Vertragsschluss abrufen und speichern können.</p>
 </li>

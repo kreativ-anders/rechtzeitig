@@ -54,3 +54,26 @@ for (const [dev, prod] of [["a", "z"], ["z", "a"]]) {
     assert.equal(result.raw.details?.[0].file, `${prod}/package-lock.json`);
   });
 }
+
+// Issue #56: every lockfile that locks the vulnerable version gets its own finding, production first.
+test("one finding per lockfile, production first", async () => {
+  const both = {
+    "a/package-lock.json": npmLock({ lodash: "4.17.20" }),
+    "b/package-lock.json": npmLock({ lodash: { version: "4.17.20", dev: true } }),
+  };
+  const result = await runRepoCheck(here, both, { osv: "ok", vulnerabilities: [vuln("pkg:npm/lodash@4.17.20", "HIGH")] });
+  assert.equal(result.status, "fail");
+  assert.deepEqual(result.details, [
+    "a/package-lock.json: lodash@4.17.20: GHSA-test HIGH. Prototype pollution Fixed in 4.17.21.",
+    "b/package-lock.json: lodash@4.17.20 (dev): GHSA-test HIGH. Prototype pollution Fixed in 4.17.21.",
+  ]);
+  assert.deepEqual(result.raw.details?.map((d) => d.fingerprint), [
+    "pkg:npm/lodash@4.17.20 GHSA-test a/package-lock.json",
+    "pkg:npm/lodash@4.17.20 GHSA-test b/package-lock.json",
+  ]);
+});
+
+test("the same lockfile is named once", async () => {
+  const result = await runRepoCheck(here, files, { osv: "ok", vulnerabilities: [vuln("pkg:npm/lodash@4.17.20", "HIGH")] });
+  assert.equal(result.details?.length, 1);
+});

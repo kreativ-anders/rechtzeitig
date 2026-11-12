@@ -41,3 +41,15 @@ test("any of a vendor's names counts, and unknown services by their domain name"
   assert.equal((await policy("Wir nutzen Typekit.", "https://use.typekit.net/a.css")).status, "pass");
   assert.equal((await policy("Wir nutzen example-cdn.", "https://cdn.example-cdn.net/a.js")).status, "pass");
 });
+
+// Issue #40: payment vendors from data/third-parties.yml are matched by host and named in the policy.
+test("warns when Mollie is contacted but not named in the policy", async () => {
+  const result = await policy("Datenschutzerklärung", "https://js.mollie.com/v1/mollie.js");
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["Mollie"]);
+});
+
+test("passes when the policy names Klarna", async () => {
+  const result = await policy("Zahlungen über Klarna.", "https://x.klarnacdn.net/kp/1.0.0/klarna.js");
+  assert.equal(result.status, "pass");
+});
