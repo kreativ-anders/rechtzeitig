@@ -180,7 +180,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-IMP-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-imp-001 legal/imprint imprint is linked and reachable impressum ist verlinkt und erreichbar § 5 ddg (german digital services act) finds the imprint link on the start page (`imprint`), loads it and checks http status and that it has text.">
+<details class="rule" id="LEG-DE-IMP-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-imp-001 legal/imprint imprint is linked and reachable impressum ist verlinkt und erreichbar § 5 ddg (german digital services act) finds the imprint link on the start page or its hreflang version in the scan language (`imprint`), loads it and checks http status and that it has text.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-IMP-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Imprint is linked and reachable</span>
@@ -189,7 +189,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds the imprint link on the start page (<code>imprint</code>), loads it and checks HTTP status and that it has text.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds the imprint link on the start page or its hreflang version in the scan language (<code>imprint</code>), loads it and checks HTTP status and that it has text.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Link the imprint from every page, for example in the footer, labeled &quot;Impressum&quot;.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/imprint"><code>checks/legal/imprint</code></a></dd></div>
@@ -335,7 +335,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-eu-dse-001 legal/privacy-policy privacy policy is linked and reachable datenschutzerklärung ist verlinkt und erreichbar art. 12, 13 gdpr finds the privacy link on the start page (`privacy`), loads it and checks http status and that it has text.">
+<details class="rule" id="LEG-EU-DSE-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-eu-dse-001 legal/privacy-policy privacy policy is linked and reachable datenschutzerklärung ist verlinkt und erreichbar art. 12, 13 gdpr finds the privacy link on the start page or its hreflang version in the scan language (`privacy`), loads it and checks http status and that it has text.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Privacy policy is linked and reachable</span>
@@ -344,7 +344,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds the privacy link on the start page (<code>privacy</code>), loads it and checks HTTP status and that it has text.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds the privacy link on the start page or its hreflang version in the scan language (<code>privacy</code>), loads it and checks HTTP status and that it has text.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Link the privacy policy from every page, for example in the footer, labeled &quot;Datenschutz&quot;.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/privacy-policy"><code>checks/legal/privacy-policy</code></a></dd></div>
@@ -403,7 +403,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-AGB-001" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-de-agb-001 legal/terms-link terms and conditions are linked and reachable agb sind verlinkt und erreichbar § 312i(1) sentence 1 no. 4 and § 305(2) bgb (german civil code) finds the t&amp;c link on the start page (`terms` in `lang/*.yml`), loads it and checks http status and that it has text; warns without a link, since t&amp;cs are optional. sales">
+<details class="rule" id="LEG-DE-AGB-001" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-de-agb-001 legal/terms-link terms and conditions are linked and reachable agb sind verlinkt und erreichbar § 312i(1) sentence 1 no. 4 and § 305(2) bgb (german civil code) finds the t&amp;c link on the start page or its hreflang version in the scan language (`terms` in `lang/*.yml`), loads it and checks http status and that it has text; warns without a link, since t&amp;cs are optional. sales">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-AGB-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Terms and conditions are linked and reachable</span>
@@ -412,7 +412,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds the T&amp;C link on the start page (<code>terms</code> in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text; warns without a link, since T&amp;Cs are optional.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds the T&amp;C link on the start page or its hreflang version in the scan language (<code>terms</code> in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text; warns without a link, since T&amp;Cs are optional.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Link the terms from the start page and the checkout, for example in the footer, labeled &quot;AGB&quot;. Customers must be able to open and save them when they sign the contract.</dd></div>
@@ -456,7 +456,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-WDR-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-wdr-001 legal/withdrawal-instruction withdrawal instructions with the model form and a pointer to the withdrawal function widerrufsbelehrung mit muster-widerrufsformular und hinweis auf die widerrufsfunktion art. 246a § 1(2) sentence 1 no. 1 egbgb with annex 2, § 356a bgb (since 19 june 2026) opens the withdrawal instructions linked from the start page (`withdrawal_info` in `lang/*.yml`), else the t&amp;cs when they contain them (`withdrawal_instruction`), and warns without the model form in the text or a link (`model_form`) or without a note on where the withdrawal function is (`withdraw_function_hint`). sales">
+<details class="rule" id="LEG-DE-WDR-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-wdr-001 legal/withdrawal-instruction withdrawal instructions with the model form and a pointer to the withdrawal function widerrufsbelehrung mit muster-widerrufsformular und hinweis auf die widerrufsfunktion art. 246a § 1(2) sentence 1 no. 1 egbgb with annex 2, § 356a bgb (since 19 june 2026) opens the withdrawal instructions linked from the start page or its hreflang version in the scan language (`withdrawal_info` in `lang/*.yml`), else the t&amp;cs when they contain them (`withdrawal_instruction`), and warns without the model form in the text or a link (`model_form`) or without a note on where the withdrawal function is (`withdraw_function_hint`). sales">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-WDR-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Withdrawal instructions with the model form and a pointer to the withdrawal function</span>
@@ -465,7 +465,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Opens the withdrawal instructions linked from the start page (<code>withdrawal_info</code> in <code>lang/*.yml</code>), else the T&amp;Cs when they contain them (<code>withdrawal_instruction</code>), and warns without the model form in the text or a link (<code>model_form</code>) or without a note on where the withdrawal function is (<code>withdraw_function_hint</code>).</dd></div>
+<div><dt>How it is checked</dt><dd>Opens the withdrawal instructions linked from the start page or its hreflang version in the scan language (<code>withdrawal_info</code> in <code>lang/*.yml</code>), else the T&amp;Cs when they contain them (<code>withdrawal_instruction</code>), and warns without the model form in the text or a link (<code>model_form</code>) or without a note on where the withdrawal function is (<code>withdraw_function_hint</code>).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Link withdrawal instructions following the model in Annex 1 EGBGB, with the model withdrawal form from Annex 2 and a sentence on where the withdrawal function &quot;Vertrag widerrufen&quot; is (&quot;Sie können Ihr Widerrufsrecht auch online unter … ausüben&quot;).</dd></div>

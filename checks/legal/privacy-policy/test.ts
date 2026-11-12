@@ -12,6 +12,11 @@ test("finds an English privacy policy", async () => {
   assert.equal((await runCheck(here, "english", { language: "en" })).status, "pass");
 });
 
+test("follows hreflang to the privacy policy in the scan language", async () => {
+  // The start page is English and links /privacy; only the hreflang="de" version links /de/datenschutz.
+  assert.equal((await runCheck(here, "hreflang")).status, "pass");
+});
+
 test("fails without a link", async () => {
   assert.equal((await runCheck(here, "missing")).status, "fail");
 });
