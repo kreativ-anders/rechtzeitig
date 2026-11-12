@@ -1402,7 +1402,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-DEPS-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-deps-001 security/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i part i(2)(a) and part ii(2) (from 11 dec 2027) sends the package urls of all locked components to the osv api and loads details for up to 100 issues, showing the fixed version of the osv range that contains the installed version (none when no range does); high and critical issues fail when any lockfile uses the package in production. vulnerabilities">
+<details class="rule" id="SEC-DEPS-001" data-module="security" data-scope="repository" data-severity="high" data-search="sec-deps-001 security/vulnerabilities no dependencies with known vulnerabilities keine abhängigkeiten mit bekannten sicherheitslücken art. 32 gdpr, cra annex i part i(2)(a) and part ii(2) (from 11 dec 2027) sends the package urls of all locked components to the osv api and loads details for up to 100 issues, showing the fixed version of the osv range that contains the installed version (none when no range does); one finding per lockfile that locks the affected version; high and critical issues fail when any lockfile uses the package in production. vulnerabilities">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-DEPS-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">No dependencies with known vulnerabilities</span>
@@ -1412,7 +1412,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues, showing the fixed version of the OSV range that contains the installed version (none when no range does); high and critical issues fail when any lockfile uses the package in production.</dd></div>
+<div><dt>How it is checked</dt><dd>Sends the package URLs of all locked components to the OSV API and loads details for up to 100 issues, showing the fixed version of the OSV range that contains the installed version (none when no range does); one finding per lockfile that locks the affected version; high and critical issues fail when any lockfile uses the package in production.</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>Runs when</dt><dd>Opt-in: only with <code>vulnerabilities: true</code>, which sends data to api.osv.dev. Without it the check is skipped and nothing is sent.</dd></div>
 <div><dt>How to fix</dt><dd>Update the affected packages to at least the fixed version shown.</dd></div>
