@@ -410,6 +410,76 @@
   country: GB
   packages: ['@sumup/sdk']
 
+- name: Mailchimp
+  hosts: [api.mailchimp.com, admin.mailchimp.com, chimpstatic.com]
+  purpose: newsletter
+  consent: required
+  country: US
+  packages: ['@mailchimp/mailchimp_marketing']
+
+- name: Brevo
+  hosts: [api.brevo.com, smtp.brevo.com, api.sendinblue.com, sibforms.com]
+  purpose: newsletter
+  consent: required
+  country: FR
+  names: [brevo, sendinblue]
+  packages: ['@getbrevo/brevo']
+
+- name: CleverReach
+  hosts: [app.cleverreach.com, api.cleverreach.com]
+  purpose: newsletter
+  consent: required
+  country: DE
+
+- name: rapidmail
+  hosts: [app.rapidmail.com, api.rapidmail.com]
+  purpose: newsletter
+  consent: required
+  country: DE
+
+- name: Klaviyo
+  hosts: [klaviyo.com]
+  purpose: newsletter
+  consent: required
+  country: US
+  packages: [klaviyo-api]
+
+- name: MailerLite
+  hosts: [app.mailerlite.com, api.mailerlite.com]
+  purpose: newsletter
+  consent: required
+  country: LT
+  packages: ['@mailerlite/mailerlite-nodejs']
+
+- name: Kit
+  hosts: [app.kit.com, api.kit.com, app.convertkit.com, api.convertkit.com]
+  purpose: newsletter
+  consent: required
+  country: US
+  names: [kit, convertkit]
+
+- name: SendGrid
+  hosts: [api.sendgrid.com]
+  purpose: newsletter
+  consent: check
+  country: US
+  names: [sendgrid, twilio sendgrid]
+  packages: ['@sendgrid/mail', '@sendgrid/client']
+
+- name: Mailjet
+  hosts: [api.mailjet.com]
+  purpose: newsletter
+  consent: check
+  country: FR
+  packages: [mailjet]
+
+- name: Resend
+  hosts: [api.resend.com]
+  purpose: newsletter
+  consent: check
+  country: US
+  packages: [resend]
+
 - name: Sentry
   hosts: [sentry.io, sentry-cdn.com]
   purpose: error tracking

@@ -53,3 +53,10 @@ test("passes when the policy names Klarna", async () => {
   const result = await policy("Zahlungen über Klarna.", "https://x.klarnacdn.net/kp/1.0.0/klarna.js");
   assert.equal(result.status, "pass");
 });
+
+// Issue #40: newsletter vendors from data/third-parties.yml are matched by host.
+test("warns when Brevo forms are contacted but not named in the policy", async () => {
+  const result = await policy("Datenschutzerklärung", "https://sibforms.com/forms/end-form/123.js");
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["Brevo"]);
+});
