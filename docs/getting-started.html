@@ -78,6 +78,31 @@
           </tbody>
         </table></div>
         <p>All inputs: <a href="workflow.html#inputs">Inputs</a>.</p>
+
+        <h3>Staging, preview and internal sites</h3>
+        <p>Private or local hosts are allowed for the <code>url</code> host only; third parties and redirects on private addresses stay blocked. Three setups:</p>
+        <ul>
+          <li><b>Preview URL</b> (Vercel, Netlify): take it from a previous step's output.
+            <pre><code>- uses: kreativ-anders/rechtzeitig@…
+  with:
+    url: ${{ steps.deploy.outputs.preview-url }}</code></pre></li>
+          <li><b>App started in the same job:</b> the input host may be <code>localhost</code>.
+            <pre><code>- run: |
+    npm start &amp;
+    sleep 5
+- uses: kreativ-anders/rechtzeitig@…
+  with:
+    url: http://localhost:3000/</code></pre></li>
+          <li><b>Intranet:</b> use a self-hosted runner that can reach it. Only the <code>url</code> host is contacted, nothing else on the private network.
+            <pre><code>jobs:
+  scan:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v6
+      - uses: kreativ-anders/rechtzeitig@…
+        with:
+          url: https://intranet.example.de/</code></pre></li>
+        </ul>
       </section>
 
       <section id="opt-in">
