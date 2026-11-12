@@ -180,7 +180,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-IMP-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-imp-001 legal/imprint imprint is linked and reachable impressum ist verlinkt und erreichbar § 5 ddg (german digital services act) finds the imprint link on the start page or its hreflang version in the scan language (`imprint`), loads it and checks http status and that it has text.">
+<details class="rule" id="LEG-DE-IMP-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-imp-001 legal/imprint imprint is linked and reachable impressum ist verlinkt und erreichbar § 5 ddg (german digital services act) finds the imprint link on the start page or its hreflang version (`imprint`, link words of every language in `lang/*.yml`), loads it and checks http status and that it has text.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-IMP-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Imprint is linked and reachable</span>
@@ -189,7 +189,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds the imprint link on the start page or its hreflang version in the scan language (<code>imprint</code>), loads it and checks HTTP status and that it has text.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds the imprint link on the start page or its hreflang version (<code>imprint</code>, link words of every language in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Link the imprint from every page, for example in the footer, labeled &quot;Impressum&quot;.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/imprint"><code>checks/legal/imprint</code></a></dd></div>
@@ -266,7 +266,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-REF-001" data-module="legal" data-scope="website" data-severity="low" data-search="leg-de-ref-001 legal/outdated-references imprint and privacy policy name no repealed laws impressum und datenschutzerklärung nennen keine aufgehobenen gesetze ddg and tdddg (since 14 may 2024), mstv (since 7 nov 2020), cjeu c-311/18 on the privacy shield searches the imprint and the privacy policy for the old names in `data/outdated-laws.yml` (tmg, ttdsg, rstv, privacy shield) and ignores a page that also names what applies instead.">
+<details class="rule" id="LEG-DE-REF-001" data-module="legal" data-scope="website" data-severity="low" data-search="leg-de-ref-001 legal/outdated-references imprint and privacy policy name no repealed laws impressum und datenschutzerklärung nennen keine aufgehobenen gesetze ddg and tdddg (since 14 may 2024), mstv (since 7 nov 2020), cjeu c-311/18 on the privacy shield searches the imprint and the privacy policy (found via the link words of every language in `lang/*.yml`) for the old names in `data/outdated-laws.yml` (tmg, ttdsg, rstv, privacy shield) and ignores a page that also names what applies instead.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-REF-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
 <span class="rule-title">Imprint and privacy policy name no repealed laws</span>
@@ -275,7 +275,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Searches the imprint and the privacy policy for the old names in <code>data/outdated-laws.yml</code> (TMG, TTDSG, RStV, Privacy Shield) and ignores a page that also names what applies instead.</dd></div>
+<div><dt>How it is checked</dt><dd>Searches the imprint and the privacy policy (found via the link words of every language in <code>lang/*.yml</code>) for the old names in <code>data/outdated-laws.yml</code> (TMG, TTDSG, RStV, Privacy Shield) and ignores a page that also names what applies instead.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Replace TMG with DDG (imprint: § 5 DDG), TTDSG with TDDDG (§ 25 TDDDG), RStV with MStV (§ 18(2) MStV); base US transfers on the EU-US Data Privacy Framework or standard contractual clauses instead of the Privacy Shield.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/outdated-references"><code>checks/legal/outdated-references</code></a></dd></div>
@@ -283,7 +283,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-IMP-004" data-module="legal" data-scope="both" data-severity="high" data-search="leg-de-imp-004 legal/placeholder-legal-texts imprint and privacy policy without template data impressum und datenschutzerklärung ohne vorlagendaten § 5(1) ddg (german digital services act); art. 13(1)(a) gdpr looks for template data (`placeholder` in `lang/*.yml`: max mustermann, musterstraße, lorem ipsum, [firmenname], example.com addresses, +49 123 456…, de123456789) line by line in the live imprint and privacy policy and in the repository's legal page files (extensions and paths in `data/legal-texts.yml`); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.">
+<details class="rule" id="LEG-DE-IMP-004" data-module="legal" data-scope="both" data-severity="high" data-search="leg-de-imp-004 legal/placeholder-legal-texts imprint and privacy policy without template data impressum und datenschutzerklärung ohne vorlagendaten § 5(1) ddg (german digital services act); art. 13(1)(a) gdpr looks for template data (`placeholder` in `lang/*.yml`: max mustermann, musterstraße, lorem ipsum, [firmenname], example.com addresses, +49 123 456…, de123456789) line by line in the live imprint and privacy policy (found via the link words of every language in `lang/*.yml`) and in the repository's legal page files (extensions and paths in `data/legal-texts.yml`); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-IMP-004<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Imprint and privacy policy without template data</span>
@@ -292,7 +292,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Looks for template data (<code>placeholder</code> in <code>lang/*.yml</code>: Max Mustermann, Musterstraße, Lorem ipsum, [Firmenname], example.com addresses, +49 123 456…, DE123456789) line by line in the live imprint and privacy policy and in the repository's legal page files (extensions and paths in <code>data/legal-texts.yml</code>); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.</dd></div>
+<div><dt>How it is checked</dt><dd>Looks for template data (<code>placeholder</code> in <code>lang/*.yml</code>: Max Mustermann, Musterstraße, Lorem ipsum, [Firmenname], example.com addresses, +49 123 456…, DE123456789) line by line in the live imprint and privacy policy (found via the link words of every language in <code>lang/*.yml</code>) and in the repository's legal page files (extensions and paths in <code>data/legal-texts.yml</code>); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
 <div><dt>How to fix</dt><dd>Replace the template data with the provider's real details (name, postal address, email, phone, register, VAT ID) and deploy again.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/placeholder-legal-texts"><code>checks/legal/placeholder-legal-texts</code></a></dd></div>
@@ -335,7 +335,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-eu-dse-001 legal/privacy-policy privacy policy is linked and reachable datenschutzerklärung ist verlinkt und erreichbar art. 12, 13 gdpr finds the privacy link on the start page or its hreflang version in the scan language (`privacy`), loads it and checks http status and that it has text.">
+<details class="rule" id="LEG-EU-DSE-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-eu-dse-001 legal/privacy-policy privacy policy is linked and reachable datenschutzerklärung ist verlinkt und erreichbar art. 12, 13 gdpr finds the privacy link on the start page or its hreflang version (`privacy`, link words of every language in `lang/*.yml`), loads it and checks http status and that it has text.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Privacy policy is linked and reachable</span>
@@ -344,7 +344,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds the privacy link on the start page or its hreflang version in the scan language (<code>privacy</code>), loads it and checks HTTP status and that it has text.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds the privacy link on the start page or its hreflang version (<code>privacy</code>, link words of every language in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Link the privacy policy from every page, for example in the footer, labeled &quot;Datenschutz&quot;.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/privacy-policy"><code>checks/legal/privacy-policy</code></a></dd></div>
@@ -403,7 +403,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-AGB-001" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-de-agb-001 legal/terms-link terms and conditions are linked and reachable agb sind verlinkt und erreichbar § 312i(1) sentence 1 no. 4 and § 305(2) bgb (german civil code) finds the t&amp;c link on the start page or its hreflang version in the scan language (`terms` in `lang/*.yml`), loads it and checks http status and that it has text; warns without a link, since t&amp;cs are optional. sales">
+<details class="rule" id="LEG-DE-AGB-001" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-de-agb-001 legal/terms-link terms and conditions are linked and reachable agb sind verlinkt und erreichbar § 312i(1) sentence 1 no. 4 and § 305(2) bgb (german civil code) finds the t&amp;c link on the start page or its hreflang version (`terms`, link words of every language in `lang/*.yml`), loads it and checks http status and that it has text; warns without a link, since t&amp;cs are optional. sales">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-AGB-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Terms and conditions are linked and reachable</span>
@@ -412,7 +412,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds the T&amp;C link on the start page or its hreflang version in the scan language (<code>terms</code> in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text; warns without a link, since T&amp;Cs are optional.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds the T&amp;C link on the start page or its hreflang version (<code>terms</code>, link words of every language in <code>lang/*.yml</code>), loads it and checks HTTP status and that it has text; warns without a link, since T&amp;Cs are optional.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Link the terms from the start page and the checkout, for example in the footer, labeled &quot;AGB&quot;. Customers must be able to open and save them when they sign the contract.</dd></div>
@@ -456,7 +456,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-WDR-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-wdr-001 legal/withdrawal-instruction withdrawal instructions with the model form and a pointer to the withdrawal function widerrufsbelehrung mit muster-widerrufsformular und hinweis auf die widerrufsfunktion art. 246a § 1(2) sentence 1 no. 1 egbgb with annex 2, § 356a bgb (since 19 june 2026) opens the withdrawal instructions linked from the start page or its hreflang version in the scan language (`withdrawal_info` in `lang/*.yml`), else the t&amp;cs when they contain them (`withdrawal_instruction`), and warns without the model form in the text or a link (`model_form`) or without a note on where the withdrawal function is (`withdraw_function_hint`). sales">
+<details class="rule" id="LEG-DE-WDR-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-wdr-001 legal/withdrawal-instruction withdrawal instructions with the model form and a pointer to the withdrawal function widerrufsbelehrung mit muster-widerrufsformular und hinweis auf die widerrufsfunktion art. 246a § 1(2) sentence 1 no. 1 egbgb with annex 2, § 356a bgb (since 19 june 2026) opens the withdrawal instructions linked from the start page or its hreflang version (`withdrawal_info`, link words of every language in `lang/*.yml`), else the t&amp;cs when they contain them (`withdrawal_instruction`), and warns without the model form in the text or a link (`model_form`) or without a note on where the withdrawal function is (`withdraw_function_hint`). sales">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-WDR-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Withdrawal instructions with the model form and a pointer to the withdrawal function</span>
@@ -465,7 +465,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Opens the withdrawal instructions linked from the start page or its hreflang version in the scan language (<code>withdrawal_info</code> in <code>lang/*.yml</code>), else the T&amp;Cs when they contain them (<code>withdrawal_instruction</code>), and warns without the model form in the text or a link (<code>model_form</code>) or without a note on where the withdrawal function is (<code>withdraw_function_hint</code>).</dd></div>
+<div><dt>How it is checked</dt><dd>Opens the withdrawal instructions linked from the start page or its hreflang version (<code>withdrawal_info</code>, link words of every language in <code>lang/*.yml</code>), else the T&amp;Cs when they contain them (<code>withdrawal_instruction</code>), and warns without the model form in the text or a link (<code>model_form</code>) or without a note on where the withdrawal function is (<code>withdraw_function_hint</code>).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Link withdrawal instructions following the model in Annex 1 EGBGB, with the model withdrawal form from Annex 2 and a sentence on where the withdrawal function &quot;Vertrag widerrufen&quot; is (&quot;Sie können Ihr Widerrufsrecht auch online unter … ausüben&quot;).</dd></div>
@@ -547,7 +547,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-CNS-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-005 privacy/consent-withdraw-link consent can be changed or withdrawn later einwilligung lässt sich später ändern oder widerrufen art. 7(3) gdpr, § 25 tdddg when the start page has a consent banner (`consent_accept` in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (`consent_settings`, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.">
+<details class="rule" id="LEG-EU-CNS-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-005 privacy/consent-withdraw-link consent can be changed or withdrawn later einwilligung lässt sich später ändern oder widerrufen art. 7(3) gdpr, § 25 tdddg when the start page has a consent banner (`consent_accept` in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy (found via the link words of every language in `lang/*.yml`), for a link or button to the consent settings (`consent_settings`, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-005<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Consent can be changed or withdrawn later</span>
@@ -556,7 +556,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>When the start page has a consent banner (<code>consent_accept</code> in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (<code>consent_settings</code>, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.</dd></div>
+<div><dt>How it is checked</dt><dd>When the start page has a consent banner (<code>consent_accept</code> in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy (found via the link words of every language in <code>lang/*.yml</code>), for a link or button to the consent settings (<code>consent_settings</code>, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Offer an always visible link or icon on every page that opens the cookie settings directly, for example &quot;Cookie settings&quot; in the footer.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-withdraw-link"><code>checks/privacy/consent-withdraw-link</code></a></dd></div>
@@ -1530,7 +1530,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SUS-JS-001" data-module="sustainability" data-scope="website" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible), art. 12(1) gdpr (easily accessible form) checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with javascript off and that the linked page that loaded shows at least 100 characters of text without it.">
+<details class="rule" id="SUS-JS-001" data-module="sustainability" data-scope="website" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible), art. 12(1) gdpr (easily accessible form) checks that imprint and privacy links (`imprint`, `privacy`, link words of every language in `lang/*.yml`) exist with javascript off and that the linked page that loaded shows at least 100 characters of text without it.">
 <summary>
 <span class="rule-head"><span class="rule-id">SUS-JS-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Imprint and privacy policy work without JavaScript</span>
@@ -1539,7 +1539,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Checks that imprint and privacy links (<code>imprint</code>, <code>privacy</code> in <code>lang/*.yml</code>) exist with JavaScript off and that the linked page that loaded shows at least 100 characters of text without it.</dd></div>
+<div><dt>How it is checked</dt><dd>Checks that imprint and privacy links (<code>imprint</code>, <code>privacy</code>, link words of every language in <code>lang/*.yml</code>) exist with JavaScript off and that the linked page that loaded shows at least 100 characters of text without it.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Deliver the links and texts of the legal pages as static HTML.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/legal-pages-without-js"><code>checks/sustainability/legal-pages-without-js</code></a></dd></div>

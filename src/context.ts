@@ -1,8 +1,8 @@
-import { matchLinks, patternsFor, type Language } from "./lang.ts";
+import { legalLinkPatterns, matchLinks, patternsFor, type Language } from "./lang.ts";
 import type { Registry } from "./registry.ts";
 import { isWebUrl, normalize, siteOf, withoutHash } from "./text.ts";
 import type { CrawlData } from "./crawl.ts";
-import { loaded, pageLinks, unique, type Page, type ScanContext, type Snapshot } from "./sdk.ts";
+import { LEGAL_CONCEPTS, loaded, pageLinks, unique, type Page, type ScanContext, type Snapshot } from "./sdk.ts";
 
 export interface ContextOptions {
   languages: string[];
@@ -38,7 +38,8 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
     observedPages,
     jsFailed: observedPages.filter((p) => !loaded(p.js)),
     page,
-    links: (concept, from) => matchLinks(lang, concept, Array.isArray(from) ? from : from.links),
+    // Legal-page links are wording from the law: match them with the link words of every language, not only the scan language.
+    links: (concept, from) => matchLinks(LEGAL_CONCEPTS.includes(concept) ? { ...lang, links: legalLinkPatterns() } : lang, concept, Array.isArray(from) ? from : from.links),
     says: (concept, text) => {
       const group = lang.text[concept] ? "text" : "links";
       const t = normalize(text);
