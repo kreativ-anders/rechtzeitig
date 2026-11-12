@@ -1,6 +1,8 @@
 import { after, test } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync } from "node:fs";
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { capture, CodeCollector } from "./capture.ts";
@@ -100,6 +102,7 @@ const response = (url: string, body: string | Error, headers: Record<string, str
     url: () => url,
     status: () => 200,
     headers: () => headers,
+    finished: () => Promise.resolve(null),
     text: () => new Promise<string>((done, fail) => setTimeout(() => (body instanceof Error ? fail(body) : done(body)), 5)),
   }) as unknown as Fake;
 
@@ -130,4 +133,56 @@ test("CodeCollector does not read a body announced larger than max_file_chars ca
   await code.take(response("https://example.de/big.js", "x", big), "script");
   assert.equal(code.files.length, 0);
   assert.equal(code.skipped, 1);
+});
+
+// Issue #55: a response without Content-Length (chunked) is bounded by the bytes counted while they arrive.
+test("CodeCollector does not read a body that arrived larger than the limit, with no Content-Length", async () => {
+  const code = new CodeCollector(100); // test-only limit: 100 chars, so 400 bytes
+  let reads = 0;
+  const res = {
+    url: () => "https://example.de/big.js",
+    status: () => 200,
+    headers: () => ({}),
+    finished: () => Promise.resolve(null),
+    text: () => {
+      reads++;
+      return Promise.resolve("x".repeat(1000));
+    },
+  } as unknown as Fake;
+  await code.take(res, "script", () => 401);
+  assert.equal(code.files.length, 0);
+  assert.equal(code.skipped, 1);
+  assert.equal(reads, 0, "text() is never called for an over-limit body");
+});
+
+test("CodeCollector reads a chunked body within the limit", async () => {
+  const code = new CodeCollector(100);
+  const res = { ...response("https://example.de/ok.js", "hello"), finished: () => Promise.resolve(null) } as unknown as Fake;
+  await code.take(res, "script", () => 5);
+  assert.deepEqual(code.files.map((f) => [f.url, f.body]), [["https://example.de/ok.js", "hello"]]);
+  assert.equal(code.skipped, 0);
+});
+
+test("a chunked script larger than the limit is skipped and not kept", async () => {
+  const code = new CodeCollector(100); // test-only limit: 100 chars, so 400 bytes
+  const server = createServer((req, res) => {
+    if (req.url === "/big.js") {
+      res.writeHead(200, { "content-type": "application/javascript", "transfer-encoding": "chunked" });
+      res.end("x".repeat(500));
+    } else {
+      res.writeHead(200, { "content-type": "text/html" });
+      res.end('<script src="/big.js"></script>');
+    }
+  });
+  await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
+  const port = (server.address() as AddressInfo).port;
+  const context = await (await browser).newContext();
+  try {
+    await capture(context, `http://127.0.0.1:${port}/`, true, 10_000, code, 500);
+    assert.ok(!code.files.some((f) => f.url.endsWith("/big.js")), "big.js is not kept");
+    assert.equal(code.skipped, 1);
+  } finally {
+    await context.close();
+    server.close();
+  }
 });

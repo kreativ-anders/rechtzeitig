@@ -1,10 +1,11 @@
 import type { Browser } from "playwright";
 import { capture, CodeCollector } from "./capture.ts";
-import { matchLinks, type Language } from "./lang.ts";
+import { loadYaml } from "./data.ts";
+import { legalLinkPatterns, matchLinks, type Language } from "./lang.ts";
 import { countries, emailDns, greenHosting, hostVariant, plainHttp, probe, sourceMaps, tlsInfo } from "./probe.ts";
 import { isPublicHost, publicProxy } from "./net.ts";
 import { isWebUrl, siteOf, withoutHash } from "./text.ts";
-import { pageLinks, type Area, type Page, type Probe, type ScanContext, type Snapshot } from "./sdk.ts";
+import { LEGAL_CONCEPTS, pageLinks, type Area, type Page, type Probe, type ScanContext, type Snapshot } from "./sdk.ts";
 
 export interface CrawlOptions {
   browser: Browser;
@@ -42,7 +43,7 @@ export interface CrawlData {
 
 const SKIP_FILES = /\.(pdf|zip|gz|dmg|pkg|exe|msi|apk|jpe?g|png|gif|svg|webp|avif|ico|mp3|mp4|webm|xml|json|txt|ics|rss|atom)$/i;
 const SAMPLE_ORDER: Area[] = ["nav", "header", "footer", "main", "other", "banner"];
-const LEGAL_LINKS_PER_CONCEPT = 2;
+const CRAWL = loadYaml<{ crawl: { legal_links_per_concept: number } }>("data/thresholds.yml").crawl;
 const MAX_COUNTRY_LOOKUPS = 30;
 
 const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_FILES.test(new URL(href).pathname);
@@ -146,11 +147,13 @@ function hreflangTarget(start: Page, codes: string[], self: Set<string>): string
 
 function legalTargets(start: Page, lang: Language): string[] {
   const urls: string[] = [];
+  // Legal-page links are wording from the law: match them with the link words of every language, not only the scan language.
+  const allLang = { ...lang, links: legalLinkPatterns() };
   for (const concept of Object.keys(lang.links)) {
-    const hrefs = matchLinks(lang, concept, pageLinks(start))
+    const hrefs = matchLinks(LEGAL_CONCEPTS.includes(concept) ? allLang : lang, concept, pageLinks(start))
       .map((l) => l.href)
       .filter(isPage);
-    urls.push(...[...new Set(hrefs)].slice(0, LEGAL_LINKS_PER_CONCEPT));
+    urls.push(...[...new Set(hrefs)].slice(0, CRAWL.legal_links_per_concept));
   }
   return urls;
 }

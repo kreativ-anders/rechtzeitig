@@ -15,15 +15,18 @@ import { componentRef } from "./sbom.ts";
 import type { Component, RepoContext, RepoCoverage, UnreadReason } from "../sdk.ts";
 
 const SKIP_DIRS = new Set([".git", "node_modules", "vendor", ".venv", "venv", "dist", "build", ".next", "target"]);
-const LIMITS = loadYaml<{ repo: { max_file_bytes: number; max_lockfile_bytes: number } }>("data/thresholds.yml").repo;
+const LIMITS = loadYaml<{ repo: { max_file_bytes: number; max_lockfile_bytes: number; cache_bytes: number } }>("data/thresholds.yml").repo;
 const LFS_POINTER = /^version https:\/\/git-lfs\.github\.com\/spec\/v1\n/;
 
 export interface RepoOptions {
   /** Query OSV for vulnerabilities. Off in tests. */
   osv?: boolean;
+  /** Tests only: override data/thresholds.yml repo.cache_bytes. */
+  cacheBytes?: number;
 }
 
-type Read = { text: string } | { skipped: Exclude<UnreadReason, "invalid" | "lfs"> } | undefined;
+/** What the first pass keeps per file: never the text, so many sub-limit files cannot build a large heap. */
+type Read = { skipped: Exclude<UnreadReason, "invalid" | "lfs"> } | { ok: true; size: number; lfs: boolean } | undefined;
 
 /** Returns undefined when the folder has no files (for example, no actions/checkout step). */
 export async function scanRepo(path: string, opts: RepoOptions = {}): Promise<RepoContext | undefined> {
@@ -31,24 +34,50 @@ export async function scanRepo(path: string, opts: RepoOptions = {}): Promise<Re
   const listing = listFiles(root);
   const files = listing.files;
   if (!files.length) return undefined;
+  const cacheBytes = opts.cacheBytes ?? LIMITS.cache_bytes;
   const cache = new Map<string, Read>();
+  // LRU over file texts, bounded by repo.cache_bytes (data/thresholds.yml); an evicted file is re-read on demand.
+  const texts = new Map<string, string>();
+  let textChars = 0;
+  const limitOf = (path: string) => (parserFor(path) ? LIMITS.max_lockfile_bytes : LIMITS.max_file_bytes);
   const load = (path: string) => {
-    if (!cache.has(path)) cache.set(path, readText(join(root, path), parserFor(path) ? LIMITS.max_lockfile_bytes : LIMITS.max_file_bytes));
+    if (!cache.has(path)) {
+      const r = readText(join(root, path), limitOf(path));
+      if (!r) cache.set(path, undefined);
+      else if ("skipped" in r) cache.set(path, { skipped: r.skipped });
+      else cache.set(path, { ok: true, size: r.text.length, lfs: LFS_POINTER.test(r.text) });
+    }
     return cache.get(path);
   };
   const read = (path: string) => {
     const r = load(path);
-    return r && "text" in r ? r.text : undefined;
+    if (!r || !("ok" in r)) return undefined;
+    const kept = texts.get(path);
+    if (kept !== undefined) {
+      texts.delete(path);
+      texts.set(path, kept); // most recently used last
+      return kept;
+    }
+    const fresh = readText(join(root, path), limitOf(path));
+    if (!fresh || "skipped" in fresh) return undefined;
+    texts.set(path, fresh.text);
+    textChars += fresh.text.length;
+    while (textChars > cacheBytes && texts.size > 1) {
+      const oldest = texts.keys().next().value!;
+      textChars -= texts.get(oldest)!.length;
+      texts.delete(oldest);
+    }
+    return fresh.text;
   };
 
-  // Every file once, so the report can say what was not read. Checks read from the same cache.
+  // Every file once, so the report can say what was not read. Checks read through the LRU cache above.
   const large: string[] = [];
   const binary: string[] = [];
   const lfs: string[] = [];
   for (const file of files) {
     const r = load(file);
     if (r && "skipped" in r) (r.skipped === "large" ? large : binary).push(file);
-    else if (r && LFS_POINTER.test(r.text)) lfs.push(file);
+    else if (r && r.lfs) lfs.push(file);
   }
 
   const lfsSet = new Set(lfs);
@@ -68,8 +97,10 @@ export async function scanRepo(path: string, opts: RepoOptions = {}): Promise<Re
       locks.failed.push({ file, reason: "lfs" });
       continue;
     }
+    const text = read(file);
+    if (text === undefined) continue;
     try {
-      const found = parser(r.text).map((c) => ({ ...c, purl: purl(c), source: file }));
+      const found = parser(text).map((c) => ({ ...c, purl: purl(c), source: file }));
       components.push(...found);
       lockfiles.push(file);
       (found.length ? locks.parsed : locks.empty).push(file);
@@ -171,7 +202,7 @@ function isRegularFile(path: string): boolean {
 }
 
 /** Reads at most `max` bytes of a regular file. Larger and binary files say why they were skipped; symlinks, devices and errors give undefined. */
-function readText(path: string, max: number): Read {
+function readText(path: string, max: number): { text: string } | { skipped: Exclude<UnreadReason, "invalid" | "lfs"> } | undefined {
   let fd: number | undefined;
   try {
     fd = openSync(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0) | (constants.O_NONBLOCK ?? 0));

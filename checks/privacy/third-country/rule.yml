@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 13 Abs. 1 lit. f, Art. 44 ff. DSGVO, EuGH C-311/18 (Schrems II)"
   en: "Art. 13(1)(f), Art. 44 ff. GDPR, ECJ C-311/18 (Schrems II)"
-how: "Takes the company country of the site's own hosting provider from the start page's response headers (`headers`, `country` in `data/hosting.yml`) and of each third-party service (`country` in `data/third-parties.yml`), the IP country from IPinfo only with `ipinfo-token` for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the EEA (`data/countries.yml`) looks for `third_country` wording in the privacy policy; whether the policy names the host at all is LEG-EU-DSE-007."
+how: "Takes the company country of the site's own hosting provider from the start page's response headers (`headers`, `country` in `data/hosting.yml`) and of each third-party service (`country` in `data/third-parties.yml`), the IP country from IPinfo only with `ipinfo-token` for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the EEA (`data/countries.yml`) looks for `third_country` wording in the privacy policy (linked from the start page or its hreflang version in the scan language); whether the policy names the host at all is LEG-EU-DSE-007."
 fix_hint:
   de: "Für den Hoster und jeden Dienst außerhalb von EU/EWR Land und Garantie nennen (z. B. Data Privacy Framework, Standardvertragsklauseln)."
   en: "Name the country and the safeguard for the hosting provider and each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses)."

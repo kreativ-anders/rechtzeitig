@@ -12,6 +12,11 @@ repo:
   max_file_bytes: 1000000
   # Largest lockfile read (names in src/repo/lockfiles.ts). Lockfiles of large projects pass 1 MB.
   max_lockfile_bytes: 50000000
+  # Approximate total size of file texts kept in memory for the whole run (counted in characters, about one
+  # byte per Latin-1 character). The first pass keeps no text; checks that read a file again get it from this
+  # LRU cache, and an evicted file is re-read from disk. Bounds the retained heap on repositories with many
+  # files below max_file_bytes.
+  cache_bytes: 268435456
 
 # axe-core on the JavaScript load of each page (src/capture.ts, rules in data/accessibility.yml).
 axe:
@@ -29,6 +34,11 @@ code:
   max_files: 40
   # Source maps requested per scan (security/source-maps), each read up to max_file_chars.
   max_maps: 5
+
+# Crawling the website (src/crawl.ts).
+crawl:
+  # Links followed per link concept (imprint, privacy, ...), after deduping.
+  legal_links_per_concept: 2
 
 # Reject button less prominent than the accept button. The authorities set no fixed numbers
 # (DSK OH Telemedien Rn. 125, EDPB Cookie Banner Taskforce Rn. 17), so these only flag clear cases.

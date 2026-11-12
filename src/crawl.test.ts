@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { siteFromFiles } from "../test/helpers.ts";
+import { pageLinks } from "./sdk.ts";
 
 // A site whose start page is English and announces a German version via hreflang.
 const multilingual = {
@@ -59,4 +60,30 @@ test("an hreflang to another site is not visited", async () => {
 test("the hreflang version counts against max-pages", async () => {
   const ctx = await siteFromFiles(multilingual, { maxPages: 1 });
   assert.equal(ctx.pages.length, 1);
+});
+
+// Issue #52: legal-page links are matched with the link words of every language, not only the scan language.
+const germanPage = {
+  "index.html": `<html lang="de"><body><main><h1>Start</h1><button>Verträge hier kündigen</button></main><footer><a href="/impressum.html">Impressum</a> <a href="/datenschutz.html">Datenschutzerklärung</a></footer></body></html>`,
+  "impressum.html": `<html lang="de"><body><h1>Impressum</h1><p>Angaben gemäß § 5 DDG: Beispiel GmbH, Musterstraße 1, 12345 Berlin.</p></body></html>`,
+  "datenschutz.html": `<html lang="de"><body><h1>Datenschutzerklärung</h1><p>Personenbezogene Daten werden verarbeitet.</p></body></html>`,
+};
+
+test("an English scan of a German page finds the imprint and privacy links and visits both pages", async () => {
+  const ctx = await siteFromFiles(germanPage, { language: "en" });
+  const imprint = ctx.legalPage("imprint");
+  const privacy = ctx.legalPage("privacy");
+  assert.ok(imprint, "the English scan finds the German imprint link");
+  assert.ok(privacy, "the English scan finds the German privacy link");
+  assert.equal(new URL(imprint!.link.href!).pathname, "/impressum.html");
+  assert.equal(new URL(privacy!.link.href!).pathname, "/datenschutz.html");
+  assert.equal(imprint!.page?.js.status, 200, "/impressum.html was visited and loaded");
+  assert.equal(privacy!.page?.js.status, 200, "/datenschutz.html was visited and loaded");
+});
+
+test("other link concepts stay on the scan language: Kündigen is not the English cancel button", async () => {
+  const ctx = await siteFromFiles(germanPage, { language: "en" });
+  assert.equal(ctx.links("cancel", pageLinks(ctx.start)).length, 0);
+  const de = await siteFromFiles(germanPage, { language: "de" });
+  assert.ok(de.links("cancel", pageLinks(de.start)).length > 0, "the German scan matches Kündigen as cancel");
 });

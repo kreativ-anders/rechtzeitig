@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "DDG und TDDDG (seit 14.05.2024), MStV (seit 07.11.2020), EuGH C-311/18 zum Privacy Shield"
   en: "DDG and TDDDG (since 14 May 2024), MStV (since 7 Nov 2020), CJEU C-311/18 on the Privacy Shield"
-how: "Searches the imprint and the privacy policy for the old names in `data/outdated-laws.yml` (TMG, TTDSG, RStV, Privacy Shield) and ignores a page that also names what applies instead."
+how: "Searches the imprint and the privacy policy (linked from the start page or its hreflang version in the scan language, using the link words of every language in `lang/*.yml`) for the old names in `data/outdated-laws.yml` (TMG, TTDSG, RStV, Privacy Shield) and ignores a page that also names what applies instead."
 fix_hint:
   de: "TMG durch DDG ersetzen (Impressum: § 5 DDG), TTDSG durch TDDDG (§ 25 TDDDG), RStV durch MStV (§ 18 Abs. 2 MStV); Übermittlungen in die USA auf das EU-US Data Privacy Framework oder Standardvertragsklauseln stützen statt auf den Privacy Shield."
   en: "Replace TMG with DDG (imprint: § 5 DDG), TTDSG with TDDDG (§ 25 TDDDG), RStV with MStV (§ 18(2) MStV); base US transfers on the EU-US Data Privacy Framework or standard contractual clauses instead of the Privacy Shield."
