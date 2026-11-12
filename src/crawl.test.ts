@@ -46,3 +46,17 @@ test("an hreflang pointing to the start page itself is not visited again", async
   assert.equal(new URL(found.link.href!).pathname, "/datenschutz");
   assert.equal(ctx.pages.filter((p) => p.url === ctx.url).length, 1, "the start page is in pages exactly once");
 });
+
+test("an hreflang to another site is not visited", async () => {
+  const ctx = await siteFromFiles({
+    "index.html": `<html lang="en"><head><link rel="alternate" hreflang="de" href="https://example.de/"></head><body><footer><a href="/privacy">Privacy Policy</a></footer></body></html>`,
+    "privacy.html": multilingual["privacy.html"],
+  }, { language: "en" });
+  assert.equal(ctx.pages.some((p) => new URL(p.url).hostname === "example.de"), false);
+  assert.equal(new URL(ctx.legalPage("privacy")!.link.href!).pathname, "/privacy");
+});
+
+test("the hreflang version counts against max-pages", async () => {
+  const ctx = await siteFromFiles(multilingual, { maxPages: 1 });
+  assert.equal(ctx.pages.length, 1);
+});

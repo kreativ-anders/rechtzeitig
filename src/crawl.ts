@@ -50,7 +50,7 @@ const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_
 /**
  * Visits the start page, every page a language pack calls a legal page (imprint, privacy, ...),
  * then a sample of same-site pages, up to maxPages. When the start page announces an alternate in the
- * scan language (hreflang), that version is visited too and its legal links are read first.
+ * scan language (hreflang) on the same site, that version is visited too and its legal links are read first.
  * Each page is loaded twice: JavaScript off and on.
  */
 export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlData> {
@@ -86,7 +86,9 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     // A start page in another language that announces the scan language (hreflang): read the legal pages of that version.
     let langPage: Page | undefined;
     const alternate = hreflangTarget(start, opts.lang.codes, seen);
-    if (alternate && (await isPublicHost(new URL(alternate).hostname, trusted))) {
+    // Only the same site and only within max-pages: another domain would put a foreign site into every check.
+    const sameSite = alternate && siteOf(new URL(alternate).hostname) === siteOf(new URL(url).hostname);
+    if (alternate && sameSite && pages.length < opts.maxPages && (await isPublicHost(new URL(alternate).hostname, trusted))) {
       langPage = await visit(alternate);
       pages.push(langPage);
       seen.add(withoutHash(langPage.url));
