@@ -163,7 +163,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-IMP-002" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-imp-002 legal/imprint-details imprint contains the required details impressum enthält die pflichtangaben § 5(1) ddg searches the imprint text for email, phone or contact form (ibans ignored), german postcode (register numbers ignored), vat id and register number.">
+<details class="rule" id="LEG-DE-IMP-002" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-imp-002 legal/imprint-details imprint contains the required details impressum enthält die pflichtangaben § 5(1) ddg searches the imprint (linked from the start page or its hreflang version in the scan language) for email, phone or contact form (ibans ignored), german postcode (register numbers ignored), vat id and register number.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-IMP-002<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Imprint contains the required details</span>
@@ -172,7 +172,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Searches the imprint text for email, phone or contact form (IBANs ignored), German postcode (register numbers ignored), VAT ID and register number.</dd></div>
+<div><dt>How it is checked</dt><dd>Searches the imprint (linked from the start page or its hreflang version in the scan language) for email, phone or contact form (IBANs ignored), German postcode (register numbers ignored), VAT ID and register number.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Give name, postal address, email address and a second fast way of contact, plus register entry and VAT ID if you have them.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/imprint-details"><code>checks/legal/imprint-details</code></a></dd></div>
@@ -266,7 +266,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-REF-001" data-module="legal" data-scope="website" data-severity="low" data-search="leg-de-ref-001 legal/outdated-references imprint and privacy policy name no repealed laws impressum und datenschutzerklärung nennen keine aufgehobenen gesetze ddg and tdddg (since 14 may 2024), mstv (since 7 nov 2020), cjeu c-311/18 on the privacy shield searches the imprint and the privacy policy for the old names in `data/outdated-laws.yml` (tmg, ttdsg, rstv, privacy shield) and ignores a page that also names what applies instead.">
+<details class="rule" id="LEG-DE-REF-001" data-module="legal" data-scope="website" data-severity="low" data-search="leg-de-ref-001 legal/outdated-references imprint and privacy policy name no repealed laws impressum und datenschutzerklärung nennen keine aufgehobenen gesetze ddg and tdddg (since 14 may 2024), mstv (since 7 nov 2020), cjeu c-311/18 on the privacy shield searches the imprint and the privacy policy (linked from the start page or its hreflang version in the scan language) for the old names in `data/outdated-laws.yml` (tmg, ttdsg, rstv, privacy shield) and ignores a page that also names what applies instead.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-REF-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
 <span class="rule-title">Imprint and privacy policy name no repealed laws</span>
@@ -275,7 +275,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Searches the imprint and the privacy policy for the old names in <code>data/outdated-laws.yml</code> (TMG, TTDSG, RStV, Privacy Shield) and ignores a page that also names what applies instead.</dd></div>
+<div><dt>How it is checked</dt><dd>Searches the imprint and the privacy policy (linked from the start page or its hreflang version in the scan language) for the old names in <code>data/outdated-laws.yml</code> (TMG, TTDSG, RStV, Privacy Shield) and ignores a page that also names what applies instead.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Replace TMG with DDG (imprint: § 5 DDG), TTDSG with TDDDG (§ 25 TDDDG), RStV with MStV (§ 18(2) MStV); base US transfers on the EU-US Data Privacy Framework or standard contractual clauses instead of the Privacy Shield.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/outdated-references"><code>checks/legal/outdated-references</code></a></dd></div>
@@ -283,7 +283,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-IMP-004" data-module="legal" data-scope="both" data-severity="high" data-search="leg-de-imp-004 legal/placeholder-legal-texts imprint and privacy policy without template data impressum und datenschutzerklärung ohne vorlagendaten § 5(1) ddg (german digital services act); art. 13(1)(a) gdpr looks for template data (`placeholder` in `lang/*.yml`: max mustermann, musterstraße, lorem ipsum, [firmenname], example.com addresses, +49 123 456…, de123456789) line by line in the live imprint and privacy policy and in the repository's legal page files (extensions and paths in `data/legal-texts.yml`); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.">
+<details class="rule" id="LEG-DE-IMP-004" data-module="legal" data-scope="both" data-severity="high" data-search="leg-de-imp-004 legal/placeholder-legal-texts imprint and privacy policy without template data impressum und datenschutzerklärung ohne vorlagendaten § 5(1) ddg (german digital services act); art. 13(1)(a) gdpr looks for template data (`placeholder` in `lang/*.yml`: max mustermann, musterstraße, lorem ipsum, [firmenname], example.com addresses, +49 123 456…, de123456789) line by line in the live imprint and privacy policy (linked from the start page or its hreflang version in the scan language) and in the repository's legal page files (extensions and paths in `data/legal-texts.yml`); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-IMP-004<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Imprint and privacy policy without template data</span>
@@ -292,7 +292,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Looks for template data (<code>placeholder</code> in <code>lang/*.yml</code>: Max Mustermann, Musterstraße, Lorem ipsum, [Firmenname], example.com addresses, +49 123 456…, DE123456789) line by line in the live imprint and privacy policy and in the repository's legal page files (extensions and paths in <code>data/legal-texts.yml</code>); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.</dd></div>
+<div><dt>How it is checked</dt><dd>Looks for template data (<code>placeholder</code> in <code>lang/*.yml</code>: Max Mustermann, Musterstraße, Lorem ipsum, [Firmenname], example.com addresses, +49 123 456…, DE123456789) line by line in the live imprint and privacy policy (linked from the start page or its hreflang version in the scan language) and in the repository's legal page files (extensions and paths in <code>data/legal-texts.yml</code>); a live hit fails with the repository line it comes from, a hit only in the repository gives info, unread legal files keep it from passing.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
 <div><dt>How to fix</dt><dd>Replace the template data with the provider's real details (name, postal address, email, phone, register, VAT ID) and deploy again.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/placeholder-legal-texts"><code>checks/legal/placeholder-legal-texts</code></a></dd></div>
@@ -318,7 +318,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-002" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-eu-dse-002 legal/privacy-policy-details privacy policy covers the required topics datenschutzerklärung enthält die pflichtthemen art. 13 gdpr searches the privacy policy for 11 topics (`controller`, `storage_period`, `right_*` ... in `lang/*.yml`).">
+<details class="rule" id="LEG-EU-DSE-002" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-eu-dse-002 legal/privacy-policy-details privacy policy covers the required topics datenschutzerklärung enthält die pflichtthemen art. 13 gdpr searches the privacy policy (linked from the start page or its hreflang version in the scan language) for 11 topics (`controller`, `storage_period`, `right_*` ... in `lang/*.yml`).">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-002<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy covers the required topics</span>
@@ -327,7 +327,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Searches the privacy policy for 11 topics (<code>controller</code>, <code>storage_period</code>, <code>right_*</code> ... in <code>lang/*.yml</code>).</dd></div>
+<div><dt>How it is checked</dt><dd>Searches the privacy policy (linked from the start page or its hreflang version in the scan language) for 11 topics (<code>controller</code>, <code>storage_period</code>, <code>right_*</code> ... in <code>lang/*.yml</code>).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Add the missing topics: controller, legal basis, storage period, data subject rights, right to complain.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/privacy-policy-details"><code>checks/legal/privacy-policy-details</code></a></dd></div>
@@ -547,7 +547,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-CNS-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-005 privacy/consent-withdraw-link consent can be changed or withdrawn later einwilligung lässt sich später ändern oder widerrufen art. 7(3) gdpr, § 25 tdddg when the start page has a consent banner (`consent_accept` in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (`consent_settings`, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.">
+<details class="rule" id="LEG-EU-CNS-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-cns-005 privacy/consent-withdraw-link consent can be changed or withdrawn later einwilligung lässt sich später ändern oder widerrufen art. 7(3) gdpr, § 25 tdddg when the start page has a consent banner (`consent_accept` in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the privacy policy linked from the start page or its hreflang version in the scan language, for a link or button to the consent settings (`consent_settings`, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-005<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Consent can be changed or withdrawn later</span>
@@ -556,7 +556,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>When the start page has a consent banner (<code>consent_accept</code> in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (<code>consent_settings</code>, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.</dd></div>
+<div><dt>How it is checked</dt><dd>When the start page has a consent banner (<code>consent_accept</code> in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the privacy policy linked from the start page or its hreflang version in the scan language, for a link or button to the consent settings (<code>consent_settings</code>, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Offer an always visible link or icon on every page that opens the cookie settings directly, for example &quot;Cookie settings&quot; in the footer.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/consent-withdraw-link"><code>checks/privacy/consent-withdraw-link</code></a></dd></div>
@@ -598,7 +598,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-008" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-008 privacy/form-receiver privacy policy names where forms send their data datenschutzerklärung nennt die empfänger der formulare art. 13(1)(e) and (f), art. 28, art. 44 gdpr finds form backends in the repository's templates, code and config (`forms` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and forms on the visited pages whose action host the repository names, then looks for each receiver's `names` as whole words in the privacy policy; a receiver outside the eea (`data/countries.yml`) without third-country wording gives info.">
+<details class="rule" id="LEG-EU-DSE-008" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-008 privacy/form-receiver privacy policy names where forms send their data datenschutzerklärung nennt die empfänger der formulare art. 13(1)(e) and (f), art. 28, art. 44 gdpr finds form backends in the repository's templates, code and config (`forms` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and forms on the visited pages whose action host the repository names, then looks for each receiver's `names` as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); a receiver outside the eea (`data/countries.yml`) without third-country wording gives info.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-008<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names where forms send their data</span>
@@ -607,7 +607,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds form backends in the repository's templates, code and config (<code>forms</code> in <code>data/third-parties.yml</code>, files in <code>data/consent-tools.yml</code>) and forms on the visited pages whose action host the repository names, then looks for each receiver's <code>names</code> as whole words in the privacy policy; a receiver outside the EEA (<code>data/countries.yml</code>) without third-country wording gives info.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds form backends in the repository's templates, code and config (<code>forms</code> in <code>data/third-parties.yml</code>, files in <code>data/consent-tools.yml</code>) and forms on the visited pages whose action host the repository names, then looks for each receiver's <code>names</code> as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); a receiver outside the EEA (<code>data/countries.yml</code>) without third-country wording gives info.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
 <div><dt>How to fix</dt><dd>Name the form service as recipient (processor) with purpose, legal basis, storage period and country, for a provider outside the EU with the basis of the transfer. Or send the form to your own server.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/form-receiver"><code>checks/privacy/form-receiver</code></a></dd></div>
@@ -649,7 +649,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-007" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-007 privacy/hosting-in-policy privacy policy names the hosting provider datenschutzerklärung nennt den hoster art. 13(1)(e), art. 28 gdpr finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy; one side alone is a skip. whether a transfer outside the eu/eea is covered is leg-eu-dse-005, which needs no repository.">
+<details class="rule" id="LEG-EU-DSE-007" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-007 privacy/hosting-in-policy privacy policy names the hosting provider datenschutzerklärung nennt den hoster art. 13(1)(e), art. 28 gdpr finds the hosting provider when a deploy file in the repository (`files`, `contains` in `data/hosting.yml`) and a response header of the live start page (`headers` there) agree, then looks for its `names` as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); one side alone is a skip. whether a transfer outside the eu/eea is covered is leg-eu-dse-005, which needs no repository.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-007<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names the hosting provider</span>
@@ -658,7 +658,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds the hosting provider when a deploy file in the repository (<code>files</code>, <code>contains</code> in <code>data/hosting.yml</code>) and a response header of the live start page (<code>headers</code> there) agree, then looks for its <code>names</code> as whole words in the privacy policy; one side alone is a skip. Whether a transfer outside the EU/EEA is covered is LEG-EU-DSE-005, which needs no repository.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds the hosting provider when a deploy file in the repository (<code>files</code>, <code>contains</code> in <code>data/hosting.yml</code>) and a response header of the live start page (<code>headers</code> there) agree, then looks for its <code>names</code> as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); one side alone is a skip. Whether a transfer outside the EU/EEA is covered is LEG-EU-DSE-005, which needs no repository.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
 <div><dt>How to fix</dt><dd>Name the hosting provider as processor with address, purpose (serving the site, server logs) and legal basis.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/hosting-in-policy"><code>checks/privacy/hosting-in-policy</code></a></dd></div>
@@ -666,7 +666,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-006" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-006 privacy/sdks-in-privacy-policy privacy policy names the services in the code datenschutzerklärung nennt die dienste aus dem code art. 13(1)(e) gdpr maps the runtime dependencies of every `package.json` (not devdependencies) to services by `packages` in `data/third-parties.yml`, leaves out those the visited pages contacted (`privacy/vendors-in-privacy-policy` covers them), and looks for the rest by `names` as whole words in the privacy policy; an unreadable `package.json` gives info, never a pass.">
+<details class="rule" id="LEG-EU-DSE-006" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-006 privacy/sdks-in-privacy-policy privacy policy names the services in the code datenschutzerklärung nennt die dienste aus dem code art. 13(1)(e) gdpr maps the runtime dependencies of every `package.json` (not devdependencies) to services by `packages` in `data/third-parties.yml`, leaves out those the visited pages contacted (`privacy/vendors-in-privacy-policy` covers them), and looks for the rest by `names` as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); an unreadable `package.json` gives info, never a pass.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-006<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names the services in the code</span>
@@ -675,7 +675,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Maps the runtime dependencies of every <code>package.json</code> (not devDependencies) to services by <code>packages</code> in <code>data/third-parties.yml</code>, leaves out those the visited pages contacted (<code>privacy/vendors-in-privacy-policy</code> covers them), and looks for the rest by <code>names</code> as whole words in the privacy policy; an unreadable <code>package.json</code> gives info, never a pass.</dd></div>
+<div><dt>How it is checked</dt><dd>Maps the runtime dependencies of every <code>package.json</code> (not devDependencies) to services by <code>packages</code> in <code>data/third-parties.yml</code>, leaves out those the visited pages contacted (<code>privacy/vendors-in-privacy-policy</code> covers them), and looks for the rest by <code>names</code> as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); an unreadable <code>package.json</code> gives info, never a pass.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
 <div><dt>How to fix</dt><dd>Name every service the application sends data to, also from the server (payment, AI, database, error reports), with purpose, legal basis and the recipient's country in the privacy policy.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/sdks-in-privacy-policy"><code>checks/privacy/sdks-in-privacy-policy</code></a></dd></div>
@@ -683,7 +683,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr, ecj c-311/18 (schrems ii) takes the company country of the site's own hosting provider from the start page's response headers (`headers`, `country` in `data/hosting.yml`) and of each third-party service (`country` in `data/third-parties.yml`), the ip country from ipinfo only with `ipinfo-token` for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the eea (`data/countries.yml`) looks for `third_country` wording in the privacy policy; whether the policy names the host at all is leg-eu-dse-007.">
+<details class="rule" id="LEG-EU-DSE-005" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-005 privacy/third-country privacy policy names transfers outside the eu datenschutzerklärung nennt übermittlungen außerhalb der eu art. 13(1)(f), art. 44 ff. gdpr, ecj c-311/18 (schrems ii) takes the company country of the site's own hosting provider from the start page's response headers (`headers`, `country` in `data/hosting.yml`) and of each third-party service (`country` in `data/third-parties.yml`), the ip country from ipinfo only with `ipinfo-token` for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the eea (`data/countries.yml`) looks for `third_country` wording in the privacy policy (linked from the start page or its hreflang version in the scan language); whether the policy names the host at all is leg-eu-dse-007.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-005<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names transfers outside the EU</span>
@@ -692,7 +692,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Takes the company country of the site's own hosting provider from the start page's response headers (<code>headers</code>, <code>country</code> in <code>data/hosting.yml</code>) and of each third-party service (<code>country</code> in <code>data/third-parties.yml</code>), the IP country from IPinfo only with <code>ipinfo-token</code> for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the EEA (<code>data/countries.yml</code>) looks for <code>third_country</code> wording in the privacy policy; whether the policy names the host at all is LEG-EU-DSE-007.</dd></div>
+<div><dt>How it is checked</dt><dd>Takes the company country of the site's own hosting provider from the start page's response headers (<code>headers</code>, <code>country</code> in <code>data/hosting.yml</code>) and of each third-party service (<code>country</code> in <code>data/third-parties.yml</code>), the IP country from IPinfo only with <code>ipinfo-token</code> for what the data does not know (for the own server only info, as it may be an edge server), and for countries outside the EEA (<code>data/countries.yml</code>) looks for <code>third_country</code> wording in the privacy policy (linked from the start page or its hreflang version in the scan language); whether the policy names the host at all is LEG-EU-DSE-007.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Name the country and the safeguard for the hosting provider and each service outside the EU/EEA (for example Data Privacy Framework, standard contractual clauses).</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/third-country"><code>checks/privacy/third-country</code></a></dd></div>
@@ -734,7 +734,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-004" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-004 privacy/vendors-in-privacy-policy privacy policy names the services the site uses datenschutzerklärung nennt die genutzten dienste art. 13(1)(e) gdpr for every contacted third-party service, looks for its name (`names` in `data/third-parties.yml`, else its domain) as a whole word in the privacy policy.">
+<details class="rule" id="LEG-EU-DSE-004" data-module="privacy" data-scope="website" data-severity="medium" data-search="leg-eu-dse-004 privacy/vendors-in-privacy-policy privacy policy names the services the site uses datenschutzerklärung nennt die genutzten dienste art. 13(1)(e) gdpr for every contacted third-party service, looks for its name (`names` in `data/third-parties.yml`, else its domain) as a whole word in the privacy policy (linked from the start page or its hreflang version in the scan language).">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-004<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names the services the site uses</span>
@@ -743,7 +743,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>For every contacted third-party service, looks for its name (<code>names</code> in <code>data/third-parties.yml</code>, else its domain) as a whole word in the privacy policy.</dd></div>
+<div><dt>How it is checked</dt><dd>For every contacted third-party service, looks for its name (<code>names</code> in <code>data/third-parties.yml</code>, else its domain) as a whole word in the privacy policy (linked from the start page or its hreflang version in the scan language).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>List every embedded service with purpose and legal basis in the privacy policy.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/vendors-in-privacy-policy"><code>checks/privacy/vendors-in-privacy-policy</code></a></dd></div>
@@ -1530,7 +1530,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SUS-JS-001" data-module="sustainability" data-scope="website" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible), art. 12(1) gdpr (easily accessible form) checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with javascript off and that the linked page that loaded shows at least 100 characters of text without it.">
+<details class="rule" id="SUS-JS-001" data-module="sustainability" data-scope="website" data-severity="medium" data-search="sus-js-001 sustainability/legal-pages-without-js imprint and privacy policy work without javascript impressum und datenschutz funktionieren ohne javascript § 5 ddg (easily recognizable, directly accessible), art. 12(1) gdpr (easily accessible form) checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist on the start page with javascript off and that the page they lead to (found on the start page or its hreflang version in the scan language) shows at least 100 characters of text without javascript.">
 <summary>
 <span class="rule-head"><span class="rule-id">SUS-JS-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Imprint and privacy policy work without JavaScript</span>
@@ -1539,7 +1539,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Checks that imprint and privacy links (<code>imprint</code>, <code>privacy</code> in <code>lang/*.yml</code>) exist with JavaScript off and that the linked page that loaded shows at least 100 characters of text without it.</dd></div>
+<div><dt>How it is checked</dt><dd>Checks that imprint and privacy links (<code>imprint</code>, <code>privacy</code> in <code>lang/*.yml</code>) exist on the start page with JavaScript off and that the page they lead to (found on the start page or its hreflang version in the scan language) shows at least 100 characters of text without JavaScript.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Deliver the links and texts of the legal pages as static HTML.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/sustainability/legal-pages-without-js"><code>checks/sustainability/legal-pages-without-js</code></a></dd></div>

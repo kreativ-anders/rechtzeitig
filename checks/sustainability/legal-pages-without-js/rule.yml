@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§ 5 DDG (leicht erkennbar, unmittelbar erreichbar), Art. 12 Abs. 1 DSGVO (leicht zugängliche Form)"
   en: "§ 5 DDG (easily recognizable, directly accessible), Art. 12(1) GDPR (easily accessible form)"
-how: "Checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist with JavaScript off and that the linked page that loaded shows at least 100 characters of text without it."
+how: "Checks that imprint and privacy links (`imprint`, `privacy` in `lang/*.yml`) exist on the start page with JavaScript off and that the page they lead to (found on the start page or its hreflang version in the scan language) shows at least 100 characters of text without JavaScript."
 fix_hint:
   de: "Links und Texte der Rechtsseiten als statisches HTML ausliefern."
   en: "Deliver the links and texts of the legal pages as static HTML."

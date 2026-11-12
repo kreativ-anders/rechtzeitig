@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 13 Abs. 1 lit. e DSGVO"
   en: "Art. 13(1)(e) GDPR"
-how: "Maps the runtime dependencies of every `package.json` (not devDependencies) to services by `packages` in `data/third-parties.yml`, leaves out those the visited pages contacted (`privacy/vendors-in-privacy-policy` covers them), and looks for the rest by `names` as whole words in the privacy policy; an unreadable `package.json` gives info, never a pass."
+how: "Maps the runtime dependencies of every `package.json` (not devDependencies) to services by `packages` in `data/third-parties.yml`, leaves out those the visited pages contacted (`privacy/vendors-in-privacy-policy` covers them), and looks for the rest by `names` as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); an unreadable `package.json` gives info, never a pass."
 fix_hint:
   de: "Jeden Dienst, an den die Anwendung Daten sendet, auch serverseitig (Zahlung, KI, Datenbank, Fehlerberichte), mit Zweck, Rechtsgrundlage und Empfängerland in der Datenschutzerklärung nennen."
   en: "Name every service the application sends data to, also from the server (payment, AI, database, error reports), with purpose, legal basis and the recipient's country in the privacy policy."
