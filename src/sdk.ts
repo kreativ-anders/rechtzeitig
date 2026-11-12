@@ -223,6 +223,8 @@ export const SALES_PAGES = [
   { concept: "withdrawal_info", check: "legal/withdrawal-instruction" },
 ] as const;
 export type LegalConcept = (typeof LEGAL_PAGES)[number]["concept"] | (typeof SALES_PAGES)[number]["concept"];
+/** The legal-page link concepts, in one place: matched with the link words of every language in lang/. */
+export const LEGAL_CONCEPTS: readonly string[] = [...LEGAL_PAGES, ...SALES_PAGES].map((p) => p.concept);
 /** The page's name as a message (`messages.common.page_<concept>`). */
 export const pageName = (concept: LegalConcept): Msg => msg(`page_${concept}`);
 const legal = (concept: LegalConcept) => [...LEGAL_PAGES, ...SALES_PAGES].find((p) => p.concept === concept)!;

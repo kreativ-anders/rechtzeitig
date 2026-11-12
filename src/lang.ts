@@ -60,3 +60,10 @@ export function matchLinks(lang: Language, concept: string, links: Link[]): Link
   const patterns = patternsFor(lang, "links", concept);
   return links.filter((link) => patterns.some((re) => re.test(link.label)));
 }
+
+let allLinks: Language["links"] | undefined;
+/** Link words of every language in lang/, cached once. Used only for the legal-page concepts (LEGAL_CONCEPTS in src/sdk.ts). */
+export function legalLinkPatterns(): Language["links"] {
+  allLinks ??= loadLanguages(availableLanguages()).links;
+  return allLinks;
+}

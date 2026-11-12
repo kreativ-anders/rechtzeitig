@@ -54,6 +54,18 @@ test("a finding's own fingerprint keeps the alert when its parameters change", (
   assert.notEqual(fp("old"), fp("new"));
 });
 
+test("one vulnerability locked in several lockfiles gives one alert per lockfile", () => {
+  const s = sarif(report([{ id: "security/vulnerabilities", rule: rule("SEC-DEPS-001"), status: "fail", message: "m",
+    details: [
+      { file: "a/package-lock.json", key: "issue", params: { name: "a" }, fingerprint: "pkg:npm/a@1 GHSA-1 a/package-lock.json" },
+      { file: "b/package-lock.json", key: "issue", params: { name: "a" }, fingerprint: "pkg:npm/a@1 GHSA-1 b/package-lock.json" },
+    ] }]));
+  const results = s.runs[0].results;
+  assert.equal(results.length, 2);
+  assert.deepEqual(results.map((r) => r.locations![0].physicalLocation.artifactLocation.uri), ["a/package-lock.json", "b/package-lock.json"]);
+  assert.notEqual(results[0].partialFingerprints["rechtzeitig/v1"], results[1].partialFingerprints["rechtzeitig/v1"]);
+});
+
 test("messages from the site stay on one line each", () => {
   const s = sarif(report([{ id: "legal/imprint", rule: rule("LEG-DE-IMP-001"), status: "fail", message: "bad\nline", details: ["x\ny"] }]));
   assert.equal(s.runs[0].results[0].message.text, "bad line\n- x y");

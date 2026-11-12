@@ -25,3 +25,8 @@ test("fails when the page returns 404", async () => {
   assert.equal(result.status, "fail");
   assert.match(result.message, /404/);
 });
+
+// Issue #52: an English scan of a German page finds the German imprint link.
+test("finds a German imprint link in an English scan", async () => {
+  assert.equal((await runCheck(here, "other-language", { language: "en" })).status, "pass");
+});
