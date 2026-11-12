@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 7 Abs. 3 DSGVO, § 25 TDDDG"
   en: "Art. 7(3) GDPR, § 25 TDDDG"
-how: "When the start page has a consent banner (`consent_accept` in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy, for a link or button to the consent settings (`consent_settings`, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen."
+how: "When the start page has a consent banner (`consent_accept` in dialogs, cookie containers or shadow roots), looks on the start page outside the banner, then on the linked privacy policy (found via the link words of every language in `lang/*.yml`), for a link or button to the consent settings (`consent_settings`, also by aria-label or title); the scan never clicks, so a widget that appears only after a choice is not seen."
 fix_hint:
   de: "Auf jeder Seite einen stets sichtbaren Link oder ein Icon anbieten, das die Cookie-Einstellungen direkt wieder öffnet, zum Beispiel „Cookie-Einstellungen“ im Footer."
   en: "Offer an always visible link or icon on every page that opens the cookie settings directly, for example \"Cookie settings\" in the footer."
