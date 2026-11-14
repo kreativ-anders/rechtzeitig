@@ -15,8 +15,7 @@ Open defects from the read-only audit of v0.5.1. The five that let a scan pass o
 Open points from the audit of 2026-11-03, after the fixes. Still open after the audit of 2026-11-10.
 
 1. `step-security/harden-runner` with an egress allowlist in `test.yml`. No workflow uses it yet.
-2. Pins in `examples/workflows/` moved automatically. Dependabot's `github-actions` ecosystem reads only `.github/workflows/` and `action.yml`; the release workflow moves the rechtzeitig pin there, and `src/pinning.test.ts` fails when another pin drifts from `action.yml` and `.github/workflows/`.
-3. Require signed commits on `main`. The ruleset on `main` already requires pull requests and the `test` and `drift` checks and blocks force pushes; the release workflow does not push to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
+2. Require signed commits on `main`. The ruleset on `main` already requires pull requests and the `test` and `drift` checks and blocks force pushes; the release workflow does not push to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
 
 ## Next: wording of a pass
 
