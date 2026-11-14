@@ -7,11 +7,11 @@ const moving = (host: string) => MOVING.some((d) => host === d || host.endsWith(
 
 export default defineCheck({
   run(ctx) {
-    if (!ctx.sitePages.length) return skip(msg("no_pages"));
+    if (!ctx.observedPages.length) return skip(msg("no_pages"));
     // The load without JavaScript holds the elements as written in the HTML. Scripts that other scripts
     // add later (a tag manager loading its tags) are not the site's to sign.
     const files = unique(
-      ctx.sitePages.flatMap((p) => p.noJs.subresources),
+      ctx.observedPages.flatMap((p) => p.noJs.subresources),
       (s) => s.url,
     ).filter((s) => isWebUrl(s.url) && ctx.isThirdParty(new URL(s.url).hostname));
     if (!files.length) return pass(msg("no_foreign"));

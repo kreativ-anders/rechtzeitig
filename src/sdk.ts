@@ -304,9 +304,10 @@ export const jsFailedPages = (ctx: ScanContext): Finding[] =>
  * the load with JavaScript failed on some of them: what scripts would have loaded or set there is unknown.
  * Undefined when every page loaded with JavaScript. Messages: `messages.common.js_incomplete` and `js_failed`.
  * Use it right before the pass, never before a finding: `return jsIncomplete(ctx) ?? pass(...)`.
+ * Warn by default (consent and privacy); `jsIncomplete(ctx, info)` for checks where a gap is only a hint (cookie flags).
  */
-export const jsIncomplete = (ctx: ScanContext): Result | undefined =>
-  ctx.jsFailed.length ? warn(msg("js_incomplete", { count: ctx.jsFailed.length }), jsFailedPages(ctx)) : undefined;
+export const jsIncomplete = (ctx: ScanContext, level: typeof warn = warn): Result | undefined =>
+  ctx.jsFailed.length ? level(msg("js_incomplete", { count: ctx.jsFailed.length }), jsFailedPages(ctx)) : undefined;
 
 /** A third-party service the site's pages contacted. */
 export interface Service {
@@ -571,6 +572,8 @@ export interface Snapshot {
   videos: Video[];
   /** axe-core violations of the rules in data/accessibility.yml (JavaScript on only). Missing when axe did not run or did not finish. */
   axe?: AxeViolation[];
+  /** Why axe-core gave no result with JavaScript on: "timeout", else the error. */
+  axeError?: string;
 }
 
 /** One axe-core rule that failed on a page: how many elements, and the CSS selectors of the first few (data/thresholds.yml `axe.max_targets`). */
@@ -678,7 +681,7 @@ export interface ScanContext {
   countries: Record<string, string>;
   /** Documents and scripts the pages loaded with JavaScript, once per URL, all sites. Use `siteCode()` for the site's own. */
   code: ServedCode[];
-  /** Documents and scripts not kept because of the limits in data/thresholds.yml `code`. */
+  /** The site's own documents and scripts not kept because of the limits in data/thresholds.yml `code` (third-party files not counted). */
   codeSkipped: number;
   /** Source maps the site's own scripts point to, up to `code.max_maps`. */
   sourceMaps: SourceMap[];
@@ -807,18 +810,25 @@ export function capped(details: Finding[]): Finding[] {
 /**
  * Result of a check built on axe-core: the violations of `rules` (its list in data/accessibility.yml)
  * on all visited own pages with JavaScript on. Skip when axe ran on none of them, warn with one
- * `node` finding per element (rule, page, selector), otherwise pass. The check's messages need
+ * `node` finding per element (rule, page, selector), otherwise pass. A page where axe gave no result
+ * is listed with its reason (`messages.common.axe_timeout`, `axe_error`) and turns the pass into a warn
+ * (`axe_incomplete`). The check's messages need
  * `none` and `found` (with `count`), `node` (`rule`, `page`, `target`) and `more`.
  * `keep` drops violations that do not count, such as a rule that only matters above a number of elements.
  */
 export function axeResult(ctx: ScanContext, rules: string[], keep: (v: AxeViolation) => boolean = () => true): Result {
   const pages = ctx.sitePages.filter((p) => p.js.axe);
-  if (!pages.length) return skip(msg("axe_not_run"));
+  const missing = ctx.sitePages
+    .filter((p) => !p.js.axe)
+    .map((p): Finding => p.js.axeError === "timeout"
+      ? { key: "axe_timeout", params: { page: ctx.short(p.url) } }
+      : { key: "axe_error", params: { page: ctx.short(p.url), error: p.js.axeError ?? "no result" } });
+  if (!pages.length) return skip(msg("axe_not_run"), capped(missing));
   const hits = pages.flatMap((p) => (p.js.axe ?? []).filter((v) => rules.includes(v.rule) && keep(v)).map((v) => ({ ...v, page: ctx.short(p.url) })));
-  if (!hits.length) return pass(msg("none", { count: pages.length }));
+  if (!hits.length) return missing.length ? warn(msg("axe_incomplete", { count: missing.length }), capped(missing)) : pass(msg("none", { count: pages.length }));
   const count = hits.reduce((n, v) => n + v.count, 0);
   const details = hits.flatMap((v) => v.targets.map((target): Finding => ({ key: "node", params: { rule: v.rule, page: v.page, target } })));
-  return warn(msg("found", { count }), capped(details));
+  return warn(msg("found", { count }), capped([...missing, ...details]));
 }
 
 // ---------- Repository helpers

@@ -21,6 +21,6 @@ export default defineCheck({
     const foreign = issues(cookies.filter((c) => ctx.isThirdParty(c.domain)), "missing_foreign");
     if (own.length) return warn(msg("lack_flags", { count: own.length, total: cookies.length }), [...own, ...foreign]);
     if (foreign.length) return info(msg("only_foreign"), foreign);
-    return jsIncomplete(ctx) ?? pass(msg("all_set", { count: cookies.length }));
+    return jsIncomplete(ctx, info) ?? pass(msg("all_set", { count: cookies.length }));
   },
 });

@@ -22,6 +22,6 @@ export default defineCheck({
     const details = [...consent, ...own].map(finding);
     if (consent.length) return warn(msg("too_long", { count: consent.length, max: MAX_DAYS }), details);
     if (own.length) return info(msg("own_long", { count: own.length, max: MAX_DAYS }), details);
-    return jsIncomplete(ctx) ?? pass(msg("within", { count: cookies.length, max: MAX_DAYS }));
+    return jsIncomplete(ctx, info) ?? pass(msg("within", { count: cookies.length, max: MAX_DAYS }));
   },
 });

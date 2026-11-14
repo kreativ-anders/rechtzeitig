@@ -41,3 +41,15 @@ test("does not take bare hosts or package names in lists for a form, but an impo
   const sdk = { "src/contact.ts": 'import emailjs from "@emailjs/browser";' };
   assert.equal((await runCrossCheck(here, await site("Nichts."), sdk)).status, "warn");
 });
+
+// #87: a form on a page whose load with JavaScript failed is read from its load without JavaScript.
+test("reads forms of a page whose JavaScript load failed", async () => {
+  const { failedJsPage, fakeContext, fakeLink, fakePage } = await import("../../../test/helpers.ts");
+  const start = fakePage("https://example.de/", { links: [fakeLink("Datenschutz", "https://example.de/datenschutz", "footer")] });
+  const policy = fakePage("https://example.de/datenschutz", { text: "Nichts." });
+  const form = { action: "https://formspree.io/f/xyzabcd", fields: ["email:email"], personal: true, links: [], text: "" };
+  const contactPage = failedJsPage("https://example.de/kontakt", { forms: [form] });
+  const result = await runCrossCheck(here, fakeContext(start.js, { start, pages: [start, policy, contactPage] }), { "README.md": "hi" });
+  assert.equal(result.status, "warn");
+  assert.match(result.message, /Formspree/);
+});

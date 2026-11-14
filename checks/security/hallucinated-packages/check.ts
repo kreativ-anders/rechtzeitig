@@ -4,6 +4,7 @@ import {
   capped,
   declaredDependencies,
   defineRepoCheck,
+  info,
   lockfilesFor,
   loadYaml,
   msg,
@@ -104,6 +105,9 @@ export default defineRepoCheck({
     }
 
     if (findings.length) return warn(msg("found", { count: findings.length }), capped(findings));
+    // A lockfile that could not be read: its packages were never compared, so no pass (like security/vulnerabilities).
+    const unreadLocks = repo.coverage.lockfiles.failed.map(({ file }): Finding => ({ file, key: "lockfile_unread" }));
+    if (unreadLocks.length) return info(msg("gaps", { count: declared.length }), capped(unreadLocks));
     return pass(msg("none", { count: declared.length, lockfiles: compared }));
   },
 });

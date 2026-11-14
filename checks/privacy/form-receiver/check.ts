@@ -1,4 +1,4 @@
-import { CODE_FILES, capped, defineCrossCheck, grepFiles, info, isWebUrl, loadYaml, msg, needLegalPage, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { CODE_FILES, capped, defineCrossCheck, grepFiles, info, isWebUrl, loaded, loadYaml, msg, needLegalPage, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
 
 const EEA = new Set(loadYaml<{ eea: string[] }>("data/countries.yml").eea);
 const hostOf = (url: string) => {
@@ -26,9 +26,10 @@ export default defineCrossCheck({
       const v = rules[m.pattern].vendor;
       if (!receivers.has(v.name)) receivers.set(v.name, { name: v.name, names: v.names, country: v.country, where: { file: m.file, line: m.line, key: "in_code", params: { name: v.name } } });
     }
-    // Website side: forms on the visited pages that send to another site whose host the repository names.
-    for (const p of ctx.sitePages) {
-      for (const f of p.js.forms) {
+    // Website side: forms on the visited pages that send to another site whose host the repository names,
+    // from the load without JavaScript where the load with JavaScript failed.
+    for (const p of ctx.observedPages) {
+      for (const f of (loaded(p.js) ? p.js : p.noJs).forms) {
         const host = hostOf(f.action);
         if (!host || !ctx.isThirdParty(host)) continue;
         const vendor = ctx.vendor(host);

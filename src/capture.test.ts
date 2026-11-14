@@ -117,7 +117,7 @@ test("CodeCollector keeps at most max_files of concurrent responses and counts t
   const total = LIMIT.max_files + 20;
   await Promise.all(Array.from({ length: total }, (_, i) => code.take(response(`https://example.de/${i}.js`, "x"), "script")));
   assert.equal(code.files.length, LIMIT.max_files);
-  assert.equal(code.skipped, total - LIMIT.max_files);
+  assert.equal(code.skipped.length, total - LIMIT.max_files);
 });
 
 test("CodeCollector frees the slot of a failed read and keeps each URL once", async () => {
@@ -128,7 +128,7 @@ test("CodeCollector frees the slot of a failed read and keeps each URL once", as
     code.take(response("https://example.de/a.js", "a"), "script"),
   ]);
   assert.deepEqual(code.files.map((f) => f.url), ["https://example.de/a.js"]);
-  assert.equal(code.skipped, 0);
+  assert.equal(code.skipped.length, 0);
   await Promise.all(Array.from({ length: LIMIT.max_files }, (_, i) => code.take(response(`https://example.de/${i}.js`, "x"), "script")));
   assert.equal(code.files.length, LIMIT.max_files);
 });
@@ -138,7 +138,7 @@ test("CodeCollector does not read a body announced larger than max_file_chars ca
   const big = { "content-length": String(LIMIT.max_file_chars * 4 + 1) };
   await code.take(response("https://example.de/big.js", "x", big), "script");
   assert.equal(code.files.length, 0);
-  assert.equal(code.skipped, 1);
+  assert.equal(code.skipped.length, 1);
 });
 
 // Issue #55: a response without Content-Length (chunked) is bounded by the bytes counted while they arrive.
@@ -157,7 +157,7 @@ test("CodeCollector does not read a body that arrived larger than the limit, wit
   } as unknown as Fake;
   await code.take(res, "script", () => 401);
   assert.equal(code.files.length, 0);
-  assert.equal(code.skipped, 1);
+  assert.equal(code.skipped.length, 1);
   assert.equal(reads, 0, "text() is never called for an over-limit body");
 });
 
@@ -166,7 +166,7 @@ test("CodeCollector reads a chunked body within the limit", async () => {
   const res = { ...response("https://example.de/ok.js", "hello"), finished: () => Promise.resolve(null) } as unknown as Fake;
   await code.take(res, "script", () => 5);
   assert.deepEqual(code.files.map((f) => [f.url, f.body]), [["https://example.de/ok.js", "hello"]]);
-  assert.equal(code.skipped, 0);
+  assert.equal(code.skipped.length, 0);
 });
 
 test("a chunked script larger than the limit is skipped and not kept", async () => {
@@ -186,7 +186,7 @@ test("a chunked script larger than the limit is skipped and not kept", async () 
   try {
     await capture(context, `http://127.0.0.1:${port}/`, true, 10_000, code, 500);
     assert.ok(!code.files.some((f) => f.url.endsWith("/big.js")), "big.js is not kept");
-    assert.equal(code.skipped, 1);
+    assert.equal(code.skipped.length, 1);
   } finally {
     await context.close();
     server.close();

@@ -18,3 +18,15 @@ test("warns for the old link without its address in the text", async () => {
   const result = await runFake(here, { links: [fakeLink("Streitschlichtung", "https://ec.europa.eu/consumers/odr/")] });
   assert.equal(result.status, "warn");
 });
+
+// #87: a page whose load with JavaScript failed is read from its load without JavaScript; no page at all gives info.
+test("reads a page whose JavaScript load failed from its load without JavaScript", async () => {
+  const { failedJsPage, fakeContext, fakePage, rendered } = await import("../../../test/helpers.ts");
+  const start = fakePage("https://example.de/");
+  const imprint = failedJsPage("https://example.de/impressum", { links: [fakeLink("Streitschlichtung", "https://ec.europa.eu/consumers/odr/")] });
+  const { default: check } = await import("./check.ts");
+  const result = rendered(here, await check.run(fakeContext(start.js, { start, pages: [start, imprint] })));
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["/impressum"]);
+  assert.equal((await runFake(here, { status: 0 })).status, "info");
+});

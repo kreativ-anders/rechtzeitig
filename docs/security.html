@@ -53,13 +53,13 @@
 <li class="topic-rule" id="SEC-HDR-002">
 <h3><a href="checks.html#SEC-HDR-002">Cookies use secure flags</a></h3>
 <p class="rule-meta"><span class="rule-id">SEC-HDR-002</span> · <span class="rule-law">Art. 32 GDPR</span></p>
-<p><span class="report-label">How it is checked</span> Checks Secure on every cookie set without login (HTTPS sites, and always with <code>SameSite=None</code>) and HttpOnly on cookies whose name looks like a session (<code>data/cookies.yml</code>); cookies of other sites only give info; warns instead of passing when a page did not load with JavaScript.</p>
+<p><span class="report-label">How it is checked</span> Checks Secure on every cookie set without login (HTTPS sites, and always with <code>SameSite=None</code>) and HttpOnly on cookies whose name looks like a session (<code>data/cookies.yml</code>); cookies of other sites only give info; gives info instead of passing when a page did not load with JavaScript.</p>
 <p><span class="report-label">Fix</span> Set cookies with Secure; session cookies also with HttpOnly and SameSite=Lax.</p>
 </li>
 <li class="topic-rule" id="SEC-HDR-005">
 <h3><a href="checks.html#SEC-HDR-005">CORS does not share answers with credentials to any site</a></h3>
 <p class="rule-meta"><span class="rule-id">SEC-HDR-005</span> · <span class="rule-law">Art. 32 GDPR</span></p>
-<p><span class="report-label">How it is checked</span> Reads the response headers of the site's own pages and fails when Access-Control-Allow-Credentials: true comes with Access-Control-Allow-Origin * or null; it sends no foreign Origin, so a server that mirrors any Origin is not detected.</p>
+<p><span class="report-label">How it is checked</span> Reads the response headers of the site's own pages, also those whose load with JavaScript failed, and fails when Access-Control-Allow-Credentials: true comes with Access-Control-Allow-Origin * or null; it sends no foreign Origin, so a server that mirrors any Origin is not detected.</p>
 <p><span class="report-label">Fix</span> Send Access-Control-Allow-Credentials only with a fixed list of trusted origins, never with * or null, and do not copy the Origin from the request unchecked. If the pages need no CORS, leave out both headers.</p>
 </li>
 <li class="topic-rule" id="SEC-DNS-001">
@@ -107,7 +107,7 @@
 <li class="topic-rule" id="SEC-TLS-003">
 <h3><a href="checks.html#SEC-TLS-003">No unencrypted resources on HTTPS pages</a></h3>
 <p class="rule-meta"><span class="rule-id">SEC-TLS-003</span> · <span class="rule-law">Art. 32 GDPR</span></p>
-<p><span class="report-label">How it is checked</span> Lists <code>http://</code> requests made by pages of an HTTPS site; warns instead of passing when a page did not load with JavaScript.</p>
+<p><span class="report-label">How it is checked</span> Lists <code>http://</code> requests made by pages of an HTTPS site; gives info instead of passing when a page did not load with JavaScript.</p>
 <p><span class="report-label">Fix</span> Load every resource over https://.</p>
 </li>
 <li class="topic-rule" id="SEC-CVD-002">
@@ -119,7 +119,7 @@
 <li class="topic-rule" id="SEC-HDR-003">
 <h3><a href="checks.html#SEC-HDR-003">Scripts and stylesheets from other sites carry an integrity hash</a></h3>
 <p class="rule-meta"><span class="rule-id">SEC-HDR-003</span> · <span class="rule-law">Art. 32 GDPR</span></p>
-<p><span class="report-label">How it is checked</span> Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute; for services whose files change under the same URL (<code>data/subresource-integrity.yml</code>) it adds how to fix them without a hash.</p>
+<p><span class="report-label">How it is checked</span> Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript, also where the load with JavaScript failed) that point to another site and have no integrity attribute; for services whose files change under the same URL (<code>data/subresource-integrity.yml</code>) it adds how to fix them without a hash.</p>
 <p><span class="report-label">Fix</span> Load fixed versions of other sites' files with integrity=&quot;sha384-…&quot; and crossorigin=&quot;anonymous&quot; (most CDNs show the hash), or host the file yourself. For services that change their file under the same URL, host a pinned copy or accept the risk knowingly.</p>
 </li>
 <li class="topic-rule" id="SEC-TLS-002">

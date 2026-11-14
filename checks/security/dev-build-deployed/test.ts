@@ -37,3 +37,13 @@ test("counts a trace only in the form the tool emits it, not quoted by a playgro
   const vue3 = "console.info(`You are running a development build of Vue.\nMake sure to use the production build (*.prod.js) when deploying for production.`);";
   assert.equal((await runCrossCheck(here, await served(vue3), { "README.md": "x" })).status, "warn");
 });
+
+// #87: a served file of the site that was cut or not kept may hold the trace, so no pass; third-party files do not count.
+test("gives info instead of a pass when served files of the site were cut or not kept", async () => {
+  const ctx = await clean();
+  const files = { "README.md": "x" };
+  assert.equal((await runCrossCheck(here, ctx, files)).status, "pass");
+  assert.equal((await runCrossCheck(here, { ...ctx, codeSkipped: 1 }, files)).status, "info");
+  const cut = { ...ctx, code: ctx.code.map((c) => ({ ...c, truncated: true })) };
+  assert.equal((await runCrossCheck(here, cut, files)).status, "info");
+});

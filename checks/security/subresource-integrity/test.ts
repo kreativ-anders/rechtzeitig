@@ -41,3 +41,13 @@ test("services whose files change warn, each with how to fix it, also on subdoma
 test("skips when no page of the site loaded", async () => {
   assert.equal((await runFake(here, { status: 0 })).status, "skip");
 });
+
+// #87: a page whose load with JavaScript failed still counts with its load without JavaScript.
+test("reads the HTML of a page whose JavaScript load failed", async () => {
+  const { failedJsPage, fakeContext, fakePage, rendered } = await import("../../../test/helpers.ts");
+  const start = fakePage("https://example.de/");
+  const blog = failedJsPage("https://example.de/blog", { subresources: [file("https://cdn.example.com/lib.js")] });
+  const { default: check } = await import("./check.ts");
+  const result = rendered(here, await check.run(fakeContext(start.js, { start, pages: [start, blog] })));
+  assert.equal(result.status, "warn");
+});
