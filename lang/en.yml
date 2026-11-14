@@ -667,6 +667,39 @@ messages:
     more:
       one: "and {count} more element"
       other: "and {count} more elements"
+  accessibility/aria-structure:
+    none:
+      one: "axe-core found no list, menu or table without the children or parent it needs on {count} page."
+      other: "axe-core found no list, menu or table without the children or parent it needs on {count} pages."
+    found:
+      one: "{count} element without the children or parent its role needs (axe-core)."
+      other: "{count} elements without the children or parent their role needs (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "and {count} more element"
+      other: "and {count} more elements"
+  accessibility/aria-attributes:
+    none:
+      one: "axe-core found no invalid ARIA attribute on {count} page."
+      other: "axe-core found no invalid ARIA attribute on {count} pages."
+    found:
+      one: "{count} invalid ARIA attribute (axe-core)."
+      other: "{count} invalid ARIA attributes (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "and {count} more element"
+      other: "and {count} more elements"
+  accessibility/best-practices:
+    none:
+      one: "axe-core found no deviation from WAI-ARIA best practice on {count} page."
+      other: "axe-core found no deviation from WAI-ARIA best practice on {count} pages."
+    found:
+      one: "{count} element deviates from WAI-ARIA best practice (axe-core): duplicate landmark, dialog without name, aria-hidden=\"false\" or too many live regions."
+      other: "{count} elements deviate from WAI-ARIA best practice (axe-core): duplicate landmarks, dialogs without name, aria-hidden=\"false\" or too many live regions."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "and {count} more element"
+      other: "and {count} more elements"
   accessibility/contrast:
     none:
       one: "axe-core found no text with too little contrast on {count} page."
