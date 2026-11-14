@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-opRjTqQ1E5eUpc4SE9v3YoU5wuVpgtqT7zsobCj245Q=' https://api.pirsch.io; style-src 'self'; img-src 'self' data:; connect-src https://api.pirsch.io; base-uri 'self' https://rechtzeitig.dev; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>Get started: first scan in ten minutes · rechtzeitig</title>
+<title>Get started: add the workflow to your repository · rechtzeitig</title>
 <meta name="description" content="Add the rechtzeitig GitHub Action to a repository, choose what may leave the runner, and read the first report. Every lookup at an outside service is opt-in.">
 <link rel="canonical" href="https://rechtzeitig.dev/getting-started.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="rechtzeitig">
-<meta property="og:title" content="Get started: first scan in ten minutes · rechtzeitig">
+<meta property="og:title" content="Get started: add the workflow to your repository · rechtzeitig">
 <meta property="og:description" content="Add the rechtzeitig GitHub Action to a repository, choose what may leave the runner, and read the first report. Every lookup at an outside service is opt-in.">
 <meta property="og:url" content="https://rechtzeitig.dev/getting-started.html">
 <meta property="og:locale" content="en_GB">
@@ -31,7 +31,7 @@
 <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="site.js" defer></script>
 <script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="w5NWUb6qKUHLnm9YxdgaEAxd7PflSnf6"></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/getting-started.html#webpage", "url": "https://rechtzeitig.dev/getting-started.html", "name": "Get started: first scan in ten minutes", "description": "Add the rechtzeitig GitHub Action to a repository, choose what may leave the runner, and read the first report. Every lookup at an outside service is opt-in.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb"}, "headline": "Get started: first scan in ten minutes", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-14"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Get started", "item": "https://rechtzeitig.dev/getting-started.html"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/getting-started.html#webpage", "url": "https://rechtzeitig.dev/getting-started.html", "name": "Get started: add the workflow to your repository", "description": "Add the rechtzeitig GitHub Action to a repository, choose what may leave the runner, and read the first report. Every lookup at an outside service is opt-in.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb"}, "headline": "Get started: add the workflow to your repository", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-14"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Get started", "item": "https://rechtzeitig.dev/getting-started.html"}]}]}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
@@ -44,7 +44,7 @@
 
 <main id="content">
   <h1>Get started</h1>
-  <p class="lead">From an empty repository to a first report in about ten minutes: copy one file, set your start page, decide on three opt-ins, start the run. Nothing about your project leaves the runner unless you turn it on.</p>
+  <p class="lead">Copy one file, set your start page, decide on three opt-ins, start the run. Nothing about your project leaves the runner unless you turn it on.</p>
 
   <div class="doc">
     <nav class="toc" aria-labelledby="toc-title">
@@ -139,7 +139,7 @@ jobs:
 
       <section id="what">
         <h2><span class="par">§ 2</span>Set these</h2>
-        <p>These lines in the <code>with:</code> block decide what is checked. Change them to fit your site.</p>
+        <p>These lines in the <code>with:</code> block decide what is checked.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Input</th><th scope="col">In the example</th><th scope="col">Change it when</th></tr></thead>
           <tbody>
@@ -168,7 +168,7 @@ jobs:
 
       <section id="optional">
         <h2><span class="par">§ 4</span>Optional: leave as is</h2>
-        <p>The example names these as comments with their defaults. Most projects never change them.</p>
+        <p>The example lists these as comments with their defaults.</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Input</th><th scope="col">Default</th><th scope="col">Change it when</th></tr></thead>
           <tbody>
@@ -207,7 +207,7 @@ jobs:
 
       <section id="permissions">
         <h2><span class="par">§ 6</span>Permissions</h2>
-        <p>The example asks for as little as it needs. Keep these lines:</p>
+        <p>Keep these lines in the example:</p>
         <ul>
           <li><code>contents: read</code> lets the checkout read the repository.</li>
           <li><code>security-events: write</code> puts the findings in the <span class="ui">Security</span> tab.</li>
@@ -246,7 +246,7 @@ updates:
           <li><code>url</code>, <code>language</code>, <code>sales</code> and <code>subscriptions</code> fit your site</li>
           <li>Opt-ins decided: <code>vulnerabilities</code>, <code>green-hosting</code>, <code>IPINFO_TOKEN</code></li>
           <li>First run started under <span class="ui">Actions</span></li>
-          <li>Findings found on the run page or in the <span class="ui">Security</span> tab</li>
+          <li>Findings read on the run page or in the <span class="ui">Security</span> tab</li>
         </ul>
       </section>
     </div>
