@@ -1,4 +1,4 @@
-import { capped, compareVersions, defineRepoCheck, loadYaml, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { capped, compareVersions, defineRepoCheck, info, loadYaml, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
 
 interface Relicensing { package: string; ecosystem: string; from: string; before: string; license: string; fork?: string; source: string }
 const EVENTS = loadYaml<Relicensing[]>("data/relicensing.yml");
@@ -14,6 +14,9 @@ export default defineRepoCheck({
       return [{ file: c.source, key: e.fork ? "relicensed_fork" : "relicensed", params }];
     });
     if (findings.length) return warn(msg("found", { count: findings.length }), capped(findings));
+    // A lockfile that could not be read: its packages were never compared, so no pass (like security/vulnerabilities).
+    const unread = repo.coverage.lockfiles.failed.map(({ file }): Finding => ({ file, key: "lockfile_unread" }));
+    if (unread.length) return info(msg("gaps", { count: production.length }), capped(unread));
     return pass(msg("none", { count: production.length, events: EVENTS.length }));
   },
 });

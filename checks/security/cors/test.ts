@@ -38,3 +38,14 @@ test("reads the headers of the load with JavaScript when the plain load failed",
   const result = rendered(here, await check.run(fakeContext(start.js, { start, pages: [start] })));
   assert.equal(result.status, "fail");
 });
+
+// #87: a page whose load with JavaScript failed still counts with its load without JavaScript.
+test("reads the headers of a page whose JavaScript load failed", async () => {
+  const { failedJsPage } = await import("../../../test/helpers.ts");
+  const start = fakePage("https://example.de/");
+  const api = failedJsPage("https://example.de/konto", { headers: { "access-control-allow-origin": "*", "access-control-allow-credentials": "true" } });
+  const { default: check } = await import("./check.ts");
+  const result = rendered(here, await check.run(fakeContext(start.js, { start, pages: [start, api] })));
+  assert.equal(result.status, "fail");
+  assert.deepEqual(result.raw.details?.map((d) => d.params?.page), ["/konto"]);
+});

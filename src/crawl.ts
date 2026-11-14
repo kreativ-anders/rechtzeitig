@@ -37,7 +37,8 @@ export interface CrawlData {
   green?: ScanContext["green"];
   /** Documents and scripts of the loads with JavaScript (ScanContext.code). Missing in hand-built contexts. */
   code?: ScanContext["code"];
-  codeSkipped?: number;
+  /** URLs of documents and scripts not kept (CodeCollector.skipped), all sites. */
+  codeSkipped?: string[];
   sourceMaps?: ScanContext["sourceMaps"];
 }
 

@@ -206,6 +206,11 @@ text:
 messages:
   common:
     axe_not_run: "axe-core lief auf keiner besuchten Seite: keine Seite lud mit JavaScript, oder axe-core wurde nicht rechtzeitig fertig."
+    axe_incomplete:
+      one: "axe-core fand nichts auf den geprüften Seiten, lieferte aber auf {count} Seite kein Ergebnis. Diese Seite bleibt ungeprüft."
+      other: "axe-core fand nichts auf den geprüften Seiten, lieferte aber auf {count} Seiten kein Ergebnis. Diese Seiten bleiben ungeprüft."
+    axe_timeout: "{page}: axe-core wurde nicht rechtzeitig fertig (axe.timeout_ms in data/thresholds.yml)"
+    axe_error: "{page}: axe-core lieferte kein Ergebnis ({error})"
     page_imprint: "Impressum"
     page_privacy: "Datenschutzerklärung"
     page_terms: "AGB"
@@ -232,6 +237,7 @@ messages:
       one: "Nichts gefunden auf den gesehenen Seiten, aber {count} Seite lud nicht mit JavaScript. Was Skripte dort laden oder setzen, ist unbekannt, daher kein Bestanden."
       other: "Nichts gefunden auf den gesehenen Seiten, aber {count} Seiten luden nicht mit JavaScript. Was Skripte dort laden oder setzen, ist unbekannt, daher kein Bestanden."
     js_failed: "{page}: Laden mit JavaScript fehlgeschlagen ({error})"
+    lockfile_unread: "Lockfile nicht lesbar (siehe security/sbom)."
     not_run_module: "Nicht gelaufen: Weder die Gruppe {module} noch der Bereich {scope} steht in modules ({modules}). Leeres modules startet alle Prüfungen."
     not_run_both_url: "Nicht gelaufen: liest Website und Repository zusammen, und die Website fehlt. Input url setzen."
     not_run_both_repository: "Nicht gelaufen: liest Website und Repository zusammen, und der Checkout fehlt. actions/checkout vor rechtzeitig ausführen."
@@ -383,6 +389,7 @@ messages:
   legal/odr-link:
     found: "Die EU-Plattform zur Online-Streitbeilegung ist seit 20. Juli 2025 abgeschaltet. Link und Hinweis darauf entfernen."
     none: "Kein veralteter Link zur EU-Streitbeilegungsplattform."
+    not_loaded: "Keine Seite der Website ließ sich laden, daher nichts geprüft."
   legal/order-button:
     ok: "{where}: Bestellbutton „{text}“."
     wrong: "{where}: Bestellbutton „{text}“ auf der Bestellübersicht. Das Gesetz verlangt „zahlungspflichtig bestellen“ oder eine ebenso eindeutige Formulierung, sonst kommt kein Vertrag zustande."
@@ -995,6 +1002,9 @@ messages:
     none:
       one: "{count} deklarierte Abhängigkeit mit {lockfiles} Lockfile(s) verglichen: keine fehlt, keine ähnelt einem verbreiteten Paket."
       other: "{count} deklarierte Abhängigkeiten mit {lockfiles} Lockfile(s) verglichen: keine fehlt, keine ähnelt einem verbreiteten Paket."
+    gaps:
+      one: "{count} deklarierte Abhängigkeit, keine ähnelt einem verbreiteten Paket. Nicht jedes Lockfile war lesbar, daher nicht jede Abhängigkeit mit ihrem Lockfile verglichen."
+      other: "{count} deklarierte Abhängigkeiten, keine ähnelt einem verbreiteten Paket. Nicht jedes Lockfile war lesbar, daher nicht jede Abhängigkeit mit ihrem Lockfile verglichen."
   security/lockfile-drift:
     no_lockfiles: "Keine Lockfiles und keine Manifeste."
     managers: "Lockfiles von {managers} nebeneinander ({files}). Jedes Werkzeug installiert andere Versionen."
@@ -1147,6 +1157,9 @@ messages:
     none:
       one: "{count} Produktionsabhängigkeit, keine nach einem von {events} bekannten Lizenzwechseln."
       other: "{count} Produktionsabhängigkeiten, keine nach einem von {events} bekannten Lizenzwechseln."
+    gaps:
+      one: "{count} Produktionsabhängigkeit, keine nach einem bekannten Lizenzwechsel. Nicht jedes Lockfile war lesbar, die Pakete darin sind ungeprüft."
+      other: "{count} Produktionsabhängigkeiten, keine nach einem bekannten Lizenzwechsel. Nicht jedes Lockfile war lesbar, die Pakete darin sind ungeprüft."
     more:
       one: "und {count} weitere Abhängigkeit"
       other: "und {count} weitere Abhängigkeiten"
@@ -1462,6 +1475,9 @@ messages:
       one: "Keine Entwicklungsspuren auf der Website; {count} Deploy-Datei war zu groß oder nur ein Git-LFS-Zeiger."
       other: "Keine Entwicklungsspuren auf der Website; {count} Deploy-Dateien waren zu groß oder nur Git-LFS-Zeiger."
     none: "Kein Entwicklungsserver oder Debug-Build auf der Website oder in den Startbefehlen des Repositorys."
+    partly:
+      one: "Kein Entwicklungsserver oder Debug-Build gefunden, aber {count} ausgelieferte Datei der Website wurde an den Größengrenzen abgeschnitten oder nicht behalten."
+      other: "Kein Entwicklungsserver oder Debug-Build gefunden, aber {count} ausgelieferte Dateien der Website wurden an den Größengrenzen abgeschnitten oder nicht behalten."
     live: "{name} auf der Website: {where}"
     start_command: "Startet einen Entwicklungsserver: {command}"
     start_script: "npm start startet einen Entwicklungsserver: {command}"

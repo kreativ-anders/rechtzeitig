@@ -1,4 +1,4 @@
-import { defineRepoCheck, fail, findSecrets, info, msg, pass, redact, warn, type Finding } from "../../../src/sdk.ts";
+import { defineRepoCheck, fail, findSecrets, info, msg, pass, redact, unreadResult, warn, type Finding } from "../../../src/sdk.ts";
 
 // Generated or test files that often contain key-like strings.
 const SKIP = /(^|\/)(fixtures?|__snapshots__)\/|\.lock$|-lock\.(json|yaml)$|\.min\.(js|css)$|\.map$/;
@@ -26,6 +26,7 @@ export default defineRepoCheck({
     if (found.length) return warn(msg(found.some((f) => !f.generic) ? "public_keys" : "possible", { count: found.length }), details);
     // Not a single file read: nothing was looked at, so no pass.
     if (unread && unread === scanned.length) return info(msg("unread", { count: unread }));
-    return pass(msg("none", { count: scanned.length - unread }), note);
+    // Too large or only a Git LFS pointer may hold a secret: no pass. Binary files stay excluded.
+    return unreadResult(repo, scanned) ?? pass(msg("none", { count: scanned.length - unread }), note);
   },
 });

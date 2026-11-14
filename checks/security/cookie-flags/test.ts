@@ -52,6 +52,7 @@ test("no pass when a page did not load with JavaScript", async () => {
   const run = async (pages: Array<ReturnType<typeof fakePage>>) => rendered(here, await check.run(fakeContext(start.js, { start, pages })));
   assert.equal((await run([start])).status, "pass");
   const result = await run([start, failedJsPage("https://example.de/blog")]);
-  assert.equal(result.status, "warn");
+  // #87: a hint, not a warning, for this check.
+  assert.equal(result.status, "info");
   assert.deepEqual(result.details, ["/blog: load with JavaScript failed (Timeout)"]);
 });

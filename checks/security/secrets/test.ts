@@ -21,11 +21,19 @@ test("passes for clean code", async () => {
   assert.equal((await runRepoCheck(here, { "src/app.ts": "const key = process.env.STRIPE_KEY;" })).status, "pass");
 });
 
-test("counts the files it could not read", async () => {
-  const result = await runRepoCheck(here, { "src/app.ts": "ok", "logo.png": "PNG\u0000\u0000", "dump.sql": "x".repeat(1_100_000) });
+test("counts the binary files it could not read", async () => {
+  const result = await runRepoCheck(here, { "src/app.ts": "ok", "logo.png": "PNG\u0000\u0000" });
   assert.equal(result.status, "pass");
   assert.equal(result.message, "No secrets found in 1 file read.");
-  assert.deepEqual(result.details, ["2 files not read: binary, too large or only a Git LFS pointer."]);
+  assert.deepEqual(result.details, ["1 file not read: binary, too large or only a Git LFS pointer."]);
+});
+
+// #87: a file too large or only a Git LFS pointer may hold a secret, so no pass; binary files stay excluded.
+test("no pass when a file is too large or only a Git LFS pointer", async () => {
+  const lfs = "version https://git-lfs.github.com/spec/v1\noid sha256:abc\nsize 12345\n";
+  const result = await runRepoCheck(here, { "src/app.ts": "ok", "logo.png": "PNG\u0000\u0000", "dump.sql": "x".repeat(1_100_000), "keys.env": lfs });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.raw.details?.map((d) => d.file).sort(), ["dump.sql", "keys.env"]);
 });
 
 test("fails for a live Stripe key and shows only its start and length", async () => {

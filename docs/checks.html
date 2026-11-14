@@ -197,7 +197,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-IMP-003" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-de-imp-003 legal/links-on-all-pages imprint and privacy policy are linked on every page impressum und datenschutz auf jeder seite verlinkt § 5 ddg, art. 12 gdpr looks for imprint and privacy links on every visited page of the site.">
+<details class="rule" id="LEG-DE-IMP-003" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-de-imp-003 legal/links-on-all-pages imprint and privacy policy are linked on every page impressum und datenschutz auf jeder seite verlinkt § 5 ddg, art. 12 gdpr looks for imprint and privacy links on every visited page of the site, from the load without javascript where the load with javascript failed.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-IMP-003<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Imprint and privacy policy are linked on every page</span>
@@ -206,7 +206,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Looks for imprint and privacy links on every visited page of the site.</dd></div>
+<div><dt>How it is checked</dt><dd>Looks for imprint and privacy links on every visited page of the site, from the load without JavaScript where the load with JavaScript failed.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Put both links in a shared layout (footer) that every page uses, including apps and sub-sections.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/links-on-all-pages"><code>checks/legal/links-on-all-pages</code></a></dd></div>
@@ -231,7 +231,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-ODR-001" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-eu-odr-001 legal/odr-link no link to the closed eu dispute platform kein link zur abgeschalteten os-plattform regulation (eu) 2024/3228 looks for links to or mentions of the closed eu dispute platform (`odr` in `data/outdated-links.yml`) on every visited page.">
+<details class="rule" id="LEG-EU-ODR-001" data-module="legal" data-scope="website" data-severity="medium" data-search="leg-eu-odr-001 legal/odr-link no link to the closed eu dispute platform kein link zur abgeschalteten os-plattform regulation (eu) 2024/3228 looks for links to or mentions of the closed eu dispute platform (`odr` in `data/outdated-links.yml`) on every visited page, from the load without javascript where the load with javascript failed; info when no page loaded.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-ODR-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">No link to the closed EU dispute platform</span>
@@ -240,7 +240,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Looks for links to or mentions of the closed EU dispute platform (<code>odr</code> in <code>data/outdated-links.yml</code>) on every visited page.</dd></div>
+<div><dt>How it is checked</dt><dd>Looks for links to or mentions of the closed EU dispute platform (<code>odr</code> in <code>data/outdated-links.yml</code>) on every visited page, from the load without JavaScript where the load with JavaScript failed; info when no page loaded.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Remove the link and the notice. The platform closed on 20 July 2025. The statement under § 36 VSBG on whether you take part in consumer dispute resolution stays required, unless you have 10 employees or fewer.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/odr-link"><code>checks/legal/odr-link</code></a></dd></div>
@@ -369,7 +369,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-LIC-007" data-module="legal" data-scope="repository" data-severity="low" data-search="leg-de-lic-007 legal/relicensed-dependencies no dependency past a license change keine abhängigkeit nach einem lizenzwechsel § 31 (1) urhg (german copyright act: rights of use) compares the locked version of every production dependency, in every ecosystem, with the first version under a new license in `data/relicensing.yml` (checked entries with their source) and names the old license and an open fork.">
+<details class="rule" id="LEG-DE-LIC-007" data-module="legal" data-scope="repository" data-severity="low" data-search="leg-de-lic-007 legal/relicensed-dependencies no dependency past a license change keine abhängigkeit nach einem lizenzwechsel § 31 (1) urhg (german copyright act: rights of use) compares the locked version of every production dependency, in every ecosystem, with the first version under a new license in `data/relicensing.yml` (checked entries with their source) and names the old license and an open fork; gives info instead of passing when a lockfile could not be read.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-LIC-007<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
 <span class="rule-title">No dependency past a license change</span>
@@ -378,7 +378,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Compares the locked version of every production dependency, in every ecosystem, with the first version under a new license in <code>data/relicensing.yml</code> (checked entries with their source) and names the old license and an open fork.</dd></div>
+<div><dt>How it is checked</dt><dd>Compares the locked version of every production dependency, in every ecosystem, with the first version under a new license in <code>data/relicensing.yml</code> (checked entries with their source) and names the old license and an open fork; gives info instead of passing when a lockfile could not be read.</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Read the new license of the named version. If it does not fit your use, stay on the last version under the old license (without new security fixes) or move to the named fork. A technical hint, not legal advice.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/relicensed-dependencies"><code>checks/legal/relicensed-dependencies</code></a></dd></div>
@@ -564,7 +564,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-CNS-008" data-module="privacy" data-scope="website" data-severity="low" data-search="leg-eu-cns-008 privacy/cookie-lifetime cookies that need consent live at most 13 months cookies, die eine einwilligung brauchen, leben höchstens 13 monate art. 5(1)(e) gdpr, § 25 tdddg warns when a known tracking cookie (`data/third-parties.yml`) or a cookie of another site set without clicks expires more than 397 days (13 months, `data/thresholds.yml`) after the scan; long-lived own cookies only give info; warns instead of passing when a page did not load with javascript.">
+<details class="rule" id="LEG-EU-CNS-008" data-module="privacy" data-scope="website" data-severity="low" data-search="leg-eu-cns-008 privacy/cookie-lifetime cookies that need consent live at most 13 months cookies, die eine einwilligung brauchen, leben höchstens 13 monate art. 5(1)(e) gdpr, § 25 tdddg warns when a known tracking cookie (`data/third-parties.yml`) or a cookie of another site set without clicks expires more than 397 days (13 months, `data/thresholds.yml`) after the scan; long-lived own cookies only give info; gives info instead of passing when a page did not load with javascript.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-CNS-008<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
 <span class="rule-title">Cookies that need consent live at most 13 months</span>
@@ -573,7 +573,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Warns when a known tracking cookie (<code>data/third-parties.yml</code>) or a cookie of another site set without clicks expires more than 397 days (13 months, <code>data/thresholds.yml</code>) after the scan; long-lived own cookies only give info; warns instead of passing when a page did not load with JavaScript.</dd></div>
+<div><dt>How it is checked</dt><dd>Warns when a known tracking cookie (<code>data/third-parties.yml</code>) or a cookie of another site set without clicks expires more than 397 days (13 months, <code>data/thresholds.yml</code>) after the scan; long-lived own cookies only give info; gives info instead of passing when a page did not load with JavaScript.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Limit the lifetime of analytics and advertising cookies to at most 13 months and do not extend it automatically on new visits.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/cookie-lifetime"><code>checks/privacy/cookie-lifetime</code></a></dd></div>
@@ -598,7 +598,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-EU-DSE-008" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-008 privacy/form-receiver privacy policy names where forms send their data datenschutzerklärung nennt die empfänger der formulare art. 13(1)(e) and (f), art. 28, art. 44 gdpr finds form backends in the repository's templates, code and config (`forms` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and forms on the visited pages whose action host the repository names, then looks for each receiver's `names` as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); a receiver outside the eea (`data/countries.yml`) without third-country wording gives info.">
+<details class="rule" id="LEG-EU-DSE-008" data-module="privacy" data-scope="both" data-severity="medium" data-search="leg-eu-dse-008 privacy/form-receiver privacy policy names where forms send their data datenschutzerklärung nennt die empfänger der formulare art. 13(1)(e) and (f), art. 28, art. 44 gdpr finds form backends in the repository's templates, code and config (`forms` in `data/third-parties.yml`, files in `data/consent-tools.yml`) and forms on the visited pages (from the load without javascript where the load with javascript failed) whose action host the repository names, then looks for each receiver's `names` as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); a receiver outside the eea (`data/countries.yml`) without third-country wording gives info.">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-EU-DSE-008<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Privacy policy names where forms send their data</span>
@@ -607,7 +607,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds form backends in the repository's templates, code and config (<code>forms</code> in <code>data/third-parties.yml</code>, files in <code>data/consent-tools.yml</code>) and forms on the visited pages whose action host the repository names, then looks for each receiver's <code>names</code> as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); a receiver outside the EEA (<code>data/countries.yml</code>) without third-country wording gives info.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds form backends in the repository's templates, code and config (<code>forms</code> in <code>data/third-parties.yml</code>, files in <code>data/consent-tools.yml</code>) and forms on the visited pages (from the load without JavaScript where the load with JavaScript failed) whose action host the repository names, then looks for each receiver's <code>names</code> as whole words in the privacy policy (linked from the start page or its hreflang version in the scan language); a receiver outside the EEA (<code>data/countries.yml</code>) without third-country wording gives info.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
 <div><dt>How to fix</dt><dd>Name the form service as recipient (processor) with purpose, legal basis, storage period and country, for a provider outside the EU with the basis of the transfer. Or send the form to your own server.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/privacy/form-receiver"><code>checks/privacy/form-receiver</code></a></dd></div>
@@ -841,7 +841,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-HDR-002" data-module="security" data-scope="website" data-severity="medium" data-search="sec-hdr-002 security/cookie-flags cookies use secure flags cookies nutzen sichere flags art. 32 gdpr checks secure on every cookie set without login (https sites, and always with `samesite=none`) and httponly on cookies whose name looks like a session (`data/cookies.yml`); cookies of other sites only give info; warns instead of passing when a page did not load with javascript.">
+<details class="rule" id="SEC-HDR-002" data-module="security" data-scope="website" data-severity="medium" data-search="sec-hdr-002 security/cookie-flags cookies use secure flags cookies nutzen sichere flags art. 32 gdpr checks secure on every cookie set without login (https sites, and always with `samesite=none`) and httponly on cookies whose name looks like a session (`data/cookies.yml`); cookies of other sites only give info; gives info instead of passing when a page did not load with javascript.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-HDR-002<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Cookies use secure flags</span>
@@ -850,7 +850,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Checks Secure on every cookie set without login (HTTPS sites, and always with <code>SameSite=None</code>) and HttpOnly on cookies whose name looks like a session (<code>data/cookies.yml</code>); cookies of other sites only give info; warns instead of passing when a page did not load with JavaScript.</dd></div>
+<div><dt>How it is checked</dt><dd>Checks Secure on every cookie set without login (HTTPS sites, and always with <code>SameSite=None</code>) and HttpOnly on cookies whose name looks like a session (<code>data/cookies.yml</code>); cookies of other sites only give info; gives info instead of passing when a page did not load with JavaScript.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Set cookies with Secure; session cookies also with HttpOnly and SameSite=Lax.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/cookie-flags"><code>checks/security/cookie-flags</code></a></dd></div>
@@ -858,7 +858,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-HDR-005" data-module="security" data-scope="website" data-severity="medium" data-search="sec-hdr-005 security/cors cors does not share answers with credentials to any site cors gibt antworten mit anmeldedaten nicht an beliebige websites frei art. 32 gdpr reads the response headers of the site's own pages and fails when access-control-allow-credentials: true comes with access-control-allow-origin * or null; it sends no foreign origin, so a server that mirrors any origin is not detected.">
+<details class="rule" id="SEC-HDR-005" data-module="security" data-scope="website" data-severity="medium" data-search="sec-hdr-005 security/cors cors does not share answers with credentials to any site cors gibt antworten mit anmeldedaten nicht an beliebige websites frei art. 32 gdpr reads the response headers of the site's own pages, also those whose load with javascript failed, and fails when access-control-allow-credentials: true comes with access-control-allow-origin * or null; it sends no foreign origin, so a server that mirrors any origin is not detected.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-HDR-005<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">CORS does not share answers with credentials to any site</span>
@@ -867,7 +867,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads the response headers of the site's own pages and fails when Access-Control-Allow-Credentials: true comes with Access-Control-Allow-Origin * or null; it sends no foreign Origin, so a server that mirrors any Origin is not detected.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads the response headers of the site's own pages, also those whose load with JavaScript failed, and fails when Access-Control-Allow-Credentials: true comes with Access-Control-Allow-Origin * or null; it sends no foreign Origin, so a server that mirrors any Origin is not detected.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Send Access-Control-Allow-Credentials only with a fixed list of trusted origins, never with * or null, and do not copy the Origin from the request unchecked. If the pages need no CORS, leave out both headers.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/cors"><code>checks/security/cors</code></a></dd></div>
@@ -960,7 +960,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-EXP-004" data-module="security" data-scope="both" data-severity="high" data-search="sec-exp-004 security/dev-build-deployed no development server or debug build in production keine entwicklungs- oder debug-builds in produktion art. 32 gdpr looks for traces of a dev server or debug build (`live` in `data/dev-builds.yml`: vite client, next.js and webpack hmr, react and vue development builds, django debug page, werkzeug debugger), each only where and in the form the tool emits it (served scripts, html, request urls or error probes), and for dev start commands in deploy files and `package.json` start scripts and debug switches in settings files (`commands`, `settings` there): both sides fail, only the site warns, only a deploy file gives info.">
+<details class="rule" id="SEC-EXP-004" data-module="security" data-scope="both" data-severity="high" data-search="sec-exp-004 security/dev-build-deployed no development server or debug build in production keine entwicklungs- oder debug-builds in produktion art. 32 gdpr looks for traces of a dev server or debug build (`live` in `data/dev-builds.yml`: vite client, next.js and webpack hmr, react and vue development builds, django debug page, werkzeug debugger), each only where and in the form the tool emits it (served scripts, html, request urls or error probes), and for dev start commands in deploy files and `package.json` start scripts and debug switches in settings files (`commands`, `settings` there): both sides fail, only the site warns, only a deploy file gives info, and so does a served file of the site cut or not kept at the `code` limits in `data/thresholds.yml`.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-EXP-004<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">No development server or debug build in production</span>
@@ -969,7 +969,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Looks for traces of a dev server or debug build (<code>live</code> in <code>data/dev-builds.yml</code>: Vite client, Next.js and webpack HMR, React and Vue development builds, Django DEBUG page, Werkzeug debugger), each only where and in the form the tool emits it (served scripts, HTML, request URLs or error probes), and for dev start commands in deploy files and <code>package.json</code> start scripts and debug switches in settings files (<code>commands</code>, <code>settings</code> there): both sides fail, only the site warns, only a deploy file gives info.</dd></div>
+<div><dt>How it is checked</dt><dd>Looks for traces of a dev server or debug build (<code>live</code> in <code>data/dev-builds.yml</code>: Vite client, Next.js and webpack HMR, React and Vue development builds, Django DEBUG page, Werkzeug debugger), each only where and in the form the tool emits it (served scripts, HTML, request URLs or error probes), and for dev start commands in deploy files and <code>package.json</code> start scripts and debug switches in settings files (<code>commands</code>, <code>settings</code> there): both sides fail, only the site warns, only a deploy file gives info, and so does a served file of the site cut or not kept at the <code>code</code> limits in <code>data/thresholds.yml</code>.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
 <div><dt>How to fix</dt><dd>Serve the production build (for example next build and next start, vite build with static hosting, gunicorn instead of runserver) and turn debug mode off (DEBUG=False, APP_DEBUG=false).</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/dev-build-deployed"><code>checks/security/dev-build-deployed</code></a></dd></div>
@@ -1062,7 +1062,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-SUPPLY-001" data-module="security" data-scope="repository" data-severity="medium" data-search="sec-supply-001 security/hallucinated-packages dependencies are real, installed packages abhängigkeiten sind echte, installierte pakete cra art. 13(5) (due diligence for third-party components) with annex i part i(2)(a) (from 11 dec 2027) reads the direct registry dependencies of package.json, composer.json, pubspec.yaml, cargo.toml and pyproject.toml (`src/repo/manifests.ts`, `data/packages.yml`) and warns on names the parsed lockfile of that manifest does not contain (never installed, so possibly made up by an ai assistant), and on names one typo away from a popular package or an unscoped copy of a scoped one (lists and allowed look-alikes in `data/packages.yml`, distance and minimum length in `data/thresholds.yml`), also in pinned requirements files; nothing is looked up in a registry.">
+<details class="rule" id="SEC-SUPPLY-001" data-module="security" data-scope="repository" data-severity="medium" data-search="sec-supply-001 security/hallucinated-packages dependencies are real, installed packages abhängigkeiten sind echte, installierte pakete cra art. 13(5) (due diligence for third-party components) with annex i part i(2)(a) (from 11 dec 2027) reads the direct registry dependencies of package.json, composer.json, pubspec.yaml, cargo.toml and pyproject.toml (`src/repo/manifests.ts`, `data/packages.yml`) and warns on names the parsed lockfile of that manifest does not contain (never installed, so possibly made up by an ai assistant), and on names one typo away from a popular package or an unscoped copy of a scoped one (lists and allowed look-alikes in `data/packages.yml`, distance and minimum length in `data/thresholds.yml`), also in pinned requirements files; nothing is looked up in a registry; gives info instead of passing when a lockfile could not be read.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SUPPLY-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Dependencies are real, installed packages</span>
@@ -1071,7 +1071,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Reads the direct registry dependencies of package.json, composer.json, pubspec.yaml, Cargo.toml and pyproject.toml (<code>src/repo/manifests.ts</code>, <code>data/packages.yml</code>) and warns on names the parsed lockfile of that manifest does not contain (never installed, so possibly made up by an AI assistant), and on names one typo away from a popular package or an unscoped copy of a scoped one (lists and allowed look-alikes in <code>data/packages.yml</code>, distance and minimum length in <code>data/thresholds.yml</code>), also in pinned requirements files; nothing is looked up in a registry.</dd></div>
+<div><dt>How it is checked</dt><dd>Reads the direct registry dependencies of package.json, composer.json, pubspec.yaml, Cargo.toml and pyproject.toml (<code>src/repo/manifests.ts</code>, <code>data/packages.yml</code>) and warns on names the parsed lockfile of that manifest does not contain (never installed, so possibly made up by an AI assistant), and on names one typo away from a popular package or an unscoped copy of a scoped one (lists and allowed look-alikes in <code>data/packages.yml</code>, distance and minimum length in <code>data/thresholds.yml</code>), also in pinned requirements files; nothing is looked up in a registry; gives info instead of passing when a lockfile could not be read.</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Check each reported name on the registry's page (publisher, age, downloads), fix typos, then let the package manager rewrite the lockfile (npm install, composer update, cargo update, uv lock).</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/hallucinated-packages"><code>checks/security/hallucinated-packages</code></a></dd></div>
@@ -1198,7 +1198,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-TLS-003" data-module="security" data-scope="website" data-severity="medium" data-search="sec-tls-003 security/mixed-content no unencrypted resources on https pages keine unverschlüsselten ressourcen auf https-seiten art. 32 gdpr lists `http://` requests made by pages of an https site; warns instead of passing when a page did not load with javascript.">
+<details class="rule" id="SEC-TLS-003" data-module="security" data-scope="website" data-severity="medium" data-search="sec-tls-003 security/mixed-content no unencrypted resources on https pages keine unverschlüsselten ressourcen auf https-seiten art. 32 gdpr lists `http://` requests made by pages of an https site; gives info instead of passing when a page did not load with javascript.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-TLS-003<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">No unencrypted resources on HTTPS pages</span>
@@ -1207,7 +1207,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Lists <code>http://</code> requests made by pages of an HTTPS site; warns instead of passing when a page did not load with JavaScript.</dd></div>
+<div><dt>How it is checked</dt><dd>Lists <code>http://</code> requests made by pages of an HTTPS site; gives info instead of passing when a page did not load with JavaScript.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Load every resource over https://.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/mixed-content"><code>checks/security/mixed-content</code></a></dd></div>
@@ -1249,7 +1249,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-SECRETS-001" data-module="security" data-scope="repository" data-severity="critical" data-search="sec-secrets-001 security/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files, including checked-out submodules, line by line against the patterns in `data/secrets.yml` (many adapted from gitleaks), each only on lines with one of its keywords, decoding jwt payloads where a pattern names claims (supabase `service_role` keys) and dropping finds below the entropy in `data/thresholds.yml`, with a placeholder word, or matching a documented example; a random-looking value under a name like secret, password or token is only a warning; nothing leaves the runner, and the report shows only the first 4 characters and the length of each find, and counts the files it could not read (binary, over the `repo` limit in `data/thresholds.yml`, git lfs pointers); gives info instead of passing when not a single file could be read.">
+<details class="rule" id="SEC-SECRETS-001" data-module="security" data-scope="repository" data-severity="critical" data-search="sec-secrets-001 security/secrets no secrets in the repository keine geheimnisse im repository art. 32 gdpr matches tracked files, including checked-out submodules, line by line against the patterns in `data/secrets.yml` (many adapted from gitleaks), each only on lines with one of its keywords, decoding jwt payloads where a pattern names claims (supabase `service_role` keys) and dropping finds below the entropy in `data/thresholds.yml`, with a placeholder word, or matching a documented example; a random-looking value under a name like secret, password or token is only a warning; nothing leaves the runner, and the report shows only the first 4 characters and the length of each find, and counts the files it could not read (binary, over the `repo` limit in `data/thresholds.yml`, git lfs pointers); gives info instead of passing when not a single file could be read or a file is over the `repo` limit or only a git lfs pointer (binary files stay excluded).">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-SECRETS-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="5" title="Severity: critical"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">critical</span></span></span>
 <span class="rule-title">No secrets in the repository</span>
@@ -1258,7 +1258,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Matches tracked files, including checked-out submodules, line by line against the patterns in <code>data/secrets.yml</code> (many adapted from gitleaks), each only on lines with one of its keywords, decoding JWT payloads where a pattern names claims (Supabase <code>service_role</code> keys) and dropping finds below the entropy in <code>data/thresholds.yml</code>, with a placeholder word, or matching a documented example; a random-looking value under a name like secret, password or token is only a warning; nothing leaves the runner, and the report shows only the first 4 characters and the length of each find, and counts the files it could not read (binary, over the <code>repo</code> limit in <code>data/thresholds.yml</code>, Git LFS pointers); gives info instead of passing when not a single file could be read.</dd></div>
+<div><dt>How it is checked</dt><dd>Matches tracked files, including checked-out submodules, line by line against the patterns in <code>data/secrets.yml</code> (many adapted from gitleaks), each only on lines with one of its keywords, decoding JWT payloads where a pattern names claims (Supabase <code>service_role</code> keys) and dropping finds below the entropy in <code>data/thresholds.yml</code>, with a placeholder word, or matching a documented example; a random-looking value under a name like secret, password or token is only a warning; nothing leaves the runner, and the report shows only the first 4 characters and the length of each find, and counts the files it could not read (binary, over the <code>repo</code> limit in <code>data/thresholds.yml</code>, Git LFS pointers); gives info instead of passing when not a single file could be read or a file is over the <code>repo</code> limit or only a Git LFS pointer (binary files stay excluded).</dd></div>
 <div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
 <div><dt>How to fix</dt><dd>Revoke found keys right away, then remove them from code and git history and store them as secrets or environment variables.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/secrets"><code>checks/security/secrets</code></a></dd></div>
@@ -1334,7 +1334,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-EXP-003" data-module="security" data-scope="both" data-severity="medium" data-search="sec-exp-003 security/source-maps source maps do not expose the repository's code source maps legen den code des repositorys nicht offen  follows the `sourcemappingurl` of the site's own scripts (inline maps decoded, others requested on the same site up to `code.max_maps` in `data/thresholds.yml`) and matches each map's `sources` against the repository's files by their path endings (at least two parts, `node_modules` left out); a match warns, more so when the map carries `sourcescontent`; gives info instead of passing when a map request got no answer, a script was cut or not kept (`code` in `data/thresholds.yml`) or `code.max_maps` was reached.">
+<details class="rule" id="SEC-EXP-003" data-module="security" data-scope="both" data-severity="medium" data-search="sec-exp-003 security/source-maps source maps do not expose the repository's code source maps legen den code des repositorys nicht offen  follows the `sourcemappingurl` of the site's own scripts (inline maps decoded, others requested on the same site up to `code.max_maps` in `data/thresholds.yml`) and matches each map's `sources` against the repository's files by their path endings (at least two parts, `node_modules` left out); a match warns, more so when the map carries `sourcescontent`; gives info instead of passing when a map request got no answer, a script of the site was cut or not kept (`code` in `data/thresholds.yml`; third-party files do not count) or `code.max_maps` was reached.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-EXP-003<span class="rule-scope both" title="Scope: what the check reads">Repository + website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Source maps do not expose the repository's code</span>
@@ -1343,7 +1343,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Follows the <code>sourceMappingURL</code> of the site's own scripts (inline maps decoded, others requested on the same site up to <code>code.max_maps</code> in <code>data/thresholds.yml</code>) and matches each map's <code>sources</code> against the repository's files by their path endings (at least two parts, <code>node_modules</code> left out); a match warns, more so when the map carries <code>sourcesContent</code>; gives info instead of passing when a map request got no answer, a script was cut or not kept (<code>code</code> in <code>data/thresholds.yml</code>) or <code>code.max_maps</code> was reached.</dd></div>
+<div><dt>How it is checked</dt><dd>Follows the <code>sourceMappingURL</code> of the site's own scripts (inline maps decoded, others requested on the same site up to <code>code.max_maps</code> in <code>data/thresholds.yml</code>) and matches each map's <code>sources</code> against the repository's files by their path endings (at least two parts, <code>node_modules</code> left out); a match warns, more so when the map carries <code>sourcesContent</code>; gives info instead of passing when a map request got no answer, a script of the site was cut or not kept (<code>code</code> in <code>data/thresholds.yml</code>; third-party files do not count) or <code>code.max_maps</code> was reached.</dd></div>
 <div><dt>Scope</dt><dd>Repository + website: reads the website and the repository together; runs only with a <code>url</code> and a checkout.</dd></div>
 <div><dt>How to fix</dt><dd>Turn off source maps in the production build (Next.js productionBrowserSourceMaps, Vite build.sourcemap), or upload them to error tracking only and do not serve them. This matters most when the repository is private.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/source-maps"><code>checks/security/source-maps</code></a></dd></div>
@@ -1351,7 +1351,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="SEC-HDR-003" data-module="security" data-scope="website" data-severity="medium" data-search="sec-hdr-003 security/subresource-integrity scripts and stylesheets from other sites carry an integrity hash skripte und stylesheets anderer websites haben einen integritäts-hash art. 32 gdpr lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the html of the site's own pages (load without javascript) that point to another site and have no integrity attribute; for services whose files change under the same url (`data/subresource-integrity.yml`) it adds how to fix them without a hash.">
+<details class="rule" id="SEC-HDR-003" data-module="security" data-scope="website" data-severity="medium" data-search="sec-hdr-003 security/subresource-integrity scripts and stylesheets from other sites carry an integrity hash skripte und stylesheets anderer websites haben einen integritäts-hash art. 32 gdpr lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the html of the site's own pages (load without javascript, also where the load with javascript failed) that point to another site and have no integrity attribute; for services whose files change under the same url (`data/subresource-integrity.yml`) it adds how to fix them without a hash.">
 <summary>
 <span class="rule-head"><span class="rule-id">SEC-HDR-003<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Scripts and stylesheets from other sites carry an integrity hash</span>
@@ -1360,7 +1360,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript) that point to another site and have no integrity attribute; for services whose files change under the same URL (<code>data/subresource-integrity.yml</code>) it adds how to fix them without a hash.</dd></div>
+<div><dt>How it is checked</dt><dd>Lists &lt;script src&gt; and &lt;link rel=stylesheet&gt; elements in the HTML of the site's own pages (load without JavaScript, also where the load with JavaScript failed) that point to another site and have no integrity attribute; for services whose files change under the same URL (<code>data/subresource-integrity.yml</code>) it adds how to fix them without a hash.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Load fixed versions of other sites' files with integrity=&quot;sha384-…&quot; and crossorigin=&quot;anonymous&quot; (most CDNs show the hash), or host the file yourself. For services that change their file under the same URL, host a pinned copy or accept the risk knowingly.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/subresource-integrity"><code>checks/security/subresource-integrity</code></a></dd></div>
@@ -1569,7 +1569,7 @@
 <section class="module" id="accessibility" data-module="accessibility">
 <h3>Accessibility <small>9 rules</small></h3>
 <div class="rules">
-<details class="rule" id="A11Y-ALT-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-alt-001 accessibility/alt-text images have a text alternative bilder haben einen alternativtext bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.1.1 (wcag 2.1 success criterion 1.1.1) runs the axe-core rules listed for `accessibility/alt-text` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists images, image buttons, image maps and svg or aria images without a text alternative, with page and css selector; it only warns, since the bfsg does not apply to every site.">
+<details class="rule" id="A11Y-ALT-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-alt-001 accessibility/alt-text images have a text alternative bilder haben einen alternativtext bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.1.1 (wcag 2.1 success criterion 1.1.1) runs the axe-core rules listed for `accessibility/alt-text` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists images, image buttons, image maps and svg or aria images without a text alternative, with page and css selector; it only warns, since the bfsg does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-ALT-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Images have a text alternative</span>
@@ -1578,7 +1578,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/alt-text</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists images, image buttons, image maps and SVG or ARIA images without a text alternative, with page and CSS selector; it only warns, since the BFSG does not apply to every site.</dd></div>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/alt-text</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists images, image buttons, image maps and SVG or ARIA images without a text alternative, with page and CSS selector; it only warns, since the BFSG does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Give every informative image an alt attribute that says what it shows, decorative images alt=&quot;&quot;. Image buttons (input type=image) and image map areas need alt too, SVG and role=img graphics an aria-label or title. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/alt-text"><code>checks/accessibility/alt-text</code></a></dd></div>
@@ -1586,7 +1586,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="A11Y-ARIA-001" data-module="accessibility" data-scope="website" data-severity="low" data-search="a11y-aria-001 accessibility/aria-attributes aria attributes are valid aria-attribute sind gültig bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.4.1.2 (wcag 2.1 success criterion 4.1.2) runs the axe-core rules listed for `accessibility/aria-attributes` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists misspelled or unknown `aria-*` attributes, such as `aria-labeledby`, and attributes with an invalid value, such as `aria-hidden=&quot;yes&quot;` or an `aria-controls` that names no element, with page and css selector; it only warns, since the bfsg does not apply to every site.">
+<details class="rule" id="A11Y-ARIA-001" data-module="accessibility" data-scope="website" data-severity="low" data-search="a11y-aria-001 accessibility/aria-attributes aria attributes are valid aria-attribute sind gültig bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.4.1.2 (wcag 2.1 success criterion 4.1.2) runs the axe-core rules listed for `accessibility/aria-attributes` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists misspelled or unknown `aria-*` attributes, such as `aria-labeledby`, and attributes with an invalid value, such as `aria-hidden=&quot;yes&quot;` or an `aria-controls` that names no element, with page and css selector; it only warns, since the bfsg does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-ARIA-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
 <span class="rule-title">ARIA attributes are valid</span>
@@ -1595,7 +1595,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/aria-attributes</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists misspelled or unknown <code>aria-*</code> attributes, such as <code>aria-labeledby</code>, and attributes with an invalid value, such as <code>aria-hidden=&quot;yes&quot;</code> or an <code>aria-controls</code> that names no element, with page and CSS selector; it only warns, since the BFSG does not apply to every site.</dd></div>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/aria-attributes</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists misspelled or unknown <code>aria-*</code> attributes, such as <code>aria-labeledby</code>, and attributes with an invalid value, such as <code>aria-hidden=&quot;yes&quot;</code> or an <code>aria-controls</code> that names no element, with page and CSS selector; it only warns, since the BFSG does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Fix typos in ARIA attributes (aria-labelledby with two l) and only use values WAI-ARIA allows: true or false for aria-hidden and aria-expanded, existing ids for aria-labelledby, aria-describedby and aria-controls. Screen readers ignore unknown attributes, so the element loses the information it was meant to carry. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/aria-attributes"><code>checks/accessibility/aria-attributes</code></a></dd></div>
@@ -1603,7 +1603,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-14">2026-11-14</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="A11Y-STRUCT-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-struct-001 accessibility/aria-structure lists, menus and tables are built correctly listen, menüs und tabellen sind richtig aufgebaut bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.3.1 (wcag 2.1 success criterion 1.3.1) runs the axe-core rules listed for `accessibility/aria-structure` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists lists, menus, tables, grids, tabs, trees and other aria roles that lack the children or the parent they need, such as a `role=menu` without menu items or an `&lt;li&gt;` outside a list, with page and css selector; it only warns, since the bfsg does not apply to every site.">
+<details class="rule" id="A11Y-STRUCT-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-struct-001 accessibility/aria-structure lists, menus and tables are built correctly listen, menüs und tabellen sind richtig aufgebaut bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.3.1 (wcag 2.1 success criterion 1.3.1) runs the axe-core rules listed for `accessibility/aria-structure` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists lists, menus, tables, grids, tabs, trees and other aria roles that lack the children or the parent they need, such as a `role=menu` without menu items or an `&lt;li&gt;` outside a list, with page and css selector; it only warns, since the bfsg does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-STRUCT-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Lists, menus and tables are built correctly</span>
@@ -1612,7 +1612,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/aria-structure</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists lists, menus, tables, grids, tabs, trees and other ARIA roles that lack the children or the parent they need, such as a <code>role=menu</code> without menu items or an <code>&lt;li&gt;</code> outside a list, with page and CSS selector; it only warns, since the BFSG does not apply to every site.</dd></div>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/aria-structure</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists lists, menus, tables, grids, tabs, trees and other ARIA roles that lack the children or the parent they need, such as a <code>role=menu</code> without menu items or an <code>&lt;li&gt;</code> outside a list, with page and CSS selector; it only warns, since the BFSG does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Give elements with a composite role the children they need: role=menu and menubar need menuitem, tablist needs tab, list needs listitem, table and grid need row; and put every menuitem, tab or listitem inside its matching parent. &lt;ul&gt; and &lt;ol&gt; may only contain &lt;li&gt; directly. Where the role is wrong, remove it instead of adding children. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/aria-structure"><code>checks/accessibility/aria-structure</code></a></dd></div>
@@ -1637,7 +1637,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="A11Y-BP-001" data-module="accessibility" data-scope="website" data-severity="info" data-search="a11y-bp-001 accessibility/best-practices landmarks, dialogs and live regions follow wai-aria best practice landmarks, dialoge und live-regionen folgen den empfehlungen von wai-aria no legal basis not a wcag requirement, but wai-aria and html recommend it: screen reader users jump by landmarks, recognize dialogs by their name and hear live regions without one interrupting the other. runs the axe-core rules listed for `accessibility/best-practices` in `data/accessibility.yml`, including its own `custom` rules, on every visited own page with javascript on, inside the browser and without sending anything, and lists more than one banner or main landmark, dialogs without an accessible name, `aria-hidden=&quot;false&quot;`, and pages with more live regions than `max_live_regions` in `data/thresholds.yml`, with page and css selector; it only gives hints.">
+<details class="rule" id="A11Y-BP-001" data-module="accessibility" data-scope="website" data-severity="info" data-search="a11y-bp-001 accessibility/best-practices landmarks, dialogs and live regions follow wai-aria best practice landmarks, dialoge und live-regionen folgen den empfehlungen von wai-aria no legal basis not a wcag requirement, but wai-aria and html recommend it: screen reader users jump by landmarks, recognize dialogs by their name and hear live regions without one interrupting the other. runs the axe-core rules listed for `accessibility/best-practices` in `data/accessibility.yml`, including its own `custom` rules, on every visited own page with javascript on, inside the browser and without sending anything, and lists more than one banner or main landmark, dialogs without an accessible name, `aria-hidden=&quot;false&quot;`, and pages with more live regions than `max_live_regions` in `data/thresholds.yml`, with page and css selector; it only gives hints; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-BP-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="1" title="Severity: info"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">info</span></span></span>
 <span class="rule-title">Landmarks, dialogs and live regions follow WAI-ARIA best practice</span>
@@ -1646,7 +1646,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/best-practices</code> in <code>data/accessibility.yml</code>, including its own <code>custom</code> rules, on every visited own page with JavaScript on, inside the browser and without sending anything, and lists more than one banner or main landmark, dialogs without an accessible name, <code>aria-hidden=&quot;false&quot;</code>, and pages with more live regions than <code>max_live_regions</code> in <code>data/thresholds.yml</code>, with page and CSS selector; it only gives hints.</dd></div>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/best-practices</code> in <code>data/accessibility.yml</code>, including its own <code>custom</code> rules, on every visited own page with JavaScript on, inside the browser and without sending anything, and lists more than one banner or main landmark, dialogs without an accessible name, <code>aria-hidden=&quot;false&quot;</code>, and pages with more live regions than <code>max_live_regions</code> in <code>data/thresholds.yml</code>, with page and CSS selector; it only gives hints; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Use only one top-level &lt;header&gt; or role=banner and only one visible &lt;main&gt; per page. Give every dialog (&lt;dialog&gt;, role=dialog or alertdialog) a name with aria-labelledby or aria-label. Remove aria-hidden=&quot;false&quot;; leaving the attribute out means the same. Collect announcements in as few live regions (aria-live, role=status or alert) as possible.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/best-practices"><code>checks/accessibility/best-practices</code></a></dd></div>
@@ -1654,7 +1654,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-14">2026-11-14</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="A11Y-CONTRAST-001" data-module="accessibility" data-scope="website" data-severity="low" data-search="a11y-contrast-001 accessibility/contrast text has enough contrast text hat genug kontrast bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.4.3 (wcag 2.1 success criterion 1.4.3) runs the axe-core rules listed for `accessibility/contrast` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists text whose contrast against its background is below 4.5:1 (3:1 for large text), only where axe-core can compute the background; text over images or gradients is left out, with page and css selector; it only warns, since the bfsg does not apply to every site.">
+<details class="rule" id="A11Y-CONTRAST-001" data-module="accessibility" data-scope="website" data-severity="low" data-search="a11y-contrast-001 accessibility/contrast text has enough contrast text hat genug kontrast bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.4.3 (wcag 2.1 success criterion 1.4.3) runs the axe-core rules listed for `accessibility/contrast` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists text whose contrast against its background is below 4.5:1 (3:1 for large text), only where axe-core can compute the background; text over images or gradients is left out, with page and css selector; it only warns, since the bfsg does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-CONTRAST-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
 <span class="rule-title">Text has enough contrast</span>
@@ -1663,7 +1663,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/contrast</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists text whose contrast against its background is below 4.5:1 (3:1 for large text), only where axe-core can compute the background; text over images or gradients is left out, with page and CSS selector; it only warns, since the BFSG does not apply to every site.</dd></div>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/contrast</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists text whose contrast against its background is below 4.5:1 (3:1 for large text), only where axe-core can compute the background; text over images or gradients is left out, with page and CSS selector; it only warns, since the BFSG does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Change the text or background color to reach a contrast of at least 4.5:1, or 3:1 for large text (from 24 px, or 18.66 px bold). Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/contrast"><code>checks/accessibility/contrast</code></a></dd></div>
@@ -1671,7 +1671,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="A11Y-NAME-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-name-001 accessibility/control-names buttons, links and frames have a name buttons, links und frames haben einen namen bfsg with § 3 bfsgv; en 301 549 v3.2.1 clauses 9.4.1.2 and 9.2.4.4 (wcag 2.1 success criteria 4.1.2 and 2.4.4) runs the axe-core rules listed for `accessibility/control-names` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists buttons, links and iframes without an accessible name, such as icon buttons without text, with page and css selector; it only warns, since the bfsg does not apply to every site.">
+<details class="rule" id="A11Y-NAME-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-name-001 accessibility/control-names buttons, links and frames have a name buttons, links und frames haben einen namen bfsg with § 3 bfsgv; en 301 549 v3.2.1 clauses 9.4.1.2 and 9.2.4.4 (wcag 2.1 success criteria 4.1.2 and 2.4.4) runs the axe-core rules listed for `accessibility/control-names` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists buttons, links and iframes without an accessible name, such as icon buttons without text, with page and css selector; it only warns, since the bfsg does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-NAME-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Buttons, links and frames have a name</span>
@@ -1680,7 +1680,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/control-names</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists buttons, links and iframes without an accessible name, such as icon buttons without text, with page and CSS selector; it only warns, since the BFSG does not apply to every site.</dd></div>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/control-names</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists buttons, links and iframes without an accessible name, such as icon buttons without text, with page and CSS selector; it only warns, since the BFSG does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Give buttons and links that only show an icon a visible text or an aria-label, and every iframe a title attribute. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/control-names"><code>checks/accessibility/control-names</code></a></dd></div>
@@ -1688,7 +1688,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="A11Y-FORM-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-form-001 accessibility/form-labels form fields have a label formularfelder haben eine beschriftung bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.4.1.2 (wcag 2.1 success criterion 4.1.2) runs the axe-core rules listed for `accessibility/form-labels` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists input fields, text areas, select boxes and aria input fields without an accessible name, with page and css selector; it only warns, since the bfsg does not apply to every site.">
+<details class="rule" id="A11Y-FORM-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-form-001 accessibility/form-labels form fields have a label formularfelder haben eine beschriftung bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.4.1.2 (wcag 2.1 success criterion 4.1.2) runs the axe-core rules listed for `accessibility/form-labels` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists input fields, text areas, select boxes and aria input fields without an accessible name, with page and css selector; it only warns, since the bfsg does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).">
 <summary>
 <span class="rule-head"><span class="rule-id">A11Y-FORM-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
 <span class="rule-title">Form fields have a label</span>
@@ -1697,7 +1697,7 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/form-labels</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists input fields, text areas, select boxes and ARIA input fields without an accessible name, with page and CSS selector; it only warns, since the BFSG does not apply to every site.</dd></div>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/form-labels</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists input fields, text areas, select boxes and ARIA input fields without an accessible name, with page and CSS selector; it only warns, since the BFSG does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error).</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>How to fix</dt><dd>Connect every field to a &lt;label for&gt; or give it an aria-label. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/form-labels"><code>checks/accessibility/form-labels</code></a></dd></div>

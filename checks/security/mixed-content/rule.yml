@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Lists `http://` requests made by pages of an HTTPS site; warns instead of passing when a page did not load with JavaScript."
+how: "Lists `http://` requests made by pages of an HTTPS site; gives info instead of passing when a page did not load with JavaScript."
 fix_hint:
   de: "Alle Ressourcen über https:// laden."
   en: "Load every resource over https://."

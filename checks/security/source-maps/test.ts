@@ -58,3 +58,12 @@ test("no pass when a source map could not be checked", async () => {
   const cut = await runCrossCheck(here, fakeContext({}, { code: [{ ...code[0], truncated: true }], sourceMaps: [] }), repo);
   assert.deepEqual(cut.raw.details?.map((d) => d.key), ["cut"]);
 });
+
+// #87: only files of the scanned site that were not kept count; a dropped third-party file is no gap.
+test("a dropped third-party file does not turn the pass into info", async () => {
+  const { fakeContext } = await import("../../../test/helpers.ts");
+  const code = [{ url: "https://example.de/app.js", type: "script" as const, body: "x;", truncated: false }];
+  const run = (skipped: string[]) => runCrossCheck(here, fakeContext({}, { code, codeSkipped: skipped, sourceMaps: [] }), repo);
+  assert.equal((await run(["https://cdn.other-site.com/big.js"])).status, "pass");
+  assert.equal((await run(["https://example.de/big.js"])).status, "info");
+});

@@ -231,11 +231,11 @@ let axeSource: string | undefined;
 const axeScript = () => (axeSource ??= readFileSync(createRequire(import.meta.url).resolve("axe-core/axe.min.js"), "utf8"));
 
 /**
- * Runs the selected axe-core rules in the page and returns their violations, or undefined when axe
- * failed or ran out of time. page.evaluate is not bound by the page's CSP and loads nothing from the
+ * Runs the selected axe-core rules in the page and returns their violations, or `axeError` when axe
+ * failed ("timeout" when it ran out of time, else the error). page.evaluate is not bound by the page's CSP and loads nothing from the
  * network. The page can tamper with what axe returns, so every value is checked and capped here.
  */
-async function runAxe(page: PlaywrightPage, ms: number): Promise<AxeViolation[] | undefined> {
+async function runAxe(page: PlaywrightPage, ms: number): Promise<Pick<Snapshot, "axe" | "axeError">> {
   const options = {
     runOnly: { type: "rule", values: AXE_RULES },
     resultTypes: ["violations"],
@@ -248,11 +248,11 @@ async function runAxe(page: PlaywrightPage, ms: number): Promise<AxeViolation[] 
   const script = `(async () => {\n${axeScript()}\n;${axeConfigure()}const r = await axe.run(document, ${JSON.stringify(options)});
     return r.violations.map((v) => ({ rule: v.id, count: v.nodes.length, targets: v.nodes.slice(0, ${AXE.max_targets}).map((n) => n.target.join(" ")) }));
   })()`;
-  const [deadline, stop] = timeoutAfter(ms, "axe-core did not finish in time");
+  const [deadline, stop] = timeoutAfter(ms, "timeout");
   try {
     const raw: unknown = await Promise.race([page.evaluate(script), deadline]);
-    if (!Array.isArray(raw)) return undefined;
-    return raw
+    if (!Array.isArray(raw)) return { axeError: "no result" };
+    const axe = raw
       .filter((v) => v && AXE_RULES.includes(v.rule) && Number.isFinite(v.count) && Array.isArray(v.targets))
       .slice(0, AXE_RULES.length)
       .map((v) => ({
@@ -260,8 +260,9 @@ async function runAxe(page: PlaywrightPage, ms: number): Promise<AxeViolation[] 
         count: Math.max(0, Math.round(v.count)),
         targets: v.targets.slice(0, AXE.max_targets).map((t: unknown) => String(t).slice(0, 300)),
       }));
-  } catch {
-    return undefined;
+    return { axe };
+  } catch (e) {
+    return { axeError: errorMessage(e).slice(0, 200) };
   } finally {
     stop();
   }
@@ -283,8 +284,8 @@ const CODE = loadYaml<{ code: { max_file_chars: number; max_files: number } }>("
  */
 export class CodeCollector {
   readonly files: ServedCode[] = [];
-  /** Not kept because `max_files` was reached, or because the body is larger than `max_file_chars` can hold. */
-  skipped = 0;
+  /** URLs not kept because `max_files` was reached, or because the body is larger than `max_file_chars` can hold. */
+  readonly skipped: string[] = [];
   private seen = new Set<string>();
   /** Slots taken by bodies still being read, so concurrent responses cannot pass `max_files`. */
   private reserved = 0;
@@ -300,7 +301,7 @@ export class CodeCollector {
     if (!isWebUrl(url) || this.seen.has(url) || res.status() < 200 || res.status() >= 300) return;
     this.seen.add(url);
     if (this.files.length + this.reserved >= CODE.max_files) {
-      this.skipped++;
+      this.skipped.push(url);
       return;
     }
     this.reserved++; // taken before the awaits, released after them
@@ -311,7 +312,7 @@ export class CodeCollector {
     // A UTF-8 character has at most 4 bytes: a body larger than that cannot fit max_file_chars, so it is not read.
     if (bytes !== undefined && bytes > this.maxChars * 4) {
       this.reserved--;
-      this.skipped++;
+      this.skipped.push(url);
       return;
     }
     const body = await res.text().catch(() => undefined);
@@ -387,7 +388,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     const response = await page.goto(url, { waitUntil: "load", timeout });
     if (js) await page.waitForLoadState("networkidle", { timeout: idle }).catch(() => {});
     const dom = await page.evaluate(readDom);
-    const axe = js ? await runAxe(page, Math.min(AXE.timeout_ms, timeout)) : undefined;
+    const axe = js ? await runAxe(page, Math.min(AXE.timeout_ms, timeout)) : {};
     const storage = js
       ? await page.evaluate(() => {
           try {
@@ -421,7 +422,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       subresources: dom.subresources,
       images: dom.images,
       videos: dom.videos,
-      ...(axe && { axe }),
+      ...axe,
     };
   };
   // page.evaluate has no timeout: a page that never yields (while (true) {}) would block the scan forever.

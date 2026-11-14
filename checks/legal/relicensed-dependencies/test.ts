@@ -28,3 +28,10 @@ test("reads Go modules and ignores dev dependencies", async () => {
 test("skips without dependencies", async () => {
   assert.equal((await runRepoCheck(here, { "README.md": "hi" })).status, "skip");
 });
+
+// #87: the packages of a lockfile that could not be read were never compared, so no pass.
+test("no pass when a lockfile could not be read", async () => {
+  const result = await runRepoCheck(here, { "package-lock.json": npmLock({ base: "1.0.0" }), "composer.lock": "{" });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.raw.details?.map((d) => [d.file, d.key]), [["composer.lock", "lockfile_unread"]]);
+});

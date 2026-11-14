@@ -94,3 +94,11 @@ test("ignores platform packages in composer.json", async () => {
   };
   assert.equal((await runRepoCheck(here, files)).status, "pass");
 });
+
+// #87: a lockfile that could not be read leaves its manifest's dependencies uncompared, so no pass.
+test("no pass when a lockfile could not be read", async () => {
+  const files = { "package.json": pkg({ react: "^18.3.1" }), "package-lock.json": npmLock({ react: "18.3.1" }), "api/composer.json": '{"require":{"monolog/monolog":"^3.0"}}', "api/composer.lock": "{" };
+  const result = await runRepoCheck(here, files);
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.raw.details?.map((d) => [d.file, d.key]), [["api/composer.lock", "lockfile_unread"]]);
+});

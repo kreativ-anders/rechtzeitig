@@ -1,4 +1,4 @@
-import { FIXTURES, capped, defineCrossCheck, fail, info, loadYaml, msg, pass, siteRequests, warn, type Finding, type RepoContext } from "../../../src/sdk.ts";
+import { FIXTURES, capped, defineCrossCheck, fail, info, loadYaml, msg, pass, siteCode, siteRequests, warn, type Finding, type RepoContext } from "../../../src/sdk.ts";
 
 const DATA = loadYaml<{
   live: Array<{ name: string; in: Array<"script" | "document" | "request" | "probe">; pattern: string }>;
@@ -60,8 +60,9 @@ export default defineCrossCheck({
   run(ctx, repo) {
     // Website side: traces only a dev server or a debug build sends, in served code, request URLs and error probes.
     const live: Finding[] = [];
+    const code = siteCode(ctx);
     const sources = [
-      ...ctx.code.filter((c) => !ctx.isThirdParty(new URL(c.url).hostname)).map((c) => ({ kind: c.type, where: ctx.short(c.url), text: c.body })),
+      ...code.map((c) => ({ kind: c.type, where: ctx.short(c.url), text: c.body })),
       ...siteRequests(ctx).filter((r) => !ctx.isThirdParty(r.host)).map((r) => ({ kind: "request" as const, where: r.page, text: r.url })),
       ...ctx.probes.filter((p) => p.kind === "error").map((p) => ({ kind: "probe" as const, where: p.path, text: p.body })),
     ];
@@ -83,6 +84,9 @@ export default defineCrossCheck({
     const deployStart = start.filter((f) => f.key === "start_command");
     if (deployStart.length) return info(msg("start_only", { count: deployStart.length }), capped(deployStart));
     if (unread.length) return info(msg("unread", { count: unread.length }), capped(unread.map((file) => ({ file, key: "unread_file" }))));
+    // A served file cut at the `code` limits or not kept may hold the trace: no pass then, like security/secrets-in-bundle.
+    const cut = code.filter((c) => c.truncated).length + ctx.codeSkipped;
+    if (cut) return info(msg("partly", { count: cut }));
     return pass(msg("none"));
   },
 });

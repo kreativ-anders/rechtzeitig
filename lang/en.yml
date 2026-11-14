@@ -162,6 +162,11 @@ text:
 messages:
   common:
     axe_not_run: "axe-core did not run on any visited page: no page loaded with JavaScript, or axe-core did not finish in time."
+    axe_incomplete:
+      one: "axe-core found nothing on the pages it checked, but gave no result on {count} page, which stays unchecked."
+      other: "axe-core found nothing on the pages it checked, but gave no result on {count} pages, which stay unchecked."
+    axe_timeout: "{page}: axe-core did not finish in time (axe.timeout_ms in data/thresholds.yml)"
+    axe_error: "{page}: axe-core gave no result ({error})"
     page_imprint: "imprint (Impressum)"
     page_privacy: "privacy policy (Datenschutzerklärung)"
     page_terms: "terms and conditions (AGB)"
@@ -188,6 +193,7 @@ messages:
       one: "Nothing found on the pages seen, but {count} page did not load with JavaScript. What scripts load or set there is unknown, so no pass."
       other: "Nothing found on the pages seen, but {count} pages did not load with JavaScript. What scripts load or set there is unknown, so no pass."
     js_failed: "{page}: load with JavaScript failed ({error})"
+    lockfile_unread: "Lockfile could not be read (see security/sbom)."
     not_run_module: "Not run: neither its group {module} nor its scope {scope} is in modules ({modules}). Empty modules runs all checks."
     not_run_both_url: "Not run: reads the website and the repository together, and the website is missing. Set the input url."
     not_run_both_repository: "Not run: reads the website and the repository together, and the checkout is missing. Run actions/checkout before rechtzeitig."
@@ -339,6 +345,7 @@ messages:
   legal/odr-link:
     found: "The EU online dispute resolution platform closed on 20 July 2025. Remove the link and the notice about it."
     none: "No outdated link to the EU dispute platform."
+    not_loaded: "No page of the site loaded, so nothing was checked."
   legal/order-button:
     ok: '{where}: order button "{text}".'
     wrong: '{where}: order button "{text}" on the order summary. The law asks for "zahlungspflichtig bestellen" or equally clear wording; otherwise no contract is formed.'
@@ -951,6 +958,9 @@ messages:
     none:
       one: "{count} declared dependency checked against {lockfiles} lockfile(s): none missing, none like a typo of a popular package."
       other: "{count} declared dependencies checked against {lockfiles} lockfile(s): none missing, none like a typo of a popular package."
+    gaps:
+      one: "{count} declared dependency, none like a typo of a popular package, but not every lockfile could be read, so not every dependency was compared with its lockfile."
+      other: "{count} declared dependencies, none like a typo of a popular package, but not every lockfile could be read, so not every dependency was compared with its lockfile."
   security/lockfile-drift:
     no_lockfiles: "No lockfiles or manifests."
     managers: "Lockfiles of {managers} side by side ({files}). Each tool installs different versions."
@@ -1103,6 +1113,9 @@ messages:
     none:
       one: "{count} production dependency, none past one of {events} known license changes."
       other: "{count} production dependencies, none past one of {events} known license changes."
+    gaps:
+      one: "{count} production dependency, none past a known license change, but not every lockfile could be read, and the packages in it were not checked."
+      other: "{count} production dependencies, none past a known license change, but not every lockfile could be read, and the packages in it were not checked."
     more:
       one: "and {count} more dependency"
       other: "and {count} more dependencies"
@@ -1418,6 +1431,9 @@ messages:
       one: "No dev traces on the site; {count} deploy file was too large to read or only a Git LFS pointer."
       other: "No dev traces on the site; {count} deploy files were too large to read or only Git LFS pointers."
     none: "No development server or debug build on the site or in the repository's start commands."
+    partly:
+      one: "No development server or debug build found, but {count} served file of the site was cut or not kept at the size limits."
+      other: "No development server or debug build found, but {count} served files of the site were cut or not kept at the size limits."
     live: "{name} on the site: {where}"
     start_command: "Starts a development server: {command}"
     start_script: "npm start runs a development server: {command}"
