@@ -18,11 +18,11 @@ Open points from the audit of 2026-11-03, after the fixes. Still open after the 
 2. Pins in `examples/workflows/` moved automatically. Dependabot's `github-actions` ecosystem reads only `.github/workflows/` and `action.yml`; the release workflow moves the rechtzeitig pin there, and `src/pinning.test.ts` fails when another pin drifts from `action.yml` and `.github/workflows/`.
 3. Require signed commits on `main`. The ruleset on `main` already requires pull requests and the `test` and `drift` checks and blocks force pushes; the release workflow does not push to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
 
-## Next: limits of a pass
+## Next: wording of a pass
 
-Feedback: a pass on a content rule reads as "complete", but a scan finds terms, links and fields, not whether they are right. An imprint with mail, phone and postcode is not a complete imprint; a privacy policy that names a retention period does not say the period fits; a consent tool that works does not make the consent valid; a database rule in the repository may differ from the live database.
+Feedback: "pass" (bestanden) reads as "complete" or "compliant", which sounds like a guarantee. A scan finds terms, links, fields and headers, not whether they are right: an imprint with mail, phone and postcode is not a complete imprint, a consent tool that works does not make the consent valid. No new rule field; the words carry it.
 
-1. A `limits` field in every `rule.yml`: one sentence on what a pass does not mean. Shown in `docs/checks.html` and, for legal and privacy rules, next to the pass in the report. A test fails when a legal or privacy rule has none.
+1. Every check, every report surface: no word that sounds like approval. The status shown to readers says what the scan saw ("no finding", "kein Befund"; for content rules "found", "Angaben gefunden"), in `lang/*.yml`, the step summary, the Markdown report, `docs/` and the ✅ icon. The `pass` value in the report JSON stays as the technical key. A test fails when "pass", "passed", "bestanden" or similar appears in a reader-facing string.
 2. A short section in the report and in `docs/` on what no scan can check (content correctness, organizational duties, live configuration the site does not expose), next to "Not run" and the repository coverage.
 
 ## Next: repository
