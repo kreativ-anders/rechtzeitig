@@ -30,8 +30,6 @@ exclude:
   - '\.pub$'
   # Windows thumbnail caches, binary files named *.db.
   - '(^|/)(?:ehthumbs|ehthumbs_vista|thumbs)\.db$'
-  # The Android debug keystore: Android Studio creates it with a known password; release keys are named otherwise.
-  - '(^|/)debug\.keystore$'
 
 files:
   # PEM private key: OpenSSL, OpenSSH, PKCS#8, encrypted or not. A certificate or public key alone is no find.
@@ -79,11 +77,6 @@ files:
   # PKCS#12 keystore: usually a certificate with its private key, sometimes only trusted certificates.
   - kind: keystore
     path: '\.(?:p12|pfx)$'
-    binary: true
-    level: warn
-  # Java keystore (JKS, JCEKS): signing or TLS keys, or only trusted certificates.
-  - kind: java_keystore
-    path: '\.(?:jks|keystore)$'
     binary: true
     level: warn
   # SQL dump with rows: the header of mysqldump, MariaDB, pg_dump, phpMyAdmin or Adminer, and INSERT or COPY data.

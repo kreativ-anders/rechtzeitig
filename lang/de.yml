@@ -1030,7 +1030,6 @@ messages:
     registry_token: "Zugangsdaten einer Paket-Registry stehen in der Datei, statt aus einer Umgebungsvariable zu kommen."
     terraform_state: "Terraform-State mit Ressourcen: kann Passwörter und Schlüssel im Klartext enthalten."
     keystore: "PKCS#12-Keystore: enthält meist einen privaten Schlüssel."
-    java_keystore: "Java-Keystore: kann Signatur- oder TLS-Schlüssel enthalten."
     database_dump: "Datenbank-Dump mit Datensätzen."
     database_file: "Datenbankdatei (binär)."
   security/lockfile-drift:

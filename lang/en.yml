@@ -986,7 +986,6 @@ messages:
     registry_token: "Package registry credential written into the file, not read from an environment variable."
     terraform_state: "Terraform state with resources: may hold passwords and keys in plain text."
     keystore: "PKCS#12 keystore: usually holds a private key."
-    java_keystore: "Java keystore: may hold signing or TLS keys."
     database_dump: "Database dump with rows."
     database_file: "Database file (binary)."
   security/lockfile-drift:
