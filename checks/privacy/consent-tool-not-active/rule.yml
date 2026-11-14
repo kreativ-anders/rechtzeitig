@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "§ 25 Abs. 1 TDDDG; Art. 6 Abs. 1 lit. a, Art. 7 DSGVO"
   en: "§ 25(1) TDDDG; Art. 6(1)(a), Art. 7 GDPR"
-how: "Finds a consent tool in the repository (`packages` and loader `scripts` in `data/consent-tools.yml`) and, when the start page shows no banner with an accept button while services with `consent: required` in `data/third-parties.yml` load: fails when the repository loads a hosted platform the site never contacted, warns when the platform loaded or for a self-hosted library; warns instead of passing when a page did not load with JavaScript."
+how: "Finds a consent tool in the repository (`packages` and loader `scripts` in `data/consent-tools.yml`) and, when the start page shows no banner with an accept button while services with `consent: required` in `data/third-parties.yml` load: fails when the repository loads a hosted platform the site never contacted, warns when the platform loaded or for a self-hosted library; warns instead of no finding when a page did not load with JavaScript."
 fix_hint:
   de: "Prüfen, ob das Consent-Tool im ausgelieferten Build steckt (richtige Umgebung, Domain beim Anbieter freigeschaltet, Skript vor den Trackern) und ob es die Tracker bis zur Einwilligung blockiert."
   en: "Check that the consent tool is part of the deployed build (right environment, domain enabled at the provider, script before the trackers) and that it blocks the trackers until consent."

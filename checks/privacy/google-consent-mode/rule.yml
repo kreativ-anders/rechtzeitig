@@ -7,10 +7,10 @@ title:
 legal_basis:
   de: "§ 25 TDDDG, Art. 7 DSGVO; der Google Consent Mode ist keine gesetzliche Pflicht, sondern ein technisches Signal"
   en: "§ 25 TDDDG, Art. 7 GDPR; Google Consent Mode is no legal requirement but a technical signal"
-how: "Reads the consent parameters of requests to Google measurement and ads endpoints (`data/google-tags.yml`) made before any click: a `gcs` state with ad or analytics storage granted or a TCF string in `gdpr_consent` fails, no readable `gcs` warns, only denied passes; `gcd` is ignored, because Google sends it with or without Consent Mode; warns instead of passing when a page did not load with JavaScript."
+how: "Reads the consent parameters of requests to Google measurement and ads endpoints (`data/google-tags.yml`) made before any click: a `gcs` state with ad or analytics storage granted or a TCF string in `gdpr_consent` fails, no readable `gcs` warns, only denied gives no finding; `gcd` is ignored, because Google sends it with or without Consent Mode; warns instead of no finding when a page did not load with JavaScript."
 fix_hint:
   de: "Vor jedem Google-Tag den Consent Mode mit `gtag('consent', 'default', …)` auf „denied“ setzen und erst nach der Auswahl im Banner aktualisieren; einen TCF-String erst nach der Auswahl übergeben. Oder Google-Tags erst nach der Einwilligung laden."
-  en: "Set Consent Mode to \"denied\" with `gtag('consent', 'default', …)` before any Google tag and update it only after the choice in the banner; pass a TCF string only after the choice. Or load Google tags only after consent."
+  en: "Set Consent Mode to \"denied\" with `gtag('consent', 'default', …)` before any Google tag and update it only after the choice in the banner; send a TCF string only after the choice. Or load Google tags only after consent."
 meta:
   last_reviewed: "2026-11-04"
   sources:

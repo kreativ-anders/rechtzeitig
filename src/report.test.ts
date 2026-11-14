@@ -46,8 +46,9 @@ test("the step summary shows only findings, the full report every check", () => 
   const summary = toMarkdown(r, { findingsOnly: true });
   assert.match(summary, /SEC-A-001/);
   assert.doesNotMatch(summary, /SEC-P-001|SEC-S-001/);
-  assert.match(summary, /❌ 1 fail · ✅ 1 pass · ⏭️ 1 skip/);
+  assert.match(summary, /❌ 1 fail · ○ 1 no finding · ⏭️ 1 skip/);
   assert.match(summary, /_Findings only\./);
+  assert.match(summary, /<summary>ℹ️ What no scan can check<\/summary>/);
   assert.match(toMarkdown(r), /SEC-P-001[\s\S]*SEC-S-001/);
   const clean = toMarkdown({ ...r, outcomes: [outcome("SEC-P-001", "pass")] }, { findingsOnly: true });
   assert.match(clean, /_No findings\./);

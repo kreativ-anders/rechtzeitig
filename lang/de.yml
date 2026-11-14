@@ -230,12 +230,12 @@ messages:
     not_run_repository: "Nicht gelaufen: braucht das Repository. actions/checkout vor rechtzeitig ausführen."
     no_code: "Kein Quellcode in einer Sprache, die diese Prüfung liest (data/code-paths.yml), also nichts zu prüfen."
     unread_gap:
-      one: "Nichts gefunden in den gelesenen Dateien, aber {count} Datei war nicht lesbar (zu groß oder nur ein Git-LFS-Zeiger), daher kein Bestanden."
-      other: "Nichts gefunden in den gelesenen Dateien, aber {count} Dateien waren nicht lesbar (zu groß oder nur Git-LFS-Zeiger), daher kein Bestanden."
+      one: "Nichts gefunden in den gelesenen Dateien, aber {count} Datei war nicht lesbar (zu groß oder nur ein Git-LFS-Zeiger), daher bleibt das Ergebnis offen."
+      other: "Nichts gefunden in den gelesenen Dateien, aber {count} Dateien waren nicht lesbar (zu groß oder nur Git-LFS-Zeiger), daher bleibt das Ergebnis offen."
     unread_file: "Nicht gelesen: zu groß oder nur ein Git-LFS-Zeiger."
     js_incomplete:
-      one: "Nichts gefunden auf den gesehenen Seiten, aber {count} Seite lud nicht mit JavaScript. Was Skripte dort laden oder setzen, ist unbekannt, daher kein Bestanden."
-      other: "Nichts gefunden auf den gesehenen Seiten, aber {count} Seiten luden nicht mit JavaScript. Was Skripte dort laden oder setzen, ist unbekannt, daher kein Bestanden."
+      one: "Nichts gefunden auf den gesehenen Seiten, aber {count} Seite lud nicht mit JavaScript. Was Skripte dort laden oder setzen, ist unbekannt, daher bleibt das Ergebnis offen."
+      other: "Nichts gefunden auf den gesehenen Seiten, aber {count} Seiten luden nicht mit JavaScript. Was Skripte dort laden oder setzen, ist unbekannt, daher bleibt das Ergebnis offen."
     js_failed: "{page}: Laden mit JavaScript fehlgeschlagen ({error})"
     lockfile_unread: "Lockfile nicht lesbar (siehe security/sbom)."
     not_run_module: "Nicht gelaufen: Weder die Gruppe {module} noch der Bereich {scope} steht in modules ({modules}). Leeres modules startet alle Prüfungen."
@@ -252,7 +252,7 @@ messages:
     severity: "Schwere"
     result: "Ergebnis"
     details: "Details"
-    findings_only: "Nur Befunde. Bestandene und übersprungene Prüfungen stehen im vollständigen Bericht im Artifact rechtzeitig-report."
+    findings_only: "Nur Befunde. Prüfungen ohne Befund und übersprungene Prüfungen stehen im vollständigen Bericht im Artifact rechtzeitig-report."
     no_findings: "Keine Befunde. Der vollständige Bericht liegt im Artifact rechtzeitig-report."
     hidden_public: "Details ausgeblendet: In einem öffentlichen Repository kann jeder diese Seite lesen. Mit report-visibility: full werden sie angezeigt, oder rechtzeitig läuft aus einem privaten Repository."
     scan: "Scan"
@@ -328,6 +328,17 @@ messages:
     source_registry: "Registry"
     source_git: "git"
     source_replace: "replace"
+    status_fail: "fehlgeschlagen"
+    status_error: "Fehler"
+    status_warn: "Warnung"
+    status_info: "Info"
+    status_suppressed: "abgeschaltet"
+    status_pass: "kein Befund"
+    status_skip: "übersprungen"
+    limits: "Was kein Scan prüfen kann"
+    limits_content: "Ob Texte richtig und vollständig sind: Ein Scan findet Begriffe, Links und Felder, nicht ob ihr Inhalt stimmt."
+    limits_duties: "Pflichten außerhalb von Website und Code: Verarbeitungsverzeichnis, Auftragsverarbeitungsverträge, Löschung, Antworten auf Anfragen."
+    limits_config: "Einstellungen, die die Website nicht zeigt: Server, Hosting, Konten und Seiten hinter einem Login."
     disclaimer: "Technische Risikohinweise mit Fundstelle und Bezug zur Rechtsgrundlage. Keine Rechtsberatung."
     made_by: "von {maker}"
     severity_info: "info"
@@ -560,7 +571,7 @@ messages:
       one: "Land des einzigen Drittanbieter-Dienstes unbekannt; Übermittlungen außerhalb von EU/EWR ließen sich nicht prüfen."
       other: "Land aller {count} Drittanbieter-Dienste unbekannt; Übermittlungen außerhalb von EU/EWR ließen sich nicht prüfen."
     none_outside: "Kein Hoster und kein Dienst außerhalb von EU/EWR erkannt."
-    covered: "Die Datenschutzerklärung behandelt Übermittlungen außerhalb von EU/EWR."
+    covered: "Die Datenschutzerklärung erwähnt Übermittlungen außerhalb von EU/EWR."
     not_covered:
       one: "{count} Dienst außerhalb von EU/EWR, aber die Datenschutzerklärung nennt keine Drittländer."
       other: "{count} Dienste außerhalb von EU/EWR, aber die Datenschutzerklärung nennt keine Drittländer."
@@ -614,7 +625,7 @@ messages:
     no_dmarc_no_mail: 'Kein DMARC-Eintrag unter _dmarc.{domain}. Die Domain versendet keine Mails, also "v=DMARC1; p=reject" veröffentlichen.'
     open_spf: 'SPF erlaubt jedem Server, Mails zu senden ("{spf}"). Mit "-all" oder "~all" abschließen.'
     no_dmarc: 'Kein DMARC-Eintrag unter _dmarc.{domain}. Mit "v=DMARC1; p=quarantine" beginnen.'
-    dmarc_none: "DMARC beobachtet nur (p=none). Mails, die die Prüfung nicht bestehen, werden trotzdem zugestellt."
+    dmarc_none: "DMARC beobachtet nur (p=none). Mails, bei denen die Prüfung scheitert, werden trotzdem zugestellt."
     spoofable: "Andere können E-Mails im Namen von {domain} versenden."
     set: "SPF und DMARC sind gesetzt."
   security/error-disclosure:
@@ -977,7 +988,7 @@ messages:
       other: ", {count} Firebase-Regeldateien ohne offenen Zugriff"
   security/dependency-updates:
     no_components: "Keine Abhängigkeiten mit Lockfile."
-    renovate: "Renovate hält die Abhängigkeiten aktuell."
+    renovate: "Renovate ist für Updates der Abhängigkeiten eingerichtet."
     dependabot: "Dependabot deckt {ecosystems} ab."
     dependabot_missing: "Dependabot deckt {ecosystems} nicht ab."
     add_ecosystem: "package-ecosystem „{name}“ ergänzen."
@@ -1027,7 +1038,7 @@ messages:
     agpl: "{name}@{version}: {license}. Die AGPL gilt auch, wenn die Software nur über ein Netzwerk angeboten wird."
     gpl: "{name}@{version}: {license}. Bei Auslieferung (App, Bibliothek, Browser-Bundle) muss das ganze Werk unter der GPL stehen{not}."
     not_project: ", nicht unter {project}"
-    no_project_license: "Das Projekt hat keine Lizenz: alle Rechte vorbehalten. Für privaten Code in Ordnung."
+    no_project_license: "Das Projekt hat keine Lizenz: alle Rechte vorbehalten. Wichtig, sobald andere den Code nutzen sollen."
     unknown:
       one: "{count} Produktionsabhängigkeit ohne Lizenz im Lockfile: {names}"
       other: "{count} Produktionsabhängigkeiten ohne Lizenz im Lockfile: {names}"
@@ -1046,7 +1057,7 @@ messages:
     no_components: "Keine gesperrten Abhängigkeiten, deren Lizenzen sich vergleichen ließen."
     no_licenses: "Kein Lockfile nennt Lizenzen ({ecosystems}), daher wurde nichts verglichen."
   legal/project-license:
-    none: "Das Projekt hat keine Lizenz: Alle Rechte vorbehalten, niemand sonst darf den Code nutzen. Für privaten Code in Ordnung."
+    none: "Das Projekt hat keine Lizenz: Alle Rechte vorbehalten, niemand sonst darf den Code nutzen. Wichtig, sobald andere den Code nutzen sollen."
     not_spdx: "{license} ist kein SPDX-Ausdruck, Werkzeuge und Nutzer können ihn nicht eindeutig lesen."
     unknown_id: "{id} ist keine SPDX-Lizenzkennung."
     deprecated: "{id} ist eine veraltete SPDX-Kennung. -only oder -or-later angeben, etwa {id}-only."
@@ -1602,14 +1613,14 @@ messages:
       other: "{count} Testfälle in {files} Dateien, keiner hohl."
     no_tests: "Keine Testdateien (data/code-paths.yml tests)."
     more: "und {count} weitere"
-    tautology: "Die Assertion vergleicht eine Konstante mit sich selbst und besteht immer."
+    tautology: "Die Assertion vergleicht eine Konstante mit sich selbst und kann nie scheitern."
     swallowed: "Eine scheiternde Assertion in diesem try wird abgefangen und ignoriert."
-    forced_pass: "Der Testlauf wird zum Bestehen gezwungen."
+    forced_pass: "Der Testlauf wird zum Erfolg gezwungen."
     no_assertions:
       one: "{count} Testfall, aber keine Assertion in der Datei."
       other: "{count} Testfälle, aber keine Assertion in der Datei."
     focused: "Ein fokussierter Test (.only, fit) überspringt alle anderen Tests des Laufs."
-    pass_with_no_tests: "Der Testlauf besteht, wenn er keine Tests findet."
+    pass_with_no_tests: "Der Testlauf gilt als erfolgreich, wenn er keine Tests findet."
     skipped_share: "{count} von {cases} Testfällen werden übersprungen."
   quality/neutralized-ci:
     neutralized:
@@ -1623,7 +1634,7 @@ messages:
     disabled_step: "if: false schaltet einen Test-, Lint- oder Scan-Schritt ab."
     or_true: "|| true (oder exit 0) nach einem Prüfbefehl verdeckt sein Scheitern."
     no_verify: "--no-verify überspringt die Git-Hooks."
-    noop_test_script: "Das Test-Skript tut nichts und besteht immer."
+    noop_test_script: "Das Test-Skript tut nichts und kann nie scheitern."
     suppressed_files: "{count} von {total} Dateien schalten am Anfang alle Typ- oder Lint-Prüfungen ab."
     suppressed: "Alle Typ- oder Lint-Prüfungen sind für diese Datei aus."
   quality/placeholder-code:

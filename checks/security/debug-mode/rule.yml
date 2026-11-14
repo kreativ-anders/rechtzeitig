@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Matches settings, code, Dockerfiles and committed `.env` files (languages and left-out paths in `data/code-paths.yml`; tests, env templates and dev or local settings excluded) against `data/insecure-code.yml`: `DEBUG = True` in Django settings, `APP_DEBUG=true`, `'debug' => true` in Laravel's `config/app.php`, `consider_all_requests_local` in Rails production and Spring actuator `include=*` fail; Flask `debug=True`, GraphQL introspection or console forced on, `display_errors`, `gin.DebugMode` and `NODE_ENV=development` in a Dockerfile warn; gives info instead of passing when one of its files is over the `repo` limit in `data/thresholds.yml` or only a Git LFS pointer."
+how: "Matches settings, code, Dockerfiles and committed `.env` files (languages and left-out paths in `data/code-paths.yml`; tests, env templates and dev or local settings excluded) against `data/insecure-code.yml`: `DEBUG = True` in Django settings, `APP_DEBUG=true`, `'debug' => true` in Laravel's `config/app.php`, `consider_all_requests_local` in Rails production and Spring actuator `include=*` fail; Flask `debug=True`, GraphQL introspection or console forced on, `display_errors`, `gin.DebugMode` and `NODE_ENV=development` in a Dockerfile warn; gives info instead of no finding when one of its files is over the `repo` limit in `data/thresholds.yml` or only a Git LFS pointer."
 fix_hint:
   de: "Debug-Modus in Produktion ausschalten und über eine Umgebungsvariable steuern, die standardmäßig aus ist."
   en: "Turn debug mode off in production and control it with an environment variable that is off by default."

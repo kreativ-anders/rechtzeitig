@@ -163,7 +163,7 @@ jobs:
             <tr><td><code>ipinfo-token</code> with the secret <code>IPINFO_TOKEN</code></td><td>IP addresses of your server and of the servers it contacts</td><td>ipinfo.io</td><td>IP countries in the <a href="checks.html#LEG-EU-DSE-005">third-country check</a></td></tr>
           </tbody>
         </table></div>
-        <p>The vulnerability lookup is the one most projects want. The example already passes <code>ipinfo-token</code>; it does nothing until you add the secret under <span class="ui">Settings → Secrets and variables → Actions</span>. If your security team reviews outside connections, show them this table and <a href="workflow.html#data">Data that leaves the runner</a>, which also lists what the setup downloads.</p>
+        <p>The vulnerability lookup is the one most projects want. The example already sets <code>ipinfo-token</code>; it does nothing until you add the secret under <span class="ui">Settings → Secrets and variables → Actions</span>. If your security team reviews outside connections, show them this table and <a href="workflow.html#data">Data that leaves the runner</a>, which also lists what the setup downloads.</p>
       </section>
 
       <section id="optional">
