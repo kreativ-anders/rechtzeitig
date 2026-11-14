@@ -13,5 +13,9 @@ rules:
   accessibility/form-labels: [label, select-name, aria-input-field-name]
   # WCAG 4.1.2 Name, role, value and 2.4.4 Link purpose: buttons, links, frames
   accessibility/control-names: [button-name, input-button-name, link-name, frame-title]
+  # WCAG 1.3.1 Info and relationships: ARIA roles and lists with the children and parents they need
+  accessibility/aria-structure: [aria-required-children, aria-required-parent, list, listitem]
+  # WCAG 4.1.2 Name, role, value: ARIA attributes that exist and have a valid value
+  accessibility/aria-attributes: [aria-valid-attr, aria-valid-attr-value]
   # WCAG 1.4.3 Contrast (minimum)
   accessibility/contrast: [color-contrast]

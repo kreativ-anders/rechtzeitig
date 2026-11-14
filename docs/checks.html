@@ -1567,7 +1567,7 @@
 </div>
 </section>
 <section class="module" id="accessibility" data-module="accessibility">
-<h3>Accessibility <small>6 rules</small></h3>
+<h3>Accessibility <small>8 rules</small></h3>
 <div class="rules">
 <details class="rule" id="A11Y-ALT-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-alt-001 accessibility/alt-text images have a text alternative bilder haben einen alternativtext bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.1.1 (wcag 2.1 success criterion 1.1.1) runs the axe-core rules listed for `accessibility/alt-text` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists images, image buttons, image maps and svg or aria images without a text alternative, with page and css selector; it only warns, since the bfsg does not apply to every site.">
 <summary>
@@ -1584,6 +1584,40 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/alt-text"><code>checks/accessibility/alt-text</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bfsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bfsgv/">gesetze-im-internet.de</a>, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">etsi.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/non-text-content.html">w3.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-08">2026-11-08</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="A11Y-ARIA-001" data-module="accessibility" data-scope="website" data-severity="low" data-search="a11y-aria-001 accessibility/aria-attributes aria attributes are valid aria-attribute sind gültig bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.4.1.2 (wcag 2.1 success criterion 4.1.2) runs the axe-core rules listed for `accessibility/aria-attributes` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists misspelled or unknown `aria-*` attributes, such as `aria-labeledby`, and attributes with an invalid value, such as `aria-hidden=&quot;yes&quot;` or an `aria-controls` that names no element, with page and css selector; it only warns, since the bfsg does not apply to every site.">
+<summary>
+<span class="rule-head"><span class="rule-id">A11Y-ARIA-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="2" title="Severity: low"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">low</span></span></span>
+<span class="rule-title">ARIA attributes are valid</span>
+<span class="rule-title-de" lang="de">ARIA-Attribute sind gültig</span>
+<span class="rule-law">BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.4.1.2 (WCAG 2.1 success criterion 4.1.2)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/aria-attributes</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists misspelled or unknown <code>aria-*</code> attributes, such as <code>aria-labeledby</code>, and attributes with an invalid value, such as <code>aria-hidden=&quot;yes&quot;</code> or an <code>aria-controls</code> that names no element, with page and CSS selector; it only warns, since the BFSG does not apply to every site.</dd></div>
+<div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Fix typos in ARIA attributes (aria-labelledby with two l) and only use values WAI-ARIA allows: true or false for aria-hidden and aria-expanded, existing ids for aria-labelledby, aria-describedby and aria-controls. Screen readers ignore unknown attributes, so the element loses the information it was meant to carry. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/aria-attributes"><code>checks/accessibility/aria-attributes</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bfsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bfsgv/">gesetze-im-internet.de</a>, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">etsi.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html">w3.org</a>, <a href="https://www.w3.org/TR/wai-aria-1.2/#state_prop_def">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-14">2026-11-14</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="A11Y-STRUCT-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-struct-001 accessibility/aria-structure lists, menus and tables are built correctly listen, menüs und tabellen sind richtig aufgebaut bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.3.1 (wcag 2.1 success criterion 1.3.1) runs the axe-core rules listed for `accessibility/aria-structure` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists lists, menus, tables, grids, tabs, trees and other aria roles that lack the children or the parent they need, such as a `role=menu` without menu items or an `&lt;li&gt;` outside a list, with page and css selector; it only warns, since the bfsg does not apply to every site.">
+<summary>
+<span class="rule-head"><span class="rule-id">A11Y-STRUCT-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Lists, menus and tables are built correctly</span>
+<span class="rule-title-de" lang="de">Listen, Menüs und Tabellen sind richtig aufgebaut</span>
+<span class="rule-law">BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.1.3.1 (WCAG 2.1 success criterion 1.3.1)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/aria-structure</code> in <code>data/accessibility.yml</code> on every visited own page with JavaScript on, inside the browser and without sending anything, and lists lists, menus, tables, grids, tabs, trees and other ARIA roles that lack the children or the parent they need, such as a <code>role=menu</code> without menu items or an <code>&lt;li&gt;</code> outside a list, with page and CSS selector; it only warns, since the BFSG does not apply to every site.</dd></div>
+<div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Give elements with a composite role the children they need: role=menu and menubar need menuitem, tablist needs tab, list needs listitem, table and grid need row; and put every menuitem, tab or listitem inside its matching parent. &lt;ul&gt; and &lt;ol&gt; may only contain &lt;li&gt; directly. Where the role is wrong, remove it instead of adding children. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/aria-structure"><code>checks/accessibility/aria-structure</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bfsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bfsgv/">gesetze-im-internet.de</a>, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">etsi.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships.html">w3.org</a>, <a href="https://www.w3.org/TR/wai-aria-1.2/#mustContain">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-14">2026-11-14</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="A11Y-MOTION-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-motion-001 accessibility/autoplay-media videos that start automatically can be paused automatisch startende videos lassen sich anhalten bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.2.2.2 (wcag 2.1 success criterion 2.2.2) and, with sound, clause 9.1.4.2 (wcag 2.1 success criterion 1.4.2) lists `&lt;video autoplay&gt;` elements without the controls attribute on all visited own pages, loaded with javascript, and names those that are not muted as playing sound; it cannot see the video's length or custom play buttons, so it only warns.">
