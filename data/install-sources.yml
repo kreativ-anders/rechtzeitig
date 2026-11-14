@@ -1,0 +1,44 @@
+# Install sources that cannot be verified, for security/install-sources.
+# Changing a list changes results: mention it in the commit message.
+
+# Lockfiles whose format records a hash for every download (integrity, checksum); an entry from a
+# registry or tarball URL without one is installed unchecked.
+integrity_in: [package-lock.json, pnpm-lock.yaml, yarn.lock]
+
+# A resolved source (Component.resolved) or manifest spec that is a git repository.
+git: '^(?:git\+|git:|github:|gitlab:|bitbucket:|ssh:)|\.git(?:[#?]|$)|^https://codeload\.github\.com/'
+# A full commit hash, in a ref or anywhere in a resolved git URL (after "#", "=", "/" or "@").
+commit: '^(?:[0-9a-f]{40}|[0-9a-f]{64})$'
+commit_in_url: '[#=/@](?:[0-9a-f]{40}|[0-9a-f]{64})(?![0-9a-f])'
+# A resolved source downloaded without TLS.
+http: '^(?:[a-z]+\+)?http://'
+# A pip requirement from git, in the files of `configs` with `pip_git: true`: "git+https://host/repo.git@ref#egg=name".
+pip_git: '(?:^|\s|@\s*)(git\+[^\s;]+)'
+
+# Package manager configs, file path (regular expression) → patterns checked line by line, the first
+# that matches a line counts. Group 1, when there is one, is the URL (only its host is reported).
+# level fail: the download is not protected; warn: it may come from somewhere else than intended.
+configs:
+  - files: '(?:^|/)\.npmrc$'
+    rules:
+      - { key: strict_ssl, level: fail, pattern: '^\s*strict-ssl\s*=\s*["'']?false\b' }
+      - { key: http_registry, level: fail, pattern: '^\s*(?:@[\w.-]+:)?registry\s*=\s*["'']?(http://[^"''\s]+)' }
+  - files: '(?:^|/)\.yarnrc$'
+    rules:
+      - { key: strict_ssl, level: fail, pattern: '^\s*strict-ssl\s+["'']?false\b' }
+      - { key: http_registry, level: fail, pattern: '^\s*registry\s+["'']?(http://[^"''\s]+)' }
+  - files: '(?:^|/)\.yarnrc\.yml$'
+    rules:
+      - { key: strict_ssl, level: fail, pattern: '^\s*enableStrictSsl\s*:\s*["'']?false\b' }
+      - { key: http_registry, level: fail, pattern: '^\s*npmRegistryServer\s*:\s*["'']?(http://[^"''\s]+)' }
+  - files: '(?:^|/)requirements(?:[^/]*|/.*)\.txt$'
+    pip_git: true
+    rules:
+      - { key: trusted_host, level: fail, pattern: '^\s*--trusted-host[\s=]+\S' }
+      - { key: http_registry, level: fail, pattern: '^\s*(?:-i|--index-url|--extra-index-url|-f|--find-links)[\s=]+(http://\S+)' }
+      - { key: extra_index, level: warn, pattern: '^\s*--extra-index-url[\s=]+(\S+)' }
+  - files: '(?:^|/)pip\.(?:conf|ini)$'
+    rules:
+      - { key: trusted_host, level: fail, pattern: '^\s*trusted-host\s*[=:]' }
+      - { key: http_registry, level: fail, pattern: '^\s*(?:index-url|extra-index-url|find-links)\s*[=:]\s*(http://\S+)' }
+      - { key: extra_index, level: warn, pattern: '^\s*extra-index-url\s*[=:]\s*(\S*)' }

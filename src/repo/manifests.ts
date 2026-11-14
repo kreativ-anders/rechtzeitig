@@ -20,6 +20,15 @@ export interface Declared {
   dev: boolean;
   /** registry: resolved from the public registry. git, local (path, workspace, file) and other (URL, alias) are not. */
   kind: "registry" | "git" | "local" | "other";
+  /** git: the branch, tag or commit as written (npm's "#semver:^1" included), empty when it names none. */
+  ref?: string;
+}
+
+/** Ref after the last "@" of a pip git URL ("git+https://host/repo.git@v1.0#egg=x"), empty when there is none. */
+export function pipGitRef(url: string): string {
+  const path = url.replace(/#.*$/, "");
+  const last = path.slice(path.lastIndexOf("/") + 1);
+  return last.includes("@") ? last.slice(last.lastIndexOf("@") + 1) : "";
 }
 
 /** Manifest file names this module reads. */
@@ -72,7 +81,8 @@ function npmDeclared(manifest: string, text: string): Declared[] {
       const kind = /^(git\+|git:|github:|gitlab:|bitbucket:|gist:)/.test(spec) || (/^[^@\s/][^\s]*\/[^\s]+$/.test(spec) && !/^https?:/.test(spec))
         ? "git"
         : /^(workspace:|file:|link:|portal:|\.|\/|~\/)/.test(spec) ? "local" : NPM_NON_REGISTRY.test(spec) && !spec.startsWith("catalog:") ? "other" : "registry";
-      out.push({ manifest, line: lineOf(text, new RegExp(`"${escape(name)}"\\s*:`)), ecosystem: "npm", name, spec, dev, kind });
+      const ref = kind === "git" ? { ref: spec.includes("#") ? spec.slice(spec.indexOf("#") + 1) : "" } : {};
+      out.push({ manifest, line: lineOf(text, new RegExp(`"${escape(name)}"\\s*:`)), ecosystem: "npm", name, spec, dev, kind, ...ref });
     }
   }
   return out;
@@ -103,7 +113,9 @@ function pubDeclared(manifest: string, text: string): Declared[] {
       if (o?.sdk !== undefined) continue; // flutter, flutter_test: part of the SDK, not a package
       const kind = o?.path !== undefined ? "local" : o?.git !== undefined ? "git" : "registry";
       const spec = typeof raw === "string" ? raw : typeof o?.version === "string" ? o.version : "";
-      out.push({ manifest, line: lineOf(text, new RegExp(`^\\s+${escape(name)}\\s*:`)), ecosystem: "pub", name, spec, dev, kind });
+      const git = o?.git && typeof o.git === "object" ? (o.git as Record<string, unknown>) : undefined;
+      const ref = kind === "git" ? { ref: typeof git?.ref === "string" ? git.ref : "" } : {};
+      out.push({ manifest, line: lineOf(text, new RegExp(`^\\s+${escape(name)}\\s*:`)), ecosystem: "pub", name, spec, dev, kind, ...ref });
     }
   }
   return out;
@@ -111,6 +123,8 @@ function pubDeclared(manifest: string, text: string): Declared[] {
 
 /** Quoted value of `key = "..."` inside an inline table. */
 const inlineField = (table: string, key: string) => new RegExp(`(?:^|[{,\\s])${key}\\s*=\\s*"([^"]*)"`).exec(table)?.[1];
+/** Cargo and Poetry: the rev, tag or branch of a git dependency, empty when it names none. */
+const tomlRef = (table: string) => ({ ref: inlineField(table, "rev") ?? inlineField(table, "tag") ?? inlineField(table, "branch") ?? "" });
 
 function cargoDeclared(manifest: string, text: string): Declared[] {
   const out: Declared[] = [];
@@ -152,7 +166,7 @@ function cargoDep(manifest: string, key: string, value: string, dev: boolean, li
   const plain = /^"([^"]*)"/.exec(value.trim())?.[1];
   const name = inlineField(value, "package") ?? key;
   const kind = /(^|[{,\s])path\s*=/.test(value) ? "local" : /(^|[{,\s])git\s*=/.test(value) ? "git" : "registry";
-  return { manifest, line, ecosystem: "cargo", name, spec: plain ?? inlineField(value, "version") ?? "", dev, kind };
+  return { manifest, line, ecosystem: "cargo", name, spec: plain ?? inlineField(value, "version") ?? "", dev, kind, ...(kind === "git" ? tomlRef(value) : {}) };
 }
 
 /**
@@ -189,12 +203,18 @@ function pep508(req: string): { name: string; spec: string; url: boolean } | und
   return { name: pypiName(m[1]), spec: rest, url: rest.startsWith("@") };
 }
 
+/** A PEP 508 URL requirement ("@ git+https://...@v1"): git with its ref, or another URL. */
+function pepUrl(spec: string): Pick<Declared, "kind" | "ref"> {
+  const url = spec.replace(/^@\s*/, "");
+  return url.startsWith("git+") ? { kind: "git", ref: pipGitRef(url) } : { kind: "other" };
+}
+
 function pyprojectDeclared(manifest: string, text: string): Declared[] {
   const out: Declared[] = [];
   const lineAt = (index: number) => text.slice(0, index).split("\n").length;
   const add = (req: string, dev: boolean, index: number) => {
     const r = pep508(req);
-    if (r) out.push({ manifest, line: lineAt(index), ecosystem: "pypi", name: r.name, spec: r.url ? "" : r.spec, dev, kind: r.url ? "other" : "registry" });
+    if (r) out.push({ manifest, line: lineAt(index), ecosystem: "pypi", name: r.name, spec: r.url ? "" : r.spec, dev, ...(r.url ? pepUrl(r.spec) : { kind: "registry" as const }) });
   };
   // Table headers with their positions, so a key can be matched to the table it stands in.
   const headers = [...text.matchAll(/^\[([^\]\n]+)\]\s*$/gm)].map((m) => ({ name: m[1].trim(), at: m.index ?? 0 }));
@@ -226,7 +246,7 @@ function pyprojectDeclared(manifest: string, text: string): Declared[] {
     const value = m[3];
     const kind = /(^|[{,\s])path\s*=/.test(value) ? "local" : /(^|[{,\s])(git|url)\s*=/.test(value) ? (/(^|[{,\s])git\s*=/.test(value) ? "git" : "other") : "registry";
     const spec = /^"([^"]*)"/.exec(value.trim())?.[1] ?? inlineField(value, "version") ?? "";
-    out.push({ manifest, line: lineAt(m.index ?? 0), ecosystem: "pypi", name: pypiName(m[2]), spec, dev, kind });
+    out.push({ manifest, line: lineAt(m.index ?? 0), ecosystem: "pypi", name: pypiName(m[2]), spec, dev, kind, ...(kind === "git" ? tomlRef(value) : {}) });
   }
   return out;
 }

@@ -988,6 +988,28 @@ messages:
       one: "{count} manifest not compared: a lockfile next to it could not be read (bun.lockb, too large, invalid)."
       other: "{count} manifests not compared: a lockfile next to them could not be read (bun.lockb, too large, invalid)."
     nothing_compared: "No manifest has a lockfile to compare with."
+  security/install-sources:
+    http: "{name}@{version} is downloaded from {host} over plain HTTP: anyone on the way can swap the package."
+    no_integrity: "{name}@{version} has no integrity hash: the package manager installs whatever the URL returns."
+    git_lockfile: "{name}@{version} comes from git without a commit: every install may get other code."
+    git_ref: "{name} comes from git at {ref}, a branch or tag that can move to other code."
+    git_no_ref: "{name} comes from git without a commit: every install takes the newest code of the default branch."
+    strict_ssl: "strict-ssl is off: the package manager accepts any TLS certificate for the registry."
+    http_registry: "Registry {host} over plain HTTP: anyone on the way can swap packages."
+    trusted_host: "trusted-host: pip skips the TLS check for this host and accepts plain HTTP."
+    extra_index: "--extra-index-url: pip takes each package from the index with the highest version, so a package of the same name on PyPI can replace an internal one (dependency confusion)."
+    unread: "Not read: too large, only a Git LFS pointer or invalid."
+    found:
+      one: "{count} install source that cannot be verified."
+      other: "{count} install sources that cannot be verified."
+    more: "and {count} more"
+    none:
+      one: "No download over HTTP, without a hash or from a moving git ref found in {count} file."
+      other: "No download over HTTP, without a hash or from a moving git ref found in {count} files."
+    gaps:
+      one: "{count} lockfile or package config could not be read; its sources were not looked at."
+      other: "{count} lockfiles or package configs could not be read; their sources were not looked at."
+    nothing: "No lockfiles, manifests or package manager configs."
   legal/licenses:
     commons_clause: 'Project: {project}. GPL-3.0 § 7 lets recipients remove "further restrictions", so the Commons Clause may not hold.'
     restricted: "{name}@{version}: {license}. Restricts use, often commercial use."

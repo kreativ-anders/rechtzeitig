@@ -8,7 +8,7 @@ import { loadYaml } from "./data.ts";
 export { isWebUrl } from "./text.ts";
 export { MANIFESTS } from "./repo/lockfiles.ts";
 import { MANIFESTS } from "./repo/lockfiles.ts";
-export { DECLARING, declaredDependencies, lockfilesFor, ownName, pypiName, type Declared } from "./repo/manifests.ts";
+export { DECLARING, declaredDependencies, lockfilesFor, ownName, pipGitRef, pypiName, type Declared } from "./repo/manifests.ts";
 export { satisfies } from "./repo/semver.ts";
 export { loadSuppressions, SUPPRESSIONS_FILE } from "./suppress.ts";
 export {
@@ -728,6 +728,13 @@ export interface Component {
   dev: boolean;
   /** Lockfile it came from. */
   source: string;
+  /**
+   * Where the lockfile says it is downloaded from, when it says so: a tarball or index URL, a git URL with the commit
+   * after "#", a local path (file:, workspace folder), or a yarn Berry protocol spec ("npm:1.2.3", "workspace:.").
+   */
+  resolved?: string;
+  /** Hash the package manager checks the download against (npm, pnpm and yarn lockfiles), when there is one. */
+  integrity?: string;
 }
 
 export interface Vulnerability {

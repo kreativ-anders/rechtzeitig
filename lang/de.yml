@@ -1032,6 +1032,28 @@ messages:
       one: "{count} Manifest nicht verglichen: ein Lockfile daneben war nicht lesbar (bun.lockb, zu groß, ungültig)."
       other: "{count} Manifeste nicht verglichen: ein Lockfile daneben war nicht lesbar (bun.lockb, zu groß, ungültig)."
     nothing_compared: "Kein Manifest hat ein Lockfile zum Vergleichen."
+  security/install-sources:
+    http: "{name}@{version} wird über unverschlüsseltes HTTP von {host} geladen: Jeder auf dem Weg kann das Paket austauschen."
+    no_integrity: "{name}@{version} hat keinen Integritäts-Hash: Der Paketmanager installiert, was die URL liefert."
+    git_lockfile: "{name}@{version} kommt aus git ohne Commit: Jede Installation kann anderen Code bekommen."
+    git_ref: "{name} kommt aus git bei {ref}, einem Branch oder Tag, der auf anderen Code wechseln kann."
+    git_no_ref: "{name} kommt aus git ohne Commit: Jede Installation nimmt den neuesten Code des Standard-Branches."
+    strict_ssl: "strict-ssl ist aus: Der Paketmanager akzeptiert jedes TLS-Zertifikat der Registry."
+    http_registry: "Registry {host} über unverschlüsseltes HTTP: Jeder auf dem Weg kann Pakete austauschen."
+    trusted_host: "trusted-host: pip lässt für diesen Host die TLS-Prüfung weg und akzeptiert unverschlüsseltes HTTP."
+    extra_index: "--extra-index-url: pip nimmt jedes Paket aus dem Index mit der höchsten Version, ein gleichnamiges Paket auf PyPI kann also ein internes ersetzen (Dependency Confusion)."
+    unread: "Nicht gelesen: zu groß, nur ein Git-LFS-Zeiger oder ungültig."
+    found:
+      one: "{count} Installationsquelle, die sich nicht prüfen lässt."
+      other: "{count} Installationsquellen, die sich nicht prüfen lassen."
+    more: "und {count} weitere"
+    none:
+      one: "Kein Download über HTTP, ohne Hash oder von einem beweglichen git-Ref in {count} Datei gefunden."
+      other: "Kein Download über HTTP, ohne Hash oder von einem beweglichen git-Ref in {count} Dateien gefunden."
+    gaps:
+      one: "{count} Lockfile oder Paket-Konfiguration war nicht lesbar; ihre Quellen wurden nicht angesehen."
+      other: "{count} Lockfiles oder Paket-Konfigurationen waren nicht lesbar; ihre Quellen wurden nicht angesehen."
+    nothing: "Keine Lockfiles, Manifeste oder Paketmanager-Konfigurationen."
   legal/licenses:
     commons_clause: "Projekt: {project}. GPL-3.0 § 7 erlaubt Empfängern, „weitere Beschränkungen“ zu entfernen; die Commons Clause greift daher womöglich nicht."
     restricted: "{name}@{version}: {license}. Schränkt die Nutzung ein, oft die kommerzielle."

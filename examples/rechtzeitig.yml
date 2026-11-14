@@ -100,6 +100,7 @@ suppress:
   # - rule: SEC-SECRETS-003 # No secrets in the served JavaScript
   # - rule: SEC-SUPPLY-001 # Dependencies are real, installed packages
   # - rule: SEC-SUPPLY-002 # Manifest and lockfile agree
+  # - rule: SEC-SUPPLY-003 # Packages come from verifiable sources
   # - rule: SEC-TLS-001 # Site uses HTTPS
   # - rule: SEC-TLS-002 # TLS certificate is valid and current
   # - rule: SEC-TLS-003 # No unencrypted resources on HTTPS pages
