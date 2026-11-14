@@ -98,6 +98,7 @@ suppress:
   # - rule: SEC-SECRETS-001 # No secrets in the repository
   # - rule: SEC-SECRETS-002 # .env files stay out of git
   # - rule: SEC-SECRETS-003 # No secrets in the served JavaScript
+  # - rule: SEC-SECRETS-004 # Key and database files stay out of git
   # - rule: SEC-SUPPLY-001 # Dependencies are real, installed packages
   # - rule: SEC-SUPPLY-002 # Manifest and lockfile agree
   # - rule: SEC-SUPPLY-003 # Packages come from verifiable sources

@@ -972,6 +972,22 @@ messages:
     gaps:
       one: "{count} declared dependency, none like a typo of a popular package, but not every lockfile could be read, so not every dependency was compared with its lockfile."
       other: "{count} declared dependencies, none like a typo of a popular package, but not every lockfile could be read, so not every dependency was compared with its lockfile."
+  security/key-files:
+    found:
+      one: "{count} committed file holds a key or credential. It stays in the git history."
+      other: "{count} committed files hold keys, credentials or database contents. They stay in the git history."
+    suspect:
+      one: "{count} committed file may hold keys or personal data."
+      other: "{count} committed files may hold keys or personal data."
+    none: "No committed key, credential or database file found."
+    more: "and {count} more"
+    private_key: "Private key (PEM block)."
+    service_account: "Google Cloud service account key with a private key."
+    registry_token: "Package registry credential written into the file, not read from an environment variable."
+    terraform_state: "Terraform state with resources: may hold passwords and keys in plain text."
+    keystore: "PKCS#12 keystore: usually holds a private key."
+    database_dump: "Database dump with rows."
+    database_file: "Database file (binary)."
   security/lockfile-drift:
     no_lockfiles: "No lockfiles or manifests."
     managers: "Lockfiles of {managers} side by side ({files}). Each tool installs different versions."
