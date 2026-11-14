@@ -46,26 +46,6 @@ window.track = (name, meta) => {
   try { window.pirsch?.(name, { meta })?.catch?.(() => {}); } catch {}
 };
 
-// Configurator on the start page: one URL field with a live workflow preview. The generic copy button
-// below copies the preview's current text. The entered URL never leaves the browser, not even into a
-// Pirsch event (the copy event carries no meta about it).
-(() => {
-  const form = document.getElementById("configurator");
-  if (!form) return;
-  const input = form.querySelector("input");
-  const code = document.getElementById("cfg-preview");
-  const template = code.textContent;
-  const fallback = (template.match(/url: .*/) ?? ["url: https://www.example.com/"])[0].slice(5);
-  const set = () => {
-    const raw = input.value.trim();
-    const url = /^https?:\/\/.+/i.test(raw) ? raw : fallback;
-    code.textContent = template.replace(/url: .*/, `url: ${url}`);
-  };
-  input.addEventListener("input", set);
-  set();
-  form.hidden = false; // without JavaScript the plain workflow link above stays
-})();
-
 // Language: English and German. A page with a counterpart in the other language names it in
 // <link rel="alternate" hreflang>. On entry, without a saved choice, such a page follows the
 // browser: if de or en, whichever comes first in navigator.languages, is the other language,
@@ -119,7 +99,7 @@ const where = (el) => {
   return el.closest("section[id]")?.id ?? "body";
 };
 
-// Clicks on links to workflow.html, with the section and where on the page the link sits.
+// Clicks on links to workflow.html and getting-started.html, with the section and where on the page the link sits.
 // Links to other sites (GitHub, law sources) are not tracked here: pa.js counts every
 // outbound click itself as "Outbound Link Click" with the link's address.
 (() => {
@@ -127,8 +107,11 @@ const where = (el) => {
     const a = e.target instanceof Element && e.target.closest("a[href]");
     if (!a || (e.type === "auxclick" && e.button !== 1)) return;
     const url = new URL(a.href, location.href);
-    if (url.origin === location.origin && url.pathname.endsWith("/workflow.html")) {
+    if (url.origin !== location.origin) return;
+    if (url.pathname.endsWith("/workflow.html")) {
       track("Workflow link", { target: `workflow.html${url.hash}`.slice(0, 100), at: where(a) });
+    } else if (url.pathname.endsWith("/getting-started.html")) {
+      track("Get started link", { page: location.pathname, at: where(a) });
     }
   };
   document.addEventListener("click", onClick);
