@@ -1,4 +1,4 @@
-// Generates the rule cards in docs/checks.html, the "what runs when" tables in docs/checks.html and
+// Generates the JSON Schema of .github/rechtzeitig.yml (docs/rechtzeitig.schema.json), the rule cards in docs/checks.html, the "what runs when" tables in docs/checks.html and
 // docs/workflow.html, the rule count, the checks of both scopes and review dates in docs/index.html and docs/de/index.html,
 // the example workflow in docs/getting-started.html, and the rule lists of the topic pages docs/security.html and docs/de/kuendigungsbutton.html from rule.yml
 // files and SWITCHES in src/rules.ts: npm run docs
@@ -7,6 +7,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { SEVERITIES, reviewProblems, switchSpec, type Rule, type Switch } from "./rules.ts";
 import { SCOPES, loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } from "./runner.ts";
+import { CATEGORIES, NEEDS_EXPIRY, SUPPRESSIONS_FILE, SUPPRESSIONS_RULE } from "./suppress.ts";
+import { loadYaml } from "./data.ts";
 
 const CHECKS_PAGE = new URL("../docs/checks.html", import.meta.url);
 const EXAMPLE_WORKFLOW = new URL("../examples/workflows/rechtzeitig.yml", import.meta.url);
@@ -16,6 +18,8 @@ const INDEX_PAGE = new URL("../docs/index.html", import.meta.url);
 const INDEX_PAGE_DE = new URL("../docs/de/index.html", import.meta.url);
 const SECURITY_PAGE = new URL("../docs/security.html", import.meta.url);
 const SHOP_PAGE_DE = new URL("../docs/de/kuendigungsbutton.html", import.meta.url);
+/** JSON Schema of .github/rechtzeitig.yml, published at rechtzeitig.dev/rechtzeitig.schema.json for editor completion. */
+export const SCHEMA_FILE = new URL("../docs/rechtzeitig.schema.json", import.meta.url);
 /** Rules on docs/de/kuendigungsbutton.html: buttons, withdrawal, prices and terms for online sales. */
 export const SHOP_RULES = ["LEG-DE-BTN-001", "LEG-DE-BTN-002", "LEG-DE-BTN-003", "LEG-DE-WDR-001", "LEG-DE-PRICE-001", "LEG-DE-AGB-001"];
 const SOURCE = "https://github.com/kreativ-anders/rechtzeitig/tree/main/checks";
@@ -245,6 +249,44 @@ export const shopChecks = (checks: LoadedCheck[]) => SHOP_RULES.map((id) => {
   return c;
 });
 
+/**
+ * JSON Schema of .github/rechtzeitig.yml with every rule id as an enum, so an editor completes ids and marks typos.
+ * src/suppress.ts validates the same and more (placeholders, dates in the past); the scan never relies on the schema.
+ */
+export function suppressionsSchema(checks: LoadedCheck[]): string {
+  const limits = loadYaml<Record<string, { min_reason_chars: number; max_expiry_days: number }>>("data/thresholds.yml")["quality/suppressions"];
+  const rules = checks.map((c) => c.rule).filter((r) => r.id !== SUPPRESSIONS_RULE).sort((a, b) => a.id.localeCompare(b.id));
+  const schema = {
+    $schema: "https://json-schema.org/draft/2020-12/schema",
+    $id: "https://rechtzeitig.dev/rechtzeitig.schema.json",
+    title: `rechtzeitig ${SUPPRESSIONS_FILE}`,
+    description: "Rules turned off with a category and a reason. They still run and show in the report as suppressed. https://rechtzeitig.dev/workflow.html#suppress",
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      suppress: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: false,
+          required: ["rule", "category", "reason"],
+          properties: {
+            rule: { description: "Rule id, see https://rechtzeitig.dev/checks.html", enum: rules.map((r) => r.id), markdownEnumDescriptions: rules.map((r) => r.title.en) },
+            category: {
+              description: "not-applicable: the duty does not apply to this project. false-positive: the rule is wrong here. accepted-risk: the finding is real and accepted until expires.",
+              enum: [...CATEGORIES],
+            },
+            reason: { description: "Why the rule does not apply or the risk is accepted. Shown in the report.", type: "string", minLength: limits.min_reason_chars },
+            expires: { description: `Last day the entry applies (YYYY-MM-DD), at most ${limits.max_expiry_days} days ahead. Required for ${NEEDS_EXPIRY.join(", ")}.`, type: "string", format: "date", pattern: "^\\d{4}-\\d{2}-\\d{2}$" },
+          },
+          allOf: NEEDS_EXPIRY.map((c) => ({ if: { properties: { category: { const: c } } }, then: { required: ["expires"] } })),
+        },
+      },
+    },
+  };
+  return `${JSON.stringify(schema, null, 2)}\n`;
+}
+
 /** Replaces what stands between <!-- name:start --> and <!-- name:end --> in `doc`. */
 export function fill(doc: string, name: string, html: string): string {
   const [start, end] = [`<!-- ${name}:start -->`, `<!-- ${name}:end -->`];
@@ -275,5 +317,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   }
   writeFileSync(SECURITY_PAGE, fill(readFileSync(SECURITY_PAGE, "utf8"), "topic-rules", topicRulesHtml(securityChecks(checks))));
   writeFileSync(SHOP_PAGE_DE, fill(readFileSync(SHOP_PAGE_DE, "utf8"), "topic-rules", topicRulesHtml(shopChecks(checks), "de")));
-  console.log("docs/checks.html, docs/workflow.html, docs/getting-started.html, docs/index.html, docs/de/index.html, docs/security.html and docs/de/kuendigungsbutton.html updated");
+  writeFileSync(SCHEMA_FILE, suppressionsSchema(checks));
+  console.log("docs/rechtzeitig.schema.json, docs/checks.html, docs/workflow.html, docs/getting-started.html, docs/index.html, docs/de/index.html, docs/security.html and docs/de/kuendigungsbutton.html updated");
 }

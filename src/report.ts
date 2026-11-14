@@ -13,6 +13,7 @@ const ICONS: Record<OutcomeStatus, string> = {
   error: "💥",
   pass: "✅",
   info: "ℹ️",
+  suppressed: "⏸️",
   skip: "⏭️",
 };
 const SEVERITY_ORDER = [...SEVERITIES].reverse();
@@ -41,6 +42,8 @@ export interface Findings {
     locations: string[];
     /** Why a check was skipped: target (no url or checkout), module, switch, or data (nothing to read). */
     because?: Because;
+    /** For status "suppressed": the entry in .github/rechtzeitig.yml and the status the rule would have without it. */
+    suppression?: { category: string; reason: string; expires?: string; file: string; line: number; status: OutcomeStatus };
   }>;
 }
 
@@ -71,9 +74,15 @@ export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">,
       ...(typeof o.message === "string" ? {} : { key: o.message.key, params: cleanParams(o.message.params) }),
       locations: where(o, lang).map((d) => oneLine(d)),
       ...(o.because && { because: o.because }),
+      ...(o.suppression && { suppression: suppressionJson(o.suppression) }),
     })),
   };
 }
+
+/** The entry as the report JSON keeps it; the reason comes from the repository, so it is one line like every other text. */
+const suppressionJson = (s: NonNullable<Outcome["suppression"]>) => ({
+  category: s.category, reason: oneLine(s.reason), ...(s.expires && { expires: s.expires }), file: s.file, line: s.line, status: s.status,
+});
 
 const HOMEPAGE = "https://github.com/kreativ-anders/rechtzeitig";
 const MAKER = "https://kreativ-anders.de";
@@ -116,6 +125,22 @@ const sorted = (outcomes: Outcome[]) =>
     (a, b) => OUTCOMES.indexOf(a.status) - OUTCOMES.indexOf(b.status) || SEVERITY_ORDER.indexOf(a.rule.severity) - SEVERITY_ORDER.indexOf(b.rule.severity),
   );
 const open = (o: Outcome) => o.status === "fail" || o.status === "warn" || o.status === "info";
+
+/**
+ * Lines for a suppressed outcome: category, expiry and reason; where the entry is and the status without it; for a
+ * false positive, where to report it. The reason is untrusted text from the repository and goes through `esc`.
+ */
+function suppressionLines(o: Outcome, lang: UiLanguage, esc: (s: string) => string): string[] {
+  const s = o.suppression;
+  if (!s) return [];
+  const t = ui(lang);
+  const until = s.expires ? t("suppressed_until", { date: s.expires }) : "";
+  return [
+    t("suppressed_by", { category: t(`category_${s.category}`), until, reason: esc(s.reason) }),
+    t("suppressed_at", { status: s.status, place: esc(`${s.file}:${s.line}`) }),
+    ...(s.category === "false-positive" ? [t("suppressed_report", { url: `${HOMEPAGE}/issues` })] : []),
+  ];
+}
 /** Skipped before it started: no target or left out by `modules`. Listed once per reason, not per check. */
 const notStarted = (o: Outcome) => o.because?.kind === "target" || o.because?.kind === "module";
 
@@ -210,17 +235,19 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
       ...list.map((o) => {
         // A rule with a value instead of a legal basis (checks/quality/) says so, never looks like a legal duty.
         const law = o.rule.legal_basis?.[lang] ?? (o.rule.value ? t("no_legal_basis") : undefined);
-        return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${t(`severity_${o.rule.severity}`)} | ${md(say(o, lang))} |`;
+        const off = o.suppression ? `<br>${ICONS.suppressed} ${suppressionLines(o, lang, md)[0]}` : "";
+        return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${t(`severity_${o.rule.severity}`)} | ${md(say(o, lang))}${off} |`;
       }),
       "",
     );
   }
-  const withDetails = list.filter((o) => o.details.length || open(o));
+  const withDetails = list.filter((o) => o.details.length || open(o) || o.suppression);
   if (withDetails.length) {
     lines.push(`### ${t("details")}`, "");
     for (const o of withDetails) {
       const fix = open(o) ? [`**${t("fix")}:** ${o.rule.fix_hint[lang]}`, ""] : [];
-      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...fix, ...where(o, lang).map((d) => `- ${md(d)}`), "", "</details>", "");
+      const off = o.suppression ? [suppressionLines(o, lang, md).map((l, i) => (i ? l : `**${l}**`)).join("<br>"), ""] : [];
+      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...off, ...fix, ...where(o, lang).map((d) => `- ${md(d)}`), "", "</details>", "");
     }
   }
   lines.push(...notRunLines(r, "md", true), `### ${t("scan")}`, "");
@@ -245,6 +272,7 @@ export function toText(r: Report): string {
   const lines = [`rechtzeitig: ${plain(title(r))}`, ""];
   for (const o of r.outcomes.filter((o) => !notStarted(o))) {
     lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${plain(say(o, r.language))}`);
+    for (const l of suppressionLines(o, r.language, plain)) lines.push(`      ${l}`);
     for (const d of where(o, r.language)) lines.push(`      - ${plain(d)}`);
   }
   const notStartedOnly = { ...r, outcomes: r.outcomes.filter(notStarted) };

@@ -1,0 +1,49 @@
+# Reasons in .github/rechtzeitig.yml that say nothing (src/suppress.ts, rule quality/suppressions).
+# Compared in lower case with letters and digits only, so "N/A", "n.a." and "n a" are the same.
+# An entry with one of these as its reason turns nothing off and counts as a finding.
+placeholders:
+  - n/a
+  - na
+  - n.a.
+  - none
+  - nothing
+  - todo
+  - tbd
+  - tbc
+  - fixme
+  - wip
+  - later
+  - test
+  - testing
+  - temp
+  - temporary
+  - ignore
+  - ignored
+  - disable
+  - disabled
+  - skip
+  - not needed
+  - not relevant
+  - irrelevant
+  - no reason
+  - reason
+  - because
+  - "-"
+  - "."
+  - "?"
+  - keine
+  - nichts
+  - kein grund
+  - später
+  - erstmal
+  - egal
+  - unwichtig
+  - nicht relevant
+  - nicht nötig
+  - nicht notwendig
+  - deaktiviert
+  - abgeschaltet
+  - siehe oben
+  - see above
+  - lorem ipsum
+  - asdf

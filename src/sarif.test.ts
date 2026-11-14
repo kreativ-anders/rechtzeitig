@@ -76,3 +76,14 @@ test("the workflow file comes from GITHUB_WORKFLOW_REF", () => {
   assert.equal(workflowFile("other/repo/.github/workflows/x.yml@refs/heads/main", "me/site"), undefined);
   assert.equal(workflowFile(undefined, "me/site"), undefined);
 });
+
+test("a suppressed rule keeps its alerts at the level it would have, marked as suppressed with the reason", () => {
+  const s = sarif(report([{
+    id: "security/secrets", rule: rule("SEC-SECRETS-001"), status: "suppressed", message: "Secret found", details: [{ file: "fixtures/key.pem", line: 1, text: "key" }],
+    suppression: { rule: "SEC-SECRETS-001", category: "false-positive", reason: "Test key of the TLS fixtures", line: 2, file: ".github/rechtzeitig.yml", status: "fail" },
+  }]), { base: "app" });
+  const [result] = s.runs[0].results as Array<Sarif["runs"][0]["results"][0] & { suppressions: Array<{ kind: string; status: string; justification: string; location: { physicalLocation: { artifactLocation: { uri: string } } } }> }>;
+  assert.equal(result.level, "error");
+  assert.deepEqual([result.suppressions[0].kind, result.suppressions[0].status, result.suppressions[0].justification], ["external", "accepted", "false-positive: Test key of the TLS fixtures"]);
+  assert.equal(result.suppressions[0].location.physicalLocation.artifactLocation.uri, "app/.github/rechtzeitig.yml");
+});

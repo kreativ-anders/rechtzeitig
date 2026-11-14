@@ -53,7 +53,7 @@ Ordered by value per effort. The first six need only a new `data/*.yml` and the 
 16. A parser for `bun.lock` (JSON with comments). Without it, `hallucinated-packages` and `lockfile-drift` skip folders with a Bun lockfile, which projects from AI app builders often have next to `package-lock.json`.
 17. MCP servers in Codex `config.toml` (`[mcp_servers.*]`) for `agent-permissions`; today only its approval and sandbox settings are read.
 18. More code patterns on `data/insecure-code.yml`, each with a benchmark case: auth bypass flags (`SKIP_AUTH`, `NODE_ENV` checks in auth middleware), unsafe HTML (`dangerouslySetInnerHTML`, `v-html` with variables), personal data in logs (`console.log(req.body)`), SQL built from strings.
-19. Visible suppressions: a committed file lists rule id, path, a mandatory reason and an expiry date; suppressed findings stay in the report and in SARIF as "suppressed" with the reason, and a suppression without a reason or past its date counts as a finding. Nothing can drop a finding silently.
+19. Suppressions per finding: `.github/rechtzeitig.yml` turns off whole rules today (`src/suppress.ts`, `QUAL-SUPPRESS-001`). Open is an optional `path` or `url` per entry, so one file or page is suppressed while the rule keeps reporting the rest. Needs a match that survives moved files and query strings without matching too much.
 
 ## Next: repository and website together
 
@@ -172,6 +172,7 @@ Paid, a hosted service in its own repository, for what the Security tab does not
 - One view over many sites and repositories, for agencies with client projects.
 - Notifications (mail, Slack, Teams) on new findings only, which needs stored state.
 - Accepting a finding with a reason, and a record of who did it and when.
+- A configurator in the app for `.github/rechtzeitig.yml`: every rule in a list with its title, legal basis and the last result, a switch to turn it off, a category and a reason to fill in, and an expiry date picker. The app checks the entries like `QUAL-SUPPRESS-001` and gives the finished file to copy or download, which the user commits to their repository. The file format and its validation stay free; the app only saves writing it by hand. Later the app could open the pull request with the file itself.
 - Reports for clients (PDF), team access and roles.
 - Scheduled scans without an own workflow, also for sites without GitHub.
 

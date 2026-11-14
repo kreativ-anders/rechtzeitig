@@ -4,13 +4,17 @@ import { dirname, join, sep } from "node:path";
 import { loadRule, switchSpec, type Rule, type Switch } from "./rules.ts";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage } from "./text.ts";
+import type { AppliedSuppression } from "./suppress.ts";
 import { STATUSES, type AnyCheck, type Finding, type Msg, type RepoContext, type ScanContext, type Status } from "./sdk.ts";
 
 const CHECKS_DIR = fileURLToPath(new URL("../checks/", import.meta.url));
 const TIMEOUT = 15_000;
 
-/** Every status an outcome can have, most urgent first. "error" means the check itself broke. */
-export const OUTCOMES = ["fail", "error", "warn", "info", "pass", "skip"] as const satisfies ReadonlyArray<Status | "error">;
+/**
+ * Every status an outcome can have, most urgent first. "error" means the check itself broke; "suppressed" that
+ * .github/rechtzeitig.yml turned the rule off (src/suppress.ts), which never counts for fail-on.
+ */
+export const OUTCOMES = ["fail", "error", "warn", "info", "suppressed", "pass", "skip"] as const satisfies ReadonlyArray<Status | "error" | "suppressed">;
 export type OutcomeStatus = (typeof OUTCOMES)[number];
 
 export interface LoadedCheck {
@@ -40,6 +44,8 @@ export interface Outcome {
   details: Array<Finding | string>;
   /** Set for every skip. */
   because?: Because;
+  /** Set when the status is "suppressed": the entry with category and reason, and the status it would have. */
+  suppression?: AppliedSuppression;
 }
 
 /** Module (group) of a check id: "legal/imprint" → "legal". A group is a legal or topic area, never a scan target. */

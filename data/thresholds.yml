@@ -134,6 +134,12 @@ quality/hollow-tests:
   # ... and they are at least this share of all test cases.
   max_skipped_share: 0.2
 
+quality/suppressions:
+  # A reason in .github/rechtzeitig.yml needs at least this many characters ("Kein Shop" is too short to say why).
+  min_reason_chars: 15
+  # An entry may expire at most this many days ahead, so an accepted risk is looked at again within a year.
+  max_expiry_days: 365
+
 quality/neutralized-ci:
   # A file-wide suppression (@ts-nocheck, bare eslint-disable, # type: ignore) counts in the first lines only.
   top_lines: 5

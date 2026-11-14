@@ -1725,7 +1725,7 @@
 </div>
 </section>
 <section class="module" id="quality" data-module="quality">
-<h3>Code quality <small>3 rules</small></h3>
+<h3>Code quality <small>4 rules</small></h3>
 <div class="rules">
 <details class="rule" id="QUAL-TEST-001" data-module="quality" data-scope="repository" data-severity="medium" data-search="qual-test-001 quality/hollow-tests tests can fail tests können scheitern no legal basis a green test run only proves something when the tests can fail. coding agents have been shown to edit tests until they pass. reads test files (`tests` in `data/code-paths.yml`) and warns for assertions that compare a constant with itself (`expect(true).tobe(true)`, `assert true`), an assertion inside a try whose catch does nothing, a forced pass (`process.exit(0)`, `outcome = &quot;passed&quot;`), test cases in a file without any assertion, `.only` and focused tests, and `--passwithnotests` in scripts and runner configs (patterns in `data/code-quality.yml`); skipped tests warn above the count and share in `data/thresholds.yml`.">
 <summary>
@@ -1776,6 +1776,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/quality/placeholder-code"><code>checks/quality/placeholder-code</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://cwe.mitre.org/data/definitions/546.html">cwe.mitre.org</a>, <a href="https://cwe.mitre.org/data/definitions/1164.html">cwe.mitre.org</a>, <a href="https://arxiv.org/abs/2510.20270">arxiv.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="QUAL-SUPPRESS-001" data-module="quality" data-scope="repository" data-severity="medium" data-search="qual-suppress-001 quality/suppressions turned-off rules have a reason abgeschaltete regeln sind begründet no legal basis a turned-off rule stays visible in the report: whoever reads it sees which rule is off, why and until when. without a reason a green run would prove nothing. reads `.github/rechtzeitig.yml` in the repository (`src/suppress.ts`) and fails for every entry without a known rule id, a category (not-applicable, false-positive, accepted-risk) or a reason, for reasons that are placeholders (`data/suppressions.yml`) or shorter than `quality/suppressions.min_reason_chars`, for an accepted risk without `expires`, for `expires` that is no real date, has passed or lies more than `max_expiry_days` ahead (`data/thresholds.yml`), for unknown fields and duplicates; such an entry turns nothing off, and a valid one turns its rule into suppressed, which still runs and shows its reason.">
+<summary>
+<span class="rule-head"><span class="rule-id">QUAL-SUPPRESS-001<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Turned-off rules have a reason</span>
+<span class="rule-title-de" lang="de">Abgeschaltete Regeln sind begründet</span>
+<span class="rule-law none">No legal basis: A turned-off rule stays visible in the report: whoever reads it sees which rule is off, why and until when. Without a reason a green run would prove nothing.</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads <code>.github/rechtzeitig.yml</code> in the repository (<code>src/suppress.ts</code>) and fails for every entry without a known rule id, a category (not-applicable, false-positive, accepted-risk) or a reason, for reasons that are placeholders (<code>data/suppressions.yml</code>) or shorter than <code>quality/suppressions.min_reason_chars</code>, for an accepted risk without <code>expires</code>, for <code>expires</code> that is no real date, has passed or lies more than <code>max_expiry_days</code> ahead (<code>data/thresholds.yml</code>), for unknown fields and duplicates; such an entry turns nothing off, and a valid one turns its rule into suppressed, which still runs and shows its reason.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Give every entry under suppress a valid rule id (rule), a category (category: not-applicable, false-positive or accepted-risk) and a reason (reason) that says why the rule does not apply here. An accepted risk needs an expiry date (expires: YYYY-MM-DD) within a year. Renew or remove expired entries.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/quality/suppressions"><code>checks/quality/suppressions</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html">docs.oasis-open.org</a>, <a href="https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning">docs.github.com</a>, <a href="https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/resolving-code-scanning-alerts">docs.github.com</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-14">2026-11-14</time></dd></div>
 </dl></div>
 </details>
 </div>
