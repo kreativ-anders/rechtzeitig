@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: A11Y-ARIA-001
+severity: low
+title:
+  de: "ARIA-Attribute sind gültig"
+  en: "ARIA attributes are valid"
+legal_basis:
+  de: "BFSG mit § 3 BFSGV; EN 301 549 V3.2.1 Nr. 9.4.1.2 (WCAG 2.1 Erfolgskriterium 4.1.2)"
+  en: "BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.4.1.2 (WCAG 2.1 success criterion 4.1.2)"
+how: "Runs the axe-core rules listed for `accessibility/aria-attributes` in `data/accessibility.yml` on every visited own page with JavaScript on, inside the browser and without sending anything, and lists misspelled or unknown `aria-*` attributes, such as `aria-labeledby`, and attributes with an invalid value, such as `aria-hidden=\"yes\"` or an `aria-controls` that names no element, with page and CSS selector; it only warns, since the BFSG does not apply to every site."
+fix_hint:
+  de: "Tippfehler in ARIA-Attributen korrigieren (aria-labelledby mit zwei l) und nur Werte verwenden, die WAI-ARIA erlaubt: true oder false bei aria-hidden und aria-expanded, vorhandene IDs bei aria-labelledby, aria-describedby und aria-controls. Unbekannte Attribute ignorieren Screenreader, das Element bleibt dann ohne die gemeinte Information. Pflicht nach BFSG für Dienstleistungen im elektronischen Geschäftsverkehr mit Verbrauchern seit 28.06.2025, außer für Kleinstunternehmen; für alle Besucher sinnvoll."
+  en: "Fix typos in ARIA attributes (aria-labelledby with two l) and only use values WAI-ARIA allows: true or false for aria-hidden and aria-expanded, existing ids for aria-labelledby, aria-describedby and aria-controls. Screen readers ignore unknown attributes, so the element loses the information it was meant to carry. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor."
+meta:
+  last_reviewed: "2026-11-14"
+  sources:
+  - https://www.gesetze-im-internet.de/bfsg/
+  - https://www.gesetze-im-internet.de/bfsgv/
+  - https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf
+  - https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html
+  - https://www.w3.org/TR/wai-aria-1.2/#state_prop_def

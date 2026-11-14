@@ -711,6 +711,39 @@ messages:
     more:
       one: "und {count} weiteres Element"
       other: "und {count} weitere Elemente"
+  accessibility/aria-structure:
+    none:
+      one: "axe-core fand keine Liste, kein Menü und keine Tabelle ohne nötige Kinder oder Eltern auf {count} Seite."
+      other: "axe-core fand keine Liste, kein Menü und keine Tabelle ohne nötige Kinder oder Eltern auf {count} Seiten."
+    found:
+      one: "{count} Element ohne die Kinder oder Eltern, die seine Rolle braucht (axe-core)."
+      other: "{count} Elemente ohne die Kinder oder Eltern, die ihre Rolle braucht (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "und {count} weiteres Element"
+      other: "und {count} weitere Elemente"
+  accessibility/aria-attributes:
+    none:
+      one: "axe-core fand kein ungültiges ARIA-Attribut auf {count} Seite."
+      other: "axe-core fand kein ungültiges ARIA-Attribut auf {count} Seiten."
+    found:
+      one: "{count} ungültiges ARIA-Attribut (axe-core)."
+      other: "{count} ungültige ARIA-Attribute (axe-core)."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "und {count} weiteres Element"
+      other: "und {count} weitere Elemente"
+  accessibility/best-practices:
+    none:
+      one: "axe-core fand keine Abweichung von den WAI-ARIA-Empfehlungen auf {count} Seite."
+      other: "axe-core fand keine Abweichung von den WAI-ARIA-Empfehlungen auf {count} Seiten."
+    found:
+      one: "{count} Element weicht von den WAI-ARIA-Empfehlungen ab (axe-core): doppelte Landmark, Dialog ohne Namen, aria-hidden=\"false\" oder zu viele Live-Regionen."
+      other: "{count} Elemente weichen von den WAI-ARIA-Empfehlungen ab (axe-core): doppelte Landmarks, Dialoge ohne Namen, aria-hidden=\"false\" oder zu viele Live-Regionen."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "und {count} weiteres Element"
+      other: "und {count} weitere Elemente"
   accessibility/contrast:
     none:
       one: "axe-core fand kein Text mit zu wenig Kontrast auf {count} Seite."

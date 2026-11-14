@@ -799,11 +799,12 @@ export function capped(details: Finding[]): Finding[] {
  * on all visited own pages with JavaScript on. Skip when axe ran on none of them, warn with one
  * `node` finding per element (rule, page, selector), otherwise pass. The check's messages need
  * `none` and `found` (with `count`), `node` (`rule`, `page`, `target`) and `more`.
+ * `keep` drops violations that do not count, such as a rule that only matters above a number of elements.
  */
-export function axeResult(ctx: ScanContext, rules: string[]): Result {
+export function axeResult(ctx: ScanContext, rules: string[], keep: (v: AxeViolation) => boolean = () => true): Result {
   const pages = ctx.sitePages.filter((p) => p.js.axe);
   if (!pages.length) return skip(msg("axe_not_run"));
-  const hits = pages.flatMap((p) => (p.js.axe ?? []).filter((v) => rules.includes(v.rule)).map((v) => ({ ...v, page: ctx.short(p.url) })));
+  const hits = pages.flatMap((p) => (p.js.axe ?? []).filter((v) => rules.includes(v.rule) && keep(v)).map((v) => ({ ...v, page: ctx.short(p.url) })));
   if (!hits.length) return pass(msg("none", { count: pages.length }));
   const count = hits.reduce((n, v) => n + v.count, 0);
   const details = hits.flatMap((v) => v.targets.map((target): Finding => ({ key: "node", params: { rule: v.rule, page: v.page, target } })));

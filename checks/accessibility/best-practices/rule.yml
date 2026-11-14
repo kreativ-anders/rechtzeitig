@@ -1,0 +1,22 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: A11Y-BP-001
+severity: info
+title:
+  de: "Landmarks, Dialoge und Live-Regionen folgen den Empfehlungen von WAI-ARIA"
+  en: "Landmarks, dialogs and live regions follow WAI-ARIA best practice"
+value:
+  de: "Keine WCAG-Pflicht, aber WAI-ARIA und HTML empfehlen es: Screenreader-Nutzer springen über Landmarks, erkennen Dialoge am Namen und hören Live-Regionen ohne gegenseitige Unterbrechung."
+  en: "Not a WCAG requirement, but WAI-ARIA and HTML recommend it: screen reader users jump by landmarks, recognize dialogs by their name and hear live regions without one interrupting the other."
+how: "Runs the axe-core rules listed for `accessibility/best-practices` in `data/accessibility.yml`, including its own `custom` rules, on every visited own page with JavaScript on, inside the browser and without sending anything, and lists more than one banner or main landmark, dialogs without an accessible name, `aria-hidden=\"false\"`, and pages with more live regions than `max_live_regions` in `data/thresholds.yml`, with page and CSS selector; it only gives hints."
+fix_hint:
+  de: "Nur ein <header> bzw. role=banner auf oberster Ebene und nur ein sichtbares <main> pro Seite. Jedem Dialog (<dialog>, role=dialog oder alertdialog) über aria-labelledby oder aria-label einen Namen geben. aria-hidden=\"false\" entfernen; das Attribut weglassen hat dieselbe Bedeutung. Meldungen in möglichst einer Live-Region (aria-live, role=status oder alert) bündeln."
+  en: "Use only one top-level <header> or role=banner and only one visible <main> per page. Give every dialog (<dialog>, role=dialog or alertdialog) a name with aria-labelledby or aria-label. Remove aria-hidden=\"false\"; leaving the attribute out means the same. Collect announcements in as few live regions (aria-live, role=status or alert) as possible."
+meta:
+  last_reviewed: "2026-11-14"
+  sources:
+  - https://www.w3.org/TR/wai-aria-1.2/#banner
+  - https://www.w3.org/TR/wai-aria-1.2/#main
+  - https://html.spec.whatwg.org/multipage/grouping-content.html#the-main-element
+  - https://www.w3.org/TR/wai-aria-1.2/#dialog
+  - https://www.w3.org/TR/wai-aria-1.2/#aria-hidden
+  - https://www.w3.org/TR/wai-aria-1.2/#dfn-live-region

@@ -1,0 +1,21 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: A11Y-STRUCT-001
+severity: medium
+title:
+  de: "Listen, Menüs und Tabellen sind richtig aufgebaut"
+  en: "Lists, menus and tables are built correctly"
+legal_basis:
+  de: "BFSG mit § 3 BFSGV; EN 301 549 V3.2.1 Nr. 9.1.3.1 (WCAG 2.1 Erfolgskriterium 1.3.1)"
+  en: "BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.1.3.1 (WCAG 2.1 success criterion 1.3.1)"
+how: "Runs the axe-core rules listed for `accessibility/aria-structure` in `data/accessibility.yml` on every visited own page with JavaScript on, inside the browser and without sending anything, and lists lists, menus, tables, grids, tabs, trees and other ARIA roles that lack the children or the parent they need, such as a `role=menu` without menu items or an `<li>` outside a list, with page and CSS selector; it only warns, since the BFSG does not apply to every site."
+fix_hint:
+  de: "Elementen mit einer zusammengesetzten Rolle die Kinder geben, die sie brauchen: role=menu und menubar braucht menuitem, tablist braucht tab, list braucht listitem, table und grid brauchen row; umgekehrt jedes menuitem, tab oder listitem in sein passendes Elternelement setzen. <ul> und <ol> dürfen direkt nur <li> enthalten. Wo die Rolle nicht stimmt, sie entfernen statt Kinder zu ergänzen. Pflicht nach BFSG für Dienstleistungen im elektronischen Geschäftsverkehr mit Verbrauchern seit 28.06.2025, außer für Kleinstunternehmen; für alle Besucher sinnvoll."
+  en: "Give elements with a composite role the children they need: role=menu and menubar need menuitem, tablist needs tab, list needs listitem, table and grid need row; and put every menuitem, tab or listitem inside its matching parent. <ul> and <ol> may only contain <li> directly. Where the role is wrong, remove it instead of adding children. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor."
+meta:
+  last_reviewed: "2026-11-14"
+  sources:
+  - https://www.gesetze-im-internet.de/bfsg/
+  - https://www.gesetze-im-internet.de/bfsgv/
+  - https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf
+  - https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships.html
+  - https://www.w3.org/TR/wai-aria-1.2/#mustContain
