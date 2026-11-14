@@ -1041,7 +1041,6 @@ messages:
     strict_ssl: "strict-ssl ist aus: Der Paketmanager akzeptiert jedes TLS-Zertifikat der Registry."
     http_registry: "Registry {host} über unverschlüsseltes HTTP: Jeder auf dem Weg kann Pakete austauschen."
     trusted_host: "trusted-host: pip lässt für diesen Host die TLS-Prüfung weg und akzeptiert unverschlüsseltes HTTP."
-    extra_index: "--extra-index-url: pip nimmt jedes Paket aus dem Index mit der höchsten Version, ein gleichnamiges Paket auf PyPI kann also ein internes ersetzen (Dependency Confusion)."
     unread: "Nicht gelesen: zu groß, nur ein Git-LFS-Zeiger oder ungültig."
     found:
       one: "{count} Installationsquelle, die sich nicht prüfen lässt."

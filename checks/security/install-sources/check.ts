@@ -18,7 +18,7 @@ import {
   type Finding,
 } from "../../../src/sdk.ts";
 
-interface Rule { key: string; level: "fail" | "warn"; pattern: string }
+interface Rule { key: string; pattern: string }
 const DATA = loadYaml<{
   integrity_in: string[];
   git: string;
@@ -34,7 +34,8 @@ const COMMIT_IN_URL = new RegExp(DATA.commit_in_url);
 const HTTP = new RegExp(DATA.http, "i");
 const PIP_GIT = new RegExp(DATA.pip_git);
 const CONFIGS = DATA.configs.map((c) => ({ files: new RegExp(c.files), pip: !!c.pip_git, rules: c.rules.map((r) => ({ ...r, re: new RegExp(r.pattern) })) }));
-const FAILING = new Set(DATA.configs.flatMap((c) => c.rules.filter((r) => r.level === "fail").map((r) => r.key)).concat("http"));
+// Every config finding turns a TLS or HTTP protection off.
+const FAILING = new Set(DATA.configs.flatMap((c) => c.rules.map((r) => r.key)).concat("http"));
 
 const baseOf = (path: string) => path.split("/").pop() ?? "";
 /** Host of a URL, never user, password, path or query: a token in the URL stays out of the report. */
@@ -71,8 +72,10 @@ export default defineRepoCheck({
         const params = { name: c.name, version: c.version };
         // yarn Berry writes "name@npm:1.2.3"; the bare spec would also match dependency lines of other packages.
         const line = at(url.startsWith("npm:") ? `${c.name}@${url}` : url);
-        if (HTTP.test(url)) findings.push({ file: lock, line, key: "http", params: { ...params, host: hostOf(url) } });
-        else if (GIT.test(url)) {
+        // Over http:// with a hash the package manager still verifies the content.
+        if (HTTP.test(url)) {
+          if (!c.integrity) findings.push({ file: lock, line, key: "http", params: { ...params, host: hostOf(url) } });
+        } else if (GIT.test(url)) {
           if (!COMMIT_IN_URL.test(url)) findings.push({ file: lock, line, key: "git_lockfile", params });
         } else if (hashed && !c.integrity && (/^https:\/\//i.test(url) || url.startsWith("npm:"))) {
           findings.push({ file: lock, line, key: "no_integrity", params });

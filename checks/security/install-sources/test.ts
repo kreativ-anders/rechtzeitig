@@ -30,12 +30,19 @@ test("no finding for HTTPS downloads with a hash, workspace folders, links and p
   assert.equal(result.status, "pass", JSON.stringify(result.raw.details));
 });
 
-test("fails on a lockfile entry downloaded over http, without credentials in the report", async () => {
-  const files = { "package-lock.json": npm({ "node_modules/a": { version: "1.0.0", resolved: tgz("http://user:token@registry.example.com", "a"), integrity: "sha512-x" } }) };
+test("fails on a lockfile entry downloaded over http without a hash, without credentials in the report", async () => {
+  const files = { "package-lock.json": npm({ "node_modules/a": { version: "1.0.0", resolved: tgz("http://user:token@registry.example.com", "a") } }) };
   const result = await runRepoCheck(here, files);
   assert.equal(result.status, "fail");
   assert.deepEqual(result.raw.details?.map((d) => [d.key, d.params?.host, d.line]), [["http", "registry.example.com", 9]]);
   assert.doesNotMatch(JSON.stringify(result.raw), /token/);
+});
+
+test("no finding for http with a hash: the package manager verifies the content", async () => {
+  const lock = npm({ "node_modules/a": { version: "1.0.0", resolved: tgz("http://registry.npmjs.org", "a"), integrity: "sha512-x" } });
+  assert.equal((await runRepoCheck(here, { "package-lock.json": lock })).status, "pass");
+  const cargo = 'version = 3\n\n[[package]]\nname = "a"\nversion = "0.1.0"\nsource = "registry+http://crates.corp.example/index"\nchecksum = "abc"\n';
+  assert.equal((await runRepoCheck(here, { "Cargo.lock": cargo })).status, "pass");
 });
 
 test("warns on npm, pnpm and yarn entries without an integrity hash", async () => {
@@ -91,7 +98,8 @@ test("checks package manager configs line by line", async () => {
   const files = {
     ".npmrc": "strict-ssl=false\n@corp:registry=http://npm.corp.example/\n",
     ".yarnrc.yml": 'enableStrictSsl: false\nnpmRegistryServer: "http://npm.corp.example"\n',
-    "requirements.txt": "--extra-index-url https://pypi.corp.example/simple\n--trusted-host pypi.corp.example\n# --extra-index-url https://old.example\nrequests==2.32.3\n",
+    "requirements.txt": "--extra-index-url https://pypi.corp.example/simple\n--trusted-host pypi.corp.example\n# --index-url http://old.example\nrequests==2.32.3\n",
+    "requirements/cuda.txt": "--extra-index-url=http://pypi.corp.example/simple\n",
     "pip.conf": "[global]\nextra-index-url =\n    https://pypi.corp.example/simple\ntrusted-host = pypi.corp.example\n",
   };
   const result = await runRepoCheck(here, files);
@@ -101,17 +109,15 @@ test("checks package manager configs line by line", async () => {
     [".npmrc", 2, "http_registry"],
     [".yarnrc.yml", 1, "strict_ssl"],
     [".yarnrc.yml", 2, "http_registry"],
-    ["pip.conf", 2, "extra_index"],
     ["pip.conf", 4, "trusted_host"],
-    ["requirements.txt", 1, "extra_index"],
     ["requirements.txt", 2, "trusted_host"],
+    ["requirements/cuda.txt", 1, "http_registry"],
   ]);
 });
 
-test("an extra index in requirements/*.txt warns, it does not fail", async () => {
+test("an extra index over https is no finding", async () => {
   const result = await runRepoCheck(here, { "requirements/cuda.txt": "--extra-index-url=https://download.pytorch.org/whl/cu121\ntorch==2.4.0\n" });
-  assert.equal(result.status, "warn");
-  assert.deepEqual(result.raw.details?.map((d) => [d.file, d.key, d.params?.host]), [["requirements/cuda.txt", "extra_index", "download.pytorch.org"]]);
+  assert.equal(result.status, "pass");
 });
 
 test("leaves fixture paths out", async () => {

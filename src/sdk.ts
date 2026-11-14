@@ -733,7 +733,7 @@ export interface Component {
    * after "#", a local path (file:, workspace folder), or a yarn Berry protocol spec ("npm:1.2.3", "workspace:.").
    */
   resolved?: string;
-  /** Hash the package manager checks the download against (npm, pnpm and yarn lockfiles), when there is one. */
+  /** Hash the package manager checks the download against (integrity, checksum, sha256, shasum), when the lockfile has one. */
   integrity?: string;
 }
 

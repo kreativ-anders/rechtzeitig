@@ -997,7 +997,6 @@ messages:
     strict_ssl: "strict-ssl is off: the package manager accepts any TLS certificate for the registry."
     http_registry: "Registry {host} over plain HTTP: anyone on the way can swap packages."
     trusted_host: "trusted-host: pip skips the TLS check for this host and accepts plain HTTP."
-    extra_index: "--extra-index-url: pip takes each package from the index with the highest version, so a package of the same name on PyPI can replace an internal one (dependency confusion)."
     unread: "Not read: too large, only a Git LFS pointer or invalid."
     found:
       one: "{count} install source that cannot be verified."

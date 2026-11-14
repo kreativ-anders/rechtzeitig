@@ -213,7 +213,7 @@ function yarnName(descriptors: string[], resolution: string | undefined): string
   return splitIdent(descriptors[0] ?? "")?.[0];
 }
 
-interface ComposerPackage { name: string; version: string | number; license?: string[]; dist?: { url?: string }; source?: { url?: string; reference?: string } }
+interface ComposerPackage { name: string; version: string | number; license?: string[]; dist?: { url?: string; shasum?: string }; source?: { url?: string; reference?: string } }
 
 function composerLock(source: string): Parsed[] {
   const lock = (JSON.parse(source) ?? {}) as { packages?: ComposerPackage[]; "packages-dev"?: ComposerPackage[] };
@@ -224,12 +224,12 @@ function composerLock(source: string): Parsed[] {
       if (!name || !version) return [];
       const license = Array.isArray(p.license) ? p.license.filter((l) => typeof l === "string").join(" OR ") || undefined : undefined;
       const source = str(p.source?.url) && `${p.source!.url}#${str(p.source!.reference) ?? ""}`;
-      return [{ ecosystem: "composer" as const, name, version, license, dev, ...fetched(str(p.dist?.url) ?? source) }];
+      return [{ ecosystem: "composer" as const, name, version, license, dev, ...fetched(str(p.dist?.url) ?? source, str(p.dist?.shasum)) }];
     });
   return [...map(lock.packages, false), ...map(lock["packages-dev"], true)];
 }
 
-interface PubspecPackage { source?: string; version?: string; dependency?: string; description?: string | { url?: string; "resolved-ref"?: string } }
+interface PubspecPackage { source?: string; version?: string; dependency?: string; description?: string | { url?: string; "resolved-ref"?: string; sha256?: string } }
 
 function pubspecLock(source: string): Parsed[] {
   const lock = (parseYaml(source) ?? {}) as { packages?: Record<string, PubspecPackage> };
@@ -239,7 +239,7 @@ function pubspecLock(source: string): Parsed[] {
     const d = typeof p.description === "object" ? p.description : undefined;
     const url = str(d?.url);
     const resolved = url && p.source === "git" ? `git+${url}#${str(d?.["resolved-ref"]) ?? ""}` : url;
-    return [{ ecosystem: "pub" as const, name, version, dev: p.dependency === "direct dev", ...fetched(resolved) }];
+    return [{ ecosystem: "pub" as const, name, version, dev: p.dependency === "direct dev", ...fetched(resolved, str(d?.sha256)) }];
   });
 }
 
@@ -253,9 +253,12 @@ function tomlPackages(text: string, ecosystem: "cargo" | "pypi"): Parsed[] {
     // Local workspace members are not dependencies.
     if (ecosystem === "cargo" && !/^source\s*=/m.test(block)) return [];
     if (/^source\s*=\s*\{\s*(editable|virtual)\s*=/m.test(block)) return [];
-    return [{ ecosystem, name, version, dev: field("category") === "dev", ...fetched(tomlResolved(block, ecosystem)) }];
+    return [{ ecosystem, name, version, dev: field("category") === "dev", ...fetched(tomlResolved(block, ecosystem), tomlHash(block)) }];
   });
 }
+
+/** Cargo's `checksum`, or the first `hash = "sha256:..."` of uv's and Poetry's files. */
+const tomlHash = (block: string) => /^checksum\s*=\s*"([^"]+)"/m.exec(block)?.[1] ?? /\bhash\s*=\s*"([^"]+)"/.exec(block)?.[1];
 
 /**
  * Cargo: `source = "registry+https://..."` without its "registry+"/"sparse+". uv: `source = { registry|git|url|path = "..." }`.
