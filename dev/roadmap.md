@@ -6,15 +6,9 @@ Sections are ordered by urgency: "Now" comes before the next release, "Next" is 
 
 ## Now: audit of 2026-11-10
 
-Open defects from the read-only audit of v0.5.1. The five that let a scan pass on missing or contradicting evidence are fixed (#50), and #41 to #46 are fixed (#59, #61, #62). Every fix lands with a regression test.
+Open defects from the read-only audit of v0.5.1. The five that let a scan pass on missing or contradicting evidence are fixed (#50); #41 to #48, #55 and #56 are fixed. Every fix lands with a regression test.
 
 1. Other "no evidence means pass" paths: review every check that passes when a list is empty, with the model of #50 (`observedPages`, `jsFailed`): no pass when the evidence it needs was not collected.
-2. Collection bounds for bodies without Content-Length (#55), and every lockfile of a vulnerable package in its finding (#56).
-3. Measure peak memory of `scanRepo()` on a large repository before deciding on an aggregate budget (#47). A browser smoke test for the website (#48).
-
-## Now: language of the scanned site
-
-Found on rechtzeitig.dev. Legal pages in another language than the report are missed (#52), and the legal pages of the version in the scan language are not followed through hreflang (#53).
 
 ## Now: hardening
 
@@ -104,7 +98,7 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 
 Open data that would sharpen existing and planned checks. Only data under MIT, Apache-2.0, BSD, MPL-2.0 (kept in its own file with its notice), CC0 or CC-BY may be copied, with attribution in the header of the `data/*.yml` file and in NOTICE; GPL, AGPL, LGPL, EUPL, CC-BY-SA and non-commercial data never, ideas only. Each import gets a refresh script and a test.
 
-1. Third-party vendors in `data/third-parties.yml`: about 49 today. Grow it with payment, analytics, newsletter and support services common in Germany (Mollie, Klarna and similar), each with hosts, `packages:` and country (#40).
+1. Third-party vendors in `data/third-parties.yml`: 90 today, payment and newsletter services added (#74, #78). Open: analytics, support and chat, reviews and trust badges common in Germany, each with hosts, `packages:` and country, one category per pull request (#40).
 2. Cookie names per vendor from the Open Cookie Database (Apache-2.0) for `data/third-parties.yml` `cookies:` and `data/cookies.yml`.
 3. Library signatures and versions from retire.js `jsrepository.json` (Apache-2.0) for client-side libraries in the served bundle (item 14 of "website", item 6 of "repository and website together").
 4. More patterns for `data/secrets.yml` from the gitleaks rules (MIT), each with a benchmark case.
