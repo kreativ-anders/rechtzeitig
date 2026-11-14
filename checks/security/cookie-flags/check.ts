@@ -1,4 +1,4 @@
-import { defineCheck, info, loadYaml, msg, pass, siteCookies, skip, warn, type Cookie, type Finding, type Msg } from "../../../src/sdk.ts";
+import { defineCheck, info, jsIncomplete, loadYaml, msg, pass, siteCookies, skip, warn, type Cookie, type Finding, type Msg } from "../../../src/sdk.ts";
 
 const NAMES = loadYaml<{ session: string[]; read_by_script: string[] }>("data/cookies.yml");
 const SESSION = new RegExp(NAMES.session.join("|"), "i");
@@ -21,6 +21,6 @@ export default defineCheck({
     const foreign = issues(cookies.filter((c) => ctx.isThirdParty(c.domain)), "missing_foreign");
     if (own.length) return warn(msg("lack_flags", { count: own.length, total: cookies.length }), [...own, ...foreign]);
     if (foreign.length) return info(msg("only_foreign"), foreign);
-    return pass(msg("all_set", { count: cookies.length }));
+    return jsIncomplete(ctx) ?? pass(msg("all_set", { count: cookies.length }));
   },
 });

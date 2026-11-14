@@ -86,7 +86,9 @@ The runner finds the check by itself. Nothing else needs to change.
 | `startSnapshot(ctx)` | The start page as the server sent it. Use it for status, headers, `meta` and `lang` |
 | `ctx.sitePages` | Pages of the site itself whose load with JavaScript succeeded, for what the rendered page shows |
 | `ctx.observedPages`, `siteRequests(ctx)`, `siteCookies(ctx)` | Pages where at least one load succeeded, and their requests and cookies (once per name and domain) |
-| `ctx.jsFailed`, `jsFailedPages(ctx)` | Pages whose load with JavaScript failed; a check that passes on missing evidence warns instead and lists them |
+| `ctx.jsFailed`, `jsFailedPages(ctx)`, `jsIncomplete(ctx)` | Pages whose load with JavaScript failed; a check whose pass rests on requests, cookies or services returns `jsIncomplete(ctx) ?? pass(...)`, which warns and lists them |
+| `unreadFiles(repo, files)`, `unreadResult(repo, files)` | Files over the `repo` limit or only a Git LFS pointer; a repository check returns `unreadResult(repo, files) ?? pass(...)`, which gives info and lists them. `codeResult(repo, files, finds)` does this itself |
+| `ctx.probes` | A probe with `status: 0` got no answer: it proves nothing, so no pass on it |
 | `thirdPartyServices(ctx)` | Other sites contacted, grouped by vendor (else by domain), with hosts and pages |
 | `ctx.legalPage("imprint")`, `needLegalPage(ctx, "privacy")` | Link on the start page and the page behind it; `needLegalPage` returns the skip result when it did not load |
 | `LEGAL_PAGES`, `linkedPageResult`, `requiredButton` | Shared logic of the imprint/privacy and cancellation/withdrawal rules |

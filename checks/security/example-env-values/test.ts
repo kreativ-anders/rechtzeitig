@@ -40,3 +40,13 @@ test("passes for placeholders, local URLs and public names", async () => {
 test("skips without a template", async () => {
   assert.equal((await runRepoCheck(here, { "package.json": "{}" })).status, "skip");
 });
+
+// "No evidence means pass" review: a file the scan could not read may hold what this check looks for.
+test("no pass when one of its files could not be read", async () => {
+  const { TOO_LARGE } = await import("../../../test/helpers.ts");
+  const clean = {".env.example":"API_KEY="};
+  assert.equal((await runRepoCheck(here, clean)).status, "pass");
+  const result = await runRepoCheck(here, { ...clean, "api/.env.example": TOO_LARGE });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, ["api/.env.example: Not read: too large or only a Git LFS pointer."]);
+});

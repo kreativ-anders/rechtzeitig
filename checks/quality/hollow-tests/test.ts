@@ -40,3 +40,13 @@ test("passes for real assertions in every language", async () => {
 test("skips without tests", async () => {
   assert.equal((await runRepoCheck(here, { "src/index.ts": "export {}" })).status, "skip");
 });
+
+// "No evidence means pass" review: a file the scan could not read may hold what this check looks for.
+test("no pass when one of its files could not be read", async () => {
+  const { TOO_LARGE } = await import("../../../test/helpers.ts");
+  const clean = {"src/math.test.ts":"it('adds', () => {\n  expect(add(1, 2)).toBe(3);\n});"};
+  assert.equal((await runRepoCheck(here, clean)).status, "pass");
+  const result = await runRepoCheck(here, { ...clean, "src/big.test.ts": TOO_LARGE });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, ["src/big.test.ts: Not read: too large or only a Git LFS pointer."]);
+});

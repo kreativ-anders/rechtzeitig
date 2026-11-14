@@ -18,3 +18,15 @@ test("fails for an http:// image on an HTTPS page", async () => {
 test("skips a site without HTTPS", async () => {
   assert.equal((await runFake(here, { finalUrl: "http://example.de/" })).status, "skip");
 });
+
+// "No evidence means pass" review: requests made by scripts on a page whose JavaScript load failed are unknown.
+test("no pass when a page did not load with JavaScript", async () => {
+  const { failedJsPage, fakeContext, fakePage, rendered } = await import("../../../test/helpers.ts");
+  const { default: check } = await import("./check.ts");
+  const start = fakePage("https://example.de/");
+  const run = async (pages: Array<ReturnType<typeof fakePage>>) => rendered(here, await check.run(fakeContext(start.js, { start, pages })));
+  assert.equal((await run([start])).status, "pass");
+  const result = await run([start, failedJsPage("https://example.de/blog")]);
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["/blog: load with JavaScript failed (Timeout)"]);
+});

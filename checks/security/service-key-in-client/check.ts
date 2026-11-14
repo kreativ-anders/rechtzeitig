@@ -6,6 +6,6 @@ export default defineRepoCheck({
   run(repo) {
     const browser = codeFiles(repo).filter((f) => isClientFile(repo, f.file));
     if (!browser.length) return skip(msg("no_client"));
-    return codeResult(browser, findInCode(repo, browser, { js: client }));
+    return codeResult(repo, browser, findInCode(repo, browser, { js: client }));
   },
 });

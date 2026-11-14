@@ -63,3 +63,10 @@ test("warns for every version header in data/leaks.yml", async () => {
     assert.equal((await runFake(here, { headers: { [header]: "4.0" } })).status, "warn", header);
   }
 });
+
+// "No evidence means pass" review: without an error page to read, nothing was looked at.
+test("no pass when no error page answered, skip without any request", async () => {
+  const probe = { path: "/x", kind: "error" as const, status: 0, headers: {}, body: "", exposed: false };
+  assert.equal((await runFake(here, {}, { probes: [probe] })).status, "info");
+  assert.equal((await runFake(here, {}, { probes: [] })).status, "skip");
+});

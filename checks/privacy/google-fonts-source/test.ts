@@ -37,3 +37,15 @@ test("gives info when the code loads Google Fonts but the visited pages did not"
 test("passes when neither the site nor the repository loads Google Fonts", async () => {
   assert.equal((await runCrossCheck(here, "clean", { "src/app.css": "body { font-family: Inter; }" })).status, "pass");
 });
+
+// "No evidence means pass" review: fonts loaded by scripts on a page whose JavaScript load failed are unknown.
+test("no pass when a page did not load with JavaScript", async () => {
+  const { failedJsPage, fakeContext, fakePage } = await import("../../../test/helpers.ts");
+  const start = fakePage("https://example.de/");
+  const files = { "src/style.css": "body { font-family: system-ui; }" };
+  const run = (pages: Array<ReturnType<typeof fakePage>>) => runCrossCheck(here, fakeContext(start.js, { start, pages }), files);
+  assert.equal((await run([start])).status, "pass");
+  const result = await run([start, failedJsPage("https://example.de/blog")]);
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["/blog: load with JavaScript failed (Timeout)"]);
+});

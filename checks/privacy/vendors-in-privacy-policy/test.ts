@@ -60,3 +60,16 @@ test("warns when Brevo forms are contacted but not named in the policy", async (
   assert.equal(result.status, "warn");
   assert.deepEqual(result.details, ["Brevo"]);
 });
+
+// "No evidence means pass" review: services loaded by scripts on a page whose JavaScript load failed are unknown.
+test("no pass when a page did not load with JavaScript", async () => {
+  const { failedJsPage, fakeContext, fakeLink, fakePage, rendered } = await import("../../../test/helpers.ts");
+  const { default: check } = await import("./check.ts");
+  const start = fakePage("https://example.de/", { links: [fakeLink("Datenschutz", "https://example.de/datenschutz")] });
+  const policy = fakePage("https://example.de/datenschutz", { text: "Datenschutzerklärung" });
+  const blog = failedJsPage("https://example.de/blog");
+  assert.equal(rendered(here, await check.run(fakeContext(start.js, { start, pages: [start, policy] }))).status, "pass");
+  const result = rendered(here, await check.run(fakeContext(start.js, { start, pages: [start, policy, blog] })));
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["/blog: load with JavaScript failed (Timeout)"]);
+});

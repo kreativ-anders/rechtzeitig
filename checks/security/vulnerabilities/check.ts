@@ -1,4 +1,4 @@
-import { defineRepoCheck, fail, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { defineRepoCheck, fail, info, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
 
 const SERIOUS = new Set(["CRITICAL", "HIGH"]);
 
@@ -6,7 +6,16 @@ export default defineRepoCheck({
   run(repo) {
     if (!repo.components.length) return skip(msg("no_components"));
     if (!repo.osv.startsWith("ok")) return warn(msg("osv_error", { error: repo.osv }));
-    if (!repo.vulnerabilities.length) return pass(msg("none", { count: repo.components.length }));
+    if (!repo.vulnerabilities.length) {
+      // Packages of a lockfile that could not be read, or of a package file without a parser, were never asked about: no pass.
+      const { lockfiles, unsupported } = repo.coverage;
+      const gaps: Finding[] = [
+        ...lockfiles.failed.map(({ file }) => ({ file, key: "not_asked" })),
+        ...unsupported.map(({ file, ecosystem }) => ({ file, key: "not_asked_unsupported", params: { ecosystem } })),
+      ];
+      if (gaps.length) return info(msg("gaps", { count: repo.components.length, gaps: gaps.length }), gaps);
+      return pass(msg("none", { count: repo.components.length }));
+    }
 
     // The same package can be locked in several lockfiles: one finding per lockfile, production first.
     const components = (purl: string) => {

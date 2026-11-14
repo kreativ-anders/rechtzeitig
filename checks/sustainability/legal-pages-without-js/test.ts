@@ -35,3 +35,10 @@ test("a button with the same name next to the link does not hide the link", asyn
   const result = await runSite(here, { "/": { links }, "/impressum": { text: "Angaben gemäß § 5 DDG. Muster GmbH, Musterstraße 1, 12345 Berlin. Telefon 030 1234567, E-Mail info@example.de. Vertreten durch die Geschäftsführung." } });
   assert.equal(result.status, "pass");
 });
+
+// "No evidence means pass" review: a linked page that was not loaded without JavaScript says nothing about its text.
+test("no pass when the linked page was not loaded without JavaScript", async () => {
+  const result = await runFake(here, { links: [fakeLink("Impressum", "https://example.de/impressum")] });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, ["Imprint: the linked page was not loaded without JavaScript, so its text was not checked."]);
+});

@@ -86,3 +86,15 @@ test("reads Cargo requirements with Cargo's caret default", async () => {
   const stale = await runRepoCheck(here, { "Cargo.toml": '[package]\nname = "a"\n[dependencies]\nserde = "2"\n', "Cargo.lock": lock });
   assert.equal(stale.status, "warn");
 });
+
+// "No evidence means pass" review: a manifest whose lockfile could not be read was never compared.
+test("no pass when a lockfile next to the manifest could not be read", async () => {
+  const files = { "package.json": pkg({ react: "^19.0.0" }), "package-lock.json": npmLock({ react: "18.3.1" }), "npm-shrinkwrap.json": "{" };
+  const result = await runRepoCheck(here, files);
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, ["package.json"]);
+});
+
+test("skips when no manifest has a lockfile to compare", async () => {
+  assert.equal((await runRepoCheck(here, { "package.json": pkg({ react: "^19.0.0" }) })).status, "skip");
+});

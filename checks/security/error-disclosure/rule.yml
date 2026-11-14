@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Requests the paths from `data/probes.yml`, searches the visible text of the error paths for the traces in `data/leaks.yml`, and the headers of the start page and every probed path for the version headers in `data/leaks.yml` (`server` only with a version number)."
+how: "Requests the paths from `data/probes.yml`, searches the visible text of the error paths for the traces in `data/leaks.yml`, and the headers of the start page and every probed path for the version headers in `data/leaks.yml` (`server` only with a version number); gives info instead of passing when no error page answered."
 fix_hint:
   de: "Fehlerausgabe in Produktion abschalten (z. B. display_errors=0, DEBUG=false) und Versions-Header entfernen."
   en: "Turn off error output in production (for example display_errors=0, DEBUG=false) and remove version headers."

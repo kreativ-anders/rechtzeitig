@@ -1,4 +1,4 @@
-import { defineCheck, fail, loadYaml, msg, pass, startSnapshot, warn, type Finding } from "../../../src/sdk.ts";
+import { defineCheck, fail, info, loadYaml, msg, pass, skip, startSnapshot, warn, type Finding } from "../../../src/sdk.ts";
 
 const DATA = loadYaml<{ patterns: string[]; version_headers: string[] }>("data/leaks.yml");
 const LEAKS = DATA.patterns.map((p) => new RegExp(p));
@@ -32,6 +32,10 @@ export default defineCheck({
 
     if (leaks.length) return fail(msg("leaks"), [...leaks, ...versions]);
     if (versions.length) return warn(msg("versions"), versions);
+    // Without a single error page to read, nothing was looked at: no pass on missing evidence.
+    const errors = ctx.probes.filter((p) => p.kind === "error");
+    if (!errors.length) return skip(msg("not_probed"));
+    if (!errors.some((p) => p.status > 0)) return info(msg("unanswered", { count: errors.length }), errors.map((p) => ({ text: p.path })));
     return pass(msg("none"));
   },
 });

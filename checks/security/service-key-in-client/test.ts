@@ -37,3 +37,13 @@ test("passes for server code and public keys in the browser", async () => {
 test("skips without browser code", async () => {
   assert.equal((await runRepoCheck(here, { "server.js": "require('firebase-admin')" })).status, "skip");
 });
+
+// "No evidence means pass" review: a file the scan could not read may hold what this check looks for.
+test("no pass when one of its files could not be read", async () => {
+  const { TOO_LARGE } = await import("../../../test/helpers.ts");
+  const clean = {"vite.config.ts":"export default {}","src/main.ts":"export const a = 1;"};
+  assert.equal((await runRepoCheck(here, clean)).status, "pass");
+  const result = await runRepoCheck(here, { ...clean, "src/big.ts": TOO_LARGE });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, ["src/big.ts: Not read: too large or only a Git LFS pointer."]);
+});

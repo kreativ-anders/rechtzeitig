@@ -135,3 +135,13 @@ test("migrations run in name order, not in listing order", async () => {
   };
   assert.equal((await runRepoCheck(here, files)).status, "fail");
 });
+
+// "No evidence means pass" review: a file the scan could not read may hold what this check looks for.
+test("no pass when one of its files could not be read", async () => {
+  const { TOO_LARGE } = await import("../../../test/helpers.ts");
+  const clean = {"supabase/migrations/1.sql":"create table a (id int);\nalter table a enable row level security;"};
+  assert.equal((await runRepoCheck(here, clean)).status, "pass");
+  const result = await runRepoCheck(here, { ...clean, "supabase/migrations/2.sql": TOO_LARGE });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, ["supabase/migrations/2.sql: Not read: too large or only a Git LFS pointer."]);
+});

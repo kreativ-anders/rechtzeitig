@@ -1,4 +1,4 @@
-import { FIXTURES, capped, defineRepoCheck, loadYaml, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { FIXTURES, capped, defineRepoCheck, loadYaml, msg, pass, skip, unreadResult, warn, type Finding } from "../../../src/sdk.ts";
 
 interface Runner { skip: string; pinned: string }
 const DATA = loadYaml<{
@@ -159,6 +159,6 @@ export default defineRepoCheck({
     }
 
     if (found.length) return warn(msg("found", { count: found.length }), capped(found));
-    return pass(msg("none", { count: configs.length + scripts.length }));
+    return unreadResult(repo, [...configs, ...scripts]) ?? pass(msg("none", { count: configs.length + scripts.length }));
   },
 });

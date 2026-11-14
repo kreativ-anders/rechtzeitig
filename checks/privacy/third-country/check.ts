@@ -1,4 +1,4 @@
-import { defineCheck, info, loadYaml, msg, needLegalPage, pass, siteHosting, thirdPartyServices, warn, type Finding } from "../../../src/sdk.ts";
+import { defineCheck, info, jsIncomplete, loadYaml, msg, needLegalPage, pass, siteHosting, thirdPartyServices, warn, type Finding } from "../../../src/sdk.ts";
 
 const EEA = new Set(loadYaml<{ eea: string[] }>("data/countries.yml").eea);
 
@@ -49,6 +49,6 @@ export default defineCheck({
       return covered ? pass(msg("covered"), details) : info(msg("host_ip_outside", { host: startHost, country: ipCountry }), details);
     }
     if (services.length && !known) return info(msg("all_unknown", { count: unknown.size }), details);
-    return pass(msg(services.length || hosting || ipCountry ? "none_outside" : "no_services"), details);
+    return jsIncomplete(ctx) ?? pass(msg(services.length || hosting || ipCountry ? "none_outside" : "no_services"), details);
   },
 });

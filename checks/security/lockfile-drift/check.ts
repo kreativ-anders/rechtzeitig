@@ -1,5 +1,6 @@
 import {
   FIXTURES,
+  info,
   capped,
   declaredDependencies,
   defineRepoCheck,
@@ -72,7 +73,10 @@ export default defineRepoCheck({
     const manifests = files.filter((f) => ["package.json", "Cargo.toml"].includes(baseOf(f)));
     if (!byDir.size && !manifests.length) return skip(msg("no_lockfiles"));
     let compared = 0;
-    const parsed = new Set(repo.coverage.lockfiles.parsed);
+    /** Manifests not compared because a lockfile next to them could not be read. */
+    const unread: string[] = [];
+    // Read: with components, or without any (a project without dependencies).
+    const parsed = new Set([...repo.coverage.lockfiles.parsed, ...repo.coverage.lockfiles.empty]);
     for (const manifest of manifests) {
       const dir = dirOf(manifest);
       // "packageManager": "pnpm@9.1.0" while only another manager's lockfile is there.
@@ -91,8 +95,12 @@ export default defineRepoCheck({
       }
 
       const locks = lockfilesFor(repo, manifest);
-      // Another manager's lockfile next to it that the scan cannot read (bun.lock) may be the one in use.
-      if (!locks.length || files.some((f) => dirOf(f) === dir && MANAGER_OF.has(baseOf(f)) && !parsed.has(f))) continue;
+      // A lockfile next to it that the scan cannot read (bun.lockb, too large) may be the one in use: not compared, and no pass.
+      if (files.some((f) => dirOf(f) === dir && MANAGER_OF.has(baseOf(f)) && !parsed.has(f))) {
+        unread.push(manifest);
+        continue;
+      }
+      if (!locks.length) continue;
       compared++;
       const deps = declaredDependencies(repo, manifest).filter((d) => d.kind === "registry" && d.spec);
       for (const lock of locks) {
@@ -121,6 +129,9 @@ export default defineRepoCheck({
     }
 
     if (findings.length) return warn(msg("found", { count: findings.length }), capped(findings));
+    // No pass for a manifest whose lockfile could not be read, nor when no manifest was compared at all.
+    if (unread.length) return info(msg("not_compared", { count: unread.length }), unread.map((file) => ({ file })));
+    if (!compared) return skip(msg("nothing_compared"));
     return pass(msg("none", { count: compared }));
   },
 });

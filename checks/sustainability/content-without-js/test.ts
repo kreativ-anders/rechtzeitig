@@ -26,3 +26,11 @@ test("warns below 20 percent of the text without JavaScript", async () => {
   assert.equal(await shares("", "a"), "warn");
   assert.equal(await shares("", ""), "pass");
 });
+
+// "No evidence means pass" review: a failed load has no text, so nothing was compared.
+test("skips when the load with JavaScript failed", async () => {
+  const { failedJsPage } = await import("../../../test/helpers.ts");
+  const { default: check } = await import("./check.ts");
+  const start = failedJsPage("https://example.de/", { text: "a".repeat(10) });
+  assert.equal(rendered(here, await check.run(fakeContext(start.noJs, { start, pages: [start] }))).status, "skip");
+});

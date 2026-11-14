@@ -1,4 +1,4 @@
-import { defineCheck, fail, loadYaml, msg, pass, siteRequests, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
+import { defineCheck, fail, jsIncomplete, loadYaml, msg, pass, siteRequests, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
 
 const DATA = loadYaml<{ endpoints: Array<{ hosts: string[]; paths: string[] }>; consent_state: string; tcf_string: string }>("data/google-tags.yml");
 
@@ -45,6 +45,6 @@ export default defineCheck({
       return fail(msg(key, { count: count(key) }), [...details("granted"), ...details("tcf")]);
     }
     if (count("no_signal")) return warn(msg("no_signal", { count: count("no_signal") }), details("no_signal"));
-    return pass(msg("denied", { count: count("denied") }));
+    return jsIncomplete(ctx) ?? pass(msg("denied", { count: count("denied") }));
   },
 });

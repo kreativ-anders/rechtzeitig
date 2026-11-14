@@ -1,4 +1,4 @@
-import { capped, consentInRepo, consentOnSite, defineCrossCheck, fail, info, msg, pass, skip, thirdPartyServices, warn, type Finding } from "../../../src/sdk.ts";
+import { capped, consentInRepo, consentOnSite, defineCrossCheck, fail, info, jsIncomplete, msg, pass, skip, thirdPartyServices, warn, type Finding } from "../../../src/sdk.ts";
 
 export default defineCrossCheck({
   run(ctx, repo) {
@@ -13,7 +13,7 @@ export default defineCrossCheck({
     if (site.banner) return pass(msg("active"));
     // Services that need consent and loaded anyway; consent platforms themselves do not count.
     const trackers = [...thirdPartyServices(ctx).values()].filter((s) => s.vendor?.consent === "required");
-    if (!trackers.length) return pass(msg("nothing_loads"));
+    if (!trackers.length) return jsIncomplete(ctx) ?? pass(msg("nothing_loads"));
     const names = trackers.map((s) => s.name).join(", ");
     const loads: Finding[] = trackers.map((s) => ({ key: "tracker", params: { name: s.name, pages: [...s.pages].join(", ") } }));
 

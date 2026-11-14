@@ -26,3 +26,13 @@ test("stays fast on many blank lines", async () => {
 test("skips without workflows", async () => {
   assert.equal((await runRepoCheck(here, { "README.md": "x" })).status, "skip");
 });
+
+// "No evidence means pass" review: a file the scan could not read may hold what this check looks for.
+test("no pass when one of its files could not be read", async () => {
+  const { TOO_LARGE } = await import("../../../test/helpers.ts");
+  const clean = {".github/workflows/a.yml":"on: push\npermissions: {}\njobs:\n  a:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo hi\n"};
+  assert.equal((await runRepoCheck(here, clean)).status, "pass");
+  const result = await runRepoCheck(here, { ...clean, ".github/workflows/big.yml": TOO_LARGE });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, [".github/workflows/big.yml: Not read: too large or only a Git LFS pointer."]);
+});

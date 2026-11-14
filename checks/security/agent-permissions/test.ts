@@ -80,3 +80,13 @@ test("warns on approval-skipping flags in workflows and scripts, and on unsafe C
 test("ignores --yolo without an agent on the line", async () => {
   assert.equal((await runRepoCheck(here, { "scripts/x.sh": "deploy --yolo\n" })).status, "pass");
 });
+
+// "No evidence means pass" review: a file the scan could not read may hold what this check looks for.
+test("no pass when one of its files could not be read", async () => {
+  const { TOO_LARGE } = await import("../../../test/helpers.ts");
+  const clean = {".claude/settings.json":"{\"permissions\":{\"allow\":[\"Bash(npm test)\"]}}"};
+  assert.equal((await runRepoCheck(here, clean)).status, "pass");
+  const result = await runRepoCheck(here, { ...clean, ".mcp.json": TOO_LARGE });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, [".mcp.json: Not read: too large or only a Git LFS pointer."]);
+});

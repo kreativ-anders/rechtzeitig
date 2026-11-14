@@ -1,4 +1,4 @@
-import { FIXTURES, WORKFLOWS, capped, defineRepoCheck, fail, loadYaml, msg, pass, skip, type Finding } from "../../../src/sdk.ts";
+import { FIXTURES, WORKFLOWS, capped, defineRepoCheck, fail, loadYaml, msg, pass, skip, unreadResult, type Finding } from "../../../src/sdk.ts";
 
 type Where = "instructions" | "code";
 const UNI = loadYaml<{ classes: Record<string, { ranges: string[]; where: Where[] }>; flag_base: string; code_extensions: string[]; test_files: string }>(
@@ -55,10 +55,12 @@ export default defineRepoCheck({
   run(repo) {
     const findings: Finding[] = [];
     let scanned = 0;
+    const candidates: string[] = [];
     for (const file of repo.files) {
       if (FIXTURES.test(file) || GENERATED.test(file)) continue;
       const where: Where | undefined = INSTRUCTIONS.some((re) => re.test(file)) ? "instructions" : (CODE.test(file) && !TESTS.test(file)) || WORKFLOWS.test(file) ? "code" : undefined;
       if (!where) continue;
+      candidates.push(file);
       const text = repo.read(file);
       if (text === undefined) continue;
       scanned++;
@@ -68,8 +70,10 @@ export default defineRepoCheck({
         findings.push({ file, line: f.line, key: `class_${kind}`, params: { count: f.count, where: msg(`where_${where}`) } });
       }
     }
-    if (!scanned) return skip(msg("no_files"));
     if (findings.length) return fail(msg("found", { count: findings.length }), capped(findings));
+    const unread = unreadResult(repo, candidates);
+    if (unread) return unread;
+    if (!scanned) return skip(msg("no_files"));
     return pass(msg("none", { count: scanned }));
   },
 });

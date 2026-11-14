@@ -1,4 +1,4 @@
-import { capped, defineCrossCheck, directPackages, fail, info, loadYaml, msg, ownFiles, packageMatches, pass, siteRequests, type Finding } from "../../../src/sdk.ts";
+import { capped, defineCrossCheck, directPackages, fail, info, jsIncomplete, loadYaml, msg, ownFiles, packageMatches, pass, siteRequests, type Finding } from "../../../src/sdk.ts";
 
 const FONTS = loadYaml<{ hosts: string[]; packages: string[]; imports: string[]; files: string[] }>("data/fonts.yml");
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -41,6 +41,6 @@ export default defineCrossCheck({
     // Not loaded on the visited pages, but the code references it: other pages may still load it.
     if (refs.length) return info(msg("referenced", { count: refs.length }), capped([...refs, ...notes]));
     if (unread) return info(msg("not_loaded_unread", { count: unread }), notes);
-    return pass(msg("none"), notes);
+    return jsIncomplete(ctx) ?? pass(msg("none"), notes);
   },
 });
