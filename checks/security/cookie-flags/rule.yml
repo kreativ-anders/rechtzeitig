@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "Art. 32 DSGVO"
   en: "Art. 32 GDPR"
-how: "Checks Secure on every cookie set without login (HTTPS sites, and always with `SameSite=None`) and HttpOnly on cookies whose name looks like a session (`data/cookies.yml`); cookies of other sites only give info; gives info instead of passing when a page did not load with JavaScript."
+how: "Checks Secure on every cookie set without login (HTTPS sites, and always with `SameSite=None`) and HttpOnly on cookies whose name looks like a session (`data/cookies.yml`); cookies of other sites only give info; gives info instead of no finding when a page did not load with JavaScript."
 fix_hint:
   de: "Cookies mit Secure setzen, Session-Cookies zusätzlich mit HttpOnly und SameSite=Lax."
   en: "Set cookies with Secure; session cookies also with HttpOnly and SameSite=Lax."

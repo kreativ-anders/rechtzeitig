@@ -11,7 +11,7 @@ const ICONS: Record<OutcomeStatus, string> = {
   fail: "❌",
   warn: "⚠️",
   error: "💥",
-  pass: "✅",
+  pass: "○",
   info: "ℹ️",
   suppressed: "⏸️",
   skip: "⏭️",
@@ -115,9 +115,11 @@ export const plain = (s: string) => oneLine(s).replace(/^::/, ": :");
 // Trusted text from rule.yml in a table cell: backslashes first, so "\\|" cannot end the cell.
 const cell = (s: string) => s.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\n/g, " ");
 const title = (r: Report) => [r.web?.url, r.repo && `repository ${repoName(r.repo.root)}`].filter(Boolean).join(" + ");
+/** The status as readers see it: "no finding", never a word that sounds like approval. The JSON keeps the key. */
+const label = (s: OutcomeStatus, lang: UiLanguage) => ui(lang)(`status_${s}`);
 const summaryLine = (r: Report, icons: boolean) => {
   const c = counts(r.outcomes);
-  return OUTCOMES.filter((s) => c[s]).map((s) => `${icons ? `${ICONS[s]} ` : ""}${c[s]} ${s}`).join(icons ? " · " : ", ");
+  return OUTCOMES.filter((s) => c[s]).map((s) => `${icons ? `${ICONS[s]} ` : ""}${c[s]} ${label(s, r.language)}`).join(icons ? " · " : ", ");
 };
 /** Most urgent first: status, then severity. */
 const sorted = (outcomes: Outcome[]) =>
@@ -137,7 +139,7 @@ function suppressionLines(o: Outcome, lang: UiLanguage, esc: (s: string) => stri
   const until = s.expires ? t("suppressed_until", { date: s.expires }) : "";
   return [
     t("suppressed_by", { category: t(`category_${s.category}`), until, reason: esc(s.reason) }),
-    t("suppressed_at", { status: s.status, place: esc(`${s.file}:${s.line}`) }),
+    t("suppressed_at", { status: label(s.status, lang), place: esc(`${s.file}:${s.line}`) }),
     ...(s.category === "false-positive" ? [t("suppressed_report", { url: `${HOMEPAGE}/issues` })] : []),
   ];
 }
@@ -194,6 +196,12 @@ function notRunLines(r: Report, format: "md" | "text", names: boolean): string[]
   return [`<details><summary>${ICONS.skip} ${t("not_run", { count: total })}</summary>`, "", ...lines, "", "</details>", ""];
 }
 
+/** The collapsed block on what no scan can check: content, duties outside site and code, settings the site does not show. */
+const limitLines = (lang: UiLanguage) => {
+  const t = ui(lang);
+  return [`<details><summary>${ICONS.info} ${t("limits")}</summary>`, "", ...["content", "duties", "config"].map((k) => `- ${t(`limits_${k}`)}`), "", "</details>", ""];
+};
+
 /** What the repository scan could not see or read, one line each; `warn` marks gaps the workflow can close. */
 export function coverageLines(c: RepoCoverage, lang: UiLanguage, esc: (s: string) => string): Array<{ warn: boolean; text: string }> {
   const t = ui(lang);
@@ -218,7 +226,7 @@ export function coverageLines(c: RepoCoverage, lang: UiLanguage, esc: (s: string
 }
 
 /**
- * The report as Markdown. With `findingsOnly` (the step summary) passed and skipped checks are left out
+ * The report as Markdown. With `findingsOnly` (the step summary) checks without a finding and skipped checks are left out
  * and a line points to the artifact, which keeps the full report. Both end with a collapsed "Not run" block
  * that groups skipped checks by reason, and list what the repository scan could not read under the scan line.
  */
@@ -250,7 +258,7 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
       lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...off, ...fix, ...where(o, lang).map((d) => `- ${md(d)}`), "", "</details>", "");
     }
   }
-  lines.push(...notRunLines(r, "md", true), `### ${t("scan")}`, "");
+  lines.push(...notRunLines(r, "md", true), ...limitLines(lang), `### ${t("scan")}`, "");
   if (r.web) {
     const w = r.web;
     lines.push(
@@ -270,8 +278,9 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
 
 export function toText(r: Report): string {
   const lines = [`rechtzeitig: ${plain(title(r))}`, ""];
+  const width = Math.max(...OUTCOMES.map((s) => label(s, r.language).length));
   for (const o of r.outcomes.filter((o) => !notStarted(o))) {
-    lines.push(`${o.status.toUpperCase().padEnd(5)} ${o.id.padEnd(40)} ${plain(say(o, r.language))}`);
+    lines.push(`${label(o.status, r.language).toUpperCase().padEnd(width)} ${o.id.padEnd(40)} ${plain(say(o, r.language))}`);
     for (const l of suppressionLines(o, r.language, plain)) lines.push(`      ${l}`);
     for (const d of where(o, r.language)) lines.push(`      - ${plain(d)}`);
   }

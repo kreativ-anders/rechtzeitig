@@ -113,7 +113,7 @@ green-hosting: "false"   # opt-in</code></pre>
 
       <section id="scope">
         <h2><span class="par">§ 3</span>What runs when</h2>
-        <p>Most checks always run. These need a setting; without it they show as <span class="status s-skip">skip</span> with the setting that turns them on.</p>
+        <p>Most checks always run. These need a setting; without it they show as <span class="status s-skip">skipped</span> with the setting that turns them on.</p>
 <!-- switches:start -->
 <div class="table-wrap"><table>
 <thead><tr><th>Check</th><th>Runs when</th></tr></thead>
@@ -148,11 +148,11 @@ green-hosting: "false"   # opt-in</code></pre>
         <h2><span class="par">§ 4</span>fail-on</h2>
         <p>Decides when the run turns red. The report is the same either way.</p>
         <div class="table-wrap"><table>
-          <thead><tr><th scope="col"><code>fail-on</code></th><th scope="col">Run is red when</th><th scope="col">1 fail, 2 warn</th><th scope="col">0 fail, 2 warn</th></tr></thead>
+          <thead><tr><th scope="col"><code>fail-on</code></th><th scope="col">Run is red when</th><th scope="col">1 finding, 2 warnings</th><th scope="col">0 findings, 2 warnings</th></tr></thead>
           <tbody>
             <tr><td><code>never</code> (default)</td><td>never</td><td class="green">green</td><td class="green">green</td></tr>
-            <tr><td><code>fail</code></td><td>any check fails</td><td class="red">red</td><td class="green">green</td></tr>
-            <tr><td><code>warn</code></td><td>any check fails or warns</td><td class="red">red</td><td class="red">red</td></tr>
+            <tr><td><code>fail</code></td><td>any check has a finding</td><td class="red">red</td><td class="green">green</td></tr>
+            <tr><td><code>warn</code></td><td>any check has a finding or a warning</td><td class="red">red</td><td class="red">red</td></tr>
           </tbody>
         </table></div>
       </section>
@@ -166,7 +166,7 @@ green-hosting: "false"   # opt-in</code></pre>
             <tr><td><code>IPINFO_TOKEN</code></td><td><code>ipinfo-token</code></td><td><a href="checks.html#LEG-EU-DSE-005">Transfers outside the EU</a> (LEG-EU-DSE-005): IP country for hosts not in the data</td><td><a href="https://ipinfo.io">ipinfo.io</a>, the free plan is enough</td></tr>
           </tbody>
         </table></div>
-        <p>Add it under <span class="ui">Settings → Secrets and variables → Actions</span>. The example workflow already passes it on.</p>
+        <p>Add it under <span class="ui">Settings → Secrets and variables → Actions</span>. The example workflow already hands it on.</p>
       </section>
 
       <section id="report">
@@ -189,6 +189,13 @@ green-hosting: "false"   # opt-in</code></pre>
           </tbody>
         </table></div>
         <p class="note">Secret values are redacted, their file and line are not. GitHub deletes the artifact after 7 days. To keep the full report private, run <span class="wm">rechtzeitig</span> from a private repository; a website-only scan needs no checkout.</p>
+        <h3 id="limits">What no scan can check</h3>
+        <p>A check without a finding shows as <span class="status s-pass">no finding</span>: the scan saw nothing to report, which is not a confirmation. The report lists the same limits:</p>
+        <ul>
+          <li>Whether texts are correct and complete: a scan finds terms, links and fields, not whether what they say is true.</li>
+          <li>Duties outside the site and the code: records of processing, contracts with processors, deletion, answering requests.</li>
+          <li>Settings the site does not show: server, hosting and account configuration, and pages behind a login.</li>
+        </ul>
         <h3 id="security-tab">Security tab</h3>
         <p>With <code>sarif-upload: auto</code>, findings also show as code scanning alerts in the <span class="ui">Security</span> tab, which only people with write access see. A weekly run updates the alerts and closes fixed ones. The job needs:</p>
         <pre><code>permissions:
@@ -220,7 +227,7 @@ suppress:
           </tbody>
         </table></div>
         <p>A turned-off rule still runs. The report shows it as <span class="status s-suppressed">suppressed</span> with the reason, the entry's line and the result it would have, and lists what it found. It does not count for <code>fail-on</code> and gives no annotations. In the JSON report it has a <code>suppression</code> field; in <a href="#security-tab">SARIF</a> its alerts carry a suppression with the reason. On a public repository with <code>report-visibility: auto</code> the run page shows only the number of suppressed rules, never the reasons.</p>
-        <p>An entry with a problem turns nothing off: no reason, an unknown rule id or field, a date that is not a real day, has passed or is too far ahead, a duplicate. The rule <a href="checks.html#QUAL-SUPPRESS-001">QUAL-SUPPRESS-001</a> fails and names each problem with its line, and cannot be turned off itself.</p>
+        <p>An entry with a problem turns nothing off: no reason, an unknown rule id or field, a date that is not a real day, lies in the past or is too far ahead, a duplicate. The rule <a href="checks.html#QUAL-SUPPRESS-001">QUAL-SUPPRESS-001</a> fails and names each problem with its line, and cannot be turned off itself.</p>
         <p>The comment in the first line lets editors with YAML support complete rule ids from the <a href="rechtzeitig.schema.json">schema</a> and mark typos. To turn off a whole group instead, use <code>modules</code>.</p>
         <p class="note">A <code>false-positive</code> means the rule needs work. Please <a href="https://github.com/kreativ-anders/rechtzeitig/issues">report it</a>; nothing is sent automatically.</p>
       </section>

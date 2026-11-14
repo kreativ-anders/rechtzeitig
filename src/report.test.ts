@@ -46,8 +46,9 @@ test("the step summary shows only findings, the full report every check", () => 
   const summary = toMarkdown(r, { findingsOnly: true });
   assert.match(summary, /SEC-A-001/);
   assert.doesNotMatch(summary, /SEC-P-001|SEC-S-001/);
-  assert.match(summary, /❌ 1 fail · ✅ 1 pass · ⏭️ 1 skip/);
+  assert.match(summary, /❌ 1 Finding · ○ 1 no finding · ⏭️ 1 skipped/);
   assert.match(summary, /_Findings only\./);
+  assert.match(summary, /<summary>ℹ️ What no scan can check<\/summary>/);
   assert.match(toMarkdown(r), /SEC-P-001[\s\S]*SEC-S-001/);
   const clean = toMarkdown({ ...r, outcomes: [outcome("SEC-P-001", "pass")] }, { findingsOnly: true });
   assert.match(clean, /_No findings\./);
@@ -168,7 +169,7 @@ test("a suppressed rule stays in every output with its reason, escaped, and give
   const md = toMarkdown(r, { findingsOnly: true });
   assert.match(md, /⏸️ 1 suppressed/);
   assert.match(md, /Turned off \(false positive\): Generated &#60;img/);
-  assert.match(md, /Without the entry: fail\. Entry: \.github\/rechtzeitig\.yml:4/);
+  assert.match(md, /Without the entry: Finding\. Entry: \.github\/rechtzeitig\.yml:4/);
   assert.match(md, /A false positive\? Please report it/);
   assert.doesNotMatch(md, /<img/);
   assert.match(toText(r), /SUPPRESSED security\/test[\s\S]*Turned off \(false positive\)/);

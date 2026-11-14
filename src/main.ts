@@ -88,7 +88,7 @@ const web = url && wantsWeb
       onWarning: (w) => warnings.push(w),
     }).catch(failed)
   : undefined;
-if (!web && !repo) exit("Nothing to scan. Pass a URL, or check out the repository before this step.");
+if (!web && !repo) exit("Nothing to scan. Set a URL, or check out the repository before this step.");
 if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
   exit(`Could not load ${url}: ${web.start.js.error ?? web.start.noJs.error ?? "unknown error"}`);
 }

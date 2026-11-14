@@ -4,12 +4,6 @@ rechtzeitig is a CI tool for technical decision makers. The core is the reposito
 
 Sections are ordered by urgency: "Now" comes before the next release, "Next" is new checks in order of value per effort, "Later" has no date. Within a section, items are in order of priority.
 
-## Now: audit of 2026-11-10
-
-Open defects from the read-only audit of v0.5.1. The five that let a scan pass on missing or contradicting evidence are fixed (#50); #41 to #48, #55 and #56 are fixed. Every fix lands with a regression test.
-
-1. Other "no evidence means pass" paths: review every check that passes when a list is empty, with the model of #50 (`observedPages`, `jsFailed`): no pass when the evidence it needs was not collected.
-
 ## Now: hardening
 
 Open points from the audit of 2026-11-03, after the fixes.
@@ -17,13 +11,6 @@ Open points from the audit of 2026-11-03, after the fixes.
 1. Require signed commits on `main`. The release workflow makes its commits through the GitHub API, which signs them (`.github/scripts/commit-signed.sh`). Once the first release pull request shows both commits as verified, tick "Require signed commits" in the ruleset on `main`.
 
 Decided against: a network monitor in CI such as `step-security/harden-runner`. It is a third-party service with paid tiers and, in its audit mode, sends the connections of each run to that service. `test.yml` keeps the parts that need no service: read-only token, no persisted credentials, `npm ci --ignore-scripts`, actions pinned to a commit, only selected actions allowed, job timeouts; the tests reach only localhost.
-
-## Next: wording of a pass
-
-Feedback: "pass" (bestanden) reads as "complete" or "compliant", which sounds like a guarantee. A scan finds terms, links, fields and headers, not whether they are right: an imprint with mail, phone and postcode is not a complete imprint, a consent tool that works does not make the consent valid. No new rule field; the words carry it.
-
-1. Every check, every report surface: no word that sounds like approval. The status shown to readers says what the scan saw ("no finding", "kein Befund"; for content rules "found", "Angaben gefunden"), in `lang/*.yml`, the step summary, the Markdown report, `docs/` and the ✅ icon. The `pass` value in the report JSON stays as the technical key. A test fails when "pass", "passed", "bestanden" or similar appears in a reader-facing string.
-2. A short section in the report and in `docs/` on what no scan can check (content correctness, organizational duties, live configuration the site does not expose), next to "Not run" and the repository coverage.
 
 ## Next: repository
 

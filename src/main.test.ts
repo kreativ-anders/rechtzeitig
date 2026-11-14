@@ -72,7 +72,7 @@ test("report-visibility auto shows the full report for a private repository", ()
 test("report-visibility auto shows only counts for a public repository or an event without the field", () => {
   for (const event of [{ repository: { private: false, visibility: "public" } }, { schedule: "0 6 * * 1" }, undefined]) {
     const r = onGitHub(event);
-    assert.match(r.summary, /\d+ fail/);
+    assert.match(r.summary, /\d+ Finding/);
     assert.match(r.summary, /_Details hidden: on a public repository/);
     assert.doesNotMatch(r.summary + r.log, /config\.js|SEC-|::error/);
     assert.deepEqual(r.files, []);

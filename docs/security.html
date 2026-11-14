@@ -53,7 +53,7 @@
 <li class="topic-rule" id="SEC-HDR-002">
 <h3><a href="checks.html#SEC-HDR-002">Cookies use secure flags</a></h3>
 <p class="rule-meta"><span class="rule-id">SEC-HDR-002</span> · <span class="rule-law">Art. 32 GDPR</span></p>
-<p><span class="report-label">How it is checked</span> Checks Secure on every cookie set without login (HTTPS sites, and always with <code>SameSite=None</code>) and HttpOnly on cookies whose name looks like a session (<code>data/cookies.yml</code>); cookies of other sites only give info; gives info instead of passing when a page did not load with JavaScript.</p>
+<p><span class="report-label">How it is checked</span> Checks Secure on every cookie set without login (HTTPS sites, and always with <code>SameSite=None</code>) and HttpOnly on cookies whose name looks like a session (<code>data/cookies.yml</code>); cookies of other sites only give info; gives info instead of no finding when a page did not load with JavaScript.</p>
 <p><span class="report-label">Fix</span> Set cookies with Secure; session cookies also with HttpOnly and SameSite=Lax.</p>
 </li>
 <li class="topic-rule" id="SEC-HDR-005">
@@ -71,13 +71,13 @@
 <li class="topic-rule" id="SEC-EXP-002">
 <h3><a href="checks.html#SEC-EXP-002">Error pages reveal no internals</a></h3>
 <p class="rule-meta"><span class="rule-id">SEC-EXP-002</span> · <span class="rule-law">Art. 32 GDPR</span></p>
-<p><span class="report-label">How it is checked</span> Requests the paths from <code>data/probes.yml</code>, searches the visible text of the error paths for the traces in <code>data/leaks.yml</code>, and the headers of the start page and every probed path for the version headers in <code>data/leaks.yml</code> (<code>server</code> only with a version number); gives info instead of passing when no error page answered.</p>
+<p><span class="report-label">How it is checked</span> Requests the paths from <code>data/probes.yml</code>, searches the visible text of the error paths for the traces in <code>data/leaks.yml</code>, and the headers of the start page and every probed path for the version headers in <code>data/leaks.yml</code> (<code>server</code> only with a version number); gives info instead of no finding when no error page answered.</p>
 <p><span class="report-label">Fix</span> Turn off error output in production (for example display_errors=0, DEBUG=false) and remove version headers.</p>
 </li>
 <li class="topic-rule" id="SEC-EXP-001">
 <h3><a href="checks.html#SEC-EXP-001">No private files are public</a></h3>
 <p class="rule-meta"><span class="rule-id">SEC-EXP-001</span> · <span class="rule-law">Art. 32 GDPR</span></p>
-<p><span class="report-label">How it is checked</span> Requests the file paths from <code>data/probes.yml</code>; a 200 whose body matches <code>expect</code> fails; gives info instead of passing when a path got no answer.</p>
+<p><span class="report-label">How it is checked</span> Requests the file paths from <code>data/probes.yml</code>; a 200 whose body matches <code>expect</code> fails; gives info instead of no finding when a path got no answer.</p>
 <p><span class="report-label">Fix</span> Remove the files from the web server or block access to dot files and backups; change any credentials they contain.</p>
 </li>
 <li class="topic-rule" id="SEC-HDR-001">
@@ -107,7 +107,7 @@
 <li class="topic-rule" id="SEC-TLS-003">
 <h3><a href="checks.html#SEC-TLS-003">No unencrypted resources on HTTPS pages</a></h3>
 <p class="rule-meta"><span class="rule-id">SEC-TLS-003</span> · <span class="rule-law">Art. 32 GDPR</span></p>
-<p><span class="report-label">How it is checked</span> Lists <code>http://</code> requests made by pages of an HTTPS site; gives info instead of passing when a page did not load with JavaScript.</p>
+<p><span class="report-label">How it is checked</span> Lists <code>http://</code> requests made by pages of an HTTPS site; gives info instead of no finding when a page did not load with JavaScript.</p>
 <p><span class="report-label">Fix</span> Load every resource over https://.</p>
 </li>
 <li class="topic-rule" id="SEC-CVD-002">
@@ -136,7 +136,7 @@
     <figure class="report">
       <ol class="report-rows">
         <li class="report-row">
-          <span class="status s-warn">warn</span>
+          <span class="status s-warn">Warning</span>
           <div class="report-check"><span class="report-title">Security headers are set</span><span class="report-law"><a class="rule-id" href="checks.html#SEC-HDR-001">SEC-HDR-001</a> · Art. 32 GDPR</span></div>
           <span class="sev" data-level="2"><i></i><i></i><i></i><i></i><i></i><span class="sev-name"><span class="visually-hidden">Severity: </span>low</span></span>
           <div class="report-result">

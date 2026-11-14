@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "BFSG mit § 3 BFSGV; EN 301 549 V3.2.1 Nr. 9.4.1.2 (WCAG 2.1 Erfolgskriterium 4.1.2)"
   en: "BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.4.1.2 (WCAG 2.1 success criterion 4.1.2)"
-how: "Runs the axe-core rules listed for `accessibility/form-labels` in `data/accessibility.yml` on every visited own page with JavaScript on, inside the browser and without sending anything, and lists input fields, text areas, select boxes and ARIA input fields without an accessible name, with page and CSS selector; it only warns, since the BFSG does not apply to every site; warns instead of passing when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error)."
+how: "Runs the axe-core rules listed for `accessibility/form-labels` in `data/accessibility.yml` on every visited own page with JavaScript on, inside the browser and without sending anything, and lists input fields, text areas, select boxes and ARIA input fields without an accessible name, with page and CSS selector; it only warns, since the BFSG does not apply to every site; warns instead of no finding when axe-core gave no result on one of these pages, naming the page and the reason (timeout or error)."
 fix_hint:
   de: "Jedes Feld mit einem <label for> verbinden oder ihm ein aria-label geben. Pflicht nach BFSG für Dienstleistungen im elektronischen Geschäftsverkehr mit Verbrauchern seit 28.06.2025, außer für Kleinstunternehmen; für alle Besucher sinnvoll."
   en: "Connect every field to a <label for> or give it an aria-label. Required by the BFSG for e-commerce services to consumers since 28 June 2025, except for microenterprises; useful for every visitor."
