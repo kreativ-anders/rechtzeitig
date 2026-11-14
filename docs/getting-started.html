@@ -31,7 +31,7 @@
 <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="site.js" defer></script>
 <script defer src="https://api.pirsch.io/pa.js" id="pianjs" data-code="w5NWUb6qKUHLnm9YxdgaEAxd7PflSnf6"></script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/getting-started.html#webpage", "url": "https://rechtzeitig.dev/getting-started.html", "name": "Get started: first scan in ten minutes", "description": "Add the rechtzeitig GitHub Action to a repository, choose what may leave the runner, and read the first report. Every lookup at an outside service is opt-in.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb"}, "headline": "Get started: first scan in ten minutes", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-11"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Get started", "item": "https://rechtzeitig.dev/getting-started.html"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "@id": "https://rechtzeitig.dev/getting-started.html#webpage", "url": "https://rechtzeitig.dev/getting-started.html", "name": "Get started: first scan in ten minutes", "description": "Add the rechtzeitig GitHub Action to a repository, choose what may leave the runner, and read the first report. Every lookup at an outside service is opt-in.", "inLanguage": "en", "isPartOf": {"@id": "https://rechtzeitig.dev/#website"}, "publisher": {"@id": "https://kreativ-anders.de/#organization"}, "breadcrumb": {"@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb"}, "headline": "Get started: first scan in ten minutes", "about": {"@id": "https://rechtzeitig.dev/#app"}, "author": {"@id": "https://kreativ-anders.de/#organization"}, "dateModified": "2026-11-14"}, {"@type": "BreadcrumbList", "@id": "https://rechtzeitig.dev/getting-started.html#breadcrumb", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "rechtzeitig", "item": "https://rechtzeitig.dev/"}, {"@type": "ListItem", "position": 2, "name": "Get started", "item": "https://rechtzeitig.dev/getting-started.html"}]}]}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
@@ -44,15 +44,18 @@
 
 <main id="content">
   <h1>Get started</h1>
-  <p class="lead">From an empty repository to a first report in about ten minutes. Nothing about your project leaves the runner unless you turn it on.</p>
+  <p class="lead">From an empty repository to a first report in about ten minutes: copy one file, set your start page, decide on three opt-ins, start the run. Nothing about your project leaves the runner unless you turn it on.</p>
 
   <div class="doc">
     <nav class="toc" aria-labelledby="toc-title">
       <h2 id="toc-title">On this page</h2>
       <ol>
-        <li><a href="#add">Add the workflow</a></li>
-        <li><a href="#what">Say what to scan</a></li>
+        <li><a href="#add">Copy the workflow</a></li>
+        <li><a href="#what">Set these</a></li>
         <li><a href="#opt-in">Decide what may leave the runner</a></li>
+        <li><a href="#optional">Optional: leave as is</a></li>
+        <li><a href="#staging">Staging, preview and internal sites</a></li>
+        <li><a href="#permissions">Permissions</a></li>
         <li><a href="#first-run">Start the first run</a></li>
         <li><a href="#next">Keep it running</a></li>
       </ol>
@@ -60,49 +63,93 @@
 
     <div>
       <section id="add">
-        <h2><span class="par">§ 1</span>Add the workflow</h2>
-        <p>Copy the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">example workflow</a> to <code>.github/workflows/rechtzeitig.yml</code> in your repository. It pins a release by its commit SHA, checks out the repository without keeping the token (<code>persist-credentials: false</code>) and needs no secret.</p>
+        <h2><span class="par">§ 1</span>Copy the workflow</h2>
+        <p>Create <code>.github/workflows/rechtzeitig.yml</code> in your repository (on GitHub: <span class="ui">Add file → Create new file</span>) and paste this file. It pins a release by its commit SHA, checks out the repository without keeping the token (<code>persist-credentials: false</code>) and needs no secret.</p>
+<!-- example-workflow:start -->
+<pre><code># Copy to .github/workflows/rechtzeitig.yml in your repository and set url. It then runs every Monday.
+# To run it now: Actions → rechtzeitig → Run workflow.
+# Docs: https://rechtzeitig.dev/workflow.html
+name: rechtzeitig
+
+on:
+  schedule:
+    - cron: &quot;17 5 * * 1&quot; # Mondays, 05:17 UTC. A minute other than :00 avoids GitHub's busiest time.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Findings as alerts in the Security tab (sarif-upload: auto). Where GitHub does not allow it,
+      # for example in private repositories without GitHub Code Security, the upload is skipped with a notice.
+      security-events: write
+      actions: read # needed by the upload in private repositories
+    timeout-minutes: 20
+    steps:
+      # Lets rechtzeitig read lockfiles, licenses and secrets. Remove to scan the website only.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Pinned to a release. Dependabot can move the pin: https://rechtzeitig.dev/#updates
+      - uses: kreativ-anders/rechtzeitig@4578635acd60d75a3f4a06e637d1ed789d4a3c31 # v0.6.0
+        with:
+          # Start page of your site. Without url only the repository is checked.
+          # url: https://www.example.de/
+          # Language of the site: de, en, a list such as de,en, or all.
+          language: de
+          # true if consumers buy or sign contracts on the site (shop checks).
+          sales: false
+          # true if visitors can sign up for subscriptions (cancellation button, § 312k BGB).
+          subscriptions: false
+          # The job fails when a check fails, so GitHub emails you about new findings of a scheduled run.
+          # never = report only, warn = also on warnings.
+          fail-on: fail
+          # Opt-in: with the secret IPINFO_TOKEN (free at ipinfo.io) the third-country check also looks up IP countries.
+          # Without the secret it uses the countries in its data and nothing is sent to IPinfo.
+          ipinfo-token: ${{ secrets.IPINFO_TOKEN }}
+          # Opt-in: true sends the name and version of every locked component, internal packages included,
+          # to api.osv.dev to find known vulnerabilities. false = nothing is sent and the check is skipped.
+          vulnerabilities: &quot;false&quot;
+          # Opt-in: true sends the site's host name to api.thegreenwebfoundation.org for the green hosting check.
+          # false = nothing is sent and the check is skipped.
+          green-hosting: &quot;false&quot;
+          # Optional, shown with their defaults:
+          # How much of the report the run shows. auto = full if private, counts if public.
+          # full = everything, also on a public repository, where anyone can read it.
+          # report-visibility: auto
+          # Security tab upload: auto = where GitHub allows it, false = never.
+          # sarif-upload: auto
+          # Only these check groups (legal, privacy, security, sustainability, accessibility, quality)
+          # or scopes (website, repository; repo = repository). Empty = all.
+          # modules: &quot;&quot;
+          # Language of the report (de or en). Empty = language of the site.
+          # report-language: &quot;&quot;
+          # Pages to visit at most.
+          # max-pages: &quot;10&quot;
+          # false scans without Chrome's sandbox where the runner has none. Only for sites you trust.
+          # require-sandbox: &quot;true&quot;</code></pre>
+<!-- example-workflow:end -->
+        <p>The same file on GitHub: <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">examples/workflows/rechtzeitig.yml</a>.</p>
         <p class="note">Never run it on <code>pull_request_target</code>. See <a href="workflow.html#safe">Safe use</a>.</p>
       </section>
 
       <section id="what">
-        <h2><span class="par">§ 2</span>Say what to scan</h2>
-        <p>Set these in the <code>with:</code> block. Everything else can stay as it is.</p>
+        <h2><span class="par">§ 2</span>Set these</h2>
+        <p>These lines in the <code>with:</code> block decide what is checked. Change them to fit your site.</p>
         <div class="table-wrap"><table>
-          <thead><tr><th scope="col">Input</th><th scope="col">Set it to</th></tr></thead>
+          <thead><tr><th scope="col">Input</th><th scope="col">In the example</th><th scope="col">Change it when</th></tr></thead>
           <tbody>
-            <tr><td><code>url</code></td><td>Your start page, for example <code>https://www.example.de/</code>. Leave it out to scan only the repository.</td></tr>
-            <tr><td><code>language</code></td><td>Language of the site: <code>de</code>, <code>en</code> or <code>de,en</code>.</td></tr>
-            <tr><td><code>sales</code></td><td><code>true</code> if consumers buy or sign contracts on the site.</td></tr>
-            <tr><td><code>subscriptions</code></td><td><code>true</code> if visitors can sign up for subscriptions.</td></tr>
+            <tr><td><code>url</code></td><td>commented out</td><td>Your site is online: remove the <code>#</code> and set your start page, for example <code>https://www.example.de/</code>. Without it only the repository is checked.</td></tr>
+            <tr><td><code>language</code></td><td><code>de</code></td><td>The site is in English (<code>en</code>) or in both (<code>de,en</code>).</td></tr>
+            <tr><td><code>sales</code></td><td><code>false</code></td><td>Consumers buy or sign contracts on the site. Turns on the shop checks.</td></tr>
+            <tr><td><code>subscriptions</code></td><td><code>false</code></td><td>Visitors can sign up for subscriptions. Turns on the cancellation button check.</td></tr>
+            <tr><td><code>fail-on</code></td><td><code>fail</code></td><td>For the first runs, <code>never</code> keeps the run green while you fix the findings. <code>warn</code> also fails on warnings. See <a href="workflow.html#fail-on">fail-on</a>.</td></tr>
           </tbody>
         </table></div>
-        <p>All inputs: <a href="workflow.html#inputs">Inputs</a>.</p>
-
-        <h3>Staging, preview and internal sites</h3>
-        <p>Private or local hosts are allowed for the <code>url</code> host only; third parties and redirects on private addresses stay blocked. Three setups:</p>
-        <ul>
-          <li><b>Preview URL</b> (Vercel, Netlify): take it from a previous step's output.
-            <pre><code>- uses: kreativ-anders/rechtzeitig@…
-  with:
-    url: ${{ steps.deploy.outputs.preview-url }}</code></pre></li>
-          <li><b>App started in the same job:</b> the input host may be <code>localhost</code>.
-            <pre><code>- run: |
-    npm start &amp;
-    sleep 5
-- uses: kreativ-anders/rechtzeitig@…
-  with:
-    url: http://localhost:3000/</code></pre></li>
-          <li><b>Intranet:</b> use a self-hosted runner that can reach it. Only the <code>url</code> host is contacted, nothing else on the private network.
-            <pre><code>jobs:
-  scan:
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v6
-      - uses: kreativ-anders/rechtzeitig@…
-        with:
-          url: https://intranet.example.de/</code></pre></li>
-        </ul>
       </section>
 
       <section id="opt-in">
@@ -113,25 +160,94 @@
           <tbody>
             <tr><td><code>vulnerabilities: "true"</code></td><td>Name and version of every locked component, internal packages included</td><td>api.osv.dev</td><td><a href="checks.html#SEC-DEPS-001">Known vulnerabilities</a> and the vulnerabilities in the SBOM</td></tr>
             <tr><td><code>green-hosting: "true"</code></td><td>Host name of the start page</td><td>api.thegreenwebfoundation.org</td><td><a href="checks.html#SUS-HOST-001">Green hosting</a></td></tr>
-            <tr><td>secret <code>IPINFO_TOKEN</code></td><td>IP addresses of your server and of the servers it contacts</td><td>ipinfo.io</td><td>IP countries in the <a href="checks.html#LEG-EU-DSE-005">third-country check</a></td></tr>
+            <tr><td><code>ipinfo-token</code> with the secret <code>IPINFO_TOKEN</code></td><td>IP addresses of your server and of the servers it contacts</td><td>ipinfo.io</td><td>IP countries in the <a href="checks.html#LEG-EU-DSE-005">third-country check</a></td></tr>
           </tbody>
         </table></div>
-        <p>The vulnerability lookup is the one most projects want. If your security team reviews outside connections, show them this table and <a href="workflow.html#data">Data that leaves the runner</a>, which also lists what the setup downloads.</p>
+        <p>The vulnerability lookup is the one most projects want. The example already passes <code>ipinfo-token</code>; it does nothing until you add the secret under <span class="ui">Settings → Secrets and variables → Actions</span>. If your security team reviews outside connections, show them this table and <a href="workflow.html#data">Data that leaves the runner</a>, which also lists what the setup downloads.</p>
+      </section>
+
+      <section id="optional">
+        <h2><span class="par">§ 4</span>Optional: leave as is</h2>
+        <p>The example names these as comments with their defaults. Most projects never change them.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Input</th><th scope="col">Default</th><th scope="col">Change it when</th></tr></thead>
+          <tbody>
+            <tr><td><code>report-visibility</code></td><td><code>auto</code></td><td>You want the full report on the run page of a public repository, where anyone can read it (<code>full</code>). See <a href="workflow.html#report">The report</a>.</td></tr>
+            <tr><td><code>sarif-upload</code></td><td><code>auto</code></td><td>You do not want findings in the Security tab (<code>false</code>).</td></tr>
+            <tr><td><code>modules</code></td><td>all</td><td>You want only some groups or scopes, for example <code>legal,privacy</code> or <code>repository</code>.</td></tr>
+            <tr><td><code>report-language</code></td><td>language of the site</td><td>The report should be in another language than the site (<code>de</code> or <code>en</code>).</td></tr>
+            <tr><td><code>max-pages</code></td><td><code>10</code></td><td>Your site has more pages worth a visit, or the run takes too long.</td></tr>
+            <tr><td><code>require-sandbox</code></td><td><code>true</code></td><td>The runner cannot start Chrome with its sandbox. Only for sites you trust; see <a href="workflow.html#safe">Safe use</a>.</td></tr>
+          </tbody>
+        </table></div>
+        <p>All inputs with their meaning: <a href="workflow.html#inputs">Inputs</a>.</p>
+      </section>
+
+      <section id="staging">
+        <h2><span class="par">§ 5</span>Staging, preview and internal sites</h2>
+        <p>Private or local hosts are allowed for the <code>url</code> host only; third parties and redirects on private addresses stay blocked. Three setups:</p>
+        <ul>
+          <li><b>Preview URL</b> (Vercel, Netlify): take it from a previous step's output.
+            <pre class="excerpt"><code>- uses: kreativ-anders/rechtzeitig@…
+  with:
+    url: ${{ steps.deploy.outputs.preview-url }}</code></pre></li>
+          <li><b>App started in the same job:</b> the input host may be <code>localhost</code>.
+            <pre class="excerpt"><code>- run: |
+    npm start &amp;
+    sleep 5
+- uses: kreativ-anders/rechtzeitig@…
+  with:
+    url: http://localhost:3000/</code></pre></li>
+          <li><b>Intranet:</b> use a self-hosted runner that can reach it. Only the <code>url</code> host is contacted, nothing else on the private network.
+            <pre class="excerpt"><code>jobs:
+  scan:
+    runs-on: self-hosted</code></pre></li>
+        </ul>
+      </section>
+
+      <section id="permissions">
+        <h2><span class="par">§ 6</span>Permissions</h2>
+        <p>The example asks for as little as it needs. Keep these lines:</p>
+        <ul>
+          <li><code>contents: read</code> lets the checkout read the repository.</li>
+          <li><code>security-events: write</code> puts the findings in the <span class="ui">Security</span> tab.</li>
+          <li><code>actions: read</code> is needed for that upload in private repositories.</li>
+        </ul>
+        <p>In a private repository without GitHub Code Security the upload is skipped with a notice; the findings are then on the run page and in the artifact <code>rechtzeitig-report</code>. See <a href="workflow.html#security-tab">Security tab</a>.</p>
       </section>
 
       <section id="first-run">
-        <h2><span class="par">§ 4</span>Start the first run</h2>
+        <h2><span class="par">§ 7</span>Start the first run</h2>
         <p>Commit the file, then open <span class="ui">Actions → rechtzeitig → Run workflow</span>. A run with a website takes a few minutes.</p>
         <ul>
           <li>Private repository: the full report is on the run page, and in the artifact <code>rechtzeitig-report</code>.</li>
           <li>Public repository: the run page shows only counts; the findings go to the <span class="ui">Security</span> tab, which only people with write access see.</li>
         </ul>
-        <p>The first run is often red. Set <code>fail-on: never</code> until the findings are fixed. More: <a href="workflow.html#report">The report</a>, <a href="workflow.html#fail-on">fail-on</a>.</p>
+        <p>The first run is often red. Set <code>fail-on: never</code> until the findings are fixed. More: <a href="workflow.html#report">The report</a>.</p>
       </section>
 
       <section id="next">
-        <h2><span class="par">§ 5</span>Keep it running</h2>
-        <p>The example runs every Monday, so a new tracker, an expiring certificate or a newly published vulnerability shows up a week later at most. Set <code>fail-on: fail</code> once the first findings are fixed. Add Dependabot for <code>github-actions</code> to get each new release as a pull request, see <a href="workflow.html#updates">Updates</a>.</p>
+        <h2><span class="par">§ 8</span>Keep it running</h2>
+        <p>The example runs every Monday, so a new tracker, an expiring certificate or a newly published vulnerability shows up a week later at most. Set <code>fail-on: fail</code> once the first findings are fixed.</p>
+        <p>To get each new release as a pull request, add <code>.github/dependabot.yml</code>:</p>
+        <pre><code>version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly</code></pre>
+        <p>See <a href="workflow.html#updates">Updates</a>.</p>
+      </section>
+
+      <section id="done" aria-labelledby="done-title">
+        <h2 id="done-title">Checklist</h2>
+        <ul class="checklist">
+          <li><code>.github/workflows/rechtzeitig.yml</code> committed</li>
+          <li><code>url</code>, <code>language</code>, <code>sales</code> and <code>subscriptions</code> fit your site</li>
+          <li>Opt-ins decided: <code>vulnerabilities</code>, <code>green-hosting</code>, <code>IPINFO_TOKEN</code></li>
+          <li>First run started under <span class="ui">Actions</span></li>
+          <li>Findings found on the run page or in the <span class="ui">Security</span> tab</li>
+        </ul>
       </section>
     </div>
   </div>

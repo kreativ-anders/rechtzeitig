@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
 import { LANGUAGES, SWITCHES, reviewProblems, validateRule, type Rule, type Switch } from "./rules.ts";
-import { checksHtml, crossChecksHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, scopeCountHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
+import { checksHtml, crossChecksHtml, exampleWorkflowHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, scopeCountHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, defineCrossCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
 import { render } from "./messages.ts";
@@ -131,6 +131,8 @@ test("the generated parts of docs/ are up to date (npm run docs)", async () => {
     const parts = [heroChecksHtml(checks, lang), reviewedHtml(checks, lang), crossChecksHtml(checks, lang), ...SCOPES.map((s) => scopeCountHtml(checks, s, lang))];
     for (const html of parts) assert.ok(page(name).includes(html), `run: npm run docs (${name})`);
   }
+  const example = readFileSync(new URL("../examples/workflows/rechtzeitig.yml", import.meta.url), "utf8");
+  assert.ok(page("getting-started.html").includes(exampleWorkflowHtml(example)), "run: npm run docs (getting-started.html)");
   assert.ok(page("security.html").includes(topicRulesHtml(securityChecks(checks))), "run: npm run docs (security.html)");
   assert.ok(page("de/kuendigungsbutton.html").includes(topicRulesHtml(shopChecks(checks), "de")), "run: npm run docs (de/kuendigungsbutton.html)");
 });
