@@ -15,7 +15,7 @@
 #     found to be binary counts; a readable text file with that name is something else.
 #   small: true when a real file of this kind is always far below the `repo` read limit in data/thresholds.yml
 #     (keys, config files). A file over the limit or behind a Git LFS pointer is then not one of them and does not
-#     turn the result into info. Without it, such a file is unread and the rule does not pass (#85).
+#     turn the result into info. Without it, such a file is unread and the result is info, not "no finding" (#85).
 #   level: fail = the content shows a key or credential; warn = the name or the format shows a file that may
 #     hold keys or personal data, but whether it does needs a look.
 
