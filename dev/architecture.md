@@ -78,6 +78,7 @@ Checks return message keys with parameters, not sentences. `src/messages.ts` ren
 | `src/net.ts`, `src/text.ts` | Public-address checks for every request; `oneLine()` for untrusted text in outputs |
 | `checks/<module>/<name>/` | One check: `rule.yml`, `check.ts`, `test.ts`, `fixtures/` |
 | `src/rules.ts`, `src/docs.ts` | Rule schema and validator; generator for the rule cards and switch tables in `docs/checks.html` and `docs/workflow.html`, the rule count and review dates in `docs/index.html` and `docs/de/index.html`, the example workflow on `docs/getting-started.html`, and the rule lists of the topic pages |
+| `src/pins.ts` | Action pins (`uses: owner/action@<sha> # vX.Y.Z`): `src/pinning.test.ts` checks that every pin is a SHA with a version and that one action has one pin everywhere; `npm run sync-pins` copies the pins Dependabot moves in `action.yml` and `.github/workflows/` into `examples/workflows/` and runs `npm run docs` for the copy on `getting-started.html`. The rechtzeitig pin of the example is moved by the release workflow |
 | `lang/*.yml` | Words per language, as regular expressions |
 | `data/third-parties.yml` | Known services: hosts, country, consent, cookies, npm packages of their SDKs, tag ids in code (`ids`), form endpoints (`forms`) |
 | `data/probes.yml` | Paths to request without a browser |
