@@ -49,17 +49,17 @@
   <h2>Results</h2>
   <ul class="legend">
     <li><span class="status s-pass">no finding</span><span>The scan saw nothing to report. This is not a confirmation: see <a href="workflow.html#limits">what no scan can check</a>.</span></li>
-    <li><span class="status s-fail">fail</span><span><span class="wm">rechtzeitig</span> is sure something is missing or wrong.</span></li>
-    <li><span class="status s-warn">warn</span><span>A pattern matched that a person should look at.</span></li>
-    <li><span class="status s-info">info</span><span>A list of things to judge yourself.</span></li>
-    <li><span class="status s-skip">skip</span><span>The check does not apply, for example no URL was given.</span></li>
+    <li><span class="status s-fail">Finding</span><span><span class="wm">rechtzeitig</span> is sure something is missing or wrong.</span></li>
+    <li><span class="status s-warn">Warning</span><span>A pattern matched that a person should look at.</span></li>
+    <li><span class="status s-info">Note</span><span>A list of things to judge yourself.</span></li>
+    <li><span class="status s-skip">skipped</span><span>The check does not apply, for example no URL was given.</span></li>
   </ul>
   <p>The severity says how much a finding matters, from <code>info</code> to <code>critical</code>. Website checks run when you give a URL. Repository checks run when the workflow checks out your repository first. Checks of <a href="#both">repository and website together</a> need both, and find what one side alone cannot show. Lockfiles read: <code>package-lock.json</code>, <code>pnpm-lock.yaml</code>, <code>yarn.lock</code>, <code>composer.lock</code>, <code>pubspec.lock</code>, <code>Cargo.lock</code>, <code>uv.lock</code>, <code>poetry.lock</code>, <code>requirements*.txt</code>, <code>go.mod</code>.</p>
   <p>Sources are primary sources only: laws, courts, authorities, standards bodies, and vendor documentation for technical facts. Blogs and law firm articles are never cited. Each card shows when its sources were last reviewed; a rule not reviewed for a year fails the project's tests.</p>
   <p>Overviews by topic: <a href="security.html">security headers, TLS and exposed files</a>, and in German <a href="de/kuendigungsbutton.html" hreflang="de" lang="de">Kündigungsbutton, Widerrufsbutton und Bestellbutton</a>.</p>
 
   <h2 id="runs-when">What runs when</h2>
-  <p>Checks that are off show as <span class="status s-skip">skip</span>, with the reason and the setting that turns them on. A check marked <a class="sends" href="workflow.html#data">Sends data</a> asks an outside service; the badge links to what is sent.</p>
+  <p>Checks that are off show as <span class="status s-skip">skipped</span>, with the reason and the setting that turns them on. A check marked <a class="sends" href="workflow.html#data">Sends data</a> asks an outside service; the badge links to what is sent.</p>
 <!-- switches:start -->
 <div class="table-wrap"><table>
 <thead><tr><th>Check</th><th>Runs when</th></tr></thead>

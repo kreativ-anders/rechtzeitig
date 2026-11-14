@@ -21,7 +21,7 @@ npm run drift
 
 ## Tests that catch bugs
 
-A rule's `test.ts` expects a pass, at least one other status, and every status its `check.ts` returns (`src/check-tests.test.ts`). Every word pattern in `lang/*.yml` has an example in `src/lang-examples.test.ts`.
+A rule's `test.ts` expects a result without a finding (`pass`), at least one other status, and every status its `check.ts` returns (`src/check-tests.test.ts`). Every word pattern in `lang/*.yml` has an example in `src/lang-examples.test.ts`.
 
 To see whether the tests of a rule notice a wrong change, run the mutation test:
 
@@ -76,7 +76,7 @@ files:
     export const openai = new OpenAI({ dangerouslyAllowBrowser: true });
 ```
 
-Write the code the way an agent would, with the surrounding files that make it realistic. For a clean case, add the traps a reviewed version still has (a `TODO` with a ticket, `rejectUnauthorized: true`, a codecov step with `continue-on-error`). `{{key:<length>:<seed>}}` becomes a random-looking key at runtime, so no key-like string is committed. A new pattern in `data/insecure-code.yml` or `data/code-quality.yml` gets a case that finds it and, where it could misfire, a clean case that must not. A new code rule goes into `SCORED`. Never lower the thresholds to make a change pass.
+Write the code the way an agent would, with the surrounding files that make it realistic. For a clean case, add the traps a reviewed version still has (a `TODO` with a ticket, `rejectUnauthorized: true`, a codecov step with `continue-on-error`). `{{key:<length>:<seed>}}` becomes a random-looking key at runtime, so no key-like string is committed. A new pattern in `data/insecure-code.yml` or `data/code-quality.yml` gets a case that finds it and, where it could misfire, a clean case that must not. A new code rule goes into `SCORED`. Never lower the thresholds to get a change through.
 
 ## Keep the documentation true
 

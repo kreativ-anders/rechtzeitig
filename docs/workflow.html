@@ -113,7 +113,7 @@ green-hosting: "false"   # opt-in</code></pre>
 
       <section id="scope">
         <h2><span class="par">§ 3</span>What runs when</h2>
-        <p>Most checks always run. These need a setting; without it they show as <span class="status s-skip">skip</span> with the setting that turns them on.</p>
+        <p>Most checks always run. These need a setting; without it they show as <span class="status s-skip">skipped</span> with the setting that turns them on.</p>
 <!-- switches:start -->
 <div class="table-wrap"><table>
 <thead><tr><th>Check</th><th>Runs when</th></tr></thead>
@@ -148,11 +148,11 @@ green-hosting: "false"   # opt-in</code></pre>
         <h2><span class="par">§ 4</span>fail-on</h2>
         <p>Decides when the run turns red. The report is the same either way.</p>
         <div class="table-wrap"><table>
-          <thead><tr><th scope="col"><code>fail-on</code></th><th scope="col">Run is red when</th><th scope="col">1 fail, 2 warn</th><th scope="col">0 fail, 2 warn</th></tr></thead>
+          <thead><tr><th scope="col"><code>fail-on</code></th><th scope="col">Run is red when</th><th scope="col">1 finding, 2 warnings</th><th scope="col">0 findings, 2 warnings</th></tr></thead>
           <tbody>
             <tr><td><code>never</code> (default)</td><td>never</td><td class="green">green</td><td class="green">green</td></tr>
-            <tr><td><code>fail</code></td><td>any check fails</td><td class="red">red</td><td class="green">green</td></tr>
-            <tr><td><code>warn</code></td><td>any check fails or warns</td><td class="red">red</td><td class="red">red</td></tr>
+            <tr><td><code>fail</code></td><td>any check has a finding</td><td class="red">red</td><td class="green">green</td></tr>
+            <tr><td><code>warn</code></td><td>any check has a finding or a warning</td><td class="red">red</td><td class="red">red</td></tr>
           </tbody>
         </table></div>
       </section>

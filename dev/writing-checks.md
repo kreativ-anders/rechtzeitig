@@ -46,7 +46,7 @@
 
    A check that needs both uses `defineCrossCheck` and gets `run(ctx, repo)`. It runs only when a URL and a checkout exist; the runner skips it otherwise and says which side is missing. Use it for what one side alone cannot show, and keep it sharp: a finding needs evidence from both sides, and a file it could not read (`repo.coverage`, `ctx.codeSkipped`) gives `info`, never a pass. Shared helpers: `directPackages(repo)`, `ownFiles(repo)`, `grepFiles(repo, files, patterns)`, `consentInRepo(repo)`, `consentOnSite(ctx)`, `ctx.matches(concept, text)`, `ctx.vendors`, `findSecrets(text)`, `databaseRules(repo)`, `siteCode(ctx)`, `hostsIn(ctx, domains)`, `ctx.packageVendor(name)`, `ctx.sourceMaps`. Test it with `runCrossCheck(here, "fixture" or a context from siteFromFiles(), { "path/file": "content" })`.
 
-4. Add `test.ts` and, for website checks, `fixtures/<case>/index.html` (plus more pages if needed). Each case is a tiny website. Cover one case that passes and one that does not.
+4. Add `test.ts` and, for website checks, `fixtures/<case>/index.html` (plus more pages if needed). Each case is a tiny website. Cover one case without a finding and one with a finding.
 
    ```ts
    import { test } from "node:test";
