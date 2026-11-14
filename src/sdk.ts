@@ -882,6 +882,46 @@ export function directPackages(repo: RepoContext): { packages: DirectPackage[]; 
 const NOT_OWN = /(^|\/)(fixtures?|__snapshots__|__tests__|node_modules|vendor)\/|(^|[\/.])(test|spec)\.[cm]?[jt]sx?$|\.lock$|-lock\.(json|yaml)$|\.min\.(js|css)$|\.map$/;
 export const ownFiles = (repo: RepoContext): string[] => repo.files.filter((f) => !NOT_OWN.test(f));
 
+// ---------- Key and database files (data/key-files.yml)
+
+const KEY_FILES = loadYaml<{
+  exclude: string[];
+  files: Array<{ kind: string; path: string; contains?: string[]; binary?: boolean; small?: boolean; level: "fail" | "warn" }>;
+}>("data/key-files.yml");
+const KEY_EXCLUDE = KEY_FILES.exclude.map((p) => new RegExp(p, "i"));
+const KEY_KINDS = KEY_FILES.files.map((e) => ({ ...e, pathRe: new RegExp(e.path, "i"), containsRe: e.contains?.map((p) => new RegExp(p, "m")) }));
+
+/**
+ * Committed files that hold keys, credentials or database contents (security/key-files): one find per file with
+ * the entry's `kind` as key and its level, and the files of a kind that can exceed the read limit (`small` not set),
+ * for `unreadResult`. security/secrets skips the files found here, so one file gives one finding.
+ */
+export function keyFiles(repo: RepoContext): { finds: Array<Finding & { file: string; level: "fail" | "warn" }>; candidates: string[] } {
+  const binary = new Set(repo.coverage.binary);
+  const finds: Array<Finding & { file: string; level: "fail" | "warn" }> = [];
+  const candidates: string[] = [];
+  for (const file of ownFiles(repo)) {
+    if (KEY_EXCLUDE.some((re) => re.test(file))) continue;
+    const kinds = KEY_KINDS.filter((k) => k.pathRe.test(file));
+    if (!kinds.length) continue;
+    if (kinds.some((k) => !k.small)) candidates.push(file);
+    const text = repo.read(file);
+    for (const k of kinds) {
+      if (k.binary) {
+        if (!binary.has(file)) continue;
+        finds.push({ level: k.level, file, key: k.kind });
+        break;
+      }
+      if (text === undefined || !k.containsRe) continue;
+      const at = k.containsRe.map((re) => re.exec(text)?.index);
+      if (at.some((i) => i === undefined)) continue;
+      finds.push({ level: k.level, file, line: lineAt(text, at[0]!), key: k.kind });
+      break;
+    }
+  }
+  return { finds, candidates };
+}
+
 /** A line of the project's own files that a pattern matched. */
 export interface CodeMatch {
   file: string;

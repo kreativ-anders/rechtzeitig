@@ -30,12 +30,20 @@ exclude:
   - '\.pub$'
   # Windows thumbnail caches, binary files named *.db.
   - '(^|/)(?:ehthumbs|ehthumbs_vista|thumbs)\.db$'
+  # The Android debug keystore: Android Studio creates it with a known password; release keys are named otherwise.
+  - '(^|/)debug\.keystore$'
 
 files:
   # PEM private key: OpenSSL, OpenSSH, PKCS#8, encrypted or not. A certificate or public key alone is no find.
   - kind: private_key
     path: '(\.(?:pem|key|crt|cer)|(^|/)id_(?:rsa|dsa|ecdsa|ed25519)(?:_sk)?(?:[._-][^/]*)?)$'
     contains: ['^-----BEGIN (?:RSA |DSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY-----']
+    small: true
+    level: fail
+  # PuTTY private key: a key file with private lines (the public key alone is exported as .pub).
+  - kind: private_key
+    path: '\.ppk$'
+    contains: ['^PuTTY-User-Key-File-\d+:', '^Private-Lines:']
     small: true
     level: fail
   # Google Cloud service account key: the JSON file the console downloads.
@@ -49,6 +57,12 @@ files:
   - kind: registry_token
     path: '(^|/)\.npmrc$'
     contains: ['^\s*(?:[^#;\s][^=\s]*:)?_(?:authToken|auth|password)\s*=\s*(?!["'']?(?:\$|<|your[_-]))\S']
+    small: true
+    level: fail
+  # Yarn 2+ registry credentials written into .yarnrc.yml instead of read from ${NPM_TOKEN}.
+  - kind: registry_token
+    path: '(^|/)\.yarnrc\.yml$'
+    contains: ['^\s*npmAuth(?:Token|Ident)\s*:\s*(?!["'']?(?:\$|<|your[_-]))\S']
     small: true
     level: fail
   # PyPI upload password or token in .pypirc. The file reads no environment variables.
@@ -65,6 +79,11 @@ files:
   # PKCS#12 keystore: usually a certificate with its private key, sometimes only trusted certificates.
   - kind: keystore
     path: '\.(?:p12|pfx)$'
+    binary: true
+    level: warn
+  # Java keystore (JKS, JCEKS): signing or TLS keys, or only trusted certificates.
+  - kind: java_keystore
+    path: '\.(?:jks|keystore)$'
     binary: true
     level: warn
   # SQL dump with rows: the header of mysqldump, MariaDB, pg_dump, phpMyAdmin or Adminer, and INSERT or COPY data.

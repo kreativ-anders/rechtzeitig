@@ -58,6 +58,35 @@ test("fails for a literal token in .npmrc, not for an environment variable or a 
   }
 });
 
+test("fails for a literal npmAuthToken in .yarnrc.yml, not for an environment variable or a comment", async () => {
+  const bad = await run({ ".yarnrc.yml": `nodeLinker: node-modules\nnpmScopes:\n  acme:\n    npmAuthToken: ${TOKEN}\n` });
+  assert.equal(bad.status, "fail");
+  assert.deepEqual(bad.raw.details, [{ file: ".yarnrc.yml", line: 4, key: "registry_token" }]);
+  for (const line of ["npmAuthToken: ${NPM_TOKEN}", 'npmAuthToken: "${NPM_TOKEN:-}"', `# npmAuthToken: ${TOKEN}`, "npmAuthToken: <your token>"]) {
+    assert.equal((await run({ ".yarnrc.yml": `${line}\n` })).status, "pass", line);
+  }
+});
+
+test("fails for a PuTTY private key, not for an exported public key", async () => {
+  const ppk = "PuTTY-User-Key-File-3: ssh-ed25519\nEncryption: none\nComment: deploy\nPublic-Lines: 2\nAAAAC3Nz\naC1lZDI1\nPrivate-Lines: 1\nAAAAIGx5\nPrivate-MAC: 1a2b\n";
+  const bad = await run({ "deploy/server.ppk": ppk });
+  assert.equal(bad.status, "fail");
+  assert.deepEqual(bad.raw.details, [{ file: "deploy/server.ppk", line: 1, key: "private_key" }]);
+  const publicOnly = "---- BEGIN SSH2 PUBLIC KEY ----\nComment: deploy\nAAAAC3Nz\n---- END SSH2 PUBLIC KEY ----\n";
+  assert.equal((await run({ "deploy/server.ppk": publicOnly, "deploy/test.ppk": ppk })).status, "pass");
+});
+
+test("warns for a binary Java keystore, not for the Android debug keystore", async () => {
+  const jks = "\xfe\xed\xfe\xed\0\0\0\x02\0\0\0\x01";
+  const result = await run({ "android/app/release.jks": jks, "certs/server.keystore": jks });
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.raw.details, [
+    { file: "android/app/release.jks", key: "java_keystore" },
+    { file: "certs/server.keystore", key: "java_keystore" },
+  ]);
+  assert.equal((await run({ "android/app/debug.keystore": jks, "config/app.keystore": "keystore.path=release.jks\n" })).status, "pass");
+});
+
 test("fails for a password in .pypirc, not for a username alone", async () => {
   assert.equal((await run({ ".pypirc": "[pypi]\nusername = __token__\npassword = pypi-AgEIcHlwaS5vcmcabc\n" })).status, "fail");
   assert.equal((await run({ ".pypirc": "[distutils]\nindex-servers = pypi\n[pypi]\nusername = __token__\n" })).status, "pass");

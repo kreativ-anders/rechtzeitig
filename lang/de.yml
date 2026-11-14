@@ -1025,11 +1025,12 @@ messages:
       other: "{count} eingecheckte Dateien enthalten womöglich Schlüssel oder personenbezogene Daten."
     none: "Keine eingecheckte Schlüssel-, Zugangs- oder Datenbankdatei gefunden."
     more: "und {count} weitere"
-    private_key: "Privater Schlüssel (PEM-Block)."
+    private_key: "Privater Schlüssel."
     service_account: "Schlüssel eines Google-Cloud-Dienstkontos mit privatem Schlüssel."
     registry_token: "Zugangsdaten einer Paket-Registry stehen in der Datei, statt aus einer Umgebungsvariable zu kommen."
     terraform_state: "Terraform-State mit Ressourcen: kann Passwörter und Schlüssel im Klartext enthalten."
     keystore: "PKCS#12-Keystore: enthält meist einen privaten Schlüssel."
+    java_keystore: "Java-Keystore: kann Signatur- oder TLS-Schlüssel enthalten."
     database_dump: "Datenbank-Dump mit Datensätzen."
     database_file: "Datenbankdatei (binär)."
   security/lockfile-drift:
