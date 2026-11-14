@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
 import { LANGUAGES, SWITCHES, reviewProblems, validateRule, type Rule, type Switch } from "./rules.ts";
-import { checksHtml, crossChecksHtml, exampleWorkflowHtml, groupCountsHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, scopeCountHtml, securityChecks, shopChecks, switchesHtml, topicRulesHtml } from "./docs.ts";
+import { checksHtml, crossChecksHtml, exampleWorkflowHtml, groupCountsHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, scopeCountHtml, securityChecks, shopChecks, suppressionsSchema, switchesHtml, topicRulesHtml, EXAMPLE_SUPPRESSIONS, exampleRulesYaml, fillYaml } from "./docs.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, defineCrossCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
 import { render } from "./messages.ts";
@@ -135,6 +135,9 @@ test("the generated parts of docs/ are up to date (npm run docs)", async () => {
   assert.ok(page("getting-started.html").includes(exampleWorkflowHtml(example)), "run: npm run docs (getting-started.html)");
   assert.ok(page("security.html").includes(topicRulesHtml(securityChecks(checks))), "run: npm run docs (security.html)");
   assert.ok(page("de/kuendigungsbutton.html").includes(topicRulesHtml(shopChecks(checks), "de")), "run: npm run docs (de/kuendigungsbutton.html)");
+  assert.equal(page("rechtzeitig.schema.json"), suppressionsSchema(checks), "run: npm run docs (rechtzeitig.schema.json)");
+  const template = readFileSync(EXAMPLE_SUPPRESSIONS, "utf8");
+  assert.equal(template, fillYaml(template, "rules", exampleRulesYaml(checks)), "run: npm run docs (examples/rechtzeitig.yml)");
 });
 
 for (const name of ["index.html", "de/index.html"]) test(`the FAQPage data in docs/${name} matches the visible questions`, () => {

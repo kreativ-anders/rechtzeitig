@@ -329,6 +329,13 @@ messages:
     severity_medium: "mittel"
     severity_high: "hoch"
     severity_critical: "kritisch"
+    suppressed_by: "Abgeschaltet ({category}{until}): {reason}"
+    suppressed_until: ", bis {date}"
+    suppressed_at: "Ohne den Eintrag: {status}. Eintrag: {place}"
+    suppressed_report: "Ein Fehlalarm? Bitte melden, damit die Regel besser wird: {url}"
+    category_not-applicable: "trifft nicht zu"
+    category_false-positive: "Fehlalarm"
+    category_accepted-risk: "Risiko akzeptiert"
   # ---------- legal
   legal/cancellation-button:
     missing: "Kein Kündigungsbutton auf der Startseite. Das Gesetz verlangt „Verträge hier kündigen“."
@@ -1619,3 +1626,33 @@ messages:
     simulated: "Simuliert einen API-, Netzwerk- oder Datenbankaufruf."
     lorem: "Lorem-ipsum-Text."
     mock_data: "Importiert Mock- oder Fake-Daten."
+  quality/suppressions:
+    no_file: "Keine {file}: keine Regel ist abgeschaltet."
+    valid:
+      one: "{count} Regel in {file} abgeschaltet, mit Kategorie und Begründung. Der Bericht zeigt sie als abgeschaltet."
+      other: "{count} Regeln in {file} abgeschaltet, jede mit Kategorie und Begründung. Der Bericht zeigt sie als abgeschaltet."
+    invalid:
+      one: "{count} Problem in {file}. Ein Eintrag mit Problem schaltet nichts ab."
+      other: "{count} Probleme in {file}. Ein Eintrag mit Problem schaltet nichts ab."
+    entry: "{rule} abgeschaltet ({category})"
+    entry_until: "{rule} abgeschaltet ({category}) bis {date}"
+    unreadable: "Kein gültiges YAML: {error}"
+    not_regular: "Keine normale Datei (ein Symlink?), nicht gelesen."
+    too_large: "Größer als {limit} MB, nicht gelesen."
+    not_a_map: "Die Datei muss eine Zuordnung mit dem Schlüssel suppress sein."
+    not_a_list: "suppress muss eine Liste von Einträgen sein."
+    entry_not_a_map: "Jeder Eintrag braucht die Felder rule, category und reason."
+    unknown_field: 'Unbekanntes Feld "{field}". Erlaubt: {allowed}.'
+    missing_rule: "Der Eintrag hat keine Regel-ID."
+    unknown_rule: 'Keine Regel hat die ID "{rule}". Die IDs stehen auf rechtzeitig.dev/checks.html.'
+    self: "{rule} prüft diese Datei und lässt sich nicht abschalten."
+    duplicate: "{rule} ist schon in Zeile {first} abgeschaltet."
+    missing_category: "{rule} hat keine category. Erlaubt: {allowed}."
+    bad_category: '{rule}: category "{value}" ist keine von {allowed}.'
+    missing_reason: "{rule} hat keine Begründung (reason)."
+    placeholder_reason: '{rule}: "{reason}" ist ein Platzhalter, keine Begründung.'
+    short_reason: "{rule}: die Begründung ist kürzer als {min} Zeichen."
+    missing_expiry: "{rule}: {category} braucht expires (JJJJ-MM-TT)."
+    bad_date: '{rule}: expires "{value}" ist kein Datum (JJJJ-MM-TT).'
+    expired: "{rule}: am {date} abgelaufen. Die Regel läuft wieder; Eintrag verlängern oder entfernen."
+    too_far: "{rule}: expires {date} liegt mehr als {max} Tage in der Zukunft."

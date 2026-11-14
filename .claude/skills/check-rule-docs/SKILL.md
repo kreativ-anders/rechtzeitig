@@ -15,7 +15,7 @@ Finds places where `checks/<module>/<name>/rule.yml` and `docs/checks.html` say 
 
 ## What the tests already catch
 
-`npm test` fails when a rule has no source, cites a domain outside `data/source-domains.yml`, was reviewed more than a year ago, `how` does not name a `data/*.yml` file that `check.ts` loads, or `docs/checks.html` is stale. Run `npm test` first and do not repeat these checks by hand. This skill covers what a test cannot judge.
+`npm test` fails when a rule has no source, cites a domain outside `data/source-domains.yml`, was reviewed more than a year ago, `how` does not name a `data/*.yml` file that `check.ts` loads, or `docs/checks.html`, `docs/rechtzeitig.schema.json` or the rule list in `examples/rechtzeitig.yml` (the template for turning rules off) is stale. Run `npm test` first and do not repeat these checks by hand. This skill covers what a test cannot judge.
 
 ## For each rule
 
@@ -28,6 +28,7 @@ Read `rule.yml`, `check.ts`, `test.ts`, and the `src/sdk.ts` helpers that `check
 5. **sources vs. claims.** Open each source (WebFetch; `curl` into the scratchpad for anchors and PDFs). Confirm that the cited article, section or anchor exists and says what `legal_basis`, `how` or the check messages claim. Prefer deep links (`#anchor`, `__5.html`) over a homepage.
 6. **fix_hint vs. messages.** Do `fix_hint` (de and en) and the hints in `check.ts` say the same thing? Does `fix_hint` promise something no source backs ("faster", "required by law")?
 7. **Tests.** Does `test.ts` have a passing and a non-passing fixture for every branch that changes the status?
+8. **New, removed or renamed rules.** Is the rule in the list of `examples/rechtzeitig.yml` with its current title (`npm run docs`)? A renamed or removed id makes users' entries in `.github/rechtzeitig.yml` fail as `unknown_rule`; the commit message must say so.
 
 ## Report
 

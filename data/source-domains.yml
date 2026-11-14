@@ -43,6 +43,7 @@ standards:
   - tc39.es
   - unicode.org
   - modelcontextprotocol.io
+  - oasis-open.org
 
 # License stewards: the texts and official FAQs of the licenses they publish.
 licenses:

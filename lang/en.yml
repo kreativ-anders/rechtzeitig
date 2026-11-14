@@ -285,6 +285,13 @@ messages:
     severity_medium: "medium"
     severity_high: "high"
     severity_critical: "critical"
+    suppressed_by: "Turned off ({category}{until}): {reason}"
+    suppressed_until: ", until {date}"
+    suppressed_at: "Without the entry: {status}. Entry: {place}"
+    suppressed_report: "A false positive? Please report it so the rule gets better: {url}"
+    category_not-applicable: "does not apply"
+    category_false-positive: "false positive"
+    category_accepted-risk: "accepted risk"
   # ---------- legal
   legal/cancellation-button:
     missing: 'No cancellation button on the start page. The law asks for "Verträge hier kündigen".'
@@ -1575,3 +1582,33 @@ messages:
     simulated: "Simulates an API, network or database call."
     lorem: "Lorem ipsum text."
     mock_data: "Imports mock or fake data."
+  quality/suppressions:
+    no_file: "No {file}: no rule is turned off."
+    valid:
+      one: "{count} rule turned off in {file}, with category and reason. The report shows it as suppressed."
+      other: "{count} rules turned off in {file}, each with category and reason. The report shows them as suppressed."
+    invalid:
+      one: "{count} problem in {file}. An entry with a problem turns nothing off."
+      other: "{count} problems in {file}. An entry with a problem turns nothing off."
+    entry: "{rule} turned off ({category})"
+    entry_until: "{rule} turned off ({category}) until {date}"
+    unreadable: "Not valid YAML: {error}"
+    not_regular: "Not a regular file (a symlink?), not read."
+    too_large: "Larger than {limit} MB, not read."
+    not_a_map: "The file must be a mapping with the key suppress."
+    not_a_list: "suppress must be a list of entries."
+    entry_not_a_map: "Each entry needs the fields rule, category and reason."
+    unknown_field: 'Unknown field "{field}". Allowed: {allowed}.'
+    missing_rule: "The entry has no rule id."
+    unknown_rule: 'No rule has the id "{rule}". The ids are on rechtzeitig.dev/checks.html.'
+    self: "{rule} checks this file and cannot be turned off."
+    duplicate: "{rule} is already turned off in line {first}."
+    missing_category: "{rule} has no category. Allowed: {allowed}."
+    bad_category: '{rule}: category "{value}" is not one of {allowed}.'
+    missing_reason: "{rule} has no reason."
+    placeholder_reason: '{rule}: "{reason}" is a placeholder, not a reason.'
+    short_reason: "{rule}: the reason is shorter than {min} characters."
+    missing_expiry: "{rule}: {category} needs expires (YYYY-MM-DD)."
+    bad_date: '{rule}: expires "{value}" is not a date (YYYY-MM-DD).'
+    expired: "{rule}: expired on {date}. The rule runs again; renew or remove the entry."
+    too_far: "{rule}: expires {date} is more than {max} days ahead."

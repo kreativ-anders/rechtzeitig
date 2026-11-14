@@ -87,7 +87,7 @@ A change that affects what a rule does updates its documentation in the same com
 | Detection in `checks/<module>/<name>/check.ts` | `how` in that `rule.yml` (one sentence, names the data files it loads) |
 | Messages of a rule in `lang/*.yml` | that `rule.yml` |
 | Legal basis, wording or threshold | `legal_basis`, `fix_hint`, `meta.sources`, and `meta.last_reviewed` set to today |
-| A rule added, removed or renamed | `rule.yml` with a new unique id, then `npm run docs` |
+| A rule added, removed or renamed | `rule.yml` with a new unique id, then `npm run docs` (also updates the rule list in `examples/rechtzeitig.yml` and `docs/rechtzeitig.schema.json`; a renamed id breaks users' suppressions, say so in the commit message) |
 | A file in `data/` in a way that changes results | name the file in the commit message |
 | An input of the action | `action.yml`, `src/options.ts`, `examples/workflows/rechtzeitig.yml` (set in `with:`, or commented with its default and named in `FILE_ONLY` in `src/inputs.test.ts`), `.github/workflows/rechtzeitig.yml` if this repository needs it, `docs/workflow.html` |
 | The architecture | `dev/architecture.md` |

@@ -10,6 +10,7 @@ export { MANIFESTS } from "./repo/lockfiles.ts";
 import { MANIFESTS } from "./repo/lockfiles.ts";
 export { DECLARING, declaredDependencies, lockfilesFor, ownName, pypiName, type Declared } from "./repo/manifests.ts";
 export { satisfies } from "./repo/semver.ts";
+export { loadSuppressions, SUPPRESSIONS_FILE } from "./suppress.ts";
 export {
   LICENSE_FILE, choices, classify, compareVersions, dependencyLicenses, detectLicenseText, hasCommonsClause, inFamily, licenseIds,
   licenseChanges, normalizeLicenseText, offending, parseSpdx, readLicense, spdxStatus, unavoidable,

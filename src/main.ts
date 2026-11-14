@@ -12,6 +12,7 @@ import { toSarif, workflowFile } from "./sarif.ts";
 import { loadChecks, OUTCOMES, runChecks, scopeOf, selectModules, type OutcomeStatus } from "./runner.ts";
 import { LANGUAGES, SWITCHES, switchSpec, type Switch, type UiLanguage } from "./rules.ts";
 import { errorMessage } from "./text.ts";
+import { applySuppressions, loadSuppressions } from "./suppress.ts";
 import {
   md, plain, repoName, REMOVED_VISIBILITIES, toAnnotations, toCounts, toFindings, toMarkdown, toText, VISIBILITIES, withoutCommands,
   type Report, type Visibility,
@@ -92,8 +93,11 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
   exit(`Could not load ${url}: ${web.start.js.error ?? web.start.noJs.error ?? "unknown error"}`);
 }
 
-// Every check gets an outcome; those that cannot run are skips that say why.
-const outcomes = await runChecks(allChecks, { web, repo }, enabled, modules);
+// Every check gets an outcome; those that cannot run are skips that say why. Rules turned off in
+// .github/rechtzeitig.yml still run and become "suppressed" with their reason; that file is read from the checkout
+// also when no repository check runs, and an invalid entry turns nothing off.
+const root = repo?.root ?? (values.repo?.trim() || undefined);
+const outcomes = applySuppressions(await runChecks(allChecks, { web, repo }, enabled, modules), root ? loadSuppressions(root) : undefined);
 const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub, language, warnings };
 const log = (text: string) => console.log(onGitHub ? withoutCommands(text) : text);
 // Scanned repository's folder relative to the workspace, for annotations and SARIF.

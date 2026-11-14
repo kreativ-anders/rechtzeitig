@@ -56,6 +56,7 @@
         <li><a href="#fail-on">fail-on</a></li>
         <li><a href="#secrets">Secrets</a></li>
         <li><a href="#report">The report</a></li>
+        <li><a href="#suppress">Turning a rule off</a></li>
         <li><a href="#visit">How the website is visited</a></li>
         <li><a href="#data">Data that leaves the runner</a></li>
         <li><a href="#safe">Safe use</a></li>
@@ -197,14 +198,41 @@ green-hosting: "false"   # opt-in</code></pre>
         <p>Public repositories have code scanning for free. <span class="wm">rechtzeitig</span> skips the upload with a notice for private repositories without GitHub Code Security, for runs from forks or Dependabot, and without <code>security-events: write</code>. The upload never fails the job. <code>false</code> asks GitHub nothing.</p>
       </section>
 
+      <section id="suppress">
+        <h2><span class="par">§ 7</span>Turning a rule off</h2>
+        <p>When a rule does not fit your project, turn it off in <code>.github/rechtzeitig.yml</code> in the checked-out repository. Copy the <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/rechtzeitig.yml">example file</a> there and uncomment what you need. Each entry needs a rule id, a category and a reason:</p>
+        <pre><code># yaml-language-server: $schema=https://rechtzeitig.dev/rechtzeitig.schema.json
+suppress:
+  - rule: A11Y-ALT-001
+    category: not-applicable
+    reason: "Microenterprise, the BFSG does not apply (§ 3 Abs. 3 BFSG)"
+  - rule: SEC-HDR-001
+    category: accepted-risk
+    reason: "CSP ships with the frontend release in Q1"
+    expires: 2027-03-31</code></pre>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Field</th><th scope="col">Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>rule</code></td><td>Required. The id of the rule, as on <a href="checks.html">Checks</a>.</td></tr>
+            <tr><td><code>category</code></td><td>Required. <code>not-applicable</code>: the duty does not apply to this project, for example no shop. <code>false-positive</code>: the rule is wrong here. <code>accepted-risk</code>: the finding is real and you accept it for a time.</td></tr>
+            <tr><td><code>reason</code></td><td>Required. Why, in at least 15 characters. Placeholders such as <code>n/a</code> or <code>todo</code> do not count.</td></tr>
+            <tr><td><code>expires</code></td><td>Last day the entry applies, <code>YYYY-MM-DD</code>, at most a year ahead. Required for <code>accepted-risk</code>, optional otherwise. After that day the rule reports again.</td></tr>
+          </tbody>
+        </table></div>
+        <p>A turned-off rule still runs. The report shows it as <span class="status s-suppressed">suppressed</span> with the reason, the entry's line and the result it would have, and lists what it found. It does not count for <code>fail-on</code> and gives no annotations. In the JSON report it has a <code>suppression</code> field; in <a href="#security-tab">SARIF</a> its alerts carry a suppression with the reason. On a public repository with <code>report-visibility: auto</code> the run page shows only the number of suppressed rules, never the reasons.</p>
+        <p>An entry with a problem turns nothing off: no reason, an unknown rule id or field, a date that is not a real day, has passed or is too far ahead, a duplicate. The rule <a href="checks.html#QUAL-SUPPRESS-001">QUAL-SUPPRESS-001</a> fails and names each problem with its line, and cannot be turned off itself.</p>
+        <p>The comment in the first line lets editors with YAML support complete rule ids from the <a href="rechtzeitig.schema.json">schema</a> and mark typos. To turn off a whole group instead, use <code>modules</code>.</p>
+        <p class="note">A <code>false-positive</code> means the rule needs work. Please <a href="https://github.com/kreativ-anders/rechtzeitig/issues">report it</a>; nothing is sent automatically.</p>
+      </section>
+
       <section id="visit">
-        <h2><span class="par">§ 7</span>How the website is visited</h2>
+        <h2><span class="par">§ 8</span>How the website is visited</h2>
         <p>Each page loads in a fresh Chromium, without and with JavaScript. Nothing is clicked and no consent is given, so every request and cookie in the report happened before consent. <span class="wm">rechtzeitig</span> opens the start page, the legal pages, a sample of other pages, and paths that must not be public (<code>/.env</code>, <code>/.git/config</code>).</p>
         <p class="note">GitHub's runners are in the US, so a banner shown only to EU visitors is missing. Pages behind a login are not checked.</p>
       </section>
 
       <section id="data">
-        <h2><span class="par">§ 8</span>Data that leaves the runner</h2>
+        <h2><span class="par">§ 9</span>Data that leaves the runner</h2>
         <p>By default nothing about your project leaves the runner except to your own website and to GitHub. The scan contacts your website (its pages, the paths in <code>data/probes.yml</code>, the source maps its own scripts point to, up to <code>code.max_maps</code>), asks the runner's DNS resolver about its domain (SPF, DMARC, MX), and uses the GitHub API of your repository for the Security tab upload (off with <code>sarif-upload: false</code>). Every other service is opt-in:</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Service</th><th scope="col">What is sent</th><th scope="col">When</th></tr></thead>
@@ -218,7 +246,7 @@ green-hosting: "false"   # opt-in</code></pre>
       </section>
 
       <section id="safe">
-        <h2><span class="par">§ 9</span>Safe use</h2>
+        <h2><span class="par">§ 10</span>Safe use</h2>
         <p class="note">Never run <span class="wm">rechtzeitig</span> on <code>pull_request_target</code>: it gives code from a fork your secrets and a write token. Use <code>workflow_dispatch</code>, <code>schedule</code>, <code>push</code> or <code>pull_request</code>.</p>
         <p>Check out with <code>persist-credentials: false</code>; <span class="wm">rechtzeitig</span> needs no token.</p>
         <p>The scanned site is untrusted, so Chrome runs with its sandbox; without one the scan stops (<code>require-sandbox: false</code> scans anyway, only for sites you trust). No request reaches private addresses except the host of <code>url</code>.</p>
@@ -226,12 +254,12 @@ green-hosting: "false"   # opt-in</code></pre>
       </section>
 
       <section id="updates">
-        <h2><span class="par">§ 10</span>Updates</h2>
+        <h2><span class="par">§ 11</span>Updates</h2>
         <p>The example workflow pins a release by its commit SHA. Dependabot moves the pin with a pull request for each new release, see <a href="./#updates">How do I get the latest version?</a> Without it, copy the <code>uses:</code> line from the <a href="https://github.com/kreativ-anders/rechtzeitig/releases">latest release</a>.</p>
       </section>
 
       <section id="no-issues">
-        <h2><span class="par">§ 11</span>Why <span class="wm">rechtzeitig</span> opens no issues</h2>
+        <h2><span class="par">§ 12</span>Why <span class="wm">rechtzeitig</span> opens no issues</h2>
         <p>On a public repository, issues would point everyone to a weakness of your site. If you want one anyway, add a step that reads <code>rechtzeitig-report.json</code> and runs <code>gh issue create</code>.</p>
       </section>
     </div>

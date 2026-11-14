@@ -158,3 +158,25 @@ test("severities are shown in the report language", () => {
   assert.match(toMarkdown({ ...report("m", []), language: "de" }), /\| hoch \|/);
   assert.match(toMarkdown(report("m", [])), /\| high \|/);
 });
+
+test("a suppressed rule stays in every output with its reason, escaped, and gives no annotation", () => {
+  const suppressed: Outcome = {
+    id: "security/test", rule, status: "suppressed", message: "m", details: [{ file: "a.js", line: 3, text: "found" }],
+    suppression: { rule: rule.id, category: "false-positive", reason: `Generated ${evilLink}`, line: 4, file: ".github/rechtzeitig.yml", status: "fail" },
+  };
+  const r: Report = { ...report("m", []), outcomes: [suppressed] };
+  const md = toMarkdown(r, { findingsOnly: true });
+  assert.match(md, /⏸️ 1 suppressed/);
+  assert.match(md, /Turned off \(false positive\): Generated &#60;img/);
+  assert.match(md, /Without the entry: fail\. Entry: \.github\/rechtzeitig\.yml:4/);
+  assert.match(md, /A false positive\? Please report it/);
+  assert.doesNotMatch(md, /<img/);
+  assert.match(toText(r), /SUPPRESSED security\/test[\s\S]*Turned off \(false positive\)/);
+  assert.deepEqual(toAnnotations(r), []);
+  const json = toFindings(r.outcomes, { version: "0", startedAt: "now", target: {} });
+  assert.deepEqual(json.results[0].suppression, { category: "false-positive", reason: oneLine(`Generated ${evilLink}`), file: ".github/rechtzeitig.yml", line: 4, status: "fail" });
+  // Public repositories see the count only, never the reason.
+  const counts = toCounts(r, "md");
+  assert.match(counts, /1 suppressed/);
+  assert.doesNotMatch(counts, /Generated/);
+});

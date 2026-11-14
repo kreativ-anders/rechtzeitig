@@ -31,9 +31,12 @@ const location = (uri: string, line?: number) => ({
   physicalLocation: { artifactLocation: { uri, uriBaseId: "%SRCROOT%" }, region: { startLine: line && line > 0 ? line : 1 } },
 });
 
+/** The status that sets the level: for a suppressed rule the one it would have without its entry. */
+const levelOf = (o: Outcome) => LEVEL[o.suppression?.status ?? o.status];
+
 export function toSarif(r: Report, { base = "", anchor }: SarifOptions = {}): object {
   const lang = r.language;
-  const open = r.outcomes.filter((o) => LEVEL[o.status]);
+  const open = r.outcomes.filter((o) => levelOf(o));
   const rules = [...new Map(open.map((o) => [o.rule.id, o])).values()].map((o) => ({
     id: o.rule.id,
     name: o.id,
@@ -56,7 +59,12 @@ export function toSarif(r: Report, { base = "", anchor }: SarifOptions = {}): ob
 }
 
 function results(o: Outcome, r: Report, base: string, anchor?: string) {
-  const level = LEVEL[o.status]!;
+  const level = levelOf(o)!;
+  // A rule turned off in .github/rechtzeitig.yml keeps its results, marked as suppressed with the reason (SARIF 2.1.0 § 3.35).
+  const s = o.suppression;
+  const suppressions = s
+    ? { suppressions: [{ kind: "external", status: "accepted", justification: oneLine(`${s.category}: ${s.reason}`), location: location(base ? `${base}/${s.file}` : s.file, s.line) }] }
+    : {};
   const message = oneLine(say(o, r.language));
   const texts = where(o, r.language).map((t) => oneLine(t));
   const inFiles = o.details.flatMap((d, i) => (typeof d !== "string" && d.file ? [{ d, text: texts[i] }] : []));
@@ -72,6 +80,7 @@ function results(o: Outcome, r: Report, base: string, anchor?: string) {
       message: { text: `${message}\n${text}` },
       locations: [location(uri, d.line)],
       partialFingerprints: { "rechtzeitig/v1": `${key}:${n}` },
+      ...suppressions,
     };
   });
   if (fileResults.length) return fileResults;
@@ -81,5 +90,6 @@ function results(o: Outcome, r: Report, base: string, anchor?: string) {
     message: { text: [r.web ? `${message} (${oneLine(r.web.url)})` : message, ...texts.map((t) => `- ${t}`)].join("\n") },
     ...(anchor ? { locations: [location(anchor)] } : {}),
     partialFingerprints: { "rechtzeitig/v1": hash(o.rule.id, o.id, r.web?.url) },
+    ...suppressions,
   }];
 }
