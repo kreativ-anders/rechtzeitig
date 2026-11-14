@@ -1,4 +1,4 @@
-import { FIXTURES, capped, defineRepoCheck, fail, findSecrets, lineAt, loadYaml, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { FIXTURES, capped, defineRepoCheck, fail, findSecrets, lineAt, loadYaml, msg, pass, skip, unreadResult, warn, type Finding } from "../../../src/sdk.ts";
 
 const AGENT = loadYaml<{
   instructions: string[];
@@ -75,6 +75,6 @@ export default defineRepoCheck({
     }
     if (failed.length) return fail(msg("found", { count: failed.length + warned.length }), capped([...failed, ...warned]));
     if (warned.length) return warn(msg("public_keys", { count: warned.length }), capped(warned));
-    return pass(msg("none", { count: files.length }));
+    return unreadResult(repo, files) ?? pass(msg("none", { count: files.length }));
   },
 });

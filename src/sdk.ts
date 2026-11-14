@@ -298,6 +298,15 @@ export const siteRequests = (ctx: ScanContext): Array<Request & { page: string }
 export const jsFailedPages = (ctx: ScanContext): Finding[] =>
   ctx.jsFailed.map((p) => ({ key: "js_failed", params: { page: ctx.short(p.url), error: p.js.error ?? String(p.js.status) } }));
 
+/**
+ * The result to return instead of a pass that rests on the requests, cookies or services of the visited pages when
+ * the load with JavaScript failed on some of them: what scripts would have loaded or set there is unknown.
+ * Undefined when every page loaded with JavaScript. Messages: `messages.common.js_incomplete` and `js_failed`.
+ * Use it right before the pass, never before a finding: `return jsIncomplete(ctx) ?? pass(...)`.
+ */
+export const jsIncomplete = (ctx: ScanContext): Result | undefined =>
+  ctx.jsFailed.length ? warn(msg("js_incomplete", { count: ctx.jsFailed.length }), jsFailedPages(ctx)) : undefined;
+
 /** A third-party service the site's pages contacted. */
 export interface Service {
   /** Vendor name from data/third-parties.yml, else the host's registrable domain. */
@@ -865,6 +874,15 @@ export interface CodeMatch {
 }
 
 /**
+ * The files of `files` that may hold text the scan could not read: over the size limit in data/thresholds.yml `repo`,
+ * or only a Git LFS pointer. A check that finds nothing must not pass while one of its files is in this list.
+ */
+export function unreadFiles(repo: RepoContext, files: string[]): string[] {
+  const gaps = new Set([...repo.coverage.large, ...repo.coverage.lfs]);
+  return files.filter((f) => gaps.has(f));
+}
+
+/**
  * Lines of the project's own files (`ownFiles`) whose path matches `files` and that one of the patterns matches,
  * at most one match per pattern and line, and the files of that kind that could not be read (too large, Git LFS pointer),
  * so a check can tell a clean result from one it could not see.
@@ -876,7 +894,7 @@ export function grepFiles(repo: RepoContext, files: { test(path: string): boolea
   for (const file of ownFiles(repo).filter((f) => files.test(f))) {
     const text = repo.read(file);
     if (text === undefined) {
-      if (repo.coverage.large.includes(file) || repo.coverage.lfs.includes(file)) unread.push(file);
+      unread.push(...unreadFiles(repo, [file]));
       continue;
     }
     text.split("\n").forEach((line, i) => {
@@ -1036,6 +1054,17 @@ export function dependencyLicenseResult(repo: RepoContext, find: (license: Licen
 
 // ---------- Source code
 
+/**
+ * The result to return instead of a pass when some of the files a check looks at could not be read (`unreadFiles`):
+ * info with `messages.common.unread_gap` and one `unread_file` per file. Undefined when every file was read.
+ * Use it right before the pass: `return unreadResult(repo, files) ?? pass(...)`.
+ */
+export function unreadResult(repo: RepoContext, files: string[]): Result | undefined {
+  const unread = unreadFiles(repo, files);
+  if (!unread.length) return undefined;
+  return info(msg("unread_gap", { count: unread.length }), capped(unread.map((file) => ({ file, key: "unread_file" }))));
+}
+
 export { codeFiles, findInCode, isClientFile, isTest, languageOf, toFindings } from "./repo/code.ts";
 export type { CodeFile, CodeFind, CodePattern, Language, PatternSet } from "./repo/code.ts";
 import { toFindings as codeFindings, type CodeFile, type CodeFind } from "./repo/code.ts";
@@ -1043,11 +1072,12 @@ import { toFindings as codeFindings, type CodeFile, type CodeFind } from "./repo
 /**
  * Result of a code check from its finds: fail with `found` when a find has level fail, warn with `suspect` otherwise,
  * pass with `none` and the number of files read, skip with `messages.common.no_code` when there is no code to read.
+ * Without finds but with a file it could not read, `unreadResult` instead of the pass.
  * The check's messages need found, suspect, none (each with {count}) and more.
  */
-export function codeResult(files: CodeFile[], finds: CodeFind[]): Result {
+export function codeResult(repo: RepoContext, files: CodeFile[], finds: CodeFind[]): Result {
   if (!files.length) return skip(msg("no_code"));
-  if (!finds.length) return pass(msg("none", { count: files.length }));
+  if (!finds.length) return unreadResult(repo, files.map((f) => f.file)) ?? pass(msg("none", { count: files.length }));
   const params = { count: finds.length, files: new Set(finds.map((f) => f.file)).size };
   const details = capped(codeFindings(finds));
   return finds.some((f) => f.level === "fail") ? fail(msg("found", params), details) : warn(msg("suspect", params), details);

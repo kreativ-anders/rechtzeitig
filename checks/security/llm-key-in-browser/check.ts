@@ -7,6 +7,6 @@ export default defineRepoCheck({
     const files = codeFiles(repo);
     const browser = files.filter((f) => isClientFile(repo, f.file));
     const finds = [...findInCode(repo, files, everywhere), ...findInCode(repo, browser, { js: client })];
-    return codeResult(files, finds.sort((a, b) => (a.file === b.file ? a.line - b.line : a.file < b.file ? -1 : 1)));
+    return codeResult(repo, files, finds.sort((a, b) => (a.file === b.file ? a.line - b.line : a.file < b.file ? -1 : 1)));
   },
 });

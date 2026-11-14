@@ -1,4 +1,4 @@
-import { capped, codeFiles, defineRepoCheck, findInCode, lineAt, loadYaml, msg, pass, skip, toFindings, warn, type Finding, type Language, type PatternSet } from "../../../src/sdk.ts";
+import { capped, codeFiles, defineRepoCheck, findInCode, lineAt, loadYaml, msg, pass, skip, toFindings, unreadResult, warn, type Finding, type Language, type PatternSet } from "../../../src/sdk.ts";
 
 type Counts = Partial<Record<Language, string>>;
 const DATA = loadYaml<Record<string, { tautology: PatternSet; swallowed: PatternSet; config: PatternSet; skipped: Counts; focused: Counts; cases: Counts; assertions: Counts }>>(
@@ -29,7 +29,7 @@ export default defineRepoCheck({
       found.push({ key: "skipped_share", params: { count: skipped, cases } });
     }
     if (found.length) return warn(msg("hollow", { count: found.length }), capped(found));
-    return pass(msg("clean", { count: cases, files: tests.length }));
+    return unreadResult(repo, tests.map((f) => f.file)) ?? pass(msg("clean", { count: cases, files: tests.length }));
   },
 });
 

@@ -35,3 +35,14 @@ test("gives info, not skip, when it found no consent tool but could not read som
   const result = await runCrossCheck(here, await page(tracker), { "src/app.js": "console.log(1);", "src/big.js": "x".repeat(1_100_000) });
   assert.equal(result.status, "info");
 });
+
+// "No evidence means pass" review: trackers loaded by scripts on a page whose JavaScript load failed are unknown.
+test("no pass for nothing loading when a page did not load with JavaScript", async () => {
+  const { failedJsPage, fakeContext, fakePage } = await import("../../../test/helpers.ts");
+  const start = fakePage("https://example.de/");
+  const run = (pages: Array<ReturnType<typeof fakePage>>) => runCrossCheck(here, fakeContext(start.js, { start, pages }), library);
+  assert.equal((await run([start])).status, "pass");
+  const result = await run([start, failedJsPage("https://example.de/blog")]);
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["/blog: load with JavaScript failed (Timeout)"]);
+});

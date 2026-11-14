@@ -26,3 +26,14 @@ test("fails for a public .env and .git folder", async () => {
 test("ignores servers that answer every path with HTML", async () => {
   assert.equal((await runCheck(here, "html-fallback")).status, "pass");
 });
+
+// "No evidence means pass" review: a path that got no answer, or no path asked at all, proves nothing.
+test("no pass for paths that got no answer, skip without any", async () => {
+  const { runFake } = await import("../../../test/helpers.ts");
+  const probe = (status: number) => ({ path: "/.env", kind: "file" as const, status, headers: {}, body: "", exposed: false });
+  assert.equal((await runFake(here, {}, { probes: [probe(404)] })).status, "pass");
+  const result = await runFake(here, {}, { probes: [probe(404), { ...probe(0), path: "/.git/config" }] });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, ["/.git/config"]);
+  assert.equal((await runFake(here, {}, { probes: [] })).status, "skip");
+});

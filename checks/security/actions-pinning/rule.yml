@@ -7,7 +7,7 @@ title:
 legal_basis:
   de: "CRA Art. 13 Abs. 5, Sorgfalt bei Komponenten Dritter (ab 11.12.2027)"
   en: "CRA Art. 13(5), due diligence for third-party components (from 11 Dec 2027)"
-how: "Reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit SHA."
+how: "Reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit SHA; gives info instead of passing when one of its files is over the `repo` limit in `data/thresholds.yml` or only a Git LFS pointer."
 fix_hint:
   de: "uses: owner/action@<commit-sha> statt eines Tags verwenden; Dependabot hält die SHAs aktuell."
   en: "Use owner/action@<commit-sha> instead of a tag; Dependabot keeps the SHAs current."

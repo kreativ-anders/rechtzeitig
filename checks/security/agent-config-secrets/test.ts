@@ -57,3 +57,13 @@ test("warns for a key that may be meant to be public", async () => {
   const result = await runRepoCheck(here, { "CLAUDE.md": `Maps key: ${google}\n` });
   assert.equal(result.status, "warn");
 });
+
+// "No evidence means pass" review: a file the scan could not read may hold what this check looks for.
+test("no pass when one of its files could not be read", async () => {
+  const { TOO_LARGE } = await import("../../../test/helpers.ts");
+  const clean = {"CLAUDE.md":"Run npm test."};
+  assert.equal((await runRepoCheck(here, clean)).status, "pass");
+  const result = await runRepoCheck(here, { ...clean, "AGENTS.md": TOO_LARGE });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.details, ["AGENTS.md: Not read: too large or only a Git LFS pointer."]);
+});

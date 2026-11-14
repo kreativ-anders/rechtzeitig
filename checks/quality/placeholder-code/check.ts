@@ -1,4 +1,4 @@
-import { capped, codeFiles, defineRepoCheck, findInCode, info, loadYaml, msg, pass, skip, toFindings, type PatternSet } from "../../../src/sdk.ts";
+import { capped, codeFiles, defineRepoCheck, findInCode, info, loadYaml, msg, pass, skip, toFindings, unreadResult, type PatternSet } from "../../../src/sdk.ts";
 
 const PATTERNS = loadYaml<Record<string, PatternSet>>("data/code-quality.yml")["quality/placeholder-code"];
 
@@ -7,7 +7,7 @@ export default defineRepoCheck({
     const files = codeFiles(repo);
     if (!files.length) return skip(msg("no_code"));
     const finds = findInCode(repo, files, PATTERNS);
-    if (!finds.length) return pass(msg("none", { count: files.length }));
+    if (!finds.length) return unreadResult(repo, files.map((f) => f.file)) ?? pass(msg("none", { count: files.length }));
     // Files with the most finds first, so the list starts where most is left to do.
     const per = new Map<string, number>();
     for (const f of finds) per.set(f.file, (per.get(f.file) ?? 0) + 1);

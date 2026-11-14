@@ -39,3 +39,15 @@ test("long-lived own cookies only give info", async () => {
 test("skips without cookies", async () => {
   assert.equal((await runFake(here, {})).status, "skip");
 });
+
+// "No evidence means pass" review: cookies set by scripts on a page whose JavaScript load failed are unknown.
+test("no pass when a page did not load with JavaScript", async () => {
+  const { failedJsPage, fakeContext, fakePage, rendered } = await import("../../../test/helpers.ts");
+  const { default: check } = await import("./check.ts");
+  const start = fakePage("https://example.de/", { cookies: [{ name: "lang", domain: "example.de", secure: true, httpOnly: false, sameSite: "Lax", expires: -1 }] });
+  const run = async (pages: Array<ReturnType<typeof fakePage>>) => rendered(here, await check.run(fakeContext(start.js, { start, pages })));
+  assert.equal((await run([start])).status, "pass");
+  const result = await run([start, failedJsPage("https://example.de/blog")]);
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["/blog: load with JavaScript failed (Timeout)"]);
+});

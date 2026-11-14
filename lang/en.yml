@@ -180,6 +180,14 @@ messages:
     not_run_url: "Not run: needs a website. Set the input url."
     not_run_repository: "Not run: needs the repository. Run actions/checkout before rechtzeitig."
     no_code: "No source code in a language this check reads (data/code-paths.yml), so nothing to check."
+    unread_gap:
+      one: "Nothing found in the files read, but {count} file could not be read (too large or only a Git LFS pointer), so no pass."
+      other: "Nothing found in the files read, but {count} files could not be read (too large or only Git LFS pointers), so no pass."
+    unread_file: "Not read: too large or only a Git LFS pointer."
+    js_incomplete:
+      one: "Nothing found on the pages seen, but {count} page did not load with JavaScript. What scripts load or set there is unknown, so no pass."
+      other: "Nothing found on the pages seen, but {count} pages did not load with JavaScript. What scripts load or set there is unknown, so no pass."
+    js_failed: "{page}: load with JavaScript failed ({error})"
     not_run_module: "Not run: neither its group {module} nor its scope {scope} is in modules ({modules}). Empty modules runs all checks."
     not_run_both_url: "Not run: reads the website and the repository together, and the website is missing. Set the input url."
     not_run_both_repository: "Not run: reads the website and the repository together, and the checkout is missing. Run actions/checkout before rechtzeitig."
@@ -555,7 +563,15 @@ messages:
     leaks: "Error pages show technical details that help attackers."
     versions: "Response headers reveal software and versions."
     none: "Error pages and headers reveal no technical details."
+    not_probed: "No error page was requested, so nothing to check."
+    unanswered:
+      one: "The {count} request for an error page got no answer, so the error pages were not checked."
+      other: "None of the {count} requests for an error page got an answer, so the error pages were not checked."
   security/exposed-files:
+    not_probed: "No private path was requested, so nothing to check."
+    unanswered:
+      one: "No private file is public among those that answered, but {count} of {total} paths got no answer and stay unchecked."
+      other: "No private file is public among those that answered, but {count} of {total} paths got no answer and stay unchecked."
     exposed:
       one: "{count} private file can be downloaded. Remove it or block it in the web server."
       other: "{count} private files can be downloaded. Remove them or block them in the web server."
@@ -762,6 +778,7 @@ messages:
       one: "Without JavaScript the start page shows only {shown} of {count} character."
       other: "Without JavaScript the start page shows only {shown} of {count} characters."
     render_html: "Render content as HTML on the server or at build time. It then works for every visitor and loads faster."
+    not_compared: "The start page did not load both with and without JavaScript, so nothing was compared."
   sustainability/legal-pages-without-js:
     label_imprint: "Imprint"
     label_privacy: "Privacy policy"
@@ -770,6 +787,10 @@ messages:
     no_links: "No imprint or privacy policy link found (see legal/*)."
     needs_js: "Mandatory information needs JavaScript. Visitors without it, and many crawlers, cannot find it."
     readable: "Both are linked and readable without JavaScript."
+    not_loaded: "{page}: the linked page was not loaded without JavaScript, so its text was not checked."
+    unchecked:
+      one: "The links work without JavaScript, but {count} linked page could not be read without it."
+      other: "The links work without JavaScript, but {count} linked pages could not be read without it."
   sustainability/green-hosting:
     none: "No green hosting lookup for this host (local address or IP)."
     failed: "The Green Web Foundation could not be asked about {host}: {error}."
@@ -935,6 +956,10 @@ messages:
     none:
       one: "{count} manifest matches its lockfile."
       other: "{count} manifests match their lockfiles."
+    not_compared:
+      one: "{count} manifest not compared: a lockfile next to it could not be read (bun.lockb, too large, invalid)."
+      other: "{count} manifests not compared: a lockfile next to them could not be read (bun.lockb, too large, invalid)."
+    nothing_compared: "No manifest has a lockfile to compare with."
   legal/licenses:
     commons_clause: 'Project: {project}. GPL-3.0 § 7 lets recipients remove "further restrictions", so the Commons Clause may not hold.'
     restricted: "{name}@{version}: {license}. Restricts use, often commercial use."
@@ -1147,6 +1172,11 @@ messages:
     none:
       one: "No known vulnerabilities in {count} component."
       other: "No known vulnerabilities in {count} components."
+    gaps:
+      one: "No known vulnerabilities in {count} component. Not checked: the packages of package files that could not be read ({gaps})."
+      other: "No known vulnerabilities in {count} components. Not checked: the packages of package files that could not be read ({gaps})."
+    not_asked: "Lockfile could not be read; its packages were not checked against OSV. See security/sbom."
+    not_asked_unsupported: "No parser for {ecosystem} yet; its packages were not checked against OSV."
     issue: "{name}@{version}{dev}: {id}{severity}.{summary}{fixed}"
     dev: " (dev)"
     fixed: " Fixed in {version}."
@@ -1247,6 +1277,16 @@ messages:
     none:
       one: "The site's {count} script serves no source map."
       other: "The site's {count} scripts serve no source maps."
+    unchecked:
+      one: "No public source map found for the site's {count} script, but not every map could be checked."
+      other: "No public source map found for the site's {count} scripts, but not every map could be checked."
+    unanswered:
+      one: "{count} source map request got no answer."
+      other: "{count} source map requests got no answer."
+    cut:
+      one: "{count} served file was cut or not kept (limits in data/thresholds.yml code), so its sourceMappingURL may be missing."
+      other: "{count} served files were cut or not kept (limits in data/thresholds.yml code), so their sourceMappingURL may be missing."
+    max_maps: "Only the first {count} source maps were requested (code.max_maps in data/thresholds.yml)."
     public_maps:
       one: "{count} source map is public, but none of its paths is a file of this repository."
       other: "{count} source maps are public, but none of their paths is a file of this repository."

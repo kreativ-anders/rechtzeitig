@@ -7,7 +7,7 @@ title:
 value:
   de: "Generierter Code sieht oft fertig aus, wo er nur simuliert. Platzhalter zu finden zeigt, welche Funktionen noch nicht echt sind."
   en: "Generated code often looks finished where it only simulates. Finding placeholders shows which features are not real yet."
-how: "Matches code outside tests, docs, examples and stories (languages and left-out paths in `data/code-paths.yml`), comments included, against `data/code-quality.yml`: `throw new Error(\"Not implemented\")`, `panic(\"TODO\")`, `raise NotImplementedError(\"TODO\")`, `pass  # TODO`, `TODO: implement`, elided code (`// ... rest of the code`), `// In a real app ...`, `// Simulate API call`, lorem ipsum and imports of mock data; info with the files that have most finds first."
+how: "Matches code outside tests, docs, examples and stories (languages and left-out paths in `data/code-paths.yml`), comments included, against `data/code-quality.yml`: `throw new Error(\"Not implemented\")`, `panic(\"TODO\")`, `raise NotImplementedError(\"TODO\")`, `pass  # TODO`, `TODO: implement`, elided code (`// ... rest of the code`), `// In a real app ...`, `// Simulate API call`, lorem ipsum and imports of mock data; info with the files that have most finds first; gives info instead of passing when one of its files is over the `repo` limit in `data/thresholds.yml` or only a Git LFS pointer."
 fix_hint:
   de: "Jede Fundstelle umsetzen oder die Funktion aus der Oberfläche nehmen, bis sie echt ist. Beispieldaten nur in Tests und Stories."
   en: "Implement each find or take the feature out of the interface until it is real. Keep sample data in tests and stories."

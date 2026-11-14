@@ -1,4 +1,4 @@
-import { FIXTURES, capped, defineRepoCheck, loadYaml, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { FIXTURES, capped, defineRepoCheck, loadYaml, msg, pass, skip, unreadResult, warn, type Finding } from "../../../src/sdk.ts";
 
 const DATA = loadYaml<Record<string, Record<string, string>>>("data/insecure-code.yml")["security/example-env-values"];
 const LIMITS = loadYaml<Record<string, { min_length: number; min_entropy: number }>>("data/thresholds.yml")["security/example-env-values"];
@@ -49,6 +49,6 @@ export default defineRepoCheck({
       });
     }
     if (found.length) return warn(msg("suspect", { count: found.length }), capped(found));
-    return pass(msg("none", { count: templates.length }));
+    return unreadResult(repo, templates) ?? pass(msg("none", { count: templates.length }));
   },
 });

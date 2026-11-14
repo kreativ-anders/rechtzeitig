@@ -5,6 +5,6 @@ const PATTERNS = loadYaml<Record<string, PatternSet>>("data/insecure-code.yml")[
 export default defineRepoCheck({
   run(repo) {
     const files = codeFiles(repo);
-    return codeResult(files, findInCode(repo, files, PATTERNS));
+    return codeResult(repo, files, findInCode(repo, files, PATTERNS));
   },
 });

@@ -1,4 +1,4 @@
-import { WORKFLOWS, capped, defineRepoCheck, fail, loadYaml, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { WORKFLOWS, capped, defineRepoCheck, fail, loadYaml, msg, pass, skip, unreadResult, warn, type Finding } from "../../../src/sdk.ts";
 
 const DATA = loadYaml<{
   untrusted: string[];
@@ -87,10 +87,10 @@ export default defineRepoCheck({
       }
     }
 
-    if (!agents) return pass(msg("no_agents", { count: workflows.length }));
+    if (!agents) return unreadResult(repo, workflows) ?? pass(msg("no_agents", { count: workflows.length }));
     const all = [...failed, ...warned];
     if (failed.length) return fail(msg("risky", { count: all.length }), capped(all));
     if (warned.length) return warn(msg("risky", { count: warned.length }), capped(warned));
-    return pass(msg("none", { count: agents }));
+    return unreadResult(repo, workflows) ?? pass(msg("none", { count: agents }));
   },
 });

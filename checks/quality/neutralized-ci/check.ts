@@ -1,4 +1,4 @@
-import { WORKFLOWS, capped, codeFiles, defineRepoCheck, findInCode, loadYaml, msg, pass, skip, toFindings, warn, type Finding, type PatternSet } from "../../../src/sdk.ts";
+import { WORKFLOWS, capped, codeFiles, defineRepoCheck, findInCode, loadYaml, msg, pass, skip, toFindings, unreadResult, warn, type Finding, type PatternSet } from "../../../src/sdk.ts";
 
 const DATA = loadYaml<Record<string, { check_words: string; harmless_steps: string; commands: PatternSet; suppressions: PatternSet }>>("data/code-quality.yml")["quality/neutralized-ci"];
 const LIMITS = loadYaml<Record<string, { top_lines: number; min_files: number; min_share: number }>>("data/thresholds.yml")["quality/neutralized-ci"];
@@ -60,6 +60,6 @@ export default defineRepoCheck({
       found.push({ key: "suppressed_files", params: { count: files.length, total: sameLanguage } }, ...files.map((file) => ({ file, line: suppressed.find((s) => s.file === file)!.line, key: "suppressed" })));
     }
     if (found.length) return warn(msg("neutralized", { count: found.length }), capped(found));
-    return pass(msg("none", { count: workflows.length }));
+    return unreadResult(repo, code.map((f) => f.file)) ?? pass(msg("none", { count: workflows.length }));
   },
 });

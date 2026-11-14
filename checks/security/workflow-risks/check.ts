@@ -1,4 +1,4 @@
-import { WORKFLOWS, defineRepoCheck, fail, lineAt, loadYaml, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { WORKFLOWS, defineRepoCheck, fail, lineAt, loadYaml, msg, pass, skip, unreadResult, warn, type Finding } from "../../../src/sdk.ts";
 
 const DATA = loadYaml<{ untrusted: string[]; privileged_triggers: string[]; pr_head: string[]; pipe_to_shell: string }>(
   "data/workflow-risks.yml",
@@ -77,6 +77,6 @@ export default defineRepoCheck({
 
     if (failed.length) return fail(msg("risky", { count: failed.length + warned.length }), [...failed, ...warned]);
     if (warned.length) return warn(msg("risky", { count: warned.length }), warned);
-    return pass(msg("none", { count: workflows.length }));
+    return unreadResult(repo, workflows) ?? pass(msg("none", { count: workflows.length }));
   },
 });

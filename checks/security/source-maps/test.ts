@@ -44,3 +44,17 @@ test("skips a site without scripts of its own", async () => {
   const site = await siteFromFiles({ "index.html": "<html><body>Hello</body></html>" });
   assert.equal((await runCrossCheck(here, site, repo)).status, "skip");
 });
+
+// "No evidence means pass" review: a map request without an answer, a cut script or the map cap leave maps unchecked.
+test("no pass when a source map could not be checked", async () => {
+  const { fakeContext } = await import("../../../test/helpers.ts");
+  const script = "https://example.de/app.js";
+  const code = [{ url: script, type: "script" as const, body: "x;", truncated: false }];
+  const map = (status: number) => ({ url: `${script}.map`, script, status, sources: [], content: false });
+  assert.equal((await runCrossCheck(here, fakeContext({}, { code, sourceMaps: [map(404)] }), repo)).status, "pass");
+  const unanswered = await runCrossCheck(here, fakeContext({}, { code, sourceMaps: [map(0)] }), repo);
+  assert.equal(unanswered.status, "info");
+  assert.deepEqual(unanswered.raw.details?.map((d) => d.key), ["unanswered"]);
+  const cut = await runCrossCheck(here, fakeContext({}, { code: [{ ...code[0], truncated: true }], sourceMaps: [] }), repo);
+  assert.deepEqual(cut.raw.details?.map((d) => d.key), ["cut"]);
+});

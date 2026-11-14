@@ -99,3 +99,15 @@ test("passes when the own server's IP country is inside the EEA", async () => {
   assert.equal(result.raw.message.key, "none_outside");
   assert.match(result.details?.[0] ?? "", /example\.de is in DE by its IP address/);
 });
+
+// "No evidence means pass" review: services loaded by scripts on a page whose JavaScript load failed are unknown.
+test("no pass when a page did not load with JavaScript", async () => {
+  const { failedJsPage, fakeLink, fakePage } = await import("../../../test/helpers.ts");
+  const start = fakePage("https://example.de/", { links: [fakeLink("Datenschutz", "https://example.de/datenschutz")] });
+  const policy = fakePage("https://example.de/datenschutz", { text: "Datenschutzerklärung" });
+  const run = async (pages: Array<ReturnType<typeof fakePage>>) => rendered(here, await check.run(fakeContext(start.js, { start, pages })));
+  assert.equal((await run([start, policy])).status, "pass");
+  const result = await run([start, policy, failedJsPage("https://example.de/blog")]);
+  assert.equal(result.status, "warn");
+  assert.equal(result.raw.details?.at(-1)?.key, "js_failed");
+});

@@ -142,6 +142,14 @@ export function fakePage(url: string, part: Partial<Snapshot> = {}): Page {
   return { url, noJs: snapshot, js: snapshot };
 }
 
+/** A page whose load without JavaScript gave `noJs` and whose load with JavaScript failed (ctx.jsFailed). */
+export function failedJsPage(url: string, noJs: Partial<Snapshot> = {}): Page {
+  return { ...fakePage(url, noJs), js: { ...emptySnapshot(url), error: "Timeout" } };
+}
+
+/** A file larger than the `repo` limit in data/thresholds.yml, so the repository scan does not read it. */
+export const TOO_LARGE = "x".repeat(1_100_000);
+
 /** A link as capture.ts records it: the label is the normalized text plus the URL path. A link without href is a button. */
 export function fakeLink(text: string, href: string | null = null, area: Area = "main"): Link {
   const path = href ? new URL(href).pathname : "";

@@ -66,3 +66,15 @@ test("reads every Google tag endpoint", async () => {
 test("a tag path on a host that is not Google's does not count", async () => {
   assert.equal((await runFake(here, requests("https://stats.example-cdn.com/g/collect?gcs=G111"))).status, "skip");
 });
+
+// "No evidence means pass" review: a tag on a page whose JavaScript load failed may report another state.
+test("no pass when a page did not load with JavaScript", async () => {
+  const { failedJsPage, fakeContext, fakePage, rendered } = await import("../../../test/helpers.ts");
+  const { default: check } = await import("./check.ts");
+  const start = fakePage("https://example.de/", requests("https://region1.google-analytics.com/g/collect?v=2&gcs=G100"));
+  const run = async (pages: Array<ReturnType<typeof fakePage>>) => rendered(here, await check.run(fakeContext(start.js, { start, pages })));
+  assert.equal((await run([start])).status, "pass");
+  const result = await run([start, failedJsPage("https://example.de/blog")]);
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["/blog: load with JavaScript failed (Timeout)"]);
+});

@@ -77,3 +77,10 @@ test("the same lockfile is named once", async () => {
   const result = await runRepoCheck(here, files, { osv: "ok", vulnerabilities: [vuln("pkg:npm/lodash@4.17.20", "HIGH")] });
   assert.equal(result.details?.length, 1);
 });
+
+// "No evidence means pass" review: the packages of a lockfile that could not be read were never asked about.
+test("no pass when a lockfile could not be read", async () => {
+  const result = await runRepoCheck(here, { ...files, "composer.lock": "{" }, { osv: "ok" });
+  assert.equal(result.status, "info");
+  assert.deepEqual(result.raw.details?.map((d) => [d.file, d.key]), [["composer.lock", "not_asked"]]);
+});

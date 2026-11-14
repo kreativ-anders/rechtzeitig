@@ -1,4 +1,4 @@
-import { defineCheck, info, loadYaml, msg, pass, siteCookies, skip, warn, type Finding } from "../../../src/sdk.ts";
+import { defineCheck, info, jsIncomplete, loadYaml, msg, pass, siteCookies, skip, warn, type Finding } from "../../../src/sdk.ts";
 
 const MAX_DAYS = loadYaml<Record<string, { max_days: number }>>("data/thresholds.yml")["privacy/cookie-lifetime"].max_days;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -22,6 +22,6 @@ export default defineCheck({
     const details = [...consent, ...own].map(finding);
     if (consent.length) return warn(msg("too_long", { count: consent.length, max: MAX_DAYS }), details);
     if (own.length) return info(msg("own_long", { count: own.length, max: MAX_DAYS }), details);
-    return pass(msg("within", { count: cookies.length, max: MAX_DAYS }));
+    return jsIncomplete(ctx) ?? pass(msg("within", { count: cookies.length, max: MAX_DAYS }));
   },
 });

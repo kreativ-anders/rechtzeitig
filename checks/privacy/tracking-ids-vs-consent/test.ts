@@ -46,3 +46,15 @@ test("gives info, not pass, when it found no id but could not read some code", a
   const result = await runCrossCheck(here, await page(), { "src/app.js": "console.log(1);", "src/big.js": "x".repeat(1_100_000) });
   assert.equal(result.status, "info");
 });
+
+// "No evidence means pass" review: a tag on a page whose JavaScript load failed may have sent the id there.
+test("no pass for held-back ids when a page did not load with JavaScript", async () => {
+  const { failedJsPage, fakeContext, fakePage } = await import("../../../test/helpers.ts");
+  const start = fakePage("https://example.de/");
+  const files = { ...layout, "package.json": '{"dependencies":{"vanilla-cookieconsent":"3.0.1"}}' };
+  const run = (pages: Array<ReturnType<typeof fakePage>>) => runCrossCheck(here, fakeContext(start.js, { start, pages }), files);
+  assert.equal((await run([start])).status, "pass");
+  const result = await run([start, failedJsPage("https://example.de/blog")]);
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["/blog: load with JavaScript failed (Timeout)"]);
+});

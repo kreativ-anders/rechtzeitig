@@ -1,4 +1,4 @@
-import { CODE_FILES, capped, consentInRepo, consentOnSite, defineCrossCheck, fail, grepFiles, info, msg, pass, siteRequests, skip, warn, type Finding, type Vendor } from "../../../src/sdk.ts";
+import { CODE_FILES, capped, consentInRepo, consentOnSite, defineCrossCheck, fail, grepFiles, info, jsIncomplete, msg, pass, siteRequests, skip, warn, type Finding, type Vendor } from "../../../src/sdk.ts";
 
 export default defineCrossCheck({
   run(ctx, repo) {
@@ -33,6 +33,6 @@ export default defineCrossCheck({
     const tool = consentInRepo(repo);
     const anyTool = site.banner || site.platforms.length > 0 || tool.packages.length > 0 || tool.scripts.length > 0;
     if (!anyTool) return warn(msg("no_consent_tool", { count: notSeen.length }), capped(notSeen));
-    return pass(msg("held_back", { count: notSeen.length }), capped(notSeen.map((f) => ({ ...f, key: "held" }))));
+    return jsIncomplete(ctx) ?? pass(msg("held_back", { count: notSeen.length }), capped(notSeen.map((f) => ({ ...f, key: "held" }))));
   },
 });

@@ -1,4 +1,4 @@
-import { WORKFLOWS, defineRepoCheck, info, lineAt, msg, pass, skip, type Finding } from "../../../src/sdk.ts";
+import { WORKFLOWS, defineRepoCheck, info, lineAt, msg, pass, skip, unreadResult, type Finding } from "../../../src/sdk.ts";
 
 const USES = /^[ \t]*-?[ \t]*uses:[ \t]*["']?([^"'\s#]+)/gm;
 
@@ -15,6 +15,6 @@ export default defineRepoCheck({
         .map((m) => ({ file, line: lineAt(text, m.index), text: m[1] }));
     });
     if (unpinned.length) return info(msg("unpinned", { count: unpinned.length }), unpinned);
-    return pass(msg("pinned"));
+    return unreadResult(repo, workflows) ?? pass(msg("pinned"));
   },
 });

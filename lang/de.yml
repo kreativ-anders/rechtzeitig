@@ -224,6 +224,14 @@ messages:
     not_run_url: "Nicht gelaufen: braucht eine Website. Input url setzen."
     not_run_repository: "Nicht gelaufen: braucht das Repository. actions/checkout vor rechtzeitig ausführen."
     no_code: "Kein Quellcode in einer Sprache, die diese Prüfung liest (data/code-paths.yml), also nichts zu prüfen."
+    unread_gap:
+      one: "Nichts gefunden in den gelesenen Dateien, aber {count} Datei war nicht lesbar (zu groß oder nur ein Git-LFS-Zeiger), daher kein Bestanden."
+      other: "Nichts gefunden in den gelesenen Dateien, aber {count} Dateien waren nicht lesbar (zu groß oder nur Git-LFS-Zeiger), daher kein Bestanden."
+    unread_file: "Nicht gelesen: zu groß oder nur ein Git-LFS-Zeiger."
+    js_incomplete:
+      one: "Nichts gefunden auf den gesehenen Seiten, aber {count} Seite lud nicht mit JavaScript. Was Skripte dort laden oder setzen, ist unbekannt, daher kein Bestanden."
+      other: "Nichts gefunden auf den gesehenen Seiten, aber {count} Seiten luden nicht mit JavaScript. Was Skripte dort laden oder setzen, ist unbekannt, daher kein Bestanden."
+    js_failed: "{page}: Laden mit JavaScript fehlgeschlagen ({error})"
     not_run_module: "Nicht gelaufen: Weder die Gruppe {module} noch der Bereich {scope} steht in modules ({modules}). Leeres modules startet alle Prüfungen."
     not_run_both_url: "Nicht gelaufen: liest Website und Repository zusammen, und die Website fehlt. Input url setzen."
     not_run_both_repository: "Nicht gelaufen: liest Website und Repository zusammen, und der Checkout fehlt. actions/checkout vor rechtzeitig ausführen."
@@ -599,7 +607,15 @@ messages:
     leaks: "Fehlerseiten zeigen technische Details, die Angreifern helfen."
     versions: "Antwort-Header verraten Software und Versionen."
     none: "Fehlerseiten und Header verraten keine technischen Details."
+    not_probed: "Keine Fehlerseite angefragt, also nichts zu prüfen."
+    unanswered:
+      one: "Die {count} Anfrage nach einer Fehlerseite blieb ohne Antwort, die Fehlerseiten sind also nicht geprüft."
+      other: "Keine der {count} Anfragen nach einer Fehlerseite bekam eine Antwort, die Fehlerseiten sind also nicht geprüft."
   security/exposed-files:
+    not_probed: "Kein privater Pfad angefragt, also nichts zu prüfen."
+    unanswered:
+      one: "Unter den Pfaden mit Antwort ist keine private Datei öffentlich, aber {count} von {total} Pfaden blieb ohne Antwort und ist nicht geprüft."
+      other: "Unter den Pfaden mit Antwort ist keine private Datei öffentlich, aber {count} von {total} Pfaden blieben ohne Antwort und sind nicht geprüft."
     exposed:
       one: "{count} private Datei lässt sich herunterladen. Entfernen oder im Webserver sperren."
       other: "{count} private Dateien lassen sich herunterladen. Entfernen oder im Webserver sperren."
@@ -806,6 +822,7 @@ messages:
       one: "Ohne JavaScript zeigt die Startseite nur {shown} von {count} Zeichen."
       other: "Ohne JavaScript zeigt die Startseite nur {shown} von {count} Zeichen."
     render_html: "Inhalte auf dem Server oder beim Build als HTML erzeugen. Dann funktionieren sie für alle Besucher und laden schneller."
+    not_compared: "Die Startseite lud nicht mit und ohne JavaScript, also wurde nichts verglichen."
   sustainability/legal-pages-without-js:
     label_imprint: "Impressum"
     label_privacy: "Datenschutzerklärung"
@@ -814,6 +831,10 @@ messages:
     no_links: "Kein Link zu Impressum oder Datenschutzerklärung gefunden (siehe legal/*)."
     needs_js: "Pflichtangaben brauchen JavaScript. Besucher ohne JavaScript und viele Crawler finden sie nicht."
     readable: "Beide sind verlinkt und ohne JavaScript lesbar."
+    not_loaded: "{page}: die verlinkte Seite wurde ohne JavaScript nicht geladen, ihr Text ist also nicht geprüft."
+    unchecked:
+      one: "Die Links funktionieren ohne JavaScript, aber {count} verlinkte Seite ließ sich ohne JavaScript nicht lesen."
+      other: "Die Links funktionieren ohne JavaScript, aber {count} verlinkte Seiten ließen sich ohne JavaScript nicht lesen."
   sustainability/green-hosting:
     none: "Keine Abfrage zu grünem Hosting für diesen Host (lokale Adresse oder IP)."
     failed: "Die Green Web Foundation konnte zu {host} nicht befragt werden: {error}."
@@ -979,6 +1000,10 @@ messages:
     none:
       one: "{count} Manifest passt zu seinem Lockfile."
       other: "{count} Manifeste passen zu ihren Lockfiles."
+    not_compared:
+      one: "{count} Manifest nicht verglichen: ein Lockfile daneben war nicht lesbar (bun.lockb, zu groß, ungültig)."
+      other: "{count} Manifeste nicht verglichen: ein Lockfile daneben war nicht lesbar (bun.lockb, zu groß, ungültig)."
+    nothing_compared: "Kein Manifest hat ein Lockfile zum Vergleichen."
   legal/licenses:
     commons_clause: "Projekt: {project}. GPL-3.0 § 7 erlaubt Empfängern, „weitere Beschränkungen“ zu entfernen; die Commons Clause greift daher womöglich nicht."
     restricted: "{name}@{version}: {license}. Schränkt die Nutzung ein, oft die kommerzielle."
@@ -1191,6 +1216,11 @@ messages:
     none:
       one: "Keine bekannten Schwachstellen in {count} Komponente."
       other: "Keine bekannten Schwachstellen in {count} Komponenten."
+    gaps:
+      one: "Keine bekannten Schwachstellen in {count} Komponente. Nicht geprüft: die Pakete nicht lesbarer Paketdateien ({gaps})."
+      other: "Keine bekannten Schwachstellen in {count} Komponenten. Nicht geprüft: die Pakete nicht lesbarer Paketdateien ({gaps})."
+    not_asked: "Lockfile nicht lesbar; seine Pakete sind nicht gegen OSV geprüft. Siehe security/sbom."
+    not_asked_unsupported: "Noch kein Parser für {ecosystem}; die Pakete sind nicht gegen OSV geprüft."
     issue: "{name}@{version}{dev}: {id}{severity}.{summary}{fixed}"
     dev: " (dev)"
     fixed: " Behoben in {version}."
@@ -1291,6 +1321,16 @@ messages:
     none:
       one: "Das {count} Skript der Website liefert keine Source Map aus."
       other: "Die {count} Skripte der Website liefern keine Source Maps aus."
+    unchecked:
+      one: "Keine öffentliche Source Map für das {count} Skript der Website gefunden, aber nicht jede Map ließ sich prüfen."
+      other: "Keine öffentliche Source Map für die {count} Skripte der Website gefunden, aber nicht jede Map ließ sich prüfen."
+    unanswered:
+      one: "{count} Anfrage nach einer Source Map blieb ohne Antwort."
+      other: "{count} Anfragen nach Source Maps blieben ohne Antwort."
+    cut:
+      one: "{count} ausgelieferte Datei wurde gekürzt oder nicht behalten (Grenzen in data/thresholds.yml code), ihre sourceMappingURL fehlt vielleicht."
+      other: "{count} ausgelieferte Dateien wurden gekürzt oder nicht behalten (Grenzen in data/thresholds.yml code), ihre sourceMappingURL fehlt vielleicht."
+    max_maps: "Nur die ersten {count} Source Maps wurden angefragt (code.max_maps in data/thresholds.yml)."
     public_maps:
       one: "{count} Source Map ist öffentlich, aber keiner ihrer Pfade ist eine Datei dieses Repositorys."
       other: "{count} Source Maps sind öffentlich, aber keiner ihrer Pfade ist eine Datei dieses Repositorys."

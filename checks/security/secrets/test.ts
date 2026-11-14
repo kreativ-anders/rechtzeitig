@@ -139,3 +139,11 @@ test("skips fixtures, snapshots, lockfiles, minified files and source maps", asy
   for (const file of skipped) assert.equal((await runRepoCheck(here, { [file]: line, "src/ok.ts": "ok" })).status, "pass", file);
   assert.equal((await runRepoCheck(here, { "src/fixtures.ts": line })).status, "fail");
 });
+
+// "No evidence means pass" review: with not a single file read, nothing was looked at.
+test("no pass when no file could be read", async () => {
+  const { TOO_LARGE } = await import("../../../test/helpers.ts");
+  const result = await runRepoCheck(here, { "dump.sql": TOO_LARGE });
+  assert.equal(result.status, "info");
+  assert.equal(result.message, "1 file not read: binary, too large or only a Git LFS pointer.");
+});
