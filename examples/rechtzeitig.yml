@@ -1,0 +1,22 @@
+# Copy to .github/rechtzeitig.yml in your repository to turn rules off that do not fit your project.
+# A turned-off rule still runs; the report shows it as suppressed, with your reason. An entry without
+# a valid rule id, category or reason turns nothing off, and QUAL-SUPPRESS-001 names it with its line.
+# Rule ids: https://rechtzeitig.dev/checks.html · Fields: https://rechtzeitig.dev/workflow.html#suppress
+# yaml-language-server: $schema=https://rechtzeitig.dev/rechtzeitig.schema.json
+
+suppress:
+  # The duty does not apply to this project. expires is optional.
+  # - rule: A11Y-ALT-001
+  #   category: not-applicable
+  #   reason: "Microenterprise, the BFSG does not apply (§ 3 Abs. 3 BFSG)"
+
+  # The rule is wrong here. Please also report it: https://github.com/kreativ-anders/rechtzeitig/issues
+  # - rule: SEC-SECRETS-001
+  #   category: false-positive
+  #   reason: "Test key of the TLS fixtures, not used anywhere else"
+
+  # The finding is real and accepted for a time. expires is required, at most a year ahead.
+  # - rule: SEC-HDR-001
+  #   category: accepted-risk
+  #   reason: "Content-Security-Policy ships with the next frontend release"
+  #   expires: 2027-03-31

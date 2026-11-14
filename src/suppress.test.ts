@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { applySuppressions, loadSuppressions, parseSuppressions, ruleIds, SUPPRESSIONS_RULE } from "./suppress.ts";
@@ -101,4 +101,13 @@ test("a suppressed rule keeps its message, details and the status it would have;
   assert.deepEqual([alt.message, alt.details, alt.suppression?.status, alt.suppression?.file, alt.suppression?.line], ["m", ["d"], "fail", ".github/rechtzeitig.yml", 2]);
   assert.deepEqual([hdr.status, hdr.suppression], ["skip", undefined]);
   assert.deepEqual([other.status, other.suppression], ["warn", undefined]);
+});
+
+test("examples/rechtzeitig.yml turns nothing off as copied, and its commented entries are valid", () => {
+  const text = readFileSync(new URL("../examples/rechtzeitig.yml", import.meta.url), "utf8");
+  assert.deepEqual(parseSuppressions(text, today), { entries: [], problems: [] });
+  const uncommented = text.replace(/^  # (- |  )/gm, "  $1");
+  const s = parseSuppressions(uncommented, today);
+  assert.deepEqual(s.problems, []);
+  assert.deepEqual(s.entries.map((e) => e.category), ["not-applicable", "false-positive", "accepted-risk"]);
 });
