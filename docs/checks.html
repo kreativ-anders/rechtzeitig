@@ -1567,7 +1567,7 @@
 </div>
 </section>
 <section class="module" id="accessibility" data-module="accessibility">
-<h3>Accessibility <small>8 rules</small></h3>
+<h3>Accessibility <small>9 rules</small></h3>
 <div class="rules">
 <details class="rule" id="A11Y-ALT-001" data-module="accessibility" data-scope="website" data-severity="medium" data-search="a11y-alt-001 accessibility/alt-text images have a text alternative bilder haben einen alternativtext bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.1.1 (wcag 2.1 success criterion 1.1.1) runs the axe-core rules listed for `accessibility/alt-text` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists images, image buttons, image maps and svg or aria images without a text alternative, with page and css selector; it only warns, since the bfsg does not apply to every site.">
 <summary>
@@ -1635,6 +1635,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/autoplay-media"><code>checks/accessibility/autoplay-media</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bfsg/">gesetze-im-internet.de</a>, <a href="https://www.gesetze-im-internet.de/bfsgv/">gesetze-im-internet.de</a>, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">etsi.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">w3.org</a>, <a href="https://www.w3.org/WAI/WCAG21/Understanding/audio-control.html">w3.org</a>, <a href="https://www.w3.org/TR/web-sustainability-guidelines/#user-controlled-media">w3.org</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-04">2026-11-04</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="A11Y-BP-001" data-module="accessibility" data-scope="website" data-severity="info" data-search="a11y-bp-001 accessibility/best-practices landmarks, dialogs and live regions follow wai-aria best practice landmarks, dialoge und live-regionen folgen den empfehlungen von wai-aria no legal basis not a wcag requirement, but wai-aria and html recommend it: screen reader users jump by landmarks, recognize dialogs by their name and hear live regions without one interrupting the other. runs the axe-core rules listed for `accessibility/best-practices` in `data/accessibility.yml`, including its own `custom` rules, on every visited own page with javascript on, inside the browser and without sending anything, and lists more than one banner or main landmark, dialogs without an accessible name, `aria-hidden=&quot;false&quot;`, and pages with more live regions than `max_live_regions` in `data/thresholds.yml`, with page and css selector; it only gives hints.">
+<summary>
+<span class="rule-head"><span class="rule-id">A11Y-BP-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="1" title="Severity: info"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">info</span></span></span>
+<span class="rule-title">Landmarks, dialogs and live regions follow WAI-ARIA best practice</span>
+<span class="rule-title-de" lang="de">Landmarks, Dialoge und Live-Regionen folgen den Empfehlungen von WAI-ARIA</span>
+<span class="rule-law none">No legal basis: Not a WCAG requirement, but WAI-ARIA and HTML recommend it: screen reader users jump by landmarks, recognize dialogs by their name and hear live regions without one interrupting the other.</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Runs the axe-core rules listed for <code>accessibility/best-practices</code> in <code>data/accessibility.yml</code>, including its own <code>custom</code> rules, on every visited own page with JavaScript on, inside the browser and without sending anything, and lists more than one banner or main landmark, dialogs without an accessible name, <code>aria-hidden=&quot;false&quot;</code>, and pages with more live regions than <code>max_live_regions</code> in <code>data/thresholds.yml</code>, with page and CSS selector; it only gives hints.</dd></div>
+<div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
+<div><dt>How to fix</dt><dd>Use only one top-level &lt;header&gt; or role=banner and only one visible &lt;main&gt; per page. Give every dialog (&lt;dialog&gt;, role=dialog or alertdialog) a name with aria-labelledby or aria-label. Remove aria-hidden=&quot;false&quot;; leaving the attribute out means the same. Collect announcements in as few live regions (aria-live, role=status or alert) as possible.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/accessibility/best-practices"><code>checks/accessibility/best-practices</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.w3.org/TR/wai-aria-1.2/#banner">w3.org</a>, <a href="https://www.w3.org/TR/wai-aria-1.2/#main">w3.org</a>, <a href="https://html.spec.whatwg.org/multipage/grouping-content.html#the-main-element">html.spec.whatwg.org</a>, <a href="https://www.w3.org/TR/wai-aria-1.2/#dialog">w3.org</a>, <a href="https://www.w3.org/TR/wai-aria-1.2/#aria-hidden">w3.org</a>, <a href="https://www.w3.org/TR/wai-aria-1.2/#dfn-live-region">w3.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-14">2026-11-14</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="A11Y-CONTRAST-001" data-module="accessibility" data-scope="website" data-severity="low" data-search="a11y-contrast-001 accessibility/contrast text has enough contrast text hat genug kontrast bfsg with § 3 bfsgv; en 301 549 v3.2.1 clause 9.1.4.3 (wcag 2.1 success criterion 1.4.3) runs the axe-core rules listed for `accessibility/contrast` in `data/accessibility.yml` on every visited own page with javascript on, inside the browser and without sending anything, and lists text whose contrast against its background is below 4.5:1 (3:1 for large text), only where axe-core can compute the background; text over images or gradients is left out, with page and css selector; it only warns, since the bfsg does not apply to every site.">

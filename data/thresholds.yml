@@ -40,6 +40,11 @@ crawl:
   # Links followed per link concept (imprint, privacy, ...), after deduping.
   legal_links_per_concept: 2
 
+accessibility/best-practices:
+  # Warn for a page with more live regions than this: announcements of several regions can interrupt
+  # each other (Safari Web Inspector's accessibility audit warns from two on).
+  max_live_regions: 1
+
 # Reject button less prominent than the accept button. The authorities set no fixed numbers
 # (DSK OH Telemedien Rn. 125, EDPB Cookie Banner Taskforce Rn. 17), so these only flag clear cases.
 privacy/consent-equal-choice:

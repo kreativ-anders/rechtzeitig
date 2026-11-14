@@ -40,6 +40,12 @@ test("runs the selected axe-core rules with JavaScript on, also under a strict C
   }
 });
 
+test("every own axe-core rule in data/accessibility.yml belongs to a check", () => {
+  const a11y = loadYaml<{ rules: Record<string, string[]>; custom: Record<string, string> }>("data/accessibility.yml");
+  const listed = Object.values(a11y.rules).flat();
+  for (const id of Object.keys(a11y.custom)) assert.ok(listed.includes(id), `${id} is in custom but in no check`);
+});
+
 test("text, links and link labels are capped", async () => {
   const s = await site(`<p>${"x ".repeat(150_000)}</p>${`<a href="/a">${"y".repeat(1000)}</a>`.repeat(3000)}`);
   const context = await (await browser).newContext({ javaScriptEnabled: false });

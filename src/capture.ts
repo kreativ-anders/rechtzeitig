@@ -216,7 +216,15 @@ const toForm = (raw: RawForm): Form => ({ ...raw, links: raw.links.map(toLink) }
 
 // ---------- axe-core
 
-const AXE_RULES = [...new Set(Object.values(loadYaml<{ rules: Record<string, string[]> }>("data/accessibility.yml").rules).flat())];
+const A11Y = loadYaml<{ rules: Record<string, string[]>; custom?: Record<string, string> }>("data/accessibility.yml");
+const AXE_RULES = [...new Set(Object.values(A11Y.rules).flat())];
+/** Own rules (data/accessibility.yml `custom`): every element matching the selector fails, hidden ones included. */
+const AXE_CUSTOM = Object.entries(A11Y.custom ?? {}).filter(([id]) => AXE_RULES.includes(id));
+const axeConfigure = () =>
+  AXE_CUSTOM.length
+    ? `axe.configure({ checks: ${JSON.stringify(AXE_CUSTOM.map(([id]) => id))}.map((id) => ({ id, evaluate: () => false })),
+        rules: ${JSON.stringify(AXE_CUSTOM.map(([id, selector]) => ({ id, selector, excludeHidden: false, any: [id], tags: ["rechtzeitig"], metadata: { description: id, help: id } })))} });`
+    : "";
 const AXE = loadYaml<{ axe: { timeout_ms: number; max_targets: number } }>("data/thresholds.yml").axe;
 let axeSource: string | undefined;
 // axe-core's own build, unchanged, with its license header. Read once, on the first page that needs it.
@@ -237,7 +245,7 @@ async function runAxe(page: PlaywrightPage, ms: number): Promise<AxeViolation[] 
     xpath: false,
     performanceTimer: false,
   };
-  const script = `(async () => {\n${axeScript()}\n;const r = await axe.run(document, ${JSON.stringify(options)});
+  const script = `(async () => {\n${axeScript()}\n;${axeConfigure()}const r = await axe.run(document, ${JSON.stringify(options)});
     return r.violations.map((v) => ({ rule: v.id, count: v.nodes.length, targets: v.nodes.slice(0, ${AXE.max_targets}).map((n) => n.target.join(" ")) }));
   })()`;
   const [deadline, stop] = timeoutAfter(ms, "axe-core did not finish in time");

@@ -689,6 +689,17 @@ messages:
     more:
       one: "and {count} more element"
       other: "and {count} more elements"
+  accessibility/best-practices:
+    none:
+      one: "axe-core found no deviation from WAI-ARIA best practice on {count} page."
+      other: "axe-core found no deviation from WAI-ARIA best practice on {count} pages."
+    found:
+      one: "{count} element deviates from WAI-ARIA best practice (axe-core): duplicate landmark, dialog without name, aria-hidden=\"false\" or too many live regions."
+      other: "{count} elements deviate from WAI-ARIA best practice (axe-core): duplicate landmarks, dialogs without name, aria-hidden=\"false\" or too many live regions."
+    node: "{page}: {target} ({rule})"
+    more:
+      one: "and {count} more element"
+      other: "and {count} more elements"
   accessibility/contrast:
     none:
       one: "axe-core found no text with too little contrast on {count} page."
