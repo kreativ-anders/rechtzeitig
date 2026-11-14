@@ -106,8 +106,13 @@ test("a suppressed rule keeps its message, details and the status it would have;
 test("examples/rechtzeitig.yml turns nothing off as copied, and its commented entries are valid", () => {
   const text = readFileSync(new URL("../examples/rechtzeitig.yml", import.meta.url), "utf8");
   assert.deepEqual(parseSuppressions(text, today), { entries: [], problems: [] });
-  const uncommented = text.replace(/^  # (- |  )/gm, "  $1");
-  const s = parseSuppressions(uncommented, today);
+  const [examples, list] = text.split(/^.*# rules:start.*$/m);
+  const s = parseSuppressions(examples.replace(/^  # (- |  )/gm, "  $1"), today);
   assert.deepEqual(s.problems, []);
   assert.deepEqual(s.entries.map((e) => e.category), ["not-applicable", "false-positive", "accepted-risk"]);
+  // Every rule but this one is listed; an uncommented line alone names a known rule and asks for category and reason.
+  const listed = [...list.matchAll(/^  # - rule: (\S+)/gm)].map((m) => m[1]);
+  assert.deepEqual(new Set(listed), new Set([...ruleIds()].filter((id) => id !== SUPPRESSIONS_RULE)));
+  const one = parseSuppressions(`suppress:\n  - rule: ${listed[0]}\n`, today);
+  assert.deepEqual(one.problems.map((p) => p.key), ["missing_category", "missing_reason"]);
 });
