@@ -1,4 +1,4 @@
-import { defineRepoCheck, fail, findSecrets, info, msg, pass, redact, unreadResult, warn, type Finding } from "../../../src/sdk.ts";
+import { defineRepoCheck, fail, findSecrets, info, keyFiles, msg, pass, redact, unreadResult, warn, type Finding } from "../../../src/sdk.ts";
 
 // Generated or test files that often contain key-like strings.
 const SKIP = /(^|\/)(fixtures?|__snapshots__)\/|\.lock$|-lock\.(json|yaml)$|\.min\.(js|css)$|\.map$/;
@@ -7,7 +7,9 @@ export default defineRepoCheck({
   run(repo) {
     const found: Array<Finding & { severity: "fail" | "warn"; generic: boolean }> = [];
     const lfs = new Set(repo.coverage.lfs);
-    const scanned = repo.files.filter((f) => !SKIP.test(f));
+    // Key files (data/key-files.yml) are reported whole by security/key-files: one file, one finding.
+    const keyFile = new Set(keyFiles(repo).finds.map((f) => f.file));
+    const scanned = repo.files.filter((f) => !SKIP.test(f) && !keyFile.has(f));
     // Binary, too large, or only a Git LFS pointer: not looked at, so the result says how many.
     let unread = 0;
     for (const file of scanned) {

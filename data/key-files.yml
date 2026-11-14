@@ -1,0 +1,100 @@
+# Committed files that hold keys, credentials or database contents (security/key-files).
+# Changing an entry changes results: name this file in the commit message.
+#
+# exclude: regular expressions (case-insensitive) on the path. A matching file is a test key, an example or a
+#   template, or not one of these files at all, and is never a find. Vendored code, node_modules and fixtures are
+#   already left out (ownFiles in src/sdk.ts).
+#
+# files: one entry per kind of file, tried in order; the first entry that matches a file wins.
+#   kind: message key of the find in lang/*.yml `messages.security/key-files`.
+#   path: regular expression (case-insensitive) on the path.
+#   contains (text files): regular expressions (multiline), all of which the text must match. The line of the
+#     first one is the line of the find. Content beats the name: a `.pem` with only a certificate, a `.key`
+#     that is a Keynote file, or a `.npmrc` that reads its token from `${NPM_TOKEN}` is no find.
+#   binary: true for formats that are binary (SQLite, PKCS#12, pg_dump custom format). Only a file the scan
+#     found to be binary counts; a readable text file with that name is something else.
+#   small: true when a real file of this kind is always far below the `repo` read limit in data/thresholds.yml
+#     (keys, config files). A file over the limit or behind a Git LFS pointer is then not one of them and does not
+#     turn the result into info. Without it, such a file is unread and the result is info, not "no finding" (#85).
+#   level: fail = the content shows a key or credential; warn = the name or the format shows a file that may
+#     hold keys or personal data, but whether it does needs a look.
+
+exclude:
+  # A folder or file name with a part that says it is a test, an example, a template or a placeholder:
+  # test/, testdata/, test-fixtures/, integration_tests/, vectors/ (test vectors), sample-config/, server-test.key, example.pem.
+  # Keys and dumps there are throwaway values.
+  - '(^|[/._-])(?:tests?|testdata|fixtures?|spec|vectors|examples?|samples?|dummy|fake|mock|templates?|placeholder)(?:[._-][^/]*)?(?:/|$)'
+  # Template suffixes the line above misses: .npmrc.dist, id_rsa.tpl.
+  - '\.(?:example|sample|template|dist|defaults|tpl)$'
+  # Public halves of key pairs.
+  - '\.pub$'
+  # Windows thumbnail caches, binary files named *.db.
+  - '(^|/)(?:ehthumbs|ehthumbs_vista|thumbs)\.db$'
+
+files:
+  # PEM private key: OpenSSL, OpenSSH, PKCS#8, encrypted or not. A certificate or public key alone is no find.
+  - kind: private_key
+    path: '(\.(?:pem|key|crt|cer)|(^|/)id_(?:rsa|dsa|ecdsa|ed25519)(?:_sk)?(?:[._-][^/]*)?)$'
+    contains: ['^-----BEGIN (?:RSA |DSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY-----']
+    small: true
+    level: fail
+  # PuTTY private key: a key file with private lines (the public key alone is exported as .pub).
+  - kind: private_key
+    path: '\.ppk$'
+    contains: ['^PuTTY-User-Key-File-\d+:', '^Private-Lines:']
+    small: true
+    level: fail
+  # Google Cloud service account key: the JSON file the console downloads.
+  - kind: service_account
+    path: '\.json$'
+    contains: ['"type"\s*:\s*"service_account"', '"private_key"\s*:\s*"-----BEGIN']
+    small: true
+    level: fail
+  # npm registry credentials written into .npmrc instead of read from an environment variable with ${...}.
+  # A value starting with $ names a variable, not a token; < or your_ mark a placeholder.
+  - kind: registry_token
+    path: '(^|/)\.npmrc$'
+    contains: ['^\s*(?:[^#;\s][^=\s]*:)?_(?:authToken|auth|password)\s*=\s*(?!["'']?(?:\$|<|your[_-]))\S']
+    small: true
+    level: fail
+  # Yarn 2+ registry credentials written into .yarnrc.yml instead of read from ${NPM_TOKEN}.
+  - kind: registry_token
+    path: '(^|/)\.yarnrc\.yml$'
+    contains: ['^\s*npmAuth(?:Token|Ident)\s*:\s*(?!["'']?(?:\$|<|your[_-]))\S']
+    small: true
+    level: fail
+  # PyPI upload password or token in .pypirc. The file reads no environment variables.
+  - kind: registry_token
+    path: '(^|/)\.pypirc$'
+    contains: ['^\s*password\s*[:=]\s*(?!<|your[_-]|%\()\S']
+    small: true
+    level: fail
+  # Terraform state with resources: holds their attributes, often passwords and keys, in plain text.
+  - kind: terraform_state
+    path: '\.tfstate(?:\.backup)?$'
+    contains: ['"terraform_version"\s*:', '"resources"\s*:\s*\[\s*\{']
+    level: fail
+  # PKCS#12 keystore: usually a certificate with its private key, sometimes only trusted certificates.
+  - kind: keystore
+    path: '\.(?:p12|pfx)$'
+    binary: true
+    level: warn
+  # SQL dump with rows: the header of mysqldump, MariaDB, pg_dump, phpMyAdmin or Adminer, and INSERT or COPY data.
+  # A schema-only dump has no rows and is no find, also with only the version rows of a migration table
+  # (Rails structure.sql, Django, Flyway, Doctrine, Knex, Laravel).
+  - kind: database_dump
+    path: '\.(?:sql|dump)$'
+    contains:
+      - '^-- (?:MySQL dump|MariaDB dump|PostgreSQL database dump|Dumped from database version|phpMyAdmin SQL Dump|Adminer \S+ \S+ dump)'
+      - '^(?:INSERT INTO|COPY) (?![`"]?(?:public\.)?[`"]?(?:schema_migrations|ar_internal_metadata|django_migrations|flyway_schema_history|doctrine_migration_versions|knex_migrations|migrations)\b)\S'
+    level: warn
+  # pg_dump custom format.
+  - kind: database_dump
+    path: '\.dump$'
+    binary: true
+    level: warn
+  # SQLite and similar database files.
+  - kind: database_file
+    path: '\.(?:sqlite3?|db3?)$'
+    binary: true
+    level: warn

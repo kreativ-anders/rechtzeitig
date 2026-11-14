@@ -14,26 +14,25 @@ Decided against: a network monitor in CI such as `step-security/harden-runner`. 
 
 ## Next: repository
 
-Ordered by value per effort. The first five need only a new `data/*.yml` and the existing `RepoContext`.
+Ordered by value per effort. The first four need only a new `data/*.yml` and the existing `RepoContext`.
 
-1. Committed key and data files that `env-files` misses: `*.pem`, `*.key`, `*.p12`, `id_rsa*`, `*.tfstate`, service-account JSON, `.npmrc` with a token, database dumps (Art. 5 Abs. 1 lit. f, Art. 32 DSGVO).
-2. Third-party SDKs in the code as info with vendor and country, also without a website (Art. 28, 44 DSGVO). The `packages:` field in `data/third-parties.yml` exists; `privacy/sdks-in-privacy-policy` compares it with the privacy policy.
-3. Dockerfile and Compose: no `USER` or `USER root`, `:latest` base images, secrets in `ENV`/`ARG`, `privileged: true`, the Docker socket mounted, database ports published.
-4. CRA for repositories that are products (library, CLI, firmware): support period in `SECURITY.md` (Art. 13 Abs. 8 CRA) and releases with provenance or a signature. `security/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
-5. More patterns in `workflow-risks`: secrets echoed into logs, `secrets: inherit` to external workflows, self-hosted runners on pull requests.
-6. Runtimes past their end of life (`engines.node`, `.nvmrc`, `FROM php:7.4`, `requires-python`), dates in a data file.
-7. In code: `cors` with `origin: *` and credentials, in JS and header config files. `security/cors` checks only the headers the site sends.
-8. Secrets in the git history. By default only the commits a pull request or push adds; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
-9. Third-party hosts in templates and styles without a website scan, as a warning. With a URL, `privacy/google-fonts-source` covers Google Fonts.
-10. SBOM fields as BSI TR-03183-2 asks: hashes, supplier, dependency graph (CRA Annex I Part II).
-11. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go, and yarn.lock). Needs a registry API, so a switch. `legal/unknown-licenses` names them as not checked today.
-12. Registry lookup for `security/hallucinated-packages`: ask each registry's official API (npm registry, PyPI JSON API, crates.io, Packagist, pub.dev) whether a declared name exists and when it was first published, so a made-up or days-old name is a finding even when it is locked. Only package names leave the runner. Opt-in like every outside lookup (`registry-lookups: true`), listed in `SWITCHES`, in "Data that leaves the runner" and in `docs/getting-started.html`. The offline part (names missing from the lockfile, look-alikes of popular names) is done.
-13. Infrastructure code: Terraform security groups open to `0.0.0.0/0`, public buckets, privileged Kubernetes pods.
-14. More license rules: SPDX headers per file and vendored files under a foreign license (REUSE), NOTICE duties of Apache-2.0 dependencies, font files and their licenses. More entries in `data/relicensing.yml` where the change differs per release branch (Vault, Consul, Nomad, Packer), which needs version ranges.
-15. A parser for `bun.lock` (JSON with comments). Without it, `hallucinated-packages` and `lockfile-drift` skip folders with a Bun lockfile, which projects from AI app builders often have next to `package-lock.json`.
-16. MCP servers in Codex `config.toml` (`[mcp_servers.*]`) for `agent-permissions`; today only its approval and sandbox settings are read.
-17. More code patterns on `data/insecure-code.yml`, each with a benchmark case: auth bypass flags (`SKIP_AUTH`, `NODE_ENV` checks in auth middleware), unsafe HTML (`dangerouslySetInnerHTML`, `v-html` with variables), personal data in logs (`console.log(req.body)`), SQL built from strings.
-18. Suppressions per finding: `.github/rechtzeitig.yml` turns off whole rules today (`src/suppress.ts`, `QUAL-SUPPRESS-001`). Open is an optional `path` or `url` per entry, so one file or page is suppressed while the rule keeps reporting the rest. Needs a match that survives moved files and query strings without matching too much.
+1. Third-party SDKs in the code as info with vendor and country, also without a website (Art. 28, 44 DSGVO). The `packages:` field in `data/third-parties.yml` exists; `privacy/sdks-in-privacy-policy` compares it with the privacy policy.
+2. Dockerfile and Compose: no `USER` or `USER root`, `:latest` base images, secrets in `ENV`/`ARG`, `privileged: true`, the Docker socket mounted, database ports published.
+3. CRA for repositories that are products (library, CLI, firmware): support period in `SECURITY.md` (Art. 13 Abs. 8 CRA) and releases with provenance or a signature. `security/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
+4. More patterns in `workflow-risks`: secrets echoed into logs, `secrets: inherit` to external workflows, self-hosted runners on pull requests.
+5. Runtimes past their end of life (`engines.node`, `.nvmrc`, `FROM php:7.4`, `requires-python`), dates in a data file.
+6. In code: `cors` with `origin: *` and credentials, in JS and header config files. `security/cors` checks only the headers the site sends.
+7. Secrets in the git history. By default only the commits a pull request or push adds; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
+8. Third-party hosts in templates and styles without a website scan, as a warning. With a URL, `privacy/google-fonts-source` covers Google Fonts.
+9. SBOM fields as BSI TR-03183-2 asks: hashes, supplier, dependency graph (CRA Annex I Part II).
+10. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go, and yarn.lock). Needs a registry API, so a switch. `legal/unknown-licenses` names them as not checked today.
+11. Registry lookup for `security/hallucinated-packages`: ask each registry's official API (npm registry, PyPI JSON API, crates.io, Packagist, pub.dev) whether a declared name exists and when it was first published, so a made-up or days-old name is a finding even when it is locked. Only package names leave the runner. Opt-in like every outside lookup (`registry-lookups: true`), listed in `SWITCHES`, in "Data that leaves the runner" and in `docs/getting-started.html`. The offline part (names missing from the lockfile, look-alikes of popular names) is done.
+12. Infrastructure code: Terraform security groups open to `0.0.0.0/0`, public buckets, privileged Kubernetes pods.
+13. More license rules: SPDX headers per file and vendored files under a foreign license (REUSE), NOTICE duties of Apache-2.0 dependencies, font files and their licenses. More entries in `data/relicensing.yml` where the change differs per release branch (Vault, Consul, Nomad, Packer), which needs version ranges.
+14. A parser for `bun.lock` (JSON with comments). Without it, `hallucinated-packages` and `lockfile-drift` skip folders with a Bun lockfile, which projects from AI app builders often have next to `package-lock.json`.
+15. MCP servers in Codex `config.toml` (`[mcp_servers.*]`) for `agent-permissions`; today only its approval and sandbox settings are read.
+16. More code patterns on `data/insecure-code.yml`, each with a benchmark case: auth bypass flags (`SKIP_AUTH`, `NODE_ENV` checks in auth middleware), unsafe HTML (`dangerouslySetInnerHTML`, `v-html` with variables), personal data in logs (`console.log(req.body)`), SQL built from strings.
+17. Suppressions per finding: `.github/rechtzeitig.yml` turns off whole rules today (`src/suppress.ts`, `QUAL-SUPPRESS-001`). Open is an optional `path` or `url` per entry, so one file or page is suppressed while the rule keeps reporting the rest. Needs a match that survives moved files and query strings without matching too much.
 
 ## Next: repository and website together
 
@@ -86,24 +85,24 @@ Open data that would sharpen existing and planned checks. Only data under MIT, A
 
 1. Third-party vendors in `data/third-parties.yml`: 90 today, payment and newsletter services added (#74, #78). Open: analytics, support and chat, reviews and trust badges common in Germany, each with hosts, `packages:` and country, one category per pull request (#40).
 2. Cookie names per vendor from the Open Cookie Database (Apache-2.0) for `data/third-parties.yml` `cookies:` and `data/cookies.yml`.
-3. Library signatures and versions from retire.js `jsrepository.json` (Apache-2.0) for client-side libraries in the served bundle (item 14 of "website", item 6 of "repository and website together").
+3. Library signatures and versions from retire.js `jsrepository.json` (Apache-2.0) for client-side libraries in the served bundle (CVEs of client-side libraries in "website", served bundle against the lockfile in "repository and website together").
 4. More patterns for `data/secrets.yml` from the gitleaks rules (MIT), each with a benchmark case.
-5. Workflow patterns for `security/workflow-risks` from the zizmor audits (MIT), reimplemented (item 6 of "repository").
+5. Workflow patterns for `security/workflow-risks` from the zizmor audits (MIT), reimplemented (see "repository").
 6. Probe paths and matchers for exposed files from the exposure templates of nuclei-templates (MIT), passive GET only, for `data/probes.yml`.
 7. Supabase lint rules (splinter, license to verify) for `databaseRules()`, reimplemented statically.
-8. End-of-life dates of runtimes from endoflife.date (license to verify) for item 7 of "repository".
+8. End-of-life dates of runtimes from endoflife.date (license to verify) for the runtimes item of "repository".
 9. License categories from the ScanCode LicenseDB (CC-BY-4.0) for `data/licenses.yml`.
 
 ## Later: ecosystems
 
-Feedback: the checks are broad, but support for other technical ecosystems should grow. Lockfile parsers cover several ecosystems already; the open question is how deep the checks go into each framework's own configuration, beyond reading dependencies. Targets: Flutter/Dart, Java (Maven, Gradle), .NET (NuGet), Python, Docker, Kubernetes, Terraform. Several items above belong here too: 4 (Dockerfile and Compose), 12 (license data), 14 (infrastructure code), 7 (runtimes past their end of life). Each step needs a parser or a `data/*.yml`, and a fixture per rule.
+Feedback: the checks are broad, but support for other technical ecosystems should grow. Lockfile parsers cover several ecosystems already; the open question is how deep the checks go into each framework's own configuration, beyond reading dependencies. Targets: Flutter/Dart, Java (Maven, Gradle), .NET (NuGet), Python, Docker, Kubernetes, Terraform. Several items of "repository" belong here too: Dockerfile and Compose, license data, infrastructure code, runtimes past their end of life. Each step needs a parser or a `data/*.yml`, and a fixture per rule.
 
-1. Flutter and Firebase configuration, not only `pubspec.lock`: `firebase.json`, `google-services.json` and `GoogleService-Info.plist` (project, region, enabled services), Firestore and Storage rules in the app's repository, Firebase Analytics, Crashlytics and Performance enabled by default, Android permissions and iOS usage descriptions (`AndroidManifest.xml`, `Info.plist`) against the SDKs used, App Tracking Transparency, cleartext traffic allowed. Third-party SDKs of Dart packages in `data/third-parties.yml` (item 4 of "repository and website together").
+1. Flutter and Firebase configuration, not only `pubspec.lock`: `firebase.json`, `google-services.json` and `GoogleService-Info.plist` (project, region, enabled services), Firestore and Storage rules in the app's repository, Firebase Analytics, Crashlytics and Performance enabled by default, Android permissions and iOS usage descriptions (`AndroidManifest.xml`, `Info.plist`) against the SDKs used, App Tracking Transparency, cleartext traffic allowed. Third-party SDKs of Dart packages in `data/third-parties.yml` (SDK packages of other ecosystems in "repository and website together").
 2. Parsers for the lockfiles listed as `unsupported` in `data/ecosystems.yml`: NuGet (`packages.lock.json`, `*.csproj`), Maven (`pom.xml`), Gradle (`gradle.lockfile`), Pipenv, PDM and Poetry, then Bundler, CocoaPods, Swift and Hex. Each parser feeds the SBOM, the vulnerability check and `hallucinated-packages`.
-3. Depth per ecosystem, the same questions in each: debug or cleartext settings in production config (Spring Boot actuator and `application.properties`, Django `DEBUG` and `ALLOWED_HOSTS`, ASP.NET `appsettings.json`), secrets in those files, unverifiable install sources (item 2 of "repository"), runtimes past their end of life (item 7).
-4. Docker and Compose (item 4 of "repository") and Kubernetes manifests and Helm charts: containers running as root, `privileged`, host paths, missing resource limits, secrets in `ConfigMap`, `:latest` images.
-5. Terraform (item 14 of "repository"): open security groups, public buckets, unencrypted storage, regions outside the EU where personal data is stored (Art. 44 DSGVO), state files in the repository, provider versions from `.terraform.lock.hcl`.
-6. License data for these ecosystems (item 12 of "repository"): Maven Central, NuGet, PyPI and pub.dev through their official APIs, behind a switch.
+3. Depth per ecosystem, the same questions in each: debug or cleartext settings in production config (Spring Boot actuator and `application.properties`, Django `DEBUG` and `ALLOWED_HOSTS`, ASP.NET `appsettings.json`), secrets in those files, runtimes past their end of life (see "repository").
+4. Docker and Compose (see "repository") and Kubernetes manifests and Helm charts: containers running as root, `privileged`, host paths, missing resource limits, secrets in `ConfigMap`, `:latest` images.
+5. Terraform (infrastructure code in "repository"): open security groups, public buckets, unencrypted storage, regions outside the EU where personal data is stored (Art. 44 DSGVO), state files in the repository, provider versions from `.terraform.lock.hcl`.
+6. License data for these ecosystems (see "repository"): Maven Central, NuGet, PyPI and pub.dev through their official APIs, behind a switch.
 
 ## Later: fix
 

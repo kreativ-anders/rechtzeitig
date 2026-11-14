@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { join } from "node:path";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { runRepoCheck } from "../../../test/helpers.ts";
@@ -154,4 +155,19 @@ test("no pass when no file could be read", async () => {
   const result = await runRepoCheck(here, { "dump.sql": TOO_LARGE });
   assert.equal(result.status, "info");
   assert.equal(result.message, "1 file not read: binary, too large or only a Git LFS pointer.");
+});
+
+// One file, one finding: a key file that security/key-files reports (data/key-files.yml) is not scanned here.
+test("leaves key files to security/key-files, but finds the same key in code", async () => {
+  const key = `${["-----BEGIN", "PRIVATE KEY-----"].join(" ")}\n${noise(64)}\n${["-----END", "PRIVATE KEY-----"].join(" ")}\n`;
+  const keyFilesCheck = join(here, "..", "key-files");
+  const files = { "deploy/server.key": key, "src/app.ts": "ok" };
+  assert.equal((await runRepoCheck(here, files)).status, "pass");
+  const whole = await runRepoCheck(keyFilesCheck, files);
+  assert.equal(whole.status, "fail");
+  assert.deepEqual(whole.raw.details, [{ file: "deploy/server.key", line: 1, key: "private_key" }]);
+  const account = JSON.stringify({ type: "service_account", private_key: key });
+  assert.equal((await runRepoCheck(here, { "gcp.json": account })).status, "pass");
+  assert.equal((await runRepoCheck(keyFilesCheck, { "gcp.json": account })).status, "fail");
+  assert.equal((await runRepoCheck(here, { "src/config.ts": `const key = \`${key}\`;` })).status, "fail");
 });
