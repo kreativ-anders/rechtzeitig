@@ -6,15 +6,9 @@ Sections are ordered by urgency: "Now" comes before the next release, "Next" is 
 
 ## Now: audit of 2026-11-10
 
-Open defects from the read-only audit of v0.5.1. The five that let a scan pass on missing or contradicting evidence are fixed (#50), and #41 to #46 are fixed (#59, #61, #62). Every fix lands with a regression test.
+Open defects from the read-only audit of v0.5.1. The five that let a scan pass on missing or contradicting evidence are fixed (#50); #41 to #48, #55 and #56 are fixed. Every fix lands with a regression test.
 
 1. Other "no evidence means pass" paths: review every check that passes when a list is empty, with the model of #50 (`observedPages`, `jsFailed`): no pass when the evidence it needs was not collected.
-2. Collection bounds for bodies without Content-Length (#55), and every lockfile of a vulnerable package in its finding (#56).
-3. Measure peak memory of `scanRepo()` on a large repository before deciding on an aggregate budget (#47). A browser smoke test for the website (#48).
-
-## Now: language of the scanned site
-
-Found on rechtzeitig.dev. Legal pages in another language than the report are missed (#52), and the legal pages of the version in the scan language are not followed through hreflang (#53).
 
 ## Now: hardening
 
@@ -24,11 +18,11 @@ Open points from the audit of 2026-11-03, after the fixes. Still open after the 
 2. Pins in `examples/workflows/` moved automatically. Dependabot's `github-actions` ecosystem reads only `.github/workflows/` and `action.yml`; the release workflow moves the rechtzeitig pin there, and `src/pinning.test.ts` fails when another pin drifts from `action.yml` and `.github/workflows/`.
 3. Require signed commits on `main`. The ruleset on `main` already requires pull requests and the `test` and `drift` checks and blocks force pushes; the release workflow does not push to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
 
-## Next: limits of a pass
+## Next: wording of a pass
 
-Feedback: a pass on a content rule reads as "complete", but a scan finds terms, links and fields, not whether they are right. An imprint with mail, phone and postcode is not a complete imprint; a privacy policy that names a retention period does not say the period fits; a consent tool that works does not make the consent valid; a database rule in the repository may differ from the live database.
+Feedback: "pass" (bestanden) reads as "complete" or "compliant", which sounds like a guarantee. A scan finds terms, links, fields and headers, not whether they are right: an imprint with mail, phone and postcode is not a complete imprint, a consent tool that works does not make the consent valid. No new rule field; the words carry it.
 
-1. A `limits` field in every `rule.yml`: one sentence on what a pass does not mean. Shown in `docs/checks.html` and, for legal and privacy rules, next to the pass in the report. A test fails when a legal or privacy rule has none.
+1. Every check, every report surface: no word that sounds like approval. The status shown to readers says what the scan saw ("no finding", "kein Befund"; for content rules "found", "Angaben gefunden"), in `lang/*.yml`, the step summary, the Markdown report, `docs/` and the ✅ icon. The `pass` value in the report JSON stays as the technical key. A test fails when "pass", "passed", "bestanden" or similar appears in a reader-facing string.
 2. A short section in the report and in `docs/` on what no scan can check (content correctness, organizational duties, live configuration the site does not expose), next to "Not run" and the repository coverage.
 
 ## Next: repository
@@ -104,7 +98,7 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 
 Open data that would sharpen existing and planned checks. Only data under MIT, Apache-2.0, BSD, MPL-2.0 (kept in its own file with its notice), CC0 or CC-BY may be copied, with attribution in the header of the `data/*.yml` file and in NOTICE; GPL, AGPL, LGPL, EUPL, CC-BY-SA and non-commercial data never, ideas only. Each import gets a refresh script and a test.
 
-1. Third-party vendors in `data/third-parties.yml`: about 49 today. Grow it with payment, analytics, newsletter and support services common in Germany (Mollie, Klarna and similar), each with hosts, `packages:` and country (#40).
+1. Third-party vendors in `data/third-parties.yml`: 90 today, payment and newsletter services added (#74, #78). Open: analytics, support and chat, reviews and trust badges common in Germany, each with hosts, `packages:` and country, one category per pull request (#40).
 2. Cookie names per vendor from the Open Cookie Database (Apache-2.0) for `data/third-parties.yml` `cookies:` and `data/cookies.yml`.
 3. Library signatures and versions from retire.js `jsrepository.json` (Apache-2.0) for client-side libraries in the served bundle (item 14 of "website", item 6 of "repository and website together").
 4. More patterns for `data/secrets.yml` from the gitleaks rules (MIT), each with a benchmark case.
