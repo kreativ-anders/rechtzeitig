@@ -754,7 +754,7 @@
 </div>
 </section>
 <section class="module" id="security" data-module="security">
-<h3>Security <small>40 rules</small></h3>
+<h3>Security <small>41 rules</small></h3>
 <div class="rules">
 <details class="rule" id="SEC-DEPS-005" data-module="security" data-scope="repository" data-severity="low" data-search="sec-deps-005 security/actions-pinning github actions are pinned to a commit github actions sind auf einen commit gepinnt cra art. 13(5), due diligence for third-party components (from 11 dec 2027) reads `uses:` lines in `.github/workflows/*.yml` and lists actions not pinned to a 40-character commit sha; gives info instead of no finding when one of its files is over the `repo` limit in `data/thresholds.yml` or only a git lfs pointer.">
 <summary>
@@ -1145,6 +1145,23 @@
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/https"><code>checks/security/https</code></a></dd></div>
 <div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj">eur-lex.europa.eu</a></dd></div>
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+</dl></div>
+</details>
+<details class="rule" id="SEC-SUPPLY-003" data-module="security" data-scope="repository" data-severity="medium" data-search="sec-supply-003 security/install-sources packages come from verifiable sources pakete kommen aus prüfbaren quellen cra art. 13(5) (due diligence for third-party components) with annex i part i(2)(f) (integrity of programs) (from 11 dec 2027) reads the download source and hash of every package in the parsed lockfiles (`src/repo/lockfiles.ts`) and fails on sources over `http://` without a hash, warns on package-lock.json, pnpm-lock.yaml and yarn.lock entries from a registry or tarball url without integrity hash and on git sources without a full commit; warns on git dependencies in package.json, cargo.toml, pubspec.yaml, pyproject.toml and requirements files that name a branch, tag or nothing instead of a commit (`src/repo/manifests.ts`); checks `.npmrc`, `.yarnrc`, `.yarnrc.yml`, requirements files and pip.conf line by line, failing on `strict-ssl` off, an `http://` registry or `trusted-host` (patterns in `data/install-sources.yml`); fixture paths are left out; gives info instead of no finding when a lockfile or config could not be read.">
+<summary>
+<span class="rule-head"><span class="rule-id">SEC-SUPPLY-003<span class="rule-scope" title="Scope: what the check reads">Repository</span></span><span class="sev" data-level="3" title="Severity: medium"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">medium</span></span></span>
+<span class="rule-title">Packages come from verifiable sources</span>
+<span class="rule-title-de" lang="de">Pakete kommen aus prüfbaren Quellen</span>
+<span class="rule-law">CRA Art. 13(5) (due diligence for third-party components) with Annex I Part I(2)(f) (integrity of programs) (from 11 Dec 2027)</span>
+<span class="rule-more">How it is checked</span>
+</summary>
+<div class="rule-body"><dl>
+<div><dt>How it is checked</dt><dd>Reads the download source and hash of every package in the parsed lockfiles (<code>src/repo/lockfiles.ts</code>) and fails on sources over <code>http://</code> without a hash, warns on package-lock.json, pnpm-lock.yaml and yarn.lock entries from a registry or tarball URL without integrity hash and on git sources without a full commit; warns on git dependencies in package.json, Cargo.toml, pubspec.yaml, pyproject.toml and requirements files that name a branch, tag or nothing instead of a commit (<code>src/repo/manifests.ts</code>); checks <code>.npmrc</code>, <code>.yarnrc</code>, <code>.yarnrc.yml</code>, requirements files and pip.conf line by line, failing on <code>strict-ssl</code> off, an <code>http://</code> registry or <code>trusted-host</code> (patterns in <code>data/install-sources.yml</code>); fixture paths are left out; gives info instead of no finding when a lockfile or config could not be read.</dd></div>
+<div><dt>Scope</dt><dd>Repository: runs when <code>actions/checkout</code> runs before <span class="wm">rechtzeitig</span>.</dd></div>
+<div><dt>How to fix</dt><dd>Use only https:// registries and indexes, remove strict-ssl and trusted-host (add the CA for own certificates), pin git dependencies to a full commit hash, and let the package manager rewrite the lockfile so every entry has a hash.</dd></div>
+<div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/security/install-sources"><code>checks/security/install-sources</code></a></dd></div>
+<div><dt>Sources</dt><dd><a href="https://eur-lex.europa.eu/eli/reg/2024/2847/oj">eur-lex.europa.eu</a>, <a href="https://docs.npmjs.com/cli/v11/configuring-npm/package-lock-json">docs.npmjs.com</a>, <a href="https://docs.npmjs.com/cli/v11/using-npm/config">docs.npmjs.com</a>, <a href="https://pip.pypa.io/en/stable/cli/pip_install/">pip.pypa.io</a>, <a href="https://cwe.mitre.org/data/definitions/494.html">cwe.mitre.org</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-14">2026-11-14</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="SEC-HDR-004" data-module="security" data-scope="website" data-severity="low" data-search="sec-hdr-004 security/isolation-headers permissions-policy and cross-origin-opener-policy are set permissions-policy und cross-origin-opener-policy sind gesetzt art. 32 gdpr reads the response headers of the start page for permissions-policy and a cross-origin-opener-policy other than unsafe-none, and names both when they appear only in &lt;meta&gt;, where browsers ignore them, or coop only as report-only.">

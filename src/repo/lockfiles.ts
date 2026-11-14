@@ -52,14 +52,17 @@ export function purl(c: { ecosystem: Ecosystem; name: string; version: string })
 }
 
 // Raw lockfile shapes, only the fields read here.
-interface NpmPackage { name?: string; version?: string; license?: string | { type?: string }; dev?: boolean; devOptional?: boolean; link?: boolean }
-interface NpmV1Dependency { version: string; dev?: boolean; dependencies?: Record<string, NpmV1Dependency> }
+interface NpmPackage { name?: string; version?: string; license?: string | { type?: string }; dev?: boolean; devOptional?: boolean; link?: boolean; resolved?: string; integrity?: string }
+interface NpmV1Dependency { version: string; dev?: boolean; resolved?: string; integrity?: string; dependencies?: Record<string, NpmV1Dependency> }
 interface NpmLock { packages?: Record<string, NpmPackage>; dependencies?: Record<string, NpmV1Dependency> }
 
 /** A non-empty string from a parsed file, or undefined: lockfiles are untrusted and may hold any type. */
 function str(value: unknown): string | undefined {
   return (typeof value === "string" && value) || (typeof value === "number" && Number.isFinite(value) && String(value)) || undefined;
 }
+
+/** `resolved` and `integrity` of a component, only those the lockfile has. */
+const fetched = (resolved: string | undefined, integrity?: string) => ({ ...(resolved && { resolved }), ...(integrity && { integrity }) });
 
 function npmLock(source: string): Parsed[] {
   const lock = (JSON.parse(source) ?? {}) as NpmLock;
@@ -69,14 +72,16 @@ function npmLock(source: string): Parsed[] {
     const name = str(p.name) ?? path.split("node_modules/").pop();
     if (!name) continue;
     const license = str(p.license) ?? str((p.license as { type?: unknown } | undefined)?.type);
-    out.push({ ecosystem: "npm", name, version: str(p.version)!, license, dev: !!(p.dev || p.devOptional) });
+    // A workspace folder ("packages/a") is the package itself, not a download.
+    const resolved = str(p.resolved) ?? (path.includes("node_modules/") ? undefined : path);
+    out.push({ ecosystem: "npm", name, version: str(p.version)!, license, dev: !!(p.dev || p.devOptional), ...fetched(resolved, str(p.integrity)) });
   }
   if (!lock.packages) {
     // lockfileVersion 1
     const walk = (deps: Record<string, NpmV1Dependency> = {}) => {
       for (const [name, d] of Object.entries(deps ?? {})) {
         const version = str(d?.version);
-        if (version) out.push({ ecosystem: "npm", name, version, dev: !!d.dev });
+        if (version) out.push({ ecosystem: "npm", name, version, dev: !!d.dev, ...fetched(str(d.resolved), str(d.integrity)) });
         walk(d?.dependencies);
       }
     };
@@ -87,7 +92,8 @@ function npmLock(source: string): Parsed[] {
 
 type PnpmRefs = Record<string, string | { version: string }>;
 interface PnpmDeps { dependencies?: PnpmRefs; optionalDependencies?: PnpmRefs; devDependencies?: PnpmRefs }
-interface PnpmPackage { name?: string; version?: string; license?: string; dev?: boolean }
+interface PnpmResolution { integrity?: string; tarball?: string; type?: string; repo?: string; commit?: string; directory?: string }
+interface PnpmPackage { name?: string; version?: string; license?: string; dev?: boolean; resolution?: PnpmResolution }
 interface PnpmLock { lockfileVersion?: string | number; importers?: Record<string, PnpmDeps>; packages?: Record<string, PnpmPackage>; snapshots?: Record<string, PnpmDeps> }
 
 /**
@@ -104,8 +110,16 @@ function pnpmLock(text: string): Parsed[] {
     const version = str(p?.version) ?? spec?.version;
     if (!name || !version) return [];
     const dev = prod ? !prod.has(`${name}@${version}`) : p?.dev === true;
-    return [{ ecosystem: "npm" as const, name, version, license: str(p?.license), dev }];
+    return [{ ecosystem: "npm" as const, name, version, license: str(p?.license), dev, ...fetched(pnpmResolved(p?.resolution), str(p?.resolution?.integrity)) }];
   });
+}
+
+/** Tarball URL, git repository with its commit, or local folder of a pnpm `resolution`; undefined for the registry. */
+function pnpmResolved(r: PnpmResolution | undefined): string | undefined {
+  const repo = str(r?.repo);
+  if (r?.type === "git" && repo) return `${repo.startsWith("git+") ? "" : "git+"}${repo}#${str(r.commit) ?? ""}`;
+  const directory = str(r?.directory);
+  return str(r?.tarball) ?? (directory && `file:${directory}`);
 }
 
 function pnpmSpec(key: string): { name: string; version: string } | undefined {
@@ -145,10 +159,17 @@ function pnpmReachable(lock: PnpmLock): Set<string> {
  */
 function yarnLock(text: string): Parsed[] {
   const out: Parsed[] = [];
-  let entry: { descriptors: string[]; version?: string; resolution?: string } | undefined;
+  let entry: { descriptors: string[]; version?: string; resolution?: string; resolved?: string; integrity?: string; checksum?: string; conditions?: boolean } | undefined;
   const flush = () => {
     const name = entry && yarnName(entry.descriptors, entry.resolution);
-    if (name && entry?.version && !entry.version.includes("use.local")) out.push({ ecosystem: "npm", name, version: entry.version, dev: false });
+    if (name && entry?.version && !entry.version.includes("use.local")) {
+      // Classic: resolved URL, integrity or the sha1 after "#" in that URL. Berry: the protocol part of resolution, checksum.
+      // Berry keeps no checksum for packages bound to a platform (conditions: os=...), so no source for those either.
+      const berry = entry.conditions && !entry.checksum ? undefined : entry.resolution && splitIdent(entry.resolution)?.[1];
+      const resolved = entry.resolved ?? berry;
+      const sha1 = entry.resolved && /^https?:[^#]*#([0-9a-f]{40})$/.exec(entry.resolved)?.[1];
+      out.push({ ecosystem: "npm", name, version: entry.version, dev: false, ...fetched(resolved, entry.integrity ?? entry.checksum ?? sha1) });
+    }
     entry = undefined;
   };
   for (const line of text.split("\n")) {
@@ -160,6 +181,10 @@ function yarnLock(text: string): Parsed[] {
     if (!entry) continue;
     entry.version ??= /^ {2}version:?\s+"?([^"\s]+)"?/.exec(line)?.[1];
     entry.resolution ??= /^ {2}resolution:\s+"?([^"\s]+)"?/.exec(line)?.[1];
+    entry.resolved ??= /^ {2}resolved:?\s+"?([^"\s]+)"?/.exec(line)?.[1];
+    entry.integrity ??= /^ {2}integrity:?\s+"?([^"\s]+)"?/.exec(line)?.[1];
+    entry.checksum ??= /^ {2}checksum:\s+"?([^"\s]+)"?/.exec(line)?.[1];
+    entry.conditions ||= /^ {2}conditions:/.test(line);
   }
   flush();
   return out;
@@ -188,7 +213,7 @@ function yarnName(descriptors: string[], resolution: string | undefined): string
   return splitIdent(descriptors[0] ?? "")?.[0];
 }
 
-interface ComposerPackage { name: string; version: string | number; license?: string[] }
+interface ComposerPackage { name: string; version: string | number; license?: string[]; dist?: { url?: string; shasum?: string }; source?: { url?: string; reference?: string } }
 
 function composerLock(source: string): Parsed[] {
   const lock = (JSON.parse(source) ?? {}) as { packages?: ComposerPackage[]; "packages-dev"?: ComposerPackage[] };
@@ -198,19 +223,23 @@ function composerLock(source: string): Parsed[] {
       const version = str(p?.version)?.replace(/^v/, "");
       if (!name || !version) return [];
       const license = Array.isArray(p.license) ? p.license.filter((l) => typeof l === "string").join(" OR ") || undefined : undefined;
-      return [{ ecosystem: "composer" as const, name, version, license, dev }];
+      const source = str(p.source?.url) && `${p.source!.url}#${str(p.source!.reference) ?? ""}`;
+      return [{ ecosystem: "composer" as const, name, version, license, dev, ...fetched(str(p.dist?.url) ?? source, str(p.dist?.shasum)) }];
     });
   return [...map(lock.packages, false), ...map(lock["packages-dev"], true)];
 }
 
-interface PubspecPackage { source?: string; version?: string; dependency?: string }
+interface PubspecPackage { source?: string; version?: string; dependency?: string; description?: string | { url?: string; "resolved-ref"?: string; sha256?: string } }
 
 function pubspecLock(source: string): Parsed[] {
   const lock = (parseYaml(source) ?? {}) as { packages?: Record<string, PubspecPackage> };
   return Object.entries(lock.packages ?? {}).flatMap(([name, p]) => {
     const version = str(p?.version);
     if (!version || (p.source !== "hosted" && p.source !== "git")) return [];
-    return [{ ecosystem: "pub" as const, name, version, dev: p.dependency === "direct dev" }];
+    const d = typeof p.description === "object" ? p.description : undefined;
+    const url = str(d?.url);
+    const resolved = url && p.source === "git" ? `git+${url}#${str(d?.["resolved-ref"]) ?? ""}` : url;
+    return [{ ecosystem: "pub" as const, name, version, dev: p.dependency === "direct dev", ...fetched(resolved, str(d?.sha256)) }];
   });
 }
 
@@ -224,8 +253,28 @@ function tomlPackages(text: string, ecosystem: "cargo" | "pypi"): Parsed[] {
     // Local workspace members are not dependencies.
     if (ecosystem === "cargo" && !/^source\s*=/m.test(block)) return [];
     if (/^source\s*=\s*\{\s*(editable|virtual)\s*=/m.test(block)) return [];
-    return [{ ecosystem, name, version, dev: field("category") === "dev" }];
+    return [{ ecosystem, name, version, dev: field("category") === "dev", ...fetched(tomlResolved(block, ecosystem), tomlHash(block)) }];
   });
+}
+
+/** Cargo's `checksum`, or the first `hash = "sha256:..."` of uv's and Poetry's files. */
+const tomlHash = (block: string) => /^checksum\s*=\s*"([^"]+)"/m.exec(block)?.[1] ?? /\bhash\s*=\s*"([^"]+)"/.exec(block)?.[1];
+
+/**
+ * Cargo: `source = "registry+https://..."` without its "registry+"/"sparse+". uv: `source = { registry|git|url|path = "..." }`.
+ * Poetry: `[package.source]` with type, url and resolved_reference. Git sources keep "git+" and the commit after "#".
+ */
+function tomlResolved(block: string, ecosystem: "cargo" | "pypi"): string | undefined {
+  if (ecosystem === "cargo") return /^source\s*=\s*"([^"]*)"/m.exec(block)?.[1].replace(/^(registry|sparse)\+/, "");
+  const uv = /^source\s*=\s*\{\s*(registry|git|url|path|directory)\s*=\s*"([^"]*)"/m.exec(block);
+  if (uv) return uv[1] === "git" ? `git+${uv[2]}` : uv[1] === "path" || uv[1] === "directory" ? `file:${uv[2]}` : uv[2];
+  const poetry = block.split(/^\[package\.source\]$/m)[1]?.split(/^\[/m)[0];
+  const field = (key: string) => poetry && new RegExp(`^${key}\\s*=\\s*"([^"]*)"`, "m").exec(poetry)?.[1];
+  const url = field("url");
+  if (!url) return undefined;
+  const type = field("type");
+  if (type === "git") return `git+${url}#${field("resolved_reference") ?? ""}`;
+  return type === "file" || type === "directory" ? `file:${url}` : url;
 }
 
 function requirements(text: string): Parsed[] {

@@ -64,6 +64,7 @@ vendors:
   - code.claude.com
   - docs.npmjs.com
   - doc.rust-lang.org
+  - pip.pypa.io
   - llama.com
   - ai.google.dev
 
