@@ -22,6 +22,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      # Records every outbound connection and sends the list to StepSecurity (insights link in the run). Audit, not block,
+      # until a few runs confirm the list below (apt sources of the runner image vary). To block, set
+      # egress-policy: block, disable-telemetry: true and allowed-endpoints: >
+      #   github.com:443 api.github.com:443 codeload.github.com:443
+      #   objects.githubusercontent.com:443 release-assets.githubusercontent.com:443 raw.githubusercontent.com:443
+      #   results-receiver.actions.githubusercontent.com:443 *.blob.core.windows.net:443
+      #   registry.npmjs.org:443 nodejs.org:443
+      #   cdn.playwright.dev:443 playwright.download.prss.microsoft.com:443
+      #   azure.archive.ubuntu.com:80 archive.ubuntu.com:80 security.ubuntu.com:80
+      #   packages.microsoft.com:443 ppa.launchpadcontent.net:443 esm.ubuntu.com:443
+      # The tests reach only 127.0.0.1 (test/helpers.ts aborts requests to other hosts, fetch is stubbed).
+      - uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -39,6 +53,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # Same as in test, without Playwright and apt: github.com, api.github.com, registry.npmjs.org and the cache endpoints.
+      - uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false

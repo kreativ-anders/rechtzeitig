@@ -4,12 +4,13 @@ name: release
 #
 # 1. Runs the tests (test.yml).
 # 2. Takes the latest tag vX.Y.Z and bumps it. On top of the tested commit it commits the
-#    version in package.json, tags that commit and pushes only the tag. The commit is not on
-#    main: the ruleset on main takes changes only through pull requests, and GITHUB_TOKEN
-#    cannot bypass it.
+#    version in package.json on a new branch release/vX.Y.Z and tags that commit. Nothing goes
+#    to main: the ruleset on main takes changes only through pull requests, and GITHUB_TOKEN
+#    cannot bypass it. Every commit is made through the GitHub API, which signs it
+#    (.github/scripts/commit-signed.sh), so main can require signed commits.
 # 3. Publishes a GitHub release. Before v1.0.0 it is a pre-release.
-# 4. Pushes a branch release/vX.Y.Z with the version and examples/workflows/rechtzeitig.yml (and its copy in docs/getting-started.html)
-#    pinned to the release commit, starts test.yml on it (pushes with GITHUB_TOKEN start no
+# 4. Adds examples/workflows/rechtzeitig.yml (and its copy in docs/getting-started.html) pinned
+#    to the release commit to the branch release/vX.Y.Z, starts test.yml on it (commits with GITHUB_TOKEN start no
 #    workflows, a dispatch does) and opens a pull request to main. If Actions may not open
 #    pull requests (Settings → Actions → General), the run summary links to open it by hand.
 
@@ -43,7 +44,7 @@ jobs:
       pull-requests: write
       actions: write
     steps:
-      # Credentials stay in this checkout, because this job pushes. It runs no third-party code.
+      # Credentials stay in this checkout, because this job fetches the commits it makes. It runs no third-party code.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
@@ -74,20 +75,23 @@ jobs:
           echo "next=$next" >> "$GITHUB_OUTPUT"
           echo "Releasing v$next (last: $last)"
 
+      # The API commits only onto a branch, so release/vX.Y.Z starts here at the tested commit.
       - name: Commit version, tag and push the tag
         id: tag
         env:
+          GH_TOKEN: ${{ github.token }}
           NEXT: ${{ steps.version.outputs.next }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          branch="release/v$NEXT"
           npm version "$NEXT" --no-git-tag-version --allow-same-version --ignore-scripts > /dev/null
+          gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/heads/$branch" -f sha="$(git rev-parse HEAD)" > /dev/null
           if ! git diff --quiet; then
-            git commit -q -am "🔖 Release v$NEXT"
+            .github/scripts/commit-signed.sh "$branch" "🔖 Release v$NEXT" > /dev/null
           fi
-          git tag "v$NEXT"
-          git push origin "refs/tags/v$NEXT"
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          sha=$(git rev-parse HEAD)
+          gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/v$NEXT" -f sha="$sha" > /dev/null
+          git tag "v$NEXT" "$sha"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
       - name: Publish release
         env:
@@ -127,8 +131,7 @@ jobs:
           sed -i -E "s|(uses: $GITHUB_REPOSITORY)@[0-9a-f]{40} # v[0-9.]+|\1@$SHA # v$NEXT|" examples/workflows/rechtzeitig.yml docs/getting-started.html
           git diff --quiet -- examples/workflows/rechtzeitig.yml && { echo "::error::No pin to $GITHUB_REPOSITORY found in examples/workflows/rechtzeitig.yml"; exit 1; }
           git diff --quiet -- docs/getting-started.html && { echo "::error::No pin to $GITHUB_REPOSITORY found in docs/getting-started.html (npm run docs)"; exit 1; }
-          git commit -q -am "📌 Pin the example workflow to v$NEXT"
-          git push origin "HEAD:refs/heads/$branch"
+          .github/scripts/commit-signed.sh "$branch" "📌 Pin the example workflow to v$NEXT" > /dev/null
           gh workflow run test.yml --ref "$branch"
           title="🔖 Release v$NEXT: version and pinned example workflow"
           body="Sets package.json to v$NEXT and pins examples/workflows/rechtzeitig.yml and its copy in docs/getting-started.html to the release commit $SHA. The checks were started by the release run."
