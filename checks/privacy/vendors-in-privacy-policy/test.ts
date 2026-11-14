@@ -73,3 +73,10 @@ test("no pass when a page did not load with JavaScript", async () => {
   assert.equal(result.status, "warn");
   assert.deepEqual(result.details, ["/blog: load with JavaScript failed (Timeout)"]);
 });
+
+// Issue #40: analytics and advertising vendors from data/third-parties.yml are matched by host.
+test("warns when etracker and the Pinterest Tag are contacted but not named in the policy", async () => {
+  const result = await policy("Datenschutzerklärung", "https://code.etracker.com/code/e.js", "https://s.pinimg.com/ct/core.js");
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["etracker", "Pinterest Tag"]);
+});

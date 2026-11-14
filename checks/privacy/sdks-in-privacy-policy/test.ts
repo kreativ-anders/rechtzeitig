@@ -55,3 +55,10 @@ test("warns for a Brevo SDK the policy does not name", async () => {
   assert.equal(result.status, "warn");
   assert.deepEqual(result.details, ["package.json:4: Brevo (newsletter) via @getbrevo/brevo, not named in the privacy policy"]);
 });
+
+// Issue #40: analytics SDKs from data/third-parties.yml are matched against the policy.
+test("warns for a Simple Analytics SDK the policy does not name", async () => {
+  const result = await runCrossCheck(here, "unnamed", { "package.json": pkg({ "@simpleanalytics/next": "^1.0.0" }) });
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["package.json:4: Simple Analytics (analytics without cookies) via @simpleanalytics/next, not named in the privacy policy"]);
+});
