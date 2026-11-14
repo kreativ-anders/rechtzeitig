@@ -28,6 +28,12 @@ test("docs/workflow.html lists every input", () => {
   assert.deepEqual(inputs.filter((i) => !page.includes(`<td><code>${i}</code></td>`)), []);
 });
 
+test("docs/getting-started.html sorts every input of the example into a table: set these, opt-ins or optional", () => {
+  const page = read("docs/getting-started.html");
+  // "repository" defaults to the checkout and is not in the example's with: block.
+  assert.deepEqual(inputs.filter((i) => i !== "repository" && !page.includes(`<td><code>${i}`)), []);
+});
+
 test("the example workflow sets or names every input", () => {
   const example = read("examples/workflows/rechtzeitig.yml");
   // "repository" defaults to the checkout; the example explains it at the checkout step.

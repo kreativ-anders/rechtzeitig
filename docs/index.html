@@ -177,31 +177,21 @@
       <h1>Find the legal and security pitfalls in fast-built and AI-written code</h1>
       <p class="lead"><span class="wm">rechtzeitig</span> is a vibe code checker for any web project, hand-written or AI-built: a GitHub Action that checks your repository and your live website against German and EU law (GDPR, imprint, cookie consent) and security basics such as leaked keys, headers and vulnerable packages. Each finding names the place and the law.</p>
       <div class="actions">
-        <a class="button" href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">Copy the workflow</a>
+        <a class="button" href="getting-started.html">Set it up in 10 minutes</a>
 <!-- hero-checks:start -->
-<a class="button secondary" href="checks.html">See all 94 checks</a>
+<a class="more" href="checks.html">See all 94 checks</a>
 <!-- hero-checks:end -->
       </div>
-      <form class="configurator" id="configurator" hidden>
-        <label for="cfg-url">Your website URL</label>
-        <input id="cfg-url" name="url" type="url" inputmode="url" placeholder="https://www.example.com/" autocomplete="off" spellcheck="false">
-        <pre><code id="cfg-preview">- uses: <!-- pinned-uses:start -->
-kreativ-anders/rechtzeitig@4578635acd60d75a3f4a06e637d1ed789d4a3c31
-<!-- pinned-uses:end -->
-  with:
-    url: https://www.example.com/</code></pre>
-        <p class="cfg-note">Stays in your browser: the URL is never sent anywhere, not even to analytics. Without JavaScript, use the workflow link above.</p>
-      </form>
+      <p class="hero-sub">One workflow file in your repository. It runs every Monday and names the place and the law for each finding.</p>
       <p class="hero-note">Free and open source (Apache-2.0), maintained by Manuel Steinberg at <a href="https://kreativ-anders.de">kreativ-anders</a> in Germany. No account; your code stays on your runner.</p>
     </div>
     <div class="stamp" aria-hidden="true"><svg class="rim" viewBox="0 0 100 100"><path id="rim-path" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" fill="none"/><text><textPath href="#rim-path" textLength="254" lengthAdjust="spacing">kreativ-anders ✦ rechtzeitig ✦</textPath></text></svg><span>checked<svg class="mark" viewBox="11.3 6.5 9.4 19"><path d="M20.03 22.21C20.03 21.3 19.64 20.4 19 19.6C19.85 18.86 20.68 17.85 20.68 16.59C20.68 13.76 18.81 12.84 16.24 11.58C15.18 11.07 14.5 10.66 14.5 9.58C14.5 8.38 15.02 7.3 16.33 7.3C17.53 7.3 17.83 7.86 17.83 8.36C17.83 8.73 17.5 8.75 17.5 9.46C17.5 9.72 17.9 10.64 18.88 10.64C19.41 10.64 20.17 10.13 20.17 9.49C20.17 7.53 18.49 6.5 16.24 6.5C15.14 6.5 14.06 6.84 13.3 7.53C12.54 8.22 12.11 9.28 12.11 10.04C12.11 11 12.43 11.78 12.91 12.38C12.08 13.09 11.32 14.1 11.32 15.28C11.32 17.09 12.24 18.29 14.79 19.71C15.97 20.35 17.5 21.2 17.5 22.38C17.5 23.91 16.75 24.7 15.71 24.7C14.38 24.7 14.15 23.78 14.15 23.62C14.15 23.29 14.52 23.11 14.52 22.51C14.52 22.26 14.01 21.34 13.05 21.34C12.54 21.34 11.83 21.87 11.83 22.47C11.83 24.49 14.08 25.5 15.76 25.5C18.91 25.5 20.03 23.8 20.03 22.21ZM13.35 12.86C13.67 13.16 14.01 13.37 14.33 13.53C17.39 14.93 18.91 15.76 18.91 17.69C18.91 18.22 18.79 18.68 18.52 19.07C17.92 18.49 17.16 17.96 16.31 17.57C13.78 16.36 13.09 15.3 13.09 14.17C13.09 13.69 13.16 13.25 13.35 12.86Z"/></svg>in time</span></div>
   </div>
 
-
   <section id="pain" aria-labelledby="pain-title">
     <h2 id="pain-title">What can go wrong</h2>
     <p>For solo developers with an AI-built site, small agencies, student projects and shop owners. Four findings that cost real money or trust:</p>
-    <ul class="covers sides">
+    <ul class="covers pairs">
       <li><h3>Warning letter over a missing legal notice</h3><p>A site without the provider information required by &sect; 5 DDG gets an Abmahnung. <a href="checks.html#LEG-DE-IMP-001">The check</a> reads the linked page and the repository.</p></li>
       <li><h3>Fonts loaded from US servers</h3><p>Google Fonts sends every visitor's IP address to Google; LG M&uuml;nchen I, 20 January 2022, 3 O 17493/20 held that this violates the GDPR. <a href="checks.html#LEG-EU-FNT-001">The check</a> finds the hosts in the code and on the site.</p></li>
       <li><h3>A tracker fires before consent</h3><p>&sect; 25 TDDDG requires consent before non-essential cookies or trackers load. <a href="checks.html#LEG-EU-CNS-001">The check</a> compares the requests with the banner.</p></li>
@@ -209,6 +199,8 @@ kreativ-anders/rechtzeitig@4578635acd60d75a3f4a06e637d1ed789d4a3c31
     </ul>
   </section>
 
+  <section id="report" aria-labelledby="report-title">
+    <h2 id="report-title">What a report looks like</h2>
     <figure class="report">
       <div class="report-head">
         <p class="report-target">rechtzeitig: https://rechtzeitig.dev/ + repository rechtzeitig</p>
@@ -236,16 +228,20 @@ kreativ-anders/rechtzeitig@4578635acd60d75a3f4a06e637d1ed789d4a3c31
       </ol>
       <figcaption>Two results from a real run on rechtzeitig.dev and its repository, 7 November 2026, shortened. The key is the example key from the AWS documentation.</figcaption>
     </figure>
-  <h2 id="start">Add it in one step</h2>
-  <ol class="setup">
-    <li>Copy <a href="https://github.com/kreativ-anders/rechtzeitig/blob/main/examples/workflows/rechtzeitig.yml">rechtzeitig.yml</a> to <code>.github/workflows/</code> in your repository.</li>
-    <li>Set your start page in it. Without a <code>url</code> only the repository is checked.
-      <pre class="excerpt"><code>- uses: kreativ-anders/rechtzeitig@…
-  with:
-    url: https://www.example.com/</code></pre></li>
-    <li>Commit. It runs every Monday; start the first run under <span class="ui">Actions → rechtzeitig → Run workflow</span>. Findings show in the run summary and the Security tab, and GitHub emails you when a check fails.</li>
-  </ol>
-  <p>Step by step: <a href="getting-started.html">Get started</a>. All options: <a href="workflow.html">Configuration</a>.</p>
+  </section>
+
+  <section id="start" aria-labelledby="start-title">
+    <h2 id="start-title">How it works</h2>
+    <ol class="setup">
+      <li>Add one workflow file to your repository. <a href="getting-started.html">Get started</a> has it ready to copy.</li>
+      <li>Set your start page as <code>url</code>. Without it only the repository is checked.</li>
+      <li>It runs every Monday. Findings show in the run summary and the Security tab, and GitHub emails you when a check fails.</li>
+    </ol>
+    <div class="actions">
+      <a class="button" href="getting-started.html">Set it up in 10 minutes</a>
+      <a class="more" href="workflow.html">All options</a>
+    </div>
+  </section>
 
   <section id="example" aria-labelledby="how">
     <h2 id="how">What it checks</h2>

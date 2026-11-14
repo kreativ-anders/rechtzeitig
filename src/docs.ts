@@ -1,6 +1,6 @@
 // Generates the rule cards in docs/checks.html, the "what runs when" tables in docs/checks.html and
-// docs/workflow.html, the rule count, the checks of both scopes and review dates in docs/index.html and docs/de/index.html, and
-// the rule lists of the topic pages docs/security.html and docs/de/kuendigungsbutton.html from rule.yml
+// docs/workflow.html, the rule count, the checks of both scopes and review dates in docs/index.html and docs/de/index.html,
+// the example workflow in docs/getting-started.html, and the rule lists of the topic pages docs/security.html and docs/de/kuendigungsbutton.html from rule.yml
 // files and SWITCHES in src/rules.ts: npm run docs
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -11,6 +11,7 @@ import { SCOPES, loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } f
 const CHECKS_PAGE = new URL("../docs/checks.html", import.meta.url);
 const EXAMPLE_WORKFLOW = new URL("../examples/workflows/rechtzeitig.yml", import.meta.url);
 const WORKFLOW_PAGE = new URL("../docs/workflow.html", import.meta.url);
+const GETTING_STARTED_PAGE = new URL("../docs/getting-started.html", import.meta.url);
 const INDEX_PAGE = new URL("../docs/index.html", import.meta.url);
 const INDEX_PAGE_DE = new URL("../docs/de/index.html", import.meta.url);
 const SECURITY_PAGE = new URL("../docs/security.html", import.meta.url);
@@ -147,9 +148,15 @@ const time = (iso: string, lang: Lang = "en") => `<time datetime="${esc(iso)}">$
 /** The hero link to checks.html on the start page, with the number of rules. The German page links up one folder. */
 export function heroChecksHtml(checks: LoadedCheck[], lang: Lang = "en"): string {
   return lang === "de"
-    ? `<a class="button secondary" href="../checks.html" hreflang="en">Alle ${checks.length} Prüfungen ansehen</a>`
-    : `<a class="button secondary" href="checks.html">See all ${checks.length} checks</a>`;
+    ? `<a class="more" href="../checks.html" hreflang="en">Alle ${checks.length} Prüfungen ansehen</a>`
+    : `<a class="more" href="checks.html">See all ${checks.length} checks</a>`;
 }
+
+/**
+ * The complete example workflow as one code block for docs/getting-started.html. The <pre> is generated
+ * as a whole, so the newlines that fill() adds around a marker's content stay outside the copied text.
+ */
+export const exampleWorkflowHtml = (yaml: string) => `<pre><code>${esc(yaml.replace(/\n+$/, ""))}</code></pre>`;
 
 /** Checks that read the website and the repository together, most severe first: the core of rechtzeitig. */
 export const crossChecks = (checks: LoadedCheck[]) =>
@@ -244,12 +251,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const page = readFileSync(CHECKS_PAGE, "utf8");
   writeFileSync(CHECKS_PAGE, fill(fill(page, "checks", checksHtml(checks)), "switches", switchesHtml(checks)));
   writeFileSync(WORKFLOW_PAGE, fill(readFileSync(WORKFLOW_PAGE, "utf8"), "switches", switchesHtml(checks)));
-  // The pinned SHA on the start pages comes from the one source of truth, the example workflow.
-  const pinned = readFileSync(EXAMPLE_WORKFLOW, "utf8").match(/uses:\s*kreativ-anders\/rechtzeitig@([0-9a-f]{40})/)?.[1];
-  if (!pinned) throw new Error("examples/workflows/rechtzeitig.yml: no pinned SHA in uses:");
+  // The workflow on Get started is the example file itself, so the copied text is what the release tests.
+  const example = readFileSync(EXAMPLE_WORKFLOW, "utf8");
+  writeFileSync(GETTING_STARTED_PAGE, fill(readFileSync(GETTING_STARTED_PAGE, "utf8"), "example-workflow", exampleWorkflowHtml(example)));
   for (const [path, lang] of [[INDEX_PAGE, "en"], [INDEX_PAGE_DE, "de"]] as const) {
     let doc = readFileSync(path, "utf8");
-    doc = fill(doc, "pinned-uses", `kreativ-anders/rechtzeitig@${pinned}`);
     doc = fill(doc, "hero-checks", heroChecksHtml(checks, lang));
     doc = fill(doc, "reviewed", reviewedHtml(checks, lang));
     doc = fill(doc, "cross-checks", crossChecksHtml(checks, lang));
@@ -258,5 +264,5 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   }
   writeFileSync(SECURITY_PAGE, fill(readFileSync(SECURITY_PAGE, "utf8"), "topic-rules", topicRulesHtml(securityChecks(checks))));
   writeFileSync(SHOP_PAGE_DE, fill(readFileSync(SHOP_PAGE_DE, "utf8"), "topic-rules", topicRulesHtml(shopChecks(checks), "de")));
-  console.log("docs/checks.html, docs/workflow.html, docs/index.html, docs/de/index.html, docs/security.html and docs/de/kuendigungsbutton.html updated");
+  console.log("docs/checks.html, docs/workflow.html, docs/getting-started.html, docs/index.html, docs/de/index.html, docs/security.html and docs/de/kuendigungsbutton.html updated");
 }

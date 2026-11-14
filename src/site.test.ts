@@ -2,6 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
+import { parse } from "yaml";
 
 const DOCS = new URL("../docs/", import.meta.url);
 const SITE = "https://rechtzeitig.dev/";
@@ -64,23 +65,26 @@ test("every page's header seal is the one in index.html, drawn as a path without
   for (const f of ["index.html", "de/index.html"]) assert.ok(read(f).match(/<svg class="mark"[^>]*>(.*?)<\/svg>/)?.[1] === path, `${f}: the stamp's § is the seal's path`);
 });
 
-test("the pinned SHA on the start pages is the one in examples/workflows/rechtzeitig.yml", () => {
+test("Get started shows the complete example workflow, and copying it gives exactly that file as valid YAML", () => {
   const example = readFileSync(new URL("../examples/workflows/rechtzeitig.yml", import.meta.url), "utf8");
-  const sha = example.match(/kreativ-anders\/rechtzeitig@([0-9a-f]{40})/)?.[1];
-  assert.ok(sha, "the example workflow pins a SHA");
-  for (const f of ["index.html", "de/index.html"]) {
-    assert.ok(read(f).includes(`kreativ-anders/rechtzeitig@${sha}`), `${f}: pinned-uses filled with the example workflow's SHA`);
-  }
+  const html = read("getting-started.html");
+  const block = html.match(/<!-- example-workflow:start -->\s*<pre><code>([\s\S]*?)<\/code><\/pre>\s*<!-- example-workflow:end -->/)?.[1];
+  assert.ok(block, "getting-started.html: the example-workflow marker holds one <pre><code> block (npm run docs)");
+  const copied = block.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+  assert.equal(`${copied}\n`, example, "the copied text is the example file (npm run docs)");
+  const parsed = parse(copied) as { jobs?: { scan?: { steps?: { uses?: string }[] } } };
+  assert.ok(parsed.jobs?.scan?.steps?.some((s) => s.uses?.startsWith("kreativ-anders/rechtzeitig@")), "the copied text is a workflow that uses the action");
 });
 
-test("the start pages have the configurator: hidden until site.js, one URL field, live preview, privacy note", () => {
-  for (const f of ["index.html", "de/index.html"]) {
+test("the start pages have one call to action, to Get started, in the hero and after How it works", () => {
+  for (const [f, href] of [["index.html", "getting-started.html"], ["de/index.html", "../getting-started.html"]]) {
     const html = read(f);
-    const form = html.match(/<form class="configurator"[^>]*>/)?.[0] ?? "";
-    assert.ok(form.includes("hidden"), `${f}: hidden without JavaScript`);
-    assert.ok(/<input[^>]*type="url"/.test(html), `${f}: one URL field`);
-    assert.ok(html.includes('id="cfg-preview"'), `${f}: live preview`);
-    assert.match(html, /class="cfg-note"/, `${f}: the note that the URL is never sent`);
+    assert.ok(!/<form\b/.test(html) && !html.includes("configurator"), `${f}: no configurator`);
+    const buttons = [...html.matchAll(/<a class="button"[^>]*>/g)].map(([t]) => attr(t, "href"));
+    assert.deepEqual(buttons, [href, href], `${f}: two buttons, both to Get started`);
+    const hero = html.slice(html.indexOf('<div class="hero">'), html.indexOf('<section id="pain"'));
+    assert.equal((hero.match(/<a class="button"/g) ?? []).length, 1, `${f}: one button in the hero`);
+    assert.ok(!/<pre\b/.test(html.slice(0, html.indexOf('<div class="faq">'))), `${f}: no code block above the questions`);
   }
 });
 

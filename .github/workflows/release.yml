@@ -8,7 +8,7 @@ name: release
 #    main: the ruleset on main takes changes only through pull requests, and GITHUB_TOKEN
 #    cannot bypass it.
 # 3. Publishes a GitHub release. Before v1.0.0 it is a pre-release.
-# 4. Pushes a branch release/vX.Y.Z with the version and examples/workflows/rechtzeitig.yml
+# 4. Pushes a branch release/vX.Y.Z with the version and examples/workflows/rechtzeitig.yml (and its copy in docs/getting-started.html)
 #    pinned to the release commit, starts test.yml on it (pushes with GITHUB_TOKEN start no
 #    workflows, a dispatch does) and opens a pull request to main. If Actions may not open
 #    pull requests (Settings → Actions → General), the run summary links to open it by hand.
@@ -123,13 +123,15 @@ jobs:
           SHA: ${{ steps.tag.outputs.sha }}
         run: |
           branch="release/v$NEXT"
-          sed -i -E "s|(uses: $GITHUB_REPOSITORY)@[0-9a-f]{40} # v[0-9.]+|\1@$SHA # v$NEXT|" examples/workflows/rechtzeitig.yml
-          git diff --quiet && { echo "::error::No pin to $GITHUB_REPOSITORY found in examples/workflows/rechtzeitig.yml"; exit 1; }
+          # docs/getting-started.html shows the example workflow verbatim (npm run docs), so its pin moves too.
+          sed -i -E "s|(uses: $GITHUB_REPOSITORY)@[0-9a-f]{40} # v[0-9.]+|\1@$SHA # v$NEXT|" examples/workflows/rechtzeitig.yml docs/getting-started.html
+          git diff --quiet -- examples/workflows/rechtzeitig.yml && { echo "::error::No pin to $GITHUB_REPOSITORY found in examples/workflows/rechtzeitig.yml"; exit 1; }
+          git diff --quiet -- docs/getting-started.html && { echo "::error::No pin to $GITHUB_REPOSITORY found in docs/getting-started.html (npm run docs)"; exit 1; }
           git commit -q -am "📌 Pin the example workflow to v$NEXT"
           git push origin "HEAD:refs/heads/$branch"
           gh workflow run test.yml --ref "$branch"
           title="🔖 Release v$NEXT: version and pinned example workflow"
-          body="Sets package.json to v$NEXT and pins examples/workflows/rechtzeitig.yml to the release commit $SHA. The checks were started by the release run."
+          body="Sets package.json to v$NEXT and pins examples/workflows/rechtzeitig.yml and its copy in docs/getting-started.html to the release commit $SHA. The checks were started by the release run."
           if url=$(gh pr create --base main --head "$branch" --title "$title" --body "$body"); then
             echo "Pull request: $url" >> "$GITHUB_STEP_SUMMARY"
           else
