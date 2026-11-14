@@ -12,10 +12,11 @@ Open defects from the read-only audit of v0.5.1. The five that let a scan pass o
 
 ## Now: hardening
 
-Open points from the audit of 2026-11-03, after the fixes. Still open after the audit of 2026-11-10.
+Open points from the audit of 2026-11-03, after the fixes.
 
-1. `step-security/harden-runner` with an egress allowlist in `test.yml`. No workflow uses it yet.
-2. Require signed commits on `main`. The ruleset on `main` already requires pull requests and the `test` and `drift` checks and blocks force pushes; the release workflow does not push to `main`. Its pull request commit is made by `github-actions[bot]` and is not signed.
+1. Require signed commits on `main`. The release workflow makes its commits through the GitHub API, which signs them (`.github/scripts/commit-signed.sh`). Once the first release pull request shows both commits as verified, tick "Require signed commits" in the ruleset on `main`.
+
+Decided against: a network monitor in CI such as `step-security/harden-runner`. It is a third-party service with paid tiers and, in its audit mode, sends the connections of each run to that service. `test.yml` keeps the parts that need no service: read-only token, no persisted credentials, `npm ci --ignore-scripts`, actions pinned to a commit, only selected actions allowed, job timeouts; the tests reach only localhost.
 
 ## Next: wording of a pass
 
