@@ -1,5 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { npmLock, runRepoCheck } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
@@ -101,4 +103,14 @@ test("no pass when a lockfile could not be read", async () => {
   const result = await runRepoCheck(here, files);
   assert.equal(result.status, "info");
   assert.deepEqual(result.raw.details?.map((d) => [d.file, d.key]), [["api/composer.lock", "lockfile_unread"]]);
+});
+
+// #99: recent pnpm puts the package manager in a first YAML document; the lockfile proper follows it.
+test("reads a pnpm-lock.yaml with several documents", async () => {
+  const files = {
+    "package.json": pkg({ picomatch: "^4.0.7", "picomatch-extra": "^1.0.0" }, { devDependencies: { "@types/node": "^26.6.6" } }),
+    "pnpm-lock.yaml": readFileSync(join(here, "fixtures", "pnpm-lock.multidoc.yaml"), "utf8"),
+  };
+  const result = await runRepoCheck(here, files);
+  assert.deepEqual(result.raw.details?.map((d) => [d.key, d.params?.name]), [["not_locked", "picomatch-extra"]]);
 });
