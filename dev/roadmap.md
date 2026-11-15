@@ -83,15 +83,14 @@ Start page, legal pages and a small sample of other pages. No full-site crawl.
 
 Open data that would sharpen existing and planned checks. Only data under MIT, Apache-2.0, BSD, MPL-2.0 (kept in its own file with its notice), CC0 or CC-BY may be copied, with attribution in the header of the `data/*.yml` file and in NOTICE; GPL, AGPL, LGPL, EUPL, CC-BY-SA and non-commercial data never, ideas only. Each import gets a refresh script and a test.
 
-1. Third-party vendors in `data/third-parties.yml`: 90 today, payment and newsletter services added (#74, #78). Open: analytics, support and chat, reviews and trust badges common in Germany, each with hosts, `packages:` and country, one category per pull request (#40).
-2. Cookie names per vendor from the Open Cookie Database (Apache-2.0) for `data/third-parties.yml` `cookies:` and `data/cookies.yml`.
-3. Library signatures and versions from retire.js `jsrepository.json` (Apache-2.0) for client-side libraries in the served bundle (CVEs of client-side libraries in "website", served bundle against the lockfile in "repository and website together").
-4. More patterns for `data/secrets.yml` from the gitleaks rules (MIT), each with a benchmark case.
-5. Workflow patterns for `security/workflow-risks` from the zizmor audits (MIT), reimplemented (see "repository").
-6. Probe paths and matchers for exposed files from the exposure templates of nuclei-templates (MIT), passive GET only, for `data/probes.yml`.
-7. Supabase lint rules (splinter, license to verify) for `databaseRules()`, reimplemented statically.
-8. End-of-life dates of runtimes from endoflife.date (license to verify) for the runtimes item of "repository".
-9. License categories from the ScanCode LicenseDB (CC-BY-4.0) for `data/licenses.yml`.
+1. Cookie names per vendor from the Open Cookie Database (Apache-2.0) for `data/third-parties.yml` `cookies:` and `data/cookies.yml`.
+2. Library signatures and versions from retire.js `jsrepository.json` (Apache-2.0) for client-side libraries in the served bundle (CVEs of client-side libraries in "website", served bundle against the lockfile in "repository and website together").
+3. More patterns for `data/secrets.yml` from the gitleaks rules (MIT), each with a benchmark case.
+4. Workflow patterns for `security/workflow-risks` from the zizmor audits (MIT), reimplemented (see "repository").
+5. Probe paths and matchers for exposed files from the exposure templates of nuclei-templates (MIT), passive GET only, for `data/probes.yml`.
+6. Supabase lint rules (splinter, license to verify) for `databaseRules()`, reimplemented statically.
+7. End-of-life dates of runtimes from endoflife.date (license to verify) for the runtimes item of "repository".
+8. License categories from the ScanCode LicenseDB (CC-BY-4.0) for `data/licenses.yml`.
 
 ## Later: ecosystems
 

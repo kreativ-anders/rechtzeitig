@@ -87,3 +87,15 @@ test("warns when Userlike and Zendesk are contacted but not named in the policy"
   assert.equal(result.status, "warn");
   assert.deepEqual(result.details, ["Userlike", "Zendesk"]);
 });
+
+// Issue #40: review and trust badge vendors from data/third-parties.yml are matched by host.
+test("warns when Trusted Shops and ProvenExpert are contacted but not named in the policy", async () => {
+  const result = await policy("Datenschutzerklärung", "https://widgets.trustedshops.com/js/X0123456789.js", "https://www.provenexpert.com/widget/x.js");
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["Trusted Shops", "ProvenExpert"]);
+});
+
+test("passes when the policy names Trusted Shops", async () => {
+  const result = await policy("Wir nutzen das Trustbadge von Trusted Shops.", "https://widgets.trustedshops.com/js/X0123456789.js");
+  assert.equal(result.status, "pass");
+});

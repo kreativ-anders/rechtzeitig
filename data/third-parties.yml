@@ -286,6 +286,33 @@
   country: PL
   packages: ['@livechat/widget-*']
 
+- name: Trusted Shops
+  hosts: [trustedshops.com, trstd.com]
+  purpose: reviews and trust badge
+  consent: required
+  country: DE
+  names: [trusted shops, trustedshops]
+  packages: ['@trustedshops-public/cot-integration-library']
+
+- name: ProvenExpert
+  hosts: [provenexpert.com]
+  purpose: reviews and trust badge
+  consent: required
+  country: DE
+
+- name: Trustpilot
+  hosts: [widget.trustpilot.com]
+  purpose: reviews and trust badge
+  consent: required
+  country: DK
+  packages: [trustpilot]
+
+- name: eKomi
+  hosts: [ekomiapps.de, connect.ekomi.de, smartforms.ekomi.com]
+  purpose: reviews and trust badge
+  consent: required
+  country: DE
+
 - name: Calendly
   hosts: [calendly.com]
   purpose: scheduling embed
