@@ -5,6 +5,9 @@
 common:
   # Longest list of items in one finding; the rest is counted as "and N more" (capped() in src/sdk.ts).
   max_listed: 20
+  # A form with a password field and at most this many fields is a login form (legal/cancellation-button,
+  # legal/withdrawal-button): an identifier and the password.
+  login_form_max_fields: 2
 
 # Reading the repository (src/repo/scan.ts). Files above a limit are not read; the report names them.
 repo:

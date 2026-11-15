@@ -21,3 +21,11 @@ quantity:
 unit_price:
   - '\d(?: ?(?:€|eur))?[ *]*(?:/|je|pro|per)[ *]*(?:\d+(?:[.,]\d+)? ?)?(?:mg|g|kg|ml|cl|l|liter|gramm|kilogramm)\b'
   - '\b(?:1|10|100|1000) ?(?:g|kg|ml|l) ?= ?(?:€|eur)? ?\d'
+
+# legal/cancellation-button, legal/withdrawal-button: app store hosts (with their subdomains), not patterns.
+# A cancellation or withdrawal button that leads there needs an app instead of working on the website.
+app_store:
+  - apps.apple.com
+  - itunes.apple.com
+  - play.google.com
+  - appgallery.huawei.com

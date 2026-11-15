@@ -111,7 +111,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a button labeled &quot;verträge hier kündigen&quot; on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and &quot;jetzt kündigen&quot; (`cancel_confirm`) on its target page; info when it cannot be followed. subscriptions">
+<details class="rule" id="LEG-DE-BTN-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-btn-001 legal/cancellation-button cancellation button for subscriptions kündigungsbutton für abos § 312k bgb (german civil code) finds a button labeled &quot;verträge hier kündigen&quot; on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and &quot;jetzt kündigen&quot; (`cancel_confirm`) on its target page; warns when the button leads to an app store (`app_store` in `data/shop.yml`) or the target page shows only a login form (a password field and at most `common.login_form_max_fields` fields in `data/thresholds.yml`, no form for the cancellation itself); info when it cannot be followed. subscriptions">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-BTN-001<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Cancellation button for subscriptions</span>
@@ -120,13 +120,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds a button labeled &quot;Verträge hier kündigen&quot; on the start page (<code>cancel</code> in <code>lang/*.yml</code>, else <code>cancel_similar</code> on the visible text, which warns) and &quot;jetzt kündigen&quot; (<code>cancel_confirm</code>) on its target page; info when it cannot be followed.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds a button labeled &quot;Verträge hier kündigen&quot; on the start page (<code>cancel</code> in <code>lang/*.yml</code>, else <code>cancel_similar</code> on the visible text, which warns) and &quot;jetzt kündigen&quot; (<code>cancel_confirm</code>) on its target page; warns when the button leads to an app store (<code>app_store</code> in <code>data/shop.yml</code>) or the target page shows only a login form (a password field and at most <code>common.login_form_max_fields</code> fields in <code>data/thresholds.yml</code>, no form for the cancellation itself); info when it cannot be followed.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>Runs when</dt><dd>Opt-in: only with <code>subscriptions: true</code>.</dd></div>
-<div><dt>How to fix</dt><dd>Offer an always available link &quot;Verträge hier kündigen&quot;, without login, that leads to a page with a &quot;jetzt kündigen&quot; button.</dd></div>
+<div><dt>How to fix</dt><dd>Offer an always available link &quot;Verträge hier kündigen&quot;, without login, that leads on the website (not to an app store) to a page with a &quot;jetzt kündigen&quot; button; login data may be fields of the cancellation form there. The Digital Fairness Act proposal (COM(2026) 1100, Art. 23) would require this EU-wide, worded &quot;terminate the contract here&quot; and &quot;confirm the contract termination&quot; in English.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/cancellation-button"><code>checks/legal/cancellation-button</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312k.html">gesetze-im-internet.de</a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__312k.html">gesetze-im-internet.de</a>, <a href="https://commission.europa.eu/law/law-topic/consumer-protection-law/digital-fairness-act_en">commission.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-14">2026-11-14</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="LEG-DE-LIC-003" data-module="legal" data-scope="repository" data-severity="medium" data-search="leg-de-lic-003 legal/copyleft-dependencies copyleft dependencies fit the project license copyleft-abhängigkeiten passen zur projektlizenz §§ 31, 69c urhg (german copyright act); gpl-2.0 § 2, gpl-3.0 § 5 reads the spdx expressions of production dependencies from lockfiles that carry licenses (`licenses_in_lockfile` in `data/ecosystems.yml`) and flags gpl or agpl that no `or` choice avoids when the project license is not gpl, and gpl-2.0-only against gplv3, lgpl-3.0 or apache-2.0; categories and linking exceptions come from `data/licenses.yml`, agpl without a choice is left to legal/network-copyleft, dev dependencies and weak copyleft (lgpl, mpl, epl) are not flagged, and without a single license read the rule is skipped.">
@@ -438,7 +438,7 @@
 <div><dt>Reviewed</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
 </dl></div>
 </details>
-<details class="rule" id="LEG-DE-BTN-002" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-btn-002 legal/withdrawal-button withdrawal button for online contracts widerrufsbutton für online-verträge § 356a bgb (german civil code, since 19 june 2026) finds a button labeled &quot;vertrag widerrufen&quot; on the start page (`withdraw` in `lang/*.yml`, else `withdraw_similar` on the visible text, which warns) and &quot;widerruf bestätigen&quot; (`withdraw_confirm`) on its target page; info when it cannot be followed. sales">
+<details class="rule" id="LEG-DE-BTN-002" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-btn-002 legal/withdrawal-button withdrawal button for online contracts widerrufsbutton für online-verträge § 356a bgb (german civil code, since 19 june 2026) finds a button labeled &quot;vertrag widerrufen&quot; on the start page (`withdraw` in `lang/*.yml`, else `withdraw_similar` on the visible text, which warns) and &quot;widerruf bestätigen&quot; (`withdraw_confirm`) on its target page; warns when the button leads to an app store (`app_store` in `data/shop.yml`) or the target page shows only a login form (a password field and at most `common.login_form_max_fields` fields in `data/thresholds.yml`, no form for the withdrawal itself); info when it cannot be followed. sales">
 <summary>
 <span class="rule-head"><span class="rule-id">LEG-DE-BTN-002<span class="rule-scope" title="Scope: what the check reads">Website</span></span><span class="sev" data-level="4" title="Severity: high"><i></i><i></i><i></i><i></i><i></i><span class="sev-name">high</span></span></span>
 <span class="rule-title">Withdrawal button for online contracts</span>
@@ -447,13 +447,13 @@
 <span class="rule-more">How it is checked</span>
 </summary>
 <div class="rule-body"><dl>
-<div><dt>How it is checked</dt><dd>Finds a button labeled &quot;Vertrag widerrufen&quot; on the start page (<code>withdraw</code> in <code>lang/*.yml</code>, else <code>withdraw_similar</code> on the visible text, which warns) and &quot;Widerruf bestätigen&quot; (<code>withdraw_confirm</code>) on its target page; info when it cannot be followed.</dd></div>
+<div><dt>How it is checked</dt><dd>Finds a button labeled &quot;Vertrag widerrufen&quot; on the start page (<code>withdraw</code> in <code>lang/*.yml</code>, else <code>withdraw_similar</code> on the visible text, which warns) and &quot;Widerruf bestätigen&quot; (<code>withdraw_confirm</code>) on its target page; warns when the button leads to an app store (<code>app_store</code> in <code>data/shop.yml</code>) or the target page shows only a login form (a password field and at most <code>common.login_form_max_fields</code> fields in <code>data/thresholds.yml</code>, no form for the withdrawal itself); info when it cannot be followed.</dd></div>
 <div><dt>Scope</dt><dd>Website: runs with a <code>url</code>.</dd></div>
 <div><dt>Runs when</dt><dd>Opt-in: only with <code>sales: true</code>.</dd></div>
-<div><dt>How to fix</dt><dd>Offer an always available, prominent &quot;Vertrag widerrufen&quot; function leading to a form with a &quot;Widerruf bestätigen&quot; button; confirm receipt electronically.</dd></div>
+<div><dt>How to fix</dt><dd>Offer an always available, prominent &quot;Vertrag widerrufen&quot; function leading to a form with a &quot;Widerruf bestätigen&quot; button, on the website and without a login in front of it; confirm receipt electronically. The Digital Fairness Act proposal (COM(2026) 1100, Art. 24) would move this function into the regulation.</dd></div>
 <div><dt>Code</dt><dd><a href="https://github.com/kreativ-anders/rechtzeitig/tree/main/checks/legal/withdrawal-button"><code>checks/legal/withdrawal-button</code></a></dd></div>
-<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__356a.html">gesetze-im-internet.de</a></dd></div>
-<div><dt>Reviewed</dt><dd><time datetime="2026-11-03">2026-11-03</time></dd></div>
+<div><dt>Sources</dt><dd><a href="https://www.gesetze-im-internet.de/bgb/__356a.html">gesetze-im-internet.de</a>, <a href="https://commission.europa.eu/law/law-topic/consumer-protection-law/digital-fairness-act_en">commission.europa.eu</a></dd></div>
+<div><dt>Reviewed</dt><dd><time datetime="2026-11-14">2026-11-14</time></dd></div>
 </dl></div>
 </details>
 <details class="rule" id="LEG-DE-WDR-001" data-module="legal" data-scope="website" data-severity="high" data-search="leg-de-wdr-001 legal/withdrawal-instruction withdrawal instructions with the model form and a pointer to the withdrawal function widerrufsbelehrung mit muster-widerrufsformular und hinweis auf die widerrufsfunktion art. 246a § 1(2) sentence 1 no. 1 egbgb with annex 2, § 356a bgb (since 19 june 2026) opens the withdrawal instructions linked from the start page or its hreflang version in the scan language (`withdrawal_info`, link words of every language in `lang/*.yml`), else the t&amp;cs when they contain them (`withdrawal_instruction`), and warns without the model form in the text or a link (`model_form`) or without a note on where the withdrawal function is (`withdraw_function_hint`). sales">

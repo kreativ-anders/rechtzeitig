@@ -19,6 +19,8 @@ links:
     - '\bwithdrawal (policy|instructions?|information)\b'
   cancel:
     - '\bcancel contracts? here\b'
+    # Wording of the Digital Fairness Act proposal, Art. 23 (COM(2026) 1100).
+    - '\bterminate (the )?contracts? here\b'
   cancel_similar:
     - '\b(cancel|end|terminate)\b (\w+ ){0,3}(subscription|contract|membership|plan)s?\b'
     - '\bcancell?ation\b'
@@ -41,6 +43,8 @@ links:
 text:
   cancel_confirm:
     - '\bcancel now\b'
+    # Wording of the Digital Fairness Act proposal, Art. 23 (COM(2026) 1100).
+    - '\bconfirm (the )?contract termination\b'
   # Second way of contact in an imprint besides email, § 5 Abs. 1 Nr. 2 DDG.
   withdraw_confirm:
     - '\bconfirm (the )?withdrawal\b'
@@ -315,6 +319,8 @@ messages:
     not_followed: 'Could not follow "{text}" to the cancellation page {where}; the confirmation button "jetzt kündigen" was not checked.'
     not_followed_button: 'Could not follow "{text}" to the cancellation page (a button without a link); the confirmation button "jetzt kündigen" was not checked.'
     no_confirm: '{where} has no confirmation button "jetzt kündigen" (§ 312k Abs. 2 Satz 2 BGB).'
+    login_wall: '{where} shows only a login form and no confirmation button "jetzt kündigen". The cancellation page must be directly and easily accessible (§ 312k Abs. 2 Satz 4 BGB); it may ask for login data as fields of the cancellation form.'
+    app_store: '"{text}" leads to an app store ({where}). The cancellation button must work on the website, without installing an app (§ 312k Abs. 2 Satz 1 BGB).'
     similar: 'Found "{text}", but the law asks for "Verträge hier kündigen" or equally clear wording.'
     unconfirmed: 'Found "{text}", but could not follow it to the confirmation page.'
     incomplete: 'Found "{text}", but the cancellation page looks incomplete.'
@@ -423,6 +429,8 @@ messages:
     not_followed: 'Could not follow "{text}" to the withdrawal page {where}; the confirmation button "Widerruf bestätigen" was not checked.'
     not_followed_button: 'Could not follow "{text}" to the withdrawal page (a button without a link); the confirmation button "Widerruf bestätigen" was not checked.'
     no_confirm: '{where} has no confirmation button "Widerruf bestätigen" (§ 356a Abs. 3 BGB).'
+    login_wall: '{where} shows only a login form and no confirmation button "Widerruf bestätigen". The withdrawal function must be easily accessible (§ 356a Abs. 1 Satz 3 BGB); it may ask for login data as fields of the withdrawal form.'
+    app_store: '"{text}" leads to an app store ({where}). The withdrawal function must work on the website where the contract was made, without installing an app (§ 356a Abs. 1 Satz 1 BGB).'
     similar: 'Found "{text}", but the law asks for "Vertrag widerrufen" or equally clear wording.'
     unconfirmed: 'Found "{text}", but could not follow it to the confirmation page.'
     incomplete: 'Found "{text}", but the withdrawal page looks incomplete.'

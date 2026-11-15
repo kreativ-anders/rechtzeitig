@@ -257,6 +257,28 @@ export function linkedPageResult(ctx: ScanContext, concept: LegalConcept): Resul
   return pass(msg("found", { page, where }));
 }
 
+const APP_STORES = loadYaml<{ app_store: string[] }>("data/shop.yml").app_store;
+const LOGIN_FIELDS = loadYaml<{ common: { login_form_max_fields: number } }>("data/thresholds.yml").common.login_form_max_fields;
+/** A link into an app store (data/shop.yml `app_store`): the function would need an app download. */
+function appStore(href: string | null): boolean {
+  try {
+    return !!href && APP_STORES.some((d) => hostIn(new URL(href).hostname, d));
+  } catch {
+    return false;
+  }
+}
+const hasPassword = (f: Form) => f.fields.some((x) => x.startsWith("password:"));
+/**
+ * The page shows only a login: a form with a password field and at most `common.login_form_max_fields` fields
+ * (data/thresholds.yml), and no form for the function itself. That is a form with more than one field and no
+ * password, or one whose button names the function (Netflix: login data and "Kündigung abschließen" in one form,
+ * which the law allows). A search or newsletter box with one field does not count.
+ */
+const loginOnly = (ctx: ScanContext, rule: ButtonRule, forms: Form[]): boolean =>
+  forms.some((f) => hasPassword(f) && f.fields.length <= LOGIN_FIELDS)
+  && !forms.some((f) => (!hasPassword(f) && f.fields.length > 1)
+    || f.links.some((l) => l.button && [rule.exact, rule.similar, rule.confirm].some((c) => ctx.says(c, l.text))));
+
 /** A button the law asks for on the start page (cancellation, withdrawal) and its confirmation page. */
 export interface ButtonRule {
   /** lang/*.yml `links` concept with the wording from the law. */
@@ -270,8 +292,9 @@ export interface ButtonRule {
 /**
  * Finds the button with the wording from the law (or similar wording, which warns) and checks the
  * confirmation button on the page behind it. A control that could not be followed gives info.
+ * A link into an app store, and a page behind it that shows only a login form and no confirmation button, warn.
  * The calling check's messages name the page and the wording from the law: missing, not_followed,
- * not_followed_button, no_confirm, similar, unconfirmed, incomplete, found (`{text}` = button text, `{where}` = URL).
+ * not_followed_button, no_confirm, login_wall, app_store, similar, unconfirmed, incomplete, found (`{text}` = button text, `{where}` = URL).
  */
 export function requiredButton(ctx: ScanContext, rule: ButtonRule): Result {
   const exact = startLinks(ctx, rule.exact);
@@ -279,11 +302,14 @@ export function requiredButton(ctx: ScanContext, rule: ButtonRule): Result {
   if (!link) return fail(msg("missing"));
   const text = link.text;
   const target = ctx.page(link.href)?.js;
-  const problems: Finding[] = !loaded(target)
-    ? [link.href ? { key: "not_followed", params: { text, where: ctx.short(link.href) } } : { key: "not_followed_button", params: { text } }]
+  const where = ctx.short(link.href ?? "");
+  const problems: Finding[] = appStore(link.href) ? [{ key: "app_store", params: { text, where } }]
+    : !loaded(target)
+    ? [link.href ? { key: "not_followed", params: { text, where } } : { key: "not_followed_button", params: { text } }]
     : ctx.says(rule.confirm, target.text) ? []
-    : [{ key: "no_confirm", params: { where: ctx.short(target.finalUrl) } }];
+    : [{ key: loginOnly(ctx, rule, target.forms) ? "login_wall" : "no_confirm", params: { where: ctx.short(target.finalUrl) } }];
   if (!exact.length) return warn(msg("similar", { text }), problems);
+  if (problems[0]?.key === "app_store") return warn(msg("incomplete", { text }), problems);
   if (!loaded(target)) return info(msg("unconfirmed", { text }), problems);
   if (problems.length) return warn(msg("incomplete", { text }), problems);
   return pass(msg("found", { text }));
