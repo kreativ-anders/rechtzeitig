@@ -1,6 +1,6 @@
 // One small parser per lockfile. Each returns components without purl; purl() adds it.
 
-import { parse as parseYaml } from "yaml";
+import { parse as parseYaml, parseAllDocuments } from "yaml";
 import type { Component, Ecosystem } from "../sdk.ts";
 
 type Parsed = Omit<Component, "purl" | "source">;
@@ -98,10 +98,22 @@ interface PnpmLock { lockfileVersion?: string | number; importers?: Record<strin
 
 /**
  * v5 keys: /name/1.2.3_peer. v6: /name@1.2.3(peer). v9: name@1.2.3, with the dependency graph in
- * `snapshots` and no dev flag, so dev is what production importers do not reach.
+ * `snapshots` and no dev flag, so dev is what production importers do not reach. pnpm 10 and later may write
+ * the package manager and config dependencies it installs as a first document of their own, before the lockfile.
  */
 function pnpmLock(text: string): Parsed[] {
-  const lock = (parseYaml(text) ?? {}) as PnpmLock;
+  return pnpmDocuments(text).flatMap(pnpmDocument);
+}
+
+/** Every YAML document of a pnpm-lock.yaml; throws when one does not parse. */
+export function pnpmDocuments(text: string): PnpmLock[] {
+  return parseAllDocuments(text).map((doc) => {
+    if (doc.errors.length) throw doc.errors[0];
+    return (doc.toJS() ?? {}) as PnpmLock;
+  });
+}
+
+function pnpmDocument(lock: PnpmLock): Parsed[] {
   const v5 = String(lock.lockfileVersion ?? "").startsWith("5");
   const prod = lock.snapshots ? pnpmReachable(lock) : undefined;
   return Object.entries(lock.packages ?? {}).flatMap(([key, p]) => {
