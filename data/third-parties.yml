@@ -178,6 +178,27 @@
   names: [microsoft advertising, bing]
   cookies: ['^_uetsid$', '^_uetvid$', '^MUID$']
 
+- name: Pinterest Tag
+  hosts: [s.pinimg.com, ct.pinterest.com]
+  purpose: advertising
+  consent: required
+  country: US
+  names: [pinterest]
+
+- name: Snap Pixel
+  hosts: [sc-static.net]
+  purpose: advertising
+  consent: required
+  country: US
+  names: [snapchat, snap pixel]
+
+- name: Reddit Pixel
+  hosts: [alb.reddit.com]
+  purpose: advertising
+  consent: required
+  country: US
+  names: [reddit]
+
 - name: Microsoft Clarity
   hosts: [clarity.ms]
   purpose: analytics
@@ -257,6 +278,25 @@
   consent: check
   country: US
   names: [cloudflare]
+
+- name: etracker
+  hosts: [etracker.com, etracker.de]
+  purpose: analytics
+  consent: check
+  country: DE
+
+- name: Fathom
+  hosts: [cdn.usefathom.com]
+  purpose: analytics without cookies
+  consent: check
+  country: CA
+
+- name: Simple Analytics
+  hosts: [scripts.simpleanalyticscdn.com, queue.simpleanalyticscdn.com]
+  purpose: analytics without cookies
+  consent: check
+  country: NL
+  packages: ['@simpleanalytics/*', simple-analytics-vue, gatsby-plugin-simple-analytics]
 
 - name: Vercel Analytics
   hosts: [va.vercel-scripts.com, vitals.vercel-insights.com]
