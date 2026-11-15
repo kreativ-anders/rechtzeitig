@@ -102,9 +102,14 @@ interface PnpmLock { lockfileVersion?: string | number; importers?: Record<strin
  * the package manager and config dependencies it installs as a first document of their own, before the lockfile.
  */
 function pnpmLock(text: string): Parsed[] {
-  return parseAllDocuments(text).flatMap((doc) => {
+  return pnpmDocuments(text).flatMap(pnpmDocument);
+}
+
+/** Every YAML document of a pnpm-lock.yaml; throws when one does not parse. */
+export function pnpmDocuments(text: string): PnpmLock[] {
+  return parseAllDocuments(text).map((doc) => {
     if (doc.errors.length) throw doc.errors[0];
-    return pnpmDocument((doc.toJS() ?? {}) as PnpmLock);
+    return (doc.toJS() ?? {}) as PnpmLock;
   });
 }
 

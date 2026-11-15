@@ -6,7 +6,7 @@ import type { UiLanguage } from "./rules.ts";
 export { loadYaml } from "./data.ts";
 import { loadYaml } from "./data.ts";
 export { isWebUrl } from "./text.ts";
-export { MANIFESTS } from "./repo/lockfiles.ts";
+export { MANIFESTS, pnpmDocuments } from "./repo/lockfiles.ts";
 import { MANIFESTS } from "./repo/lockfiles.ts";
 export { DECLARING, declaredDependencies, lockfilesFor, ownName, pipGitRef, pypiName, type Declared } from "./repo/manifests.ts";
 export { satisfies } from "./repo/semver.ts";

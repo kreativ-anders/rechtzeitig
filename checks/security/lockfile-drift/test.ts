@@ -1,5 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { npmLock, runRepoCheck } from "../../../test/helpers.ts";
 import { satisfies } from "../../../src/sdk.ts";
 
@@ -69,6 +71,16 @@ test("compares the specifier pnpm recorded", async () => {
   assert.equal(ok.status, "pass");
   const stale = await runRepoCheck(here, { "package.json": pkg({ react: "^18.3.0" }), "pnpm-lock.yaml": lock });
   assert.equal(stale.raw.details?.[0].key, "stale");
+});
+
+// #99: recent pnpm puts the package manager in a first YAML document; the specifiers are in the one after it.
+test("compares the specifier pnpm recorded in a lockfile with several documents", async () => {
+  const lock = readFileSync(join(here, "../hallucinated-packages/fixtures/pnpm-lock.multidoc.yaml"), "utf8");
+  const ok = await runRepoCheck(here, { "package.json": pkg({ picomatch: "^4.0.7" }), "pnpm-lock.yaml": lock });
+  assert.equal(ok.status, "pass", JSON.stringify(ok.raw.details));
+  // 4.0.7 meets ^4.0.0, but pnpm recorded ^4.0.7: only the specifier shows the drift.
+  const stale = await runRepoCheck(here, { "package.json": pkg({ picomatch: "^4.0.0" }), "pnpm-lock.yaml": lock });
+  assert.deepEqual(stale.raw.details?.map((d) => [d.key, d.params?.name]), [["stale", "picomatch"]]);
 });
 
 test("compares yarn.lock descriptors, classic and berry", async () => {

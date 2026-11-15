@@ -8,6 +8,7 @@ import {
   loadYaml,
   msg,
   pass,
+  pnpmDocuments,
   satisfies,
   skip,
   warn,
@@ -26,8 +27,10 @@ const inDir = (dir: string, name: string) => (dir ? `${dir}/${name}` : name);
 type PnpmRef = string | { specifier?: string; version?: string };
 interface PnpmImporter { specifiers?: Record<string, string>; dependencies?: Record<string, PnpmRef>; devDependencies?: Record<string, PnpmRef>; optionalDependencies?: Record<string, PnpmRef> }
 
+type PnpmLockDoc = PnpmImporter & { importers?: Record<string, PnpmImporter> };
+
 /** Specifier pnpm recorded for a dependency of the importer at `rel`, in lockfile v5 to v9. */
-function pnpmSpecifier(lock: (PnpmImporter & { importers?: Record<string, PnpmImporter> }) | undefined, rel: string, name: string): string | undefined {
+function pnpmSpecifier(lock: PnpmLockDoc, rel: string, name: string): string | undefined {
   const importer = lock?.importers ? lock.importers[rel || "."] : rel ? undefined : lock;
   if (!importer) return undefined;
   if (importer.specifiers) return importer.specifiers[name];
@@ -108,14 +111,15 @@ export default defineRepoCheck({
         const rel = lockDir ? dir.slice(lockDir.length + 1) : dir;
         const versions = new Map<string, string[]>();
         for (const c of repo.components.filter((c) => c.source === lock)) versions.set(c.name, [...(versions.get(c.name) ?? []), c.version]);
-        const pnpm = baseOf(lock) === "pnpm-lock.yaml" ? repo.yaml<PnpmImporter & { importers?: Record<string, PnpmImporter> }>(lock) : undefined;
+        // Recent pnpm writes the package manager it installs as a document of its own before the lockfile: read every document.
+        const pnpm = baseOf(lock) === "pnpm-lock.yaml" ? (pnpmDocuments(repo.read(lock) ?? "") as PnpmLockDoc[]) : undefined;
         const yarn = baseOf(lock) === "yarn.lock" ? yarnDescriptors(repo.read(lock) ?? "") : undefined;
         for (const d of deps) {
           const locked = versions.get(d.name);
           if (!locked) continue; // not locked at all: security/hallucinated-packages reports it
           let stale = false;
           if (pnpm) {
-            const recorded = pnpmSpecifier(pnpm, rel, d.name);
+            const recorded = pnpm.map((doc) => pnpmSpecifier(doc, rel, d.name)).find((s) => s !== undefined);
             stale = recorded !== undefined && recorded !== d.spec;
           } else if (yarn) {
             stale = !yarn.has(`${d.name}@${d.spec}`) && !yarn.has(`${d.name}@npm:${d.spec}`);
