@@ -80,3 +80,10 @@ test("warns when etracker and the Pinterest Tag are contacted but not named in t
   assert.equal(result.status, "warn");
   assert.deepEqual(result.details, ["etracker", "Pinterest Tag"]);
 });
+
+// Issue #40: chat vendors from data/third-parties.yml are matched by host.
+test("warns when Userlike and Zendesk are contacted but not named in the policy", async () => {
+  const result = await policy("Datenschutzerklärung", "https://userlike-cdn-widgets.userlike.com/abc.js", "https://static.zdassets.com/ekr/snippet.js?key=x");
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.details, ["Userlike", "Zendesk"]);
+});

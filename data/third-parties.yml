@@ -245,6 +245,47 @@
   country: FR
   packages: [crisp-sdk-web]
 
+- name: Userlike
+  hosts: [userlike.com]
+  purpose: chat
+  consent: required
+  country: DE
+  names: [userlike, lime connect]
+  packages: ['@userlike/messenger']
+
+- name: Zendesk
+  hosts: [zdassets.com, zendesk.com, zopim.com, smooch.io]
+  purpose: chat
+  consent: required
+  country: US
+
+- name: Freshchat
+  hosts: [freshchat.com]
+  purpose: chat
+  consent: required
+  country: US
+  names: [freshchat, freshworks]
+
+- name: tawk.to
+  hosts: [tawk.to]
+  purpose: chat
+  consent: required
+  country: US
+  packages: ['@tawk.to/tawk-messenger-react', '@tawk.to/tawk-messenger-vue']
+
+- name: Tidio
+  hosts: [tidio.co, tidiochat.com, uploads.tidio.com]
+  purpose: chat
+  consent: required
+  country: US
+
+- name: LiveChat
+  hosts: [livechatinc.com, livechat-static.com, livechat-files.com]
+  purpose: chat
+  consent: required
+  country: PL
+  packages: ['@livechat/widget-*']
+
 - name: Calendly
   hosts: [calendly.com]
   purpose: scheduling embed
