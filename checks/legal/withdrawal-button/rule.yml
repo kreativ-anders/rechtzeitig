@@ -7,12 +7,13 @@ title:
 legal_basis:
   de: "§ 356a BGB (seit 19.06.2026)"
   en: "§ 356a BGB (German Civil Code, since 19 June 2026)"
-how: "Finds a button labeled \"Vertrag widerrufen\" on the start page (`withdraw` in `lang/*.yml`, else `withdraw_similar` on the visible text, which warns) and \"Widerruf bestätigen\" (`withdraw_confirm`) on its target page; info when it cannot be followed."
+how: "Finds a button labeled \"Vertrag widerrufen\" on the start page (`withdraw` in `lang/*.yml`, else `withdraw_similar` on the visible text, which warns) and \"Widerruf bestätigen\" (`withdraw_confirm`) on its target page; warns when the button leads to an app store (`app_store` in `data/shop.yml`) or the target page shows only a login form (a password field and at most `common.login_form_max_fields` fields in `data/thresholds.yml`, no form for the withdrawal itself); info when it cannot be followed."
 requires: [sales]
 fix_hint:
-  de: "Ständig verfügbare, hervorgehobene Funktion \"Vertrag widerrufen\" anbieten, die zu einem Formular mit dem Button \"Widerruf bestätigen\" führt; den Eingang elektronisch bestätigen."
-  en: "Offer an always available, prominent \"Vertrag widerrufen\" function leading to a form with a \"Widerruf bestätigen\" button; confirm receipt electronically."
+  de: "Ständig verfügbare, hervorgehobene Funktion \"Vertrag widerrufen\" anbieten, die zu einem Formular mit dem Button \"Widerruf bestätigen\" führt, auf der Website und ohne vorgeschalteten Login; den Eingang elektronisch bestätigen. Der Vorschlag für einen Digital Fairness Act (COM(2026) 1100, Art. 24) würde diese Funktion in die Verordnung übernehmen."
+  en: "Offer an always available, prominent \"Vertrag widerrufen\" function leading to a form with a \"Widerruf bestätigen\" button, on the website and without a login in front of it; confirm receipt electronically. The Digital Fairness Act proposal (COM(2026) 1100, Art. 24) would move this function into the regulation."
 meta:
-  last_reviewed: "2026-11-03"
+  last_reviewed: "2026-11-14"
   sources:
   - https://www.gesetze-im-internet.de/bgb/__356a.html
+  - https://commission.europa.eu/law/law-topic/consumer-protection-law/digital-fairness-act_en

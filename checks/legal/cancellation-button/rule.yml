@@ -7,12 +7,13 @@ title:
 legal_basis:
   de: "§ 312k BGB"
   en: "§ 312k BGB (German Civil Code)"
-how: "Finds a button labeled \"Verträge hier kündigen\" on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and \"jetzt kündigen\" (`cancel_confirm`) on its target page; info when it cannot be followed."
+how: "Finds a button labeled \"Verträge hier kündigen\" on the start page (`cancel` in `lang/*.yml`, else `cancel_similar` on the visible text, which warns) and \"jetzt kündigen\" (`cancel_confirm`) on its target page; warns when the button leads to an app store (`app_store` in `data/shop.yml`) or the target page shows only a login form (a password field and at most `common.login_form_max_fields` fields in `data/thresholds.yml`, no form for the cancellation itself); info when it cannot be followed."
 requires: [subscriptions]
 fix_hint:
-  de: "Ständig verfügbaren Link \"Verträge hier kündigen\" ohne Login anbieten, der zu einer Seite mit dem Button \"jetzt kündigen\" führt."
-  en: "Offer an always available link \"Verträge hier kündigen\", without login, that leads to a page with a \"jetzt kündigen\" button."
+  de: "Ständig verfügbaren Link \"Verträge hier kündigen\" ohne Login anbieten, der auf der Website (nicht im App-Store) zu einer Seite mit dem Button \"jetzt kündigen\" führt; Login-Daten dürfen dort Felder des Kündigungsformulars sein. Der Vorschlag für einen Digital Fairness Act (COM(2026) 1100, Art. 23) würde das EU-weit verlangen, mit \"terminate the contract here\" und \"confirm the contract termination\" auf Englisch."
+  en: "Offer an always available link \"Verträge hier kündigen\", without login, that leads on the website (not to an app store) to a page with a \"jetzt kündigen\" button; login data may be fields of the cancellation form there. The Digital Fairness Act proposal (COM(2026) 1100, Art. 23) would require this EU-wide, worded \"terminate the contract here\" and \"confirm the contract termination\" in English."
 meta:
-  last_reviewed: "2026-11-03"
+  last_reviewed: "2026-11-14"
   sources:
   - https://www.gesetze-im-internet.de/bgb/__312k.html
+  - https://commission.europa.eu/law/law-topic/consumer-protection-law/digital-fairness-act_en

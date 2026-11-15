@@ -65,7 +65,7 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       privacy: ["Privacy policy", "Data protection"],
       terms: ["Terms and conditions", "Terms of service", "General terms"],
       withdrawal_info: ["Right of withdrawal", "Withdrawal policy"],
-      cancel: ["Cancel contracts here"],
+      cancel: ["Cancel contracts here", "Terminate the contract here"],
       cancel_similar: ["Cancel your subscription", "Cancellation"],
       withdraw: ["Withdraw from the contract here"],
       withdraw_similar: ["Withdrawal form"],
@@ -74,7 +74,7 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       consent_settings: ["Cookie settings", "Manage your cookies"],
     },
     text: {
-      cancel_confirm: ["Cancel now"],
+      cancel_confirm: ["Cancel now", "Confirm contract termination"],
       withdraw_confirm: ["Confirm withdrawal"],
       contact_form: ["Contact form"],
       order_button: ["Buy with obligation to pay", "Place order and pay", "Buy now"],
