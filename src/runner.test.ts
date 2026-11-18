@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
 import { LANGUAGES, SWITCHES, reviewProblems, validateRule, type Rule, type Switch } from "./rules.ts";
-import { suppressionsSchema, EXAMPLE_SUPPRESSIONS, SCHEMA_FILE, exampleRulesYaml, fillYaml, wikiPages } from "./docs.ts";
+import { suppressionsSchema, EXAMPLE_SUPPRESSIONS, SCHEMA_FILE, exampleRulesYaml, fillYaml, tagsAsCode, wikiPages } from "./docs.ts";
 import { groupPage } from "./wiki.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, defineCrossCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
@@ -80,6 +80,13 @@ test("the scope follows the check type: defineCheck reads the website, defineRep
 test("groups are legal or topic areas, not scan targets: no checks/repo/ folder", async () => {
   const groups = new Set((await loadChecks()).map((c) => moduleOf(c.id)));
   assert.deepEqual([...groups].filter((g) => (SCOPES as readonly string[]).includes(g) || g === "repo"), []);
+});
+
+test("HTML tags in rule texts become code on the wiki, existing code stays", async () => {
+  assert.equal(tagsAsCode("Use <picture> and `<img alt>`, not </div>."), "Use `<picture>` and `<img alt>`, not `</div>`.");
+  const pages = Object.values(wikiPages(await loadChecks(), {}, "main")).join("\n");
+  const outside = pages.split(/`[^`]*`/).join("").replace(/^<!--.*-->$/gm, "");
+  assert.deepEqual(outside.match(/<\/?[a-zA-Z][^<>]*>/g) ?? [], []);
 });
 
 test("each rule on its wiki page carries the scope of its check", async () => {

@@ -33,6 +33,8 @@ const MODULES: Record<string, [string, string]> = {
 const SCOPE: Record<Scope, string> = { website: "Website", repository: "Repository", both: "Repository + website" };
 
 const cell = (s: string) => s.replace(/\s+/g, " ").replace(/\|/g, "\\|").trim();
+/** HTML tags in rule texts as code, outside existing code spans, so the wiki shows them instead of dropping them. */
+export const tagsAsCode = (s: string) => s.split(/(`[^`]*`)/).map((part, i) => (i % 2 ? part : part.replace(/<\/?[a-zA-Z][^<>]*>/g, "`$&`"))).join("");
 const host = (url: string) => new URL(url).hostname.replace(/^www\./, "");
 const bySeverity = (a: LoadedCheck, b: LoadedCheck) => SEVERITIES.indexOf(b.rule.severity) - SEVERITIES.indexOf(a.rule.severity) || a.rule.id.localeCompare(b.rule.id);
 
@@ -69,11 +71,11 @@ export function wikiPages(checks: LoadedCheck[], inputs: Record<string, { descri
         "",
         `## ${r.id}`,
         "",
-        `**${cell(r.title.en)}** · ${r.severity} · ${SCOPE[scopeOf(check)]} · ${cell(basis)}`,
+        `**${tagsAsCode(cell(r.title.en))}** · ${r.severity} · ${SCOPE[scopeOf(check)]} · ${tagsAsCode(cell(basis))}`,
         "",
-        `- **How:** ${r.how}`,
+        `- **How:** ${tagsAsCode(r.how)}`,
         ...(r.requires ?? []).map((i) => `- **Runs:** ${runsWhen(i)}`),
-        `- **Fix:** ${r.fix_hint.en}`,
+        `- **Fix:** ${tagsAsCode(r.fix_hint.en)}`,
         `- **Sources:** ${r.meta.sources.map((s) => `[${host(s)}](${s})`).join(", ")} · reviewed ${r.meta.last_reviewed} · [code](${code}/${id})`,
       );
     }
