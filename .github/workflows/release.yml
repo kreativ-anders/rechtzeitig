@@ -9,10 +9,11 @@ name: release
 #    cannot bypass it. Every commit is made through the GitHub API, which signs it
 #    (.github/scripts/commit-signed.sh), so main can require signed commits.
 # 3. Publishes a GitHub release. Before v1.0.0 it is a pre-release.
-# 4. Adds examples/workflows/rechtzeitig.yml (and its copy in docs/getting-started.html) pinned
+# 4. Adds examples/workflows/rechtzeitig.yml pinned
 #    to the release commit to the branch release/vX.Y.Z, starts test.yml on it (commits with GITHUB_TOKEN start no
 #    workflows, a dispatch does) and opens a pull request to main. If Actions may not open
 #    pull requests (Settings → Actions → General), the run summary links to open it by hand.
+# 5. Writes the generated wiki pages (npm run docs) for the release and pushes them to the wiki.
 
 on:
   workflow_dispatch:
@@ -38,6 +39,8 @@ jobs:
   release:
     needs: test
     runs-on: ubuntu-latest
+    outputs:
+      next: ${{ steps.version.outputs.next }}
     timeout-minutes: 10
     permissions:
       contents: write
@@ -108,7 +111,7 @@ jobs:
             echo "- uses: $GITHUB_REPOSITORY@$SHA # v$NEXT"
             echo '```'
             echo
-            echo "Example workflow: \`examples/workflows/rechtzeitig.yml\`. Inputs: https://rechtzeitig.dev/workflow.html"
+            echo "Example workflow: \`examples/workflows/rechtzeitig.yml\`. Inputs: https://github.com/kreativ-anders/rechtzeitig/wiki/Inputs"
             echo
             echo "## Changes since $LAST"
             echo
@@ -127,14 +130,12 @@ jobs:
           SHA: ${{ steps.tag.outputs.sha }}
         run: |
           branch="release/v$NEXT"
-          # docs/getting-started.html shows the example workflow verbatim (npm run docs), so its pin moves too.
-          sed -i -E "s|(uses: $GITHUB_REPOSITORY)@[0-9a-f]{40} # v[0-9.]+|\1@$SHA # v$NEXT|" examples/workflows/rechtzeitig.yml docs/getting-started.html
+          sed -i -E "s|(uses: $GITHUB_REPOSITORY)@[0-9a-f]{40} # v[0-9.]+|\1@$SHA # v$NEXT|" examples/workflows/rechtzeitig.yml
           git diff --quiet -- examples/workflows/rechtzeitig.yml && { echo "::error::No pin to $GITHUB_REPOSITORY found in examples/workflows/rechtzeitig.yml"; exit 1; }
-          git diff --quiet -- docs/getting-started.html && { echo "::error::No pin to $GITHUB_REPOSITORY found in docs/getting-started.html (npm run docs)"; exit 1; }
           .github/scripts/commit-signed.sh "$branch" "📌 Pin the example workflow to v$NEXT" > /dev/null
           gh workflow run test.yml --ref "$branch"
           title="🔖 Release v$NEXT: version and pinned example workflow"
-          body="Sets package.json to v$NEXT and pins examples/workflows/rechtzeitig.yml and its copy in docs/getting-started.html to the release commit $SHA. The checks were started by the release run."
+          body="Sets package.json to v$NEXT and pins examples/workflows/rechtzeitig.yml to the release commit $SHA. The checks were started by the release run."
           if url=$(gh pr create --base main --head "$branch" --title "$title" --body "$body"); then
             echo "Pull request: $url" >> "$GITHUB_STEP_SUMMARY"
           else
@@ -142,3 +143,38 @@ jobs:
             echo "::warning::Could not open the pull request. Open it by hand: $link"
             echo "Released v$NEXT. Open the pull request by hand: $link" >> "$GITHUB_STEP_SUMMARY"
           fi
+
+  # The wiki shows the released rules and inputs, not those on main. This job runs npm packages, so the
+  # checkout keeps no credentials and the token is used only by the final push.
+  wiki:
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: v${{ needs.release.outputs.next }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - name: Write the generated pages of the wiki
+        run: npm run docs
+
+      - name: Push them
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEXT: ${{ needs.release.outputs.next }}
+        run: |
+          cd wiki
+          git add -A
+          git diff --cached --quiet && { echo "The wiki is current."; exit 0; }
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Generated pages for v$NEXT"
+          git push -q "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.wiki.git" HEAD

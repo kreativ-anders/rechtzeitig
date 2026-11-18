@@ -1,6 +1,6 @@
 # Copy to .github/workflows/rechtzeitig.yml in your repository and set url. It then runs every Monday.
 # To run it now: Actions → rechtzeitig → Run workflow.
-# Docs: https://rechtzeitig.dev/workflow.html
+# Docs: https://github.com/kreativ-anders/rechtzeitig/wiki/Inputs
 name: rechtzeitig
 
 on:
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # Pinned to a release. Dependabot can move the pin: https://rechtzeitig.dev/#updates
+      # Pinned to a release. Dependabot can move the pin: https://github.com/kreativ-anders/rechtzeitig/wiki/Getting-started#5-keep-it-running
       - uses: kreativ-anders/rechtzeitig@2bac959a3f7601c1cf05c11d76a0c3d351d5043e # v0.8.0
         with:
           # Start page of your site. Without url only the repository is checked.

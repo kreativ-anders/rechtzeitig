@@ -1712,7 +1712,7 @@ messages:
     entry_not_a_map: "Jeder Eintrag braucht die Felder rule, category und reason."
     unknown_field: 'Unbekanntes Feld "{field}". Erlaubt: {allowed}.'
     missing_rule: "Der Eintrag hat keine Regel-ID."
-    unknown_rule: 'Keine Regel hat die ID "{rule}". Die IDs stehen auf rechtzeitig.dev/checks.html.'
+    unknown_rule: 'Keine Regel hat die ID "{rule}". Die IDs stehen auf https://github.com/kreativ-anders/rechtzeitig/wiki/Checks.'
     self: "{rule} prüft diese Datei und lässt sich nicht abschalten."
     duplicate: "{rule} ist schon in Zeile {first} abgeschaltet."
     missing_category: "{rule} hat keine category. Erlaubt: {allowed}."

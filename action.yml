@@ -148,4 +148,4 @@ runs:
       run: |
         level=notice
         if [ "$MODE" = true ]; then level=warning; fi
-        echo "::$level::rechtzeitig: could not upload SARIF to code scanning. The findings are in the report. See https://rechtzeitig.dev/workflow.html#security-tab"
+        echo "::$level::rechtzeitig: could not upload SARIF to code scanning. The findings are in the report. See https://github.com/kreativ-anders/rechtzeitig/wiki/Report#security-tab"

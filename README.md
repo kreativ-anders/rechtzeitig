@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://rechtzeitig.dev/"><img src="docs/favicon.svg" width="72" alt=""></a>
+  <a href="https://rechtzeitig.dev/"><img src=".github/logo.svg" width="72" alt=""></a>
 </p>
 
 <h1 align="center">rechtzeitig</h1>
@@ -17,15 +17,15 @@
 
 <p align="center">
   <a href="https://rechtzeitig.dev/">Website</a> ·
-  <a href="https://rechtzeitig.dev/checks.html">All checks</a> ·
-  <a href="https://rechtzeitig.dev/workflow.html">Workflow reference</a>
+  <a href="https://github.com/kreativ-anders/rechtzeitig/wiki/Checks">All checks</a> ·
+  <a href="https://github.com/kreativ-anders/rechtzeitig/wiki">Docs</a>
 </p>
 
 ## Why
 
 More code is written with AI, and the same things keep slipping through: no imprint (Impressum), trackers that load before consent, API keys in the repository, Supabase tables without row level security, missing security headers, outdated packages. rechtzeitig catches them where you already work:
 
-- **Repository and live site.** It reads what visitors never see (lockfiles, workflows, keys, database rules) and what they get (HTML, scripts, cookies, headers, TLS, DNS), and what ships without being visible: the JavaScript bundles and source maps your site serves ([SEC-SECRETS-003](https://rechtzeitig.dev/checks.html#SEC-SECRETS-003), [SEC-EXP-003](https://rechtzeitig.dev/checks.html#SEC-EXP-003)), in one run and one report. Thirteen checks [compare the two directly](https://rechtzeitig.dev/checks.html#both); they run when the job has both a checkout and a `url`.
+- **Repository and live site.** It reads what visitors never see (lockfiles, workflows, keys, database rules) and what they get (HTML, scripts, cookies, headers, TLS, DNS), and what ships without being visible: the JavaScript bundles and source maps your site serves ([SEC-SECRETS-003](https://github.com/kreativ-anders/rechtzeitig/wiki/Checks-Security#sec-secrets-003), [SEC-EXP-003](https://github.com/kreativ-anders/rechtzeitig/wiki/Checks-Security#sec-exp-003)), in one run and one report. Thirteen checks [compare the two directly](https://github.com/kreativ-anders/rechtzeitig/wiki/Checks) (scope "Repository + website"); they run when the job has both a checkout and a `url`.
 - **Continuous.** Run it weekly or on every push, so a new tracker, an expiring certificate or a newly published vulnerability shows up in the next run.
 - **Private where it should be.** Private repositories get the full report on the run page. Public ones show only counts by default; the findings go to the Security tab, which only people with write access see, where GitHub allows the upload.
 
@@ -47,7 +47,7 @@ Every check names its legal basis and links a primary source. Your code stays on
 2. Set `url` (and `language`, `sales`, `subscriptions`) in the file.
 3. Wait for Monday or open **Actions → rechtzeitig → Run workflow**, then read the report on the run's summary page.
 
-No secret needed. The example runs weekly and fails when a check fails, so GitHub notifies you. Findings also go to the [Security tab](https://rechtzeitig.dev/workflow.html#security-tab) where GitHub allows it. Optional switches (`sales`, `subscriptions`, `IPINFO_TOKEN`) are listed in [What runs when](https://rechtzeitig.dev/workflow.html#scope). A rule that does not fit can be [turned off with a reason](https://rechtzeitig.dev/workflow.html#suppress) in `.github/rechtzeitig.yml` (template: [`examples/rechtzeitig.yml`](examples/rechtzeitig.yml)); the report keeps showing it. To get new releases, let Dependabot update the pin: [How do I get the latest version?](https://rechtzeitig.dev/#updates).
+No secret needed. The example runs weekly and fails when a check fails, so GitHub notifies you. Findings also go to the [Security tab](https://github.com/kreativ-anders/rechtzeitig/wiki/Report#security-tab) where GitHub allows it. Optional switches (`sales`, `subscriptions`, `IPINFO_TOKEN`) are listed in [What runs when](https://github.com/kreativ-anders/rechtzeitig/wiki/Inputs#what-runs-when). A rule that does not fit can be [turned off with a reason](https://github.com/kreativ-anders/rechtzeitig/wiki/Suppressions) in `.github/rechtzeitig.yml` (template: [`examples/rechtzeitig.yml`](examples/rechtzeitig.yml)); the report keeps showing it. To get new releases, let Dependabot update the pin: [Keep it running](https://github.com/kreativ-anders/rechtzeitig/wiki/Getting-started#5-keep-it-running).
 
 ## Develop
 

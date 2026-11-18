@@ -17,7 +17,7 @@ rechtzeitig visits websites and reads repositories that it does not control. A v
 - a website or repository runs code on the runner, outside the browser sandbox
 - scanned content reads or changes files, tokens or secrets of the workflow
 - scanned content injects into the job summary, the report or later workflow steps in a way that misleads or harms
-- the action or its dependencies send data anywhere other than documented in [docs/workflow.html](docs/workflow.html)
+- the action or its dependencies send data anywhere other than documented in [Data and safety](https://github.com/kreativ-anders/rechtzeitig/wiki/Data-and-safety)
 
 Not in scope: wrong or missing findings (open a normal issue), problems in sites you scan, and attacks that need write access to the workflow or the repository.
 

@@ -8,6 +8,7 @@ import { availableLanguages } from "./lang.ts";
 import { OUTCOMES, type Outcome } from "./runner.ts";
 import { LANGUAGES, type Rule } from "./rules.ts";
 import { toCounts, toMarkdown, toText, type Report } from "./report.ts";
+import { wikiPages } from "../test/wiki.ts";
 
 const APPROVAL = [/\b(pass(es|ed|ing)?|compliant|konform|erfüllt|bestanden(e[nrs]?)?|besteh(en|t))\b|✅|✔|✓/i, /\bOK\b/];
 const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
@@ -53,11 +54,8 @@ test("the report shows every status without a word that sounds like approval", (
   }
 });
 
-test("the pages in docs/ and the README use no word that sounds like approval", () => {
-  const visible = (html: string) =>
-    html.replace(/<(script|style|code|pre)\b[\s\S]*?<\/\1>/g, " ").replace(/<[^>]*>/g, " ");
-  const pages = ["docs", "docs/de"].flatMap((dir) =>
-    readdirSync(new URL(`../${dir}`, import.meta.url)).filter((f) => f.endsWith(".html")).map((f) => `${dir}/${f}`));
-  const found = [...pages.flatMap((p) => hits(p, visible(read(p)))), ...hits("README.md", noCode(read("README.md")))];
+test("the wiki and the README use no word that sounds like approval", () => {
+  const pages = wikiPages().map((f) => `wiki/${f}`);
+  const found = [...pages, "README.md"].flatMap((p) => hits(p, noCode(read(p))));
   assert.deepEqual(found, []);
 });

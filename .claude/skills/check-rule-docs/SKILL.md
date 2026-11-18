@@ -1,11 +1,11 @@
 ---
 name: check-rule-docs
-description: Check that each rechtzeitig rule's documentation (rule.yml how, legal_basis, fix_hint, meta.sources, docs/checks.html) matches what its check.ts actually does, and that every claim is backed by a cited primary source. Use when asked whether code and docs still agree, to audit rules for missing or unfitting sources, after changing check.ts, lang/*.yml or data/*.yml, or before a release.
+description: Check that each rechtzeitig rule's documentation (rule.yml how, legal_basis, fix_hint, meta.sources, the wiki pages Checks-<Group>) matches what its check.ts actually does, and that every claim is backed by a cited primary source. Use when asked whether code and docs still agree, to audit rules for missing or unfitting sources, after changing check.ts, lang/*.yml or data/*.yml, or before a release.
 ---
 
 # Check rule docs against code
 
-Finds places where `checks/<module>/<name>/rule.yml` and `docs/checks.html` say something different from what `check.ts` does, and claims without a fitting source. `review-sources` asks "did the law change?". This skill asks "does the documentation describe the code, and does each source support it?". The result is a report first. Files change only after the user agrees.
+Finds places where `checks/<module>/<name>/rule.yml` and the wiki pages `Checks-<Group>` (generated from it by `npm run docs` into `wiki/`) say something different from what `check.ts` does, and claims without a fitting source. `review-sources` asks "did the law change?". This skill asks "does the documentation describe the code, and does each source support it?". The result is a report first. Files change only after the user agrees.
 
 ## Scope
 
@@ -15,7 +15,7 @@ Finds places where `checks/<module>/<name>/rule.yml` and `docs/checks.html` say 
 
 ## What the tests already catch
 
-`npm test` fails when a rule has no source, cites a domain outside `data/source-domains.yml`, was reviewed more than a year ago, `how` does not name a `data/*.yml` file that `check.ts` loads, or `docs/checks.html`, `docs/rechtzeitig.schema.json` or the rule list in `examples/rechtzeitig.yml` (the template for turning rules off) is stale. Run `npm test` first and do not repeat these checks by hand. This skill covers what a test cannot judge.
+`npm test` fails when a rule has no source, cites a domain outside `data/source-domains.yml`, was reviewed more than a year ago, `how` does not name a `data/*.yml` file that `check.ts` loads, or `examples/rechtzeitig.schema.json` or the rule list in `examples/rechtzeitig.yml` (the template for turning rules off) is stale, a link between wiki pages breaks, or the wiki page `Data-and-safety` misses an outside service. Run `npm test` first and do not repeat these checks by hand. This skill covers what a test cannot judge.
 
 ## For each rule
 

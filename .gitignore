@@ -8,3 +8,5 @@ rechtzeitig-sbom.cdx.json
 .claude/*
 !.claude/skills/
 .DS_Store
+# Clone of the wiki for npm run docs and the tests (src/wiki.ts).
+wiki/

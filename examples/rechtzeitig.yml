@@ -1,8 +1,8 @@
 # Copy to .github/rechtzeitig.yml in your repository to turn rules off that do not fit your project.
 # A turned-off rule still runs; the report shows it as suppressed, with your reason. An entry without
 # a valid rule id, category or reason turns nothing off, and QUAL-SUPPRESS-001 names it with its line.
-# Rule ids: https://rechtzeitig.dev/checks.html · Fields: https://rechtzeitig.dev/workflow.html#suppress
-# yaml-language-server: $schema=https://rechtzeitig.dev/rechtzeitig.schema.json
+# Rule ids: https://github.com/kreativ-anders/rechtzeitig/wiki/Checks · Fields: https://github.com/kreativ-anders/rechtzeitig/wiki/Suppressions
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kreativ-anders/rechtzeitig/main/examples/rechtzeitig.schema.json
 
 suppress:
   # The duty does not apply to this project. expires is optional.

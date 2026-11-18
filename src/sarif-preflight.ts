@@ -7,9 +7,10 @@
 
 import { appendFileSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+import { WIKI } from "./wiki.ts";
 
 export const SARIF_MODES = ["auto", "true", "false"] as const;
-const HELP = "https://rechtzeitig.dev/workflow.html#security-tab";
+const HELP = `${WIKI}/Report#security-tab`;
 
 export type Skip = "local" | "fork" | "dependabot" | "no-code-security" | "permission";
 export interface Decision { upload: boolean; reason?: Skip; note: string }
