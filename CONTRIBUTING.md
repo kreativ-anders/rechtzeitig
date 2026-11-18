@@ -87,9 +87,9 @@ A change that affects what a rule does updates its documentation in the same com
 | Detection in `checks/<module>/<name>/check.ts` | `how` in that `rule.yml` (one sentence, names the data files it loads) |
 | Messages of a rule in `lang/*.yml` | that `rule.yml` |
 | Legal basis, wording or threshold | `legal_basis`, `fix_hint`, `meta.sources`, and `meta.last_reviewed` set to today |
-| A rule added, removed or renamed | `rule.yml` with a new unique id, then `npm run docs` (also updates the rule list in `examples/rechtzeitig.yml` and `docs/rechtzeitig.schema.json`; a renamed id breaks users' suppressions, say so in the commit message) |
+| A rule added, removed or renamed | `rule.yml` with a new unique id, then `npm run docs` (also updates the rule list in `examples/rechtzeitig.yml` and `examples/rechtzeitig.schema.json`; a renamed id breaks users' suppressions, say so in the commit message) |
 | A file in `data/` in a way that changes results | name the file in the commit message |
-| An input of the action | `action.yml`, `src/options.ts`, `examples/workflows/rechtzeitig.yml` (set in `with:`, or commented with its default and named in `FILE_ONLY` in `src/inputs.test.ts`), `.github/workflows/rechtzeitig.yml` if this repository needs it, `docs/workflow.html` |
+| An input of the action | `action.yml`, `src/options.ts`, `examples/workflows/rechtzeitig.yml` (set in `with:`, or commented with its default and named in `FILE_ONLY` in `src/inputs.test.ts`), `.github/workflows/rechtzeitig.yml` if this repository needs it; the wiki page `Inputs` is generated from `action.yml` |
 | The architecture | `dev/architecture.md` |
 
 When a commit really leaves the docs as they are, add a line `Docs-unchanged: <reason>` to its message.
@@ -98,11 +98,11 @@ When a commit really leaves the docs as they are, add a line `Docs-unchanged: <r
 
 - Words go into `lang/*.yml`, services and patterns into `data/`, numbers a check decides by into `data/thresholds.yml`, never into check code.
 - Sources in `meta.sources` are primary sources only (laws, courts, authorities, standards, vendor docs) on a domain listed in `data/source-domains.yml`.
-- Checks make no network requests. A check that asks an outside service uses only its official API. With a token it is opt-in, without a token it needs an input to turn it off. Both are documented in `docs/workflow.html`.
+- Checks make no network requests. A check that asks an outside service uses only its official API. With a token it is opt-in, without a token it needs an input to turn it off. Both are documented in the wiki page [Data and safety](https://github.com/kreativ-anders/rechtzeitig/wiki/Data-and-safety).
 - No paid features or paid code paths.
 - Findings are technical risk hints with location and legal basis, never legal advice.
 - Keep secret-looking strings out of the repository, also in tests. Build them at runtime.
-- Docs are English, short and plain. `docs/` is for users, `dev/` for contributors.
+- Docs are English only, short and plain. The [wiki](https://github.com/kreativ-anders/rechtzeitig/wiki) is for users (`npm run docs` generates its pages `Inputs` and `Checks*`, the release pushes them), `dev/` for contributors.
 
 ## License
 

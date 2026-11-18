@@ -1672,7 +1672,7 @@ messages:
     entry_not_a_map: "Each entry needs the fields rule, category and reason."
     unknown_field: 'Unknown field "{field}". Allowed: {allowed}.'
     missing_rule: "The entry has no rule id."
-    unknown_rule: 'No rule has the id "{rule}". The ids are on rechtzeitig.dev/checks.html.'
+    unknown_rule: 'No rule has the id "{rule}". The ids are on https://github.com/kreativ-anders/rechtzeitig/wiki/Checks.'
     self: "{rule} checks this file and cannot be turned off."
     duplicate: "{rule} is already turned off in line {first}."
     missing_category: "{rule} has no category. Allowed: {allowed}."

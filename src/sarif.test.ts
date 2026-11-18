@@ -27,7 +27,7 @@ test("findings in files point to their file and line, passed and skipped checks 
   assert.equal(result.locations![0].physicalLocation.region.startLine, 3);
   assert.deepEqual(s.runs[0].tool.driver.rules.map((r) => r.id), ["SEC-SECRETS-001"]);
   assert.equal(s.runs[0].tool.driver.rules[0].properties["security-severity"], "8.0");
-  assert.match(s.runs[0].tool.driver.rules[0].helpUri, /checks\.html#SEC-SECRETS-001$/);
+  assert.match(s.runs[0].tool.driver.rules[0].helpUri, /wiki\/Checks-Security#sec-secrets-001$/);
 });
 
 test("website findings become one alert at the workflow file, with the URL and details", () => {

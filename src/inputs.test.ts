@@ -1,6 +1,6 @@
-// Every input of the action is documented: in docs/workflow.html and in the example workflow users copy.
+// Every input of the action is in the example workflow users copy (the wiki page Inputs is generated from action.yml).
 // Every switch in src/rules.ts is an input, so "what runs when" never names something that cannot be set.
-// action.yml, src/options.ts and the docs agree on names and defaults, and every input is either set in the
+// action.yml and src/options.ts agree on names and defaults, and every input is either set in the
 // example's with: block or named in FILE_ONLY, so adding an input forces that decision.
 
 import { test } from "node:test";
@@ -23,17 +23,6 @@ const flagOf = (env: string) => new RegExp(`--([a-z-]+) "\\$${env}"`).exec(scanR
 /** The input an environment variable of the scan step comes from. */
 const inputOf = (value: string) => /inputs\.([a-z-]+)/.exec(value)?.[1];
 
-test("docs/workflow.html lists every input", () => {
-  const page = read("docs/workflow.html");
-  assert.deepEqual(inputs.filter((i) => !page.includes(`<td><code>${i}</code></td>`)), []);
-});
-
-test("docs/getting-started.html sorts every input of the example into a table: set these, opt-ins or optional", () => {
-  const page = read("docs/getting-started.html");
-  // "repository" defaults to the checkout and is not in the example's with: block.
-  assert.deepEqual(inputs.filter((i) => i !== "repository" && !page.includes(`<td><code>${i}`)), []);
-});
-
 test("the example workflow sets or names every input", () => {
   const example = read("examples/workflows/rechtzeitig.yml");
   // "repository" defaults to the checkout; the example explains it at the checkout step.
@@ -45,7 +34,7 @@ test("every switch is an input of the action", () => {
   assert.deepEqual(Object.keys(SWITCHES).filter((s) => !inputs.includes(s)), []);
 });
 
-// ---------- action.yml, src/options.ts and the docs agree
+// ---------- action.yml and src/options.ts agree
 
 test("every input is used by a step of the action", () => {
   const text = read("action.yml");
@@ -81,16 +70,6 @@ test("an input and its command line option have the same default", () => {
     const want = input && action.inputs[input].default;
     if (have === undefined || !want || isExpression(want)) return [];
     return have === want ? [] : [`${input}: action.yml "${want}", src/options.ts "${have}"`];
-  });
-  assert.deepEqual(differ, []);
-});
-
-test("docs/workflow.html shows the default of action.yml", () => {
-  const page = read("docs/workflow.html");
-  // Empty and computed defaults are described in words there ("empty", "all", "workspace").
-  const differ = inputs.filter((i) => {
-    const want = action.inputs[i].default ?? "";
-    return want && !isExpression(want) && !page.includes(`<tr><td><code>${i}</code></td><td><code>${want}</code></td>`);
   });
   assert.deepEqual(differ, []);
 });

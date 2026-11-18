@@ -47,7 +47,7 @@ export const missingLanguages = (value: unknown): UiLanguage[] =>
  * - `secret`: on when the workflow sets that secret (opt-in, nothing is sent to `service` without it).
  * - `default: false`: on when the input is `true` (opt-in for sites it applies to).
  * - `default: true`: on unless the input is `false` (opt-out; `service` is where data goes).
- * docs/checks.html and the skip messages are generated from this list.
+ * The wiki pages Inputs and Checks* (npm run docs) and the skip messages are generated from this list.
  */
 export const SWITCHES = {
   "ipinfo-token": { secret: "IPINFO_TOKEN", service: "ipinfo.io" },
@@ -71,7 +71,7 @@ export interface Rule {
    * Required in NO_LEGAL_BASIS_GROUPS, never together with `legal_basis`. Shown as "No legal basis: <value>".
    */
   value?: Localized;
-  /** One sentence: how check.ts detects it, naming the data files it uses. Shown in docs/checks.html. */
+  /** One sentence: how check.ts detects it, naming the data files it uses. Shown on the wiki pages Checks-<Group>. */
   how: string;
   fix_hint: Localized;
   /** Inputs the rule needs (SWITCHES). Without them it is skipped. */

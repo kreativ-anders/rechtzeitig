@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
 import { LANGUAGES, SWITCHES, reviewProblems, validateRule, type Rule, type Switch } from "./rules.ts";
-import { checksHtml, crossChecksHtml, exampleWorkflowHtml, groupCountsHtml, SCOPE_LABELS, heroChecksHtml, reviewedHtml, scopeCountHtml, securityChecks, shopChecks, suppressionsSchema, switchesHtml, topicRulesHtml, EXAMPLE_SUPPRESSIONS, exampleRulesYaml, fillYaml } from "./docs.ts";
+import { suppressionsSchema, EXAMPLE_SUPPRESSIONS, SCHEMA_FILE, exampleRulesYaml, fillYaml, wikiPages } from "./docs.ts";
+import { groupPage } from "./wiki.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, defineCrossCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
 import { render } from "./messages.ts";
@@ -54,8 +55,9 @@ test("a quality rule states its value instead of a legal basis, and no rule has 
   assert.match(validateRule({ ...rule, value: { de: "x" } as Rule["value"] }).join(), /value\.en is missing/);
   const quality = (await loadChecks()).filter((c) => moduleOf(c.id) === "quality");
   assert.ok(quality.length > 0 && quality.every((c) => c.rule.value && !c.rule.legal_basis));
-  // The card says so, never a bare "Technical" that could read like a duty by omission.
-  for (const c of quality) assert.ok(checksHtml([c]).includes(`No legal basis: ${c.rule.value!.en}`), c.id);
+  // The wiki says so, never a bare "Technical" that could read like a duty by omission.
+  const page = wikiPages(quality, {}, "main")[`${groupPage("quality")}.md`];
+  for (const c of quality) assert.ok(page.includes(`No legal basis: ${c.rule.value!.en}`), c.id);
 });
 
 test("rule.yml how names every data file its check.ts loads", async () => {
@@ -73,7 +75,6 @@ test("the scope follows the check type: defineCheck reads the website, defineRep
   assert.equal(scopeOf(defineCrossCheck({ run: () => pass({ key: "x" }) })), "both");
   const checks = await loadChecks();
   assert.ok(checks.some((c) => scopeOf(c.check) === "both"), "at least one check reads both");
-  for (const scope of SCOPES) assert.ok(SCOPE_LABELS[scope], `label for scope ${scope}`);
 });
 
 test("groups are legal or topic areas, not scan targets: no checks/repo/ folder", async () => {
@@ -81,15 +82,16 @@ test("groups are legal or topic areas, not scan targets: no checks/repo/ folder"
   assert.deepEqual([...groups].filter((g) => (SCOPES as readonly string[]).includes(g) || g === "repo"), []);
 });
 
-test("each card on checks.html carries the scope of its check", async () => {
+test("each rule on its wiki page carries the scope of its check", async () => {
   const checks = await loadChecks();
-  const html = checksHtml(checks);
+  const pages = wikiPages(checks, {}, "main");
+  const label = { website: "Website", repository: "Repository", both: "Repository + website" };
   for (const c of checks) {
-    const scope = scopeOf(c.check);
-    assert.ok(html.includes(`id="${c.rule.id}" data-module="${moduleOf(c.id)}" data-scope="${scope}"`), `${c.id}: data-scope="${scope}"`);
+    const page = pages[`${groupPage(moduleOf(c.id))}.md`];
+    const entry = page.slice(page.indexOf(`## ${c.rule.id}\n`)).split("\n")[2];
+    assert.ok(entry.includes(` · ${label[scopeOf(c.check)]} · `), `${c.id}: ${label[scopeOf(c.check)]}`);
   }
 });
-
 test("modules select checks by group or by scope; repo still means all repository checks; both counts for either", async () => {
   const checks = await loadChecks();
   const ids = (modules: string[]) => selectModules(checks, modules).map((c) => c.id);
@@ -122,34 +124,11 @@ test("a check of both scopes gets both contexts, and without one of them is a sk
   }
 });
 
-test("the generated parts of docs/ are up to date (npm run docs)", async () => {
+test("the schema and the rule list in examples/ are up to date (npm run docs)", async () => {
   const checks = await loadChecks();
-  const page = (name: string) => readFileSync(new URL(`../docs/${name}`, import.meta.url), "utf8");
-  assert.ok(page("checks.html").includes(checksHtml(checks)), "run: npm run docs");
-  for (const name of ["checks.html", "workflow.html"]) assert.ok(page(name).includes(switchesHtml(checks)), `run: npm run docs (${name})`);
-  for (const [name, lang] of [["index.html", "en"], ["de/index.html", "de"]] as const) {
-    const parts = [heroChecksHtml(checks, lang), groupCountsHtml(checks, lang), reviewedHtml(checks, lang), crossChecksHtml(checks, lang), ...SCOPES.map((s) => scopeCountHtml(checks, s, lang))];
-    for (const html of parts) assert.ok(page(name).includes(html), `run: npm run docs (${name})`);
-  }
-  const example = readFileSync(new URL("../examples/workflows/rechtzeitig.yml", import.meta.url), "utf8");
-  assert.ok(page("getting-started.html").includes(exampleWorkflowHtml(example)), "run: npm run docs (getting-started.html)");
-  assert.ok(page("security.html").includes(topicRulesHtml(securityChecks(checks))), "run: npm run docs (security.html)");
-  assert.ok(page("de/kuendigungsbutton.html").includes(topicRulesHtml(shopChecks(checks), "de")), "run: npm run docs (de/kuendigungsbutton.html)");
-  assert.equal(page("rechtzeitig.schema.json"), suppressionsSchema(checks), "run: npm run docs (rechtzeitig.schema.json)");
+  assert.equal(readFileSync(SCHEMA_FILE, "utf8"), suppressionsSchema(checks), "run: npm run docs (examples/rechtzeitig.schema.json)");
   const template = readFileSync(EXAMPLE_SUPPRESSIONS, "utf8");
   assert.equal(template, fillYaml(template, "rules", exampleRulesYaml(checks)), "run: npm run docs (examples/rechtzeitig.yml)");
-});
-
-for (const name of ["index.html", "de/index.html"]) test(`the FAQPage data in docs/${name} matches the visible questions`, () => {
-  const html = readFileSync(new URL(`../docs/${name}`, import.meta.url), "utf8");
-  const plain = (s: string) => s.replace(/<[^>]+>/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/\s+/g, " ").replace(/ ([.,:;)])/g, "$1").replace(/\( /g, "(").trim();
-  const faq = html.slice(html.indexOf('<div class="faq">'));
-  const visible = [...faq.matchAll(/<details[^>]*>\s*<summary>(.*?)<\/summary>(.*?)<\/details>/gs)].map((m) => [plain(m[1]), plain(m[2])]);
-  const ld = JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)![1]);
-  const page = ld["@graph"].find((n: { "@type": string }) => n["@type"] === "FAQPage");
-  const data = page.mainEntity.map((q: { name: string; acceptedAnswer: { text: string } }) => [q.name, plain(q.acceptedAnswer.text)]);
-  assert.ok(visible.length > 0);
-  assert.deepEqual(data, visible);
 });
 
 test("a broken check becomes an error and the others still run", async () => {

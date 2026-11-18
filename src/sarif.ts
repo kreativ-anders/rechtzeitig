@@ -7,11 +7,11 @@ import type { Severity } from "./rules.ts";
 import { oneLine } from "./text.ts";
 import { render } from "./messages.ts";
 import { say, where, type Report } from "./report.ts";
+import { WIKI, ruleUrl } from "./wiki.ts";
 
 const LEVEL: Partial<Record<OutcomeStatus, "error" | "warning" | "note">> = { fail: "error", error: "error", warn: "warning", info: "note" };
 // GitHub sorts security alerts by this score (critical from 9.0, high from 7.0, medium from 4.0).
 const SECURITY_SEVERITY: Record<Severity, string> = { critical: "9.5", high: "8.0", medium: "5.0", low: "2.0", info: "0.0" };
-const DOCS = "https://rechtzeitig.dev/checks.html";
 
 export interface SarifOptions {
   /** Scanned repository's folder relative to the checkout ("" when it is the checkout). */
@@ -42,7 +42,7 @@ export function toSarif(r: Report, { base = "", anchor }: SarifOptions = {}): ob
     name: o.id,
     shortDescription: { text: o.rule.title[lang] },
     help: { text: [o.rule.fix_hint[lang], o.rule.legal_basis?.[lang] ?? (o.rule.value ? `${render({ key: "no_legal_basis" }, "report", lang)}: ${o.rule.value[lang]}` : undefined)].filter(Boolean).join("\n\n") },
-    helpUri: `${DOCS}#${o.rule.id}`,
+    helpUri: ruleUrl(o.id, o.rule.id),
     properties: {
       tags: [o.id.split("/")[0]],
       ...(o.rule.id.startsWith("SEC-") ? { "security-severity": SECURITY_SEVERITY[o.rule.severity] } : {}),
@@ -52,7 +52,7 @@ export function toSarif(r: Report, { base = "", anchor }: SarifOptions = {}): ob
     $schema: "https://json.schemastore.org/sarif-2.1.0.json",
     version: "2.1.0",
     runs: [{
-      tool: { driver: { name: "rechtzeitig", version: r.version, informationUri: "https://rechtzeitig.dev/", rules } },
+      tool: { driver: { name: "rechtzeitig", version: r.version, informationUri: WIKI, rules } },
       results: open.flatMap((o) => results(o, r, base, anchor)),
     }],
   };

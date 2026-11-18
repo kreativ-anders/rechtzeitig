@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://rechtzeitig.dev/rechtzeitig.schema.json",
+  "$id": "https://raw.githubusercontent.com/kreativ-anders/rechtzeitig/main/examples/rechtzeitig.schema.json",
   "title": "rechtzeitig .github/rechtzeitig.yml",
-  "description": "Rules turned off with a category and a reason. They still run and show in the report as suppressed. https://rechtzeitig.dev/workflow.html#suppress",
+  "description": "Rules turned off with a category and a reason. They still run and show in the report as suppressed. https://github.com/kreativ-anders/rechtzeitig/wiki/Suppressions",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -18,7 +18,7 @@
         ],
         "properties": {
           "rule": {
-            "description": "Rule id, see https://rechtzeitig.dev/checks.html",
+            "description": "Rule id, see https://github.com/kreativ-anders/rechtzeitig/wiki/Checks",
             "enum": [
               "A11Y-ALT-001",
               "A11Y-ARIA-001",

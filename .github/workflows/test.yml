@@ -32,6 +32,8 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npx playwright install --with-deps --only-shell chromium
       - run: npm run typecheck
+      # The tests read the wiki (src/wiki.test.ts); it is public, so cloning needs no token.
+      - run: git clone --quiet --depth 1 "https://github.com/$GITHUB_REPOSITORY.wiki.git" wiki
       - run: npm test
 
   # Each commit keeps rule.yml with its check.ts and lang messages, and names changed data files (src/drift.ts).
