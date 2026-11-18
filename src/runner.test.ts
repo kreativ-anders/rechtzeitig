@@ -85,7 +85,7 @@ test("groups are legal or topic areas, not scan targets: no checks/repo/ folder"
 test("HTML tags in rule texts become code on the wiki, existing code stays", async () => {
   assert.equal(tagsAsCode("Use <picture> and `<img alt>`, not </div>."), "Use `<picture>` and `<img alt>`, not `</div>`.");
   const pages = Object.values(wikiPages(await loadChecks(), {}, "main")).join("\n");
-  const outside = pages.split(/`[^`]*`/).join("").replace(/^<!--.*-->$/gm, "");
+  const outside = pages.split("\n").filter((l) => !l.startsWith("<!-- Generated from ")).join("\n").split(/`[^`]*`/).join("");
   assert.deepEqual(outside.match(/<\/?[a-zA-Z][^<>]*>/g) ?? [], []);
 });
 
