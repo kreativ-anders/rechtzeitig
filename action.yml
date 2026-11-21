@@ -81,10 +81,23 @@ runs:
         # sandbox stays on. Self-hosted runners are left as they are.
         if [ "$RUNNER_ENVIRONMENT" = github-hosted ] && [ "$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns 2>/dev/null)" = 1 ]; then
           CHROME=$(find "${PLAYWRIGHT_BROWSERS_PATH:-$HOME/.cache/ms-playwright}" -type f -name chrome-headless-shell -path '*chromium_headless_shell-*' | head -n 1)
+          # The path goes into an AppArmor profile that is loaded with root rights. Accept only a resolved
+          # path inside the Playwright browser directory, and only characters that cannot break out of the
+          # quoted profile string (a " in a file name could inject own rules).
           if [ -n "$CHROME" ]; then
+            PLAYWRIGHT_ROOT=$(realpath "${PLAYWRIGHT_BROWSERS_PATH:-$HOME/.cache/ms-playwright}")
+            CHROME=$(realpath "$CHROME" 2>/dev/null || true)
+            case "$CHROME" in
+              "$PLAYWRIGHT_ROOT"/*) ;;
+              *) CHROME="" ;;
+            esac
+          fi
+          if [ -n "$CHROME" ] && printf '%s' "$CHROME" | LC_ALL=C grep -qE '^[A-Za-z0-9/_.-]+$'; then
             printf 'abi <abi/4.0>,\ninclude <tunables/global>\nprofile rechtzeitig-chrome "%s" flags=(unconfined) {\n  userns,\n}\n' "$CHROME" \
               | sudo tee /etc/apparmor.d/rechtzeitig-chrome > /dev/null
             sudo apparmor_parser -r /etc/apparmor.d/rechtzeitig-chrome || echo "::warning::rechtzeitig: could not allow Chrome's sandbox on this runner."
+          else
+            echo "::warning::rechtzeitig: Chrome binary not found under the Playwright directory, its sandbox stays restricted."
           fi
         fi
 
