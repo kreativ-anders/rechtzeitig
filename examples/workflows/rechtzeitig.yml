@@ -50,9 +50,6 @@ jobs:
           # false = nothing is sent and the check is skipped.
           green-hosting: "false"
           # Optional, shown with their defaults:
-          # How much of the report the run shows. auto = full if private, counts if public.
-          # full = everything, also on a public repository, where anyone can read it.
-          # report-visibility: auto
           # Security tab upload: auto = where GitHub allows it, false = never.
           # sarif-upload: auto
           # Only these check groups (legal, privacy, security, sustainability, accessibility, quality)

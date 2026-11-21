@@ -96,7 +96,6 @@ test("an input and its command line option have the same default", () => {
 const FILE_ONLY: Record<string, string> = {
   url: "each user sets their own site; the example shows it as a comment",
   repository: "follows the checkout step",
-  "report-visibility": "the default auto keeps findings off public run pages",
   "sarif-upload": "the default auto uploads where GitHub allows it",
   modules: "the default runs all checks",
   "max-pages": "rarely changes",

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { basename } from "node:path";
-import { OUTCOMES, type Because, type Outcome, type OutcomeStatus } from "./runner.ts";
+import { OUTCOMES, type Outcome, type OutcomeStatus } from "./runner.ts";
 import { SEVERITIES } from "./rules.ts";
 import { loadYaml } from "./data.ts";
 import type { Params, RepoContext, RepoCoverage, ScanContext } from "./sdk.ts";
@@ -21,67 +21,10 @@ const SEVERITY_ORDER = [...SEVERITIES].reverse();
 /** Folder name of the scanned repository. */
 export const repoName = (root: string) => basename(root);
 
-/** Shape of rechtzeitig-report.json: rule ids, results and where they were found. No page text, no file contents. */
-export interface Findings {
-  version: string;
-  startedAt: string;
-  target: { url?: string; repository?: string };
-  /** What the repository scan could not see or read: submodules, LFS pointers, unread files, lockfiles, private sources. */
-  coverage?: RepoCoverage;
-  results: Array<{
-    rule: string;
-    check: string;
-    severity: string;
-    status: OutcomeStatus;
-    /** In English. */
-    message: string;
-    /** Message key and parameters (lang/en.yml `messages`), to build the message in any language. */
-    key?: string;
-    params?: Params;
-    /** Pages, files with line numbers, hosts. Secrets are already redacted by the checks. */
-    locations: string[];
-    /** Why a check was skipped: target (no url or checkout), module, switch, or data (nothing to read). */
-    because?: Because;
-    /** For status "suppressed": the entry in .github/rechtzeitig.yml and the status the rule would have without it. */
-    suppression?: { category: string; reason: string; expires?: string; file: string; line: number; status: OutcomeStatus };
-  }>;
-}
-
 /** The outcome's message. */
 export const say = (o: Outcome) => render(o.message, o.id);
 /** The outcome's details, one line each. */
 export const where = (o: Outcome) => o.details.map((d) => renderFinding(d, o.id));
-
-/** Parameters can hold text from the scanned site; one line each, like every other output. */
-const cleanParams = (params?: Params): Params | undefined =>
-  params && Object.fromEntries(Object.entries(params).map(([k, v]) => [k, cleanValue(v)]));
-const cleanValue = (v: Params[string]): Params[string] => {
-  if (typeof v === "string") return oneLine(v);
-  if (typeof v === "number") return v;
-  return { key: v.key, params: cleanParams(v.params) };
-};
-
-export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">): Findings {
-  return {
-    ...meta,
-    results: outcomes.map((o) => ({
-      rule: o.rule.id,
-      check: o.id,
-      severity: o.rule.severity,
-      status: o.status,
-      message: oneLine(say(o)),
-      ...(typeof o.message === "string" ? {} : { key: o.message.key, params: cleanParams(o.message.params) }),
-      locations: where(o).map((d) => oneLine(d)),
-      ...(o.because && { because: o.because }),
-      ...(o.suppression && { suppression: suppressionJson(o.suppression) }),
-    })),
-  };
-}
-
-/** The entry as the report JSON keeps it; the reason comes from the repository, so it is one line like every other text. */
-const suppressionJson = (s: NonNullable<Outcome["suppression"]>) => ({
-  category: s.category, reason: oneLine(s.reason), ...(s.expires && { expires: s.expires }), file: s.file, line: s.line, status: s.status,
-});
 
 const HOMEPAGE = "https://github.com/kreativ-anders/rechtzeitig";
 const MAKER = "https://kreativ-anders.de";
@@ -124,7 +67,6 @@ const sorted = (outcomes: Outcome[]) =>
   [...outcomes].sort(
     (a, b) => OUTCOMES.indexOf(a.status) - OUTCOMES.indexOf(b.status) || SEVERITY_ORDER.indexOf(a.rule.severity) - SEVERITY_ORDER.indexOf(b.rule.severity),
   );
-const open = (o: Outcome) => o.status === "fail" || o.status === "warn" || o.status === "info";
 
 /**
  * Lines for a suppressed outcome: category, expiry and reason; where the entry is and the status without it; for a
@@ -219,36 +161,19 @@ export function coverageLines(c: RepoCoverage, esc: (s: string) => string): Arra
 }
 
 /**
- * The report as Markdown. With `findingsOnly` (the step summary) checks without a finding and skipped checks are left out
- * and a line points to the artifact, which keeps the full report. Both end with a collapsed "Not run" block
- * that groups skipped checks by reason, and list what the repository scan could not read under the scan line.
+ * The step summary for private repositories: the counts, then one line per finding (fail, error, warn, info,
+ * suppressed), most urgent first. Places, fix hints and fingerprints are in the report JSON. Ends with a collapsed
+ * "Not run" block that groups skipped checks by reason, and lists what the repository scan could not read.
  */
-export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
-  const list = sorted(r.outcomes).filter((o) => !notStarted(o) && (!findingsOnly || (o.status !== "pass" && o.status !== "skip")));
+export function toSummary(r: Report): string {
+  const list = sorted(r.outcomes).filter((o) => o.status !== "pass" && o.status !== "skip");
   const lines = [`## rechtzeitig: ${md(title(r))}`, "", summaryLine(r, true), ""];
-  if (findingsOnly) lines.push(`_${t(list.length ? "findings_only" : "no_findings")}_`, "");
-  if (list.length) {
-    lines.push(
-      `| | ${t("check")} | ${t("severity")} | ${t("result")} |`,
-      "|---|---|---|---|",
-      ...list.map((o) => {
-        // A rule with a value instead of a legal basis (checks/quality/) says so, never looks like a legal duty.
-        const law = o.rule.legal_basis ?? (o.rule.value ? t("no_legal_basis") : undefined);
-        const off = o.suppression ? `<br>${ICONS.suppressed} ${suppressionLines(o, md)[0]}` : "";
-        return `| ${ICONS[o.status]} | ${cell(o.rule.title)}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${t(`severity_${o.rule.severity}`)} | ${md(say(o))}${off} |`;
-      }),
-      "",
-    );
+  for (const o of list) {
+    const places = o.details.length ? ` (${t("places", { count: o.details.length })})` : "";
+    const off = o.suppression ? ` ${ICONS.suppressed} ${suppressionLines(o, md)[0]}` : "";
+    lines.push(`- ${ICONS[o.status]} \`${o.rule.id}\` ${o.rule.title} · ${t(`severity_${o.rule.severity}`)}: ${md(say(o))}${places}${off}`);
   }
-  const withDetails = list.filter((o) => o.details.length || open(o) || o.suppression);
-  if (withDetails.length) {
-    lines.push(`### ${t("details")}`, "");
-    for (const o of withDetails) {
-      const fix = open(o) ? [`**${t("fix")}:** ${o.rule.fix_hint}`, ""] : [];
-      const off = o.suppression ? [suppressionLines(o, md).map((l, i) => (i ? l : `**${l}**`)).join("<br>"), ""] : [];
-      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title} (${o.rule.id})</summary>`, "", ...off, ...fix, ...where(o).map((d) => `- ${md(d)}`), "", "</details>", "");
-    }
-  }
+  lines.push(...(list.length ? [""] : []), `_${t(list.length ? "findings" : "no_findings")}_`, "");
   lines.push(...notRunLines(r, "md", true), ...limitLines(), `### ${t("scan")}`, "");
   if (r.web) {
     const w = r.web;
@@ -280,16 +205,6 @@ export function toText(r: Report): string {
   lines.push("", ...notRunLines(notStartedOnly, "text", false), ...coverage, ...(r.warnings ?? []).map((w) => `Warning: ${plain(w)}`), summaryLine(r, false));
   return lines.join("\n");
 }
-
-/**
- * How much of the report the run shows (input `report-visibility`). `full` shows everything; `auto` shows
- * everything for private repositories and only `counts` for public ones: how many checks ended in each status,
- * without rule ids, messages or places.
- */
-export const VISIBILITIES = ["auto", "full"] as const;
-/** Removed values. For one more version they work like `auto`, with a warning. */
-export const REMOVED_VISIBILITIES = ["counts", "none"] as const;
-export type Visibility = "full" | "counts";
 
 /** The counts-only report for the step summary (`md`) or the log. Names no check and no place. */
 export function toCounts(r: Report, format: "md" | "text"): string {

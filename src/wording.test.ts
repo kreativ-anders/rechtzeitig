@@ -7,7 +7,7 @@ import { parse } from "yaml";
 import { availableLanguages } from "./lang.ts";
 import { OUTCOMES, type Outcome } from "./runner.ts";
 import type { Rule } from "./rules.ts";
-import { toCounts, toMarkdown, toText, type Report } from "./report.ts";
+import { toCounts, toSummary, toText, type Report } from "./report.ts";
 import { wikiPages } from "../test/wiki.ts";
 
 const APPROVAL = [/\b(pass(es|ed|ing)?|compliant|konform|erfüllt|bestanden(e[nrs]?)?|besteh(en|t))\b|✅|✔|✓/i, /\bOK\b/];
@@ -48,7 +48,7 @@ test("the report shows every status without a word that sounds like approval", (
     ...(status === "suppressed" && { suppression: { rule: rule.id, category: "accepted-risk", reason: "r", file: ".github/rechtzeitig.yml", line: 1, status: "pass" } }),
   } as Outcome));
   const r: Report = { outcomes, version: "0", startedAt: "now", onGitHub: true };
-  const out = [toMarkdown(r), toMarkdown(r, { findingsOnly: true }), toText(r), toCounts(r, "md"), toCounts(r, "text")].join("\n");
+  const out = [toSummary(r), toText(r), toCounts(r, "md"), toCounts(r, "text")].join("\n");
   assert.deepEqual(hits("report", out), []);
 });
 

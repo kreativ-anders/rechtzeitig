@@ -53,23 +53,27 @@ function onGitHub(event: object | undefined, ...args: string[]) {
     writeFileSync(summaryPath, "");
     const out = join(dir, "out", "rechtzeitig-report");
     mkdirSync(join(dir, "out"));
+    const outputPath = join(dir, "output.txt");
+    writeFileSync(outputPath, "");
+    const reportPath = join(dir, "upload", "rechtzeitig-report.json");
     const log = execFileSync(process.execPath, ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts",
-      "--repo", repo, "--modules", "repo", "--vulnerabilities", "false", "--out", out, ...args],
-      { stdio: "pipe", encoding: "utf8", env: { ...process.env, GITHUB_ACTIONS: "true", GITHUB_EVENT_PATH: event ? eventPath : "", GITHUB_STEP_SUMMARY: summaryPath, GITHUB_OUTPUT: "", GITHUB_WORKSPACE: dir } });
-    return { log, summary: readFileSync(summaryPath, "utf8"), files: readdirSync(join(dir, "out")) };
+      "--repo", repo, "--modules", "repo", "--vulnerabilities", "false", "--out", out, "--report", reportPath, ...args],
+      { stdio: "pipe", encoding: "utf8", env: { ...process.env, GITHUB_ACTIONS: "true", GITHUB_EVENT_PATH: event ? eventPath : "", GITHUB_STEP_SUMMARY: summaryPath, GITHUB_OUTPUT: outputPath, GITHUB_WORKSPACE: dir } });
+    const output = readFileSync(outputPath, "utf8");
+    return { log, output, summary: readFileSync(summaryPath, "utf8"), files: readdirSync(join(dir, "out")), json: JSON.parse(readFileSync(reportPath, "utf8")), reportPath };
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
 }
 
-test("report-visibility auto shows the full report for a private repository", () => {
+test("a private repository shows one line per finding, the log, and JSON and SBOM in the artifact", () => {
   const r = onGitHub({ repository: { private: true, visibility: "private" } });
-  assert.match(r.summary, /SEC-/);
+  assert.match(r.summary, /^- ❌ `SEC-SECRETS-001` /m);
   assert.match(r.log, /config\.js/);
-  assert.deepEqual(r.files.sort(), ["rechtzeitig-report.json", "rechtzeitig-report.md", "rechtzeitig-sbom.cdx.json"]);
+  assert.deepEqual(r.files.sort(), ["rechtzeitig-report.json", "rechtzeitig-sbom.cdx.json"]);
 });
 
-test("report-visibility auto shows only counts for a public repository or an event without the field", () => {
+test("a public repository, or an event without the field, shows only counts and fills no artifact", () => {
   for (const event of [{ repository: { private: false, visibility: "public" } }, { schedule: "0 6 * * 1" }, undefined]) {
     const r = onGitHub(event);
     assert.match(r.summary, /\d+ finding/);
@@ -79,18 +83,22 @@ test("report-visibility auto shows only counts for a public repository or an eve
   }
 });
 
-test("report-visibility full overrides the repository's visibility", () => {
-  assert.match(onGitHub({ repository: { private: false } }, "--report-visibility", "full").log, /config\.js/);
+test("the report JSON is written for every visibility and named in the output report", () => {
+  for (const repository of [{ private: true }, { private: false }]) {
+    const r = onGitHub({ repository });
+    assert.equal(r.json.schema_version, 2);
+    const secret = r.json.results.find((x: { check: string }) => x.check === "security/secrets");
+    assert.equal(secret.locations[0].file, "config.js");
+    assert.match(secret.locations[0].fingerprint, /^[0-9a-f]{64}:1$/);
+    assert.match(r.output, new RegExp(`^report=${r.reportPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "m"));
+  }
 });
 
-test("the removed values counts and none work like auto, with a warning", () => {
-  for (const value of ["counts", "none"]) {
-    const pub = onGitHub({ repository: { private: false } }, "--report-visibility", value);
-    assert.match(pub.log, new RegExp(`::warning::report-visibility: ${value} was removed`));
-    assert.match(pub.summary, /_Details hidden: on a public repository/);
-    assert.deepEqual(pub.files, []);
-    assert.match(onGitHub({ repository: { private: true } }, "--report-visibility", value).log, /config\.js/);
-  }
+test("report-visibility was removed: full warns and still shows only counts on a public repository", () => {
+  const r = onGitHub({ repository: { private: false } }, "--report-visibility", "full");
+  assert.match(r.log, /::warning::report-visibility was removed/);
+  assert.doesNotMatch(r.log, /config\.js/);
+  assert.deepEqual(r.files, []);
 });
 
 test("a removed input that is set warns and changes nothing", () => {
@@ -99,7 +107,7 @@ test("a removed input that is set warns and changes nothing", () => {
   assert.match(r.log, /config\.js/);
 });
 
-test("sarif writes the findings with places even when report-visibility hides them", () => {
+test("sarif writes the findings with places also for a public repository", () => {
   const dir = mkdtempSync(join(tmpdir(), "rechtzeitig-sarif-"));
   try {
     const file = join(dir, "sarif", "rechtzeitig.sarif");

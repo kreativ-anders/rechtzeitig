@@ -13,8 +13,9 @@ export const CLI_OPTIONS = {
   vulnerabilities: { type: "string", default: "false" },
   "green-hosting": { type: "string", default: "false" },
   "require-sandbox": { type: "string", default: "true" },
-  "report-visibility": { type: "string", default: "auto" },
   sarif: { type: "string", default: "" },
+  /** Where to write the report JSON whatever the visibility; empty = only in the artifact (`out`). */
+  report: { type: "string", default: "" },
   out: { type: "string", default: "rechtzeitig-report" },
 } as const;
 
@@ -24,4 +25,5 @@ export const CLI_OPTIONS = {
  */
 export const REMOVED_OPTIONS = {
   "report-language": "report-language was removed: the report is English. Remove the input.",
+  "report-visibility": "report-visibility was removed: private and internal repositories show every finding, public ones only counts. Remove the input.",
 } as const;

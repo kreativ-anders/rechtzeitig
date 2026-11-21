@@ -46,8 +46,8 @@ inputs:
     description: true = stop when Chrome cannot start with its sandbox. false = then scan without it, only for sites you trust.
     default: "true"
   report-visibility:
-    description: How much of the report the run shows. auto = everything for private and internal repositories; for public ones only how many checks ended in each status, no artifact (the details go to the Security tab with sarif-upload). full = findings with places in summary, log, annotations and artifact, also on public repositories, where anyone can read them.
-    default: auto
+    description: Removed. Private and internal repositories always show one line per finding in the summary, plus log, annotations and the artifact; public ones only counts, no artifact. A set value is ignored with a warning.
+    deprecationMessage: report-visibility was removed. Private and internal repositories show every finding, public ones only counts. Remove the input.
   sarif-upload:
     description: Upload the findings as SARIF to GitHub code scanning, so they show as alerts in the Security tab, which only people with write access see. auto = upload where GitHub allows it (job permission security-events write; private repositories also need actions read and GitHub Code Security), otherwise skip with a notice. true = the same, but a skip or failure is a warning. false = never. The upload never fails the job.
     default: auto
@@ -56,6 +56,9 @@ outputs:
   result:
     description: pass, warn or fail.
     value: ${{ steps.scan.outputs.result }}
+  report:
+    description: Path of the report JSON (schema_version 2, every finding with places, message keys, fix hints and fingerprints) in RUNNER_TEMP, written for every repository visibility and never uploaded by rechtzeitig. For later steps of the same job, such as a coding agent or an upload of your own.
+    value: ${{ steps.scan.outputs.report }}
 
 runs:
   using: composite
@@ -111,14 +114,14 @@ runs:
         VULNERABILITIES: ${{ inputs.vulnerabilities }}
         GREEN_HOSTING: ${{ inputs.green-hosting }}
         REQUIRE_SANDBOX: ${{ inputs.require-sandbox }}
-        REPORT_VISIBILITY: ${{ inputs.report-visibility }}
         SARIF: ${{ steps.sarif.outputs.upload == 'true' && format('{0}/sarif/rechtzeitig.sarif', runner.temp) || '' }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
         --sales "$SALES" --modules "$MODULES"
         --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES"
-        --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --report-visibility "$REPORT_VISIBILITY" --sarif "$SARIF" --out "$RUNNER_TEMP/rechtzeitig-report"
+        --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --sarif "$SARIF"
+        --report "$RUNNER_TEMP/upload/rechtzeitig-report.json" --out "$RUNNER_TEMP/rechtzeitig-report"
 
     - name: Upload report
       if: always()
@@ -129,7 +132,8 @@ runs:
         if-no-files-found: ignore
         retention-days: 7
 
-    # Outside the artifact folder, so a counts-only report on a public repository keeps the artifact empty.
+    # The SARIF file (sarif/) and the report JSON of the output report (upload/) lie outside the artifact
+    # glob, so a counts-only report on a public repository keeps the artifact empty.
     - name: Upload SARIF
       id: upload
       if: always() && steps.sarif.outputs.upload == 'true'
