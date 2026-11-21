@@ -1,7 +1,7 @@
-// Every input of the action is in the example workflow users copy (the wiki page Inputs is generated from action.yml).
+// The example workflow users copy sets only what most users change; every other input is named in FILE_ONLY and
+// documented in the wiki page Inputs (generated from action.yml), so adding an input forces that decision.
 // Every switch in src/rules.ts is an input, so "what runs when" never names something that cannot be set.
-// action.yml and src/options.ts agree on names and defaults, and every input is either set in the
-// example's with: block or named in FILE_ONLY, so adding an input forces that decision.
+// action.yml and src/options.ts agree on names and defaults.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -24,13 +24,6 @@ const options = CLI_OPTIONS as Record<string, { default?: string }>;
 const flagOf = (env: string) => new RegExp(`--([a-z-]+) "\\$${env}"`).exec(scanRun)?.[1];
 /** The input an environment variable of the scan step comes from. */
 const inputOf = (value: string) => /inputs\.([a-z-]+)/.exec(value)?.[1];
-
-test("the example workflow sets or names every input", () => {
-  const example = read("examples/workflows/rechtzeitig.yml");
-  // "repository" defaults to the checkout; the example explains it at the checkout step.
-  const missing = inputs.filter((i) => i !== "repository" && !new RegExp(`^\\s*(#\\s*)?${i}:`, "m").test(example));
-  assert.deepEqual(missing, []);
-});
 
 test("a removed input only warns: deprecated in action.yml, accepted by the command line, used by no step", () => {
   assert.deepEqual(removed.sort(), Object.keys(REMOVED_OPTIONS).sort());
@@ -89,12 +82,11 @@ test("an input and its command line option have the same default", () => {
 // ---------- the example workflow and this repository's workflow
 
 /**
- * Inputs the example workflow does not set in its with: block, and why. The example names them in a comment
- * with their default ("repository" at the checkout step). A new input goes either into the with: block of
- * the example or here.
+ * Inputs the example workflow does not set, and why. They keep their default and are documented in the wiki page
+ * Inputs only, so the example stays short. A new input goes either into the with: block of the example or here.
  */
 const FILE_ONLY: Record<string, string> = {
-  url: "each user sets their own site; the example shows it as a comment",
+  language: "the default auto reads it from the start page",
   repository: "follows the checkout step",
   "sarif-upload": "the default auto uploads where GitHub allows it",
   modules: "the default runs all checks",
@@ -124,16 +116,14 @@ test("every input is set in the example's with: block or in FILE_ONLY", () => {
   assert.deepEqual(Object.keys(FILE_ONLY).filter((i) => !inputs.includes(i)), [], "FILE_ONLY names an input that does not exist");
 });
 
-test("the example names each input it does not set with the default of action.yml", () => {
+test("the example sets nothing else and no optional input as a comment", () => {
   const text = read("examples/workflows/rechtzeitig.yml");
-  const differ = Object.keys(FILE_ONLY).flatMap((i) => {
-    const comment = new RegExp(`^\\s*#\\s*${i}:\\s*(.*)$`, "m").exec(text)?.[1].replace(/^"(.*)"$/, "$1");
-    const want = action.inputs[i].default ?? "";
-    // url shows an example site, not the default.
-    if (comment === undefined || i === "url" || isExpression(want)) return [];
-    return comment === want ? [] : [`${i}: "${comment}" in the example, "${want}" in action.yml`];
-  });
-  assert.deepEqual(differ, []);
+  assert.deepEqual(Object.keys(FILE_ONLY).filter((i) => new RegExp(`^\\s*#\\s*${i}:`, "m").test(text)), []);
+});
+
+test("committing the example starts its first run: push on main, limited to the workflow file", () => {
+  const wf = loadYaml<{ on: { push?: { branches?: string[]; paths?: string[] } } }>("examples/workflows/rechtzeitig.yml");
+  assert.deepEqual(wf.on.push, { branches: ["main"], paths: [".github/workflows/rechtzeitig.yml"] });
 });
 
 test("both workflows run on a schedule and by hand, without a Run workflow dialog", () => {

@@ -1,9 +1,12 @@
-# Copy to .github/workflows/rechtzeitig.yml in your repository and set url. It then runs every Monday.
-# To run it now: Actions → rechtzeitig → Run workflow.
-# Docs: https://github.com/kreativ-anders/rechtzeitig/wiki/Inputs
+# Copy to .github/workflows/rechtzeitig.yml in your repository and set url. It runs when you commit it, then every Monday.
+# Every input: https://github.com/kreativ-anders/rechtzeitig/wiki/Inputs
 name: rechtzeitig
 
 on:
+  # The first run starts when this file is committed to main; later edits of it start one too.
+  push:
+    branches: [main]
+    paths: [.github/workflows/rechtzeitig.yml]
   schedule:
     - cron: "17 5 * * 1" # Mondays, 05:17 UTC. A minute other than :00 avoids GitHub's busiest time.
   workflow_dispatch:
@@ -29,10 +32,8 @@ jobs:
       # Pinned to a release. Dependabot can move the pin: https://github.com/kreativ-anders/rechtzeitig/wiki/Getting-started#5-keep-it-running
       - uses: kreativ-anders/rechtzeitig@2bac959a3f7601c1cf05c11d76a0c3d351d5043e # v0.8.0
         with:
-          # Start page of your site. Without url only the repository is checked.
-          # url: https://www.example.de/
-          # Language of the site: de, en, a list such as de,en, or all.
-          language: de
+          # Start page of your site. Remove the line to check only the repository.
+          url: https://www.example.de/
           # true if consumers buy or sign contracts on the site (shop checks).
           sales: false
           # true if visitors can sign up for subscriptions (cancellation button, § 312k BGB).
@@ -49,13 +50,3 @@ jobs:
           # Opt-in: true sends the site's host name to api.thegreenwebfoundation.org for the green hosting check.
           # false = nothing is sent and the check is skipped.
           green-hosting: "false"
-          # Optional, shown with their defaults:
-          # Security tab upload: auto = where GitHub allows it, false = never.
-          # sarif-upload: auto
-          # Only these check groups (legal, privacy, security, sustainability, accessibility, quality)
-          # or scopes (website, repository; repo = repository). Empty = all.
-          # modules: ""
-          # Pages to visit at most.
-          # max-pages: "10"
-          # false scans without Chrome's sandbox where the runner has none. Only for sites you trust.
-          # require-sandbox: "true"
