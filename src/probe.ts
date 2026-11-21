@@ -209,7 +209,9 @@ export async function countries(hosts: string[], token: string | undefined, time
     hosts.map(async (host) => {
       try {
         const { address } = await lookup(host);
-        const res = await fetch(`https://api.ipinfo.io/lite/${address}?token=${encodeURIComponent(token)}`, {
+        // The token goes into the Authorization header, never into the URL (proxy and access logs).
+        const res = await fetch(`https://api.ipinfo.io/lite/${address}`, {
+          headers: { authorization: `Bearer ${token}` },
           signal: AbortSignal.timeout(timeout),
         });
         const data = (await res.json()) as { country_code?: string };

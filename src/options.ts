@@ -13,6 +13,7 @@ export const CLI_OPTIONS = {
   vulnerabilities: { type: "string", default: "false" },
   "green-hosting": { type: "string", default: "false" },
   "require-sandbox": { type: "string", default: "true" },
+  "allow-private-url": { type: "string", default: "false" },
   sarif: { type: "string", default: "" },
   /** Where to write the report JSON whatever the visibility; empty = only in the artifact (`out`). */
   report: { type: "string", default: "" },
