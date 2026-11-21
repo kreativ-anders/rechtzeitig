@@ -45,6 +45,9 @@ inputs:
   require-sandbox:
     description: true = stop when Chrome cannot start with its sandbox. false = then scan without it, only for sites you trust.
     default: "true"
+  allow-private-url:
+    description: Opt-in, only for a site on your own network on a self-hosted runner. false (default) = the runner never connects to private or local addresses, not even the host of url, so a url from event data cannot reach cloud metadata or internal services. On GitHub-hosted runners a private url fails the scan.
+    default: "false"
   report-visibility:
     description: Removed. Private and internal repositories always show one line per finding in the summary, plus log, annotations and the artifact; public ones only counts, no artifact. A set value is ignored with a warning.
     deprecationMessage: report-visibility was removed. Private and internal repositories show every finding, public ones only counts. Remove the input.
@@ -114,13 +117,14 @@ runs:
         VULNERABILITIES: ${{ inputs.vulnerabilities }}
         GREEN_HOSTING: ${{ inputs.green-hosting }}
         REQUIRE_SANDBOX: ${{ inputs.require-sandbox }}
+        ALLOW_PRIVATE_URL: ${{ inputs.allow-private-url }}
         SARIF: ${{ steps.sarif.outputs.upload == 'true' && format('{0}/sarif/rechtzeitig.sarif', runner.temp) || '' }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
         --sales "$SALES" --modules "$MODULES"
         --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES"
-        --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --sarif "$SARIF"
+        --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --allow-private-url "$ALLOW_PRIVATE_URL" --sarif "$SARIF"
         --report "$RUNNER_TEMP/upload/rechtzeitig-report.json" --out "$RUNNER_TEMP/rechtzeitig-report"
 
     - name: Upload report
