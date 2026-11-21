@@ -3,28 +3,22 @@
 ## A new check
 
 1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`, and `quality` for rules without a legal basis), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/copyleft-dependencies`. Whether it reads the website or the repository follows from `defineCheck`, `defineRepoCheck` or, for both together, `defineCrossCheck` (its scope, shown on `docs/checks.html`).
-2. Add `rule.yml` with the metadata. Titles, legal basis and fix hint in German and English; the report shows them in the chosen language.
+2. Add `rule.yml` with the metadata. Title, legal basis and fix hint in English only: the report is English, and readable reports in other languages are built outside the engine from rule ids and message keys.
 
    ```yaml
    id: LEG-DE-IMP-001        # SEC, LEG-DE, LEG-EU, A11Y, PRC or SUS, then a topic and a number
    severity: high            # info | low | medium | high | critical
-   title:
-     de: "Impressum ist verlinkt und erreichbar"
-     en: "Imprint is linked and reachable"
-   legal_basis:              # optional; rules in checks/quality/ have none and state `value:` (de, en) instead
-     de: "§ 5 DDG"
-     en: "§ 5 DDG (German Digital Services Act)"
+   title: "Imprint is linked and reachable"
+   legal_basis: "§ 5 DDG (German Digital Services Act)"  # optional; rules in checks/quality/ have none and state `value:` instead
    how: "Finds the imprint link on the start page (`imprint`), loads it and checks status and text."
-   fix_hint:
-     de: "Impressum auf jeder Seite verlinken."
-     en: "Link the imprint from every page."
+   fix_hint: "Link the imprint from every page."
    requires: [subscriptions]  # optional: inputs the rule needs (SWITCHES in src/rules.ts); skipped without them
    meta:
      last_reviewed: "2026-11-03"
      sources: ["https://www.gesetze-im-internet.de/ddg/__5.html"]
    ```
 
-   A test validates every rule. It fails when `last_reviewed` is older than a year, so legal texts get looked at again (`reviewProblems()` in `src/rules.ts`, also run by `npm run docs`; a scan never checks the age, so a pinned release keeps working), when `sources` is empty, when a source is not on a domain in `data/source-domains.yml` (primary sources only: laws, courts, authorities, standards, vendor docs), and when `how` does not name a `data/*.yml` file that `check.ts` loads. A check that needs data from an API with a token is opt-in: list the input in `requires` (known inputs: `SWITCHES` in `src/rules.ts`, each an `action.yml` input with a `messages.common.switch_<input>` text; a new one also needs an option in `src/options.ts`, a line in the example workflow, set in `with:` or commented with its default and named in `FILE_ONLY`, which `src/inputs.test.ts` checks). Without the secret the runner skips the rule and the crawler sends nothing to that service. A rule without `legal_basis` still cites a standard or official guideline for its claim. To review sources and look for changes, use the Claude Code skill `.claude/skills/review-sources/` (`/review-sources`). To check that `rule.yml` and its sources match what `check.ts` does, use `.claude/skills/check-rule-docs/` (`/check-rule-docs`). Both take an optional rule id or module. `npm run drift`, also a CI job, fails for a commit that changes `check.ts` or the rule's messages in `lang/` without its `rule.yml`, or a data file without naming it in the message; when the docs really stay the same, add a line `Docs-unchanged: <reason>` to the commit message.
+   A test validates every rule. It fails when `last_reviewed` is older than a year, so legal texts get looked at again (`reviewProblems()` in `src/rules.ts`, also run by `npm run docs`; a scan never checks the age, so a pinned release keeps working), when `sources` is empty, when a source is not on a domain in `data/source-domains.yml` (primary sources only: laws, courts, authorities, standards, vendor docs), and when `how` does not name a `data/*.yml` file that `check.ts` loads. A check that needs data from an API with a token is opt-in: list the input in `requires` (known inputs: `SWITCHES` in `src/rules.ts`, each an `action.yml` input with a `messages.common.switch_<input>` text; a new one also needs an option in `src/options.ts`, set in the example workflow's `with:` or named in `FILE_ONLY`, which `src/inputs.test.ts` checks). Without the secret the runner skips the rule and the crawler sends nothing to that service. A rule without `legal_basis` still cites a standard or official guideline for its claim. To review sources and look for changes, use the Claude Code skill `.claude/skills/review-sources/` (`/review-sources`). To check that `rule.yml` and its sources match what `check.ts` does, use `.claude/skills/check-rule-docs/` (`/check-rule-docs`). Both take an optional rule id or module. `npm run drift`, also a CI job, fails for a commit that changes `check.ts` or the rule's messages in `lang/` without its `rule.yml`, or a data file without naming it in the message; when the docs really stay the same, add a line `Docs-unchanged: <reason>` to the commit message.
 
 3. Add `check.ts` with the detection:
 
@@ -40,7 +34,7 @@
    });
    ```
 
-   A check returns message keys, never sentences. The sentences go into every `lang/<code>.yml` under `messages.<check id>` (here `messages.legal/imprint`), with `{name}` for parameters and `one`/`other` when a `count` parameter decides the plural. Keys that several checks share live in `messages.common`. A parameter can itself be a `msg(...)`, for words that need translating. Details are findings: `{ file, line, key, params }` for places in the repository (GitHub shows them as annotations in pull requests), `{ text }` for values shown as they are (URLs, hosts, cookie names). The test helpers render every result in every language, so a missing key fails the test.
+   A check returns message keys, never sentences. The sentences go into `lang/en.yml` under `messages.<check id>` (here `messages.legal/imprint`), in English; other files in `lang/` hold only detection patterns, with `{name}` for parameters and `one`/`other` when a `count` parameter decides the plural. Keys that several checks share live in `messages.common`. A parameter can itself be a `msg(...)`, for words a translated report replaces (page names). Details are findings: `{ file, line, key, params }` for places in the repository (GitHub shows them as annotations in pull requests), `{ text }` for values shown as they are (URLs, hosts, cookie names). The test helpers render every result, so a missing key fails the test.
 
    A repository check uses `defineRepoCheck` and gets `repo` instead of `ctx`: `repo.files`, `repo.find(pattern)` (for example `repo.find(WORKFLOWS)`), `repo.read(path)`, `repo.yaml(path)` for YAML or JSON, and the locked `repo.components`.
 
@@ -103,7 +97,7 @@ The runner finds the check by itself. Nothing else needs to change.
 | File | Add here |
 |---|---|
 | `lang/<code>.yml` | Words. `links` concepts match link and button labels (the crawler opens matching links); `text` concepts match page text. Patterns run on normalized text: lowercase, `ä→ae ö→oe ü→ue ß→ss`. A new language is a new file with the same keys; a test checks this. Add the code to `examples/workflows/rechtzeitig.yml`. |
-| `data/third-parties.yml` | A service: hosts, country, whether it needs consent, how a privacy policy names it, its cookies, advice in every report language (`de`, `en`; the loader rejects a missing one). |
+| `data/third-parties.yml` | A service: hosts, country, whether it needs consent, how a privacy policy names it, its cookies, advice in English (the loader rejects an empty one). |
 | `data/probes.yml` | A path to request. `kind: file` with an `expect` pattern for files that must not be public, `kind: error` for error pages, `kind: public` for files that should be public and a check reads (`security.txt`). |
 | `data/secrets.yml` | A secret pattern with `fail` or `warn` under `rules`, with `keywords` (lowercase, the line must contain one), a group named `secret`, and `entropy: token` (or `generic`) so placeholders drop out. With `allow`, a documented example; with `payload`, match group 1 is decoded as a JWT payload and must have the listed claims. A pattern adapted from gitleaks (MIT) is fine, it is named in `NOTICE`; never take detectors from AGPL projects such as trufflehog. |
 | `data/accessibility.yml` | An axe-core rule id for one of the accessibility checks. Only rules that map to one WCAG success criterion and rarely misfire. |

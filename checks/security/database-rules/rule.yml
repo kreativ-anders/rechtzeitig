@@ -1,16 +1,10 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-DBAI-001
 severity: critical
-title:
-  de: "Datenbankregeln öffnen keine Daten für alle"
-  en: "Database rules do not open data to everyone"
-legal_basis:
-  de: "Art. 32 DSGVO"
-  en: "Art. 32 GDPR"
+title: "Database rules do not open data to everyone"
+legal_basis: "Art. 32 GDPR"
 how: "Splits `supabase/**/*.sql` into statements and follows `create table` in the public schema, `enable` and `disable row level security` and `drop table` in migration order, so the last statement about a table decides; looks for `if true` and test mode (`request.time < timestamp.date(...)`) in Firebase rules; gives info instead of no finding when one of its files is over the `repo` limit in `data/thresholds.yml` or only a Git LFS pointer."
-fix_hint:
-  de: "Row Level Security für jede Tabelle aktivieren und Regeln mit \"if true\" oder Testmodus-Datum durch Prüfungen auf den angemeldeten Nutzer ersetzen."
-  en: "Enable row level security on every table and replace \"if true\" and test-mode rules with checks on the signed-in user."
+fix_hint: "Enable row level security on every table and replace \"if true\" and test-mode rules with checks on the signed-in user."
 meta:
   last_reviewed: "2026-11-03"
   sources:

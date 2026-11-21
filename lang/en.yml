@@ -162,7 +162,8 @@ text:
 
 # Report sentences. Checks return a key and parameters; {name} is replaced by a parameter.
 # A value with one/other is picked by the parameter count. Groups are check ids; `common` is shared.
-# Every language file must define the same keys (test: src/lang.test.ts).
+# Report sentences exist only here: the report is English (src/messages.ts). Other files in lang/ hold
+# only detection patterns. The German texts of v0.8.0 and earlier stay in lang/de.yml at tag v0.8.0.
 messages:
   common:
     axe_not_run: "axe-core did not run on any visited page: no page loaded with JavaScript, or axe-core did not finish in time."

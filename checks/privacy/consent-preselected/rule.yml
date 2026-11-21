@@ -1,16 +1,10 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-CNS-004
 severity: high
-title:
-  de: "Optionale Cookie-Kategorien nicht vorausgewählt"
-  en: "Optional cookie categories are not preselected"
-legal_basis:
-  de: "§ 25 TDDDG, EuGH C-673/17 (Planet49)"
-  en: "§ 25 TDDDG, ECJ C-673/17 (Planet49)"
+title: "Optional cookie categories are not preselected"
+legal_basis: "§ 25 TDDDG, ECJ C-673/17 (Planet49)"
 how: "Finds ticked, enabled checkboxes whose label is an optional category (`consent_optional`), also in shadow roots."
-fix_hint:
-  de: "Statistik, Marketing und ähnliche Kategorien im Banner standardmäßig abwählen."
-  en: "Leave statistics, marketing and similar categories unticked by default."
+fix_hint: "Leave statistics, marketing and similar categories unticked by default."
 meta:
   last_reviewed: "2026-11-03"
   sources:

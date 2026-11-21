@@ -4,13 +4,13 @@
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
-import { CLI_OPTIONS } from "./options.ts";
+import { CLI_OPTIONS, REMOVED_OPTIONS } from "./options.ts";
 import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
 import { toSarif, workflowFile } from "./sarif.ts";
 import { loadChecks, OUTCOMES, runChecks, scopeOf, selectModules, type OutcomeStatus } from "./runner.ts";
-import { LANGUAGES, SWITCHES, switchSpec, type Switch, type UiLanguage } from "./rules.ts";
+import { SWITCHES, switchSpec, type Switch } from "./rules.ts";
 import { errorMessage } from "./text.ts";
 import { applySuppressions, loadSuppressions } from "./suppress.ts";
 import {
@@ -26,7 +26,7 @@ const FAIL_ON: Record<string, OutcomeStatus[]> = {
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: CLI_OPTIONS,
+  options: { ...CLI_OPTIONS, ...Object.fromEntries(Object.keys(REMOVED_OPTIONS).map((o) => [o, { type: "string" as const }])) },
 });
 // Runs without the Run workflow dialog (schedule, push) pass every `inputs.*` as "", so empty means the default.
 // url and repo have no default: empty there means "do not scan the site" or "no checkout".
@@ -39,11 +39,12 @@ let url = (values.url || positionals[0] || "").trim();
 if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;
 const failOn = values["fail-on"] || "never";
 if (!FAIL_ON[failOn]) exit(`fail-on must be one of: ${Object.keys(FAIL_ON).join(", ")}`);
-// The report follows the site language unless set; "all" and unknown languages fall back to English.
-const wanted = values["report-language"] || values.language!.split(",")[0];
-const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ? (wanted as UiLanguage) : "en";
-let wantedVisibility = values["report-visibility"] || "auto";
 const onGitHub = !!process.env.GITHUB_ACTIONS;
+// A removed input that is set only warns, so an old workflow keeps running.
+for (const [name, note] of Object.entries(REMOVED_OPTIONS)) {
+  if ((values as Record<string, unknown>)[name]?.toString().trim()) console.log(onGitHub ? `::warning::${note}` : `Warning: ${note}`);
+}
+let wantedVisibility = values["report-visibility"] || "auto";
 if ((REMOVED_VISIBILITIES as readonly string[]).includes(wantedVisibility)) {
   const note = `report-visibility: ${wantedVisibility} was removed and now works like auto. Remove the input or set full.`;
   console.log(onGitHub ? `::warning::${note}` : `Warning: ${note}`);
@@ -98,7 +99,7 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
 // also when no repository check runs, and an invalid entry turns nothing off.
 const root = repo?.root ?? (values.repo?.trim() || undefined);
 const outcomes = applySuppressions(await runChecks(allChecks, { web, repo }, enabled, modules), root ? loadSuppressions(root) : undefined);
-const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub, language, warnings };
+const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub, warnings };
 const log = (text: string) => console.log(onGitHub ? withoutCommands(text) : text);
 // Scanned repository's folder relative to the workspace, for annotations and SARIF.
 const base = repo ? relative(process.env.GITHUB_WORKSPACE ?? process.cwd(), resolve(repo.root)).split(sep).join("/") : "";
@@ -109,7 +110,7 @@ if (values.sarif) {
 }
 let summary: string | undefined;
 if (visibility === "full") {
-  const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) }, ...(repo && { coverage: repo.coverage }) }, language);
+  const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) }, ...(repo && { coverage: repo.coverage }) });
   writeFileSync(`${values.out}.md`, toMarkdown(report));
   writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
   if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));

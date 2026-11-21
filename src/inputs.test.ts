@@ -8,11 +8,13 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadYaml } from "./data.ts";
 import { SWITCHES } from "./rules.ts";
-import { CLI_OPTIONS } from "./options.ts";
+import { CLI_OPTIONS, REMOVED_OPTIONS } from "./options.ts";
 
 type Step = { id?: string; uses?: string; env?: Record<string, string>; run?: string; with?: Record<string, unknown> };
-const action = loadYaml<{ inputs: Record<string, { default?: string }>; runs: { steps: Step[] } }>("action.yml");
-const inputs = Object.keys(action.inputs);
+const action = loadYaml<{ inputs: Record<string, { default?: string; deprecationMessage?: string }>; runs: { steps: Step[] } }>("action.yml");
+/** Current inputs. Removed ones stay in action.yml with a deprecationMessage, so GitHub warns when they are set. */
+const inputs = Object.keys(action.inputs).filter((i) => !action.inputs[i].deprecationMessage);
+const removed = Object.keys(action.inputs).filter((i) => action.inputs[i].deprecationMessage);
 const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const scanStep = action.runs.steps.find((s) => s.id === "scan")!;
 const scanRun = scanStep.run ?? "";
@@ -28,6 +30,16 @@ test("the example workflow sets or names every input", () => {
   // "repository" defaults to the checkout; the example explains it at the checkout step.
   const missing = inputs.filter((i) => i !== "repository" && !new RegExp(`^\\s*(#\\s*)?${i}:`, "m").test(example));
   assert.deepEqual(missing, []);
+});
+
+test("a removed input only warns: deprecated in action.yml, accepted by the command line, used by no step", () => {
+  assert.deepEqual(removed.sort(), Object.keys(REMOVED_OPTIONS).sort());
+  const text = read("action.yml");
+  for (const i of removed) {
+    assert.ok(!text.includes(`inputs.${i}`), `${i} is still passed to a step`);
+    assert.equal(action.inputs[i].default, undefined, `${i} has a default`);
+    assert.ok(!(i in options), `${i} is still an option in src/options.ts`);
+  }
 });
 
 test("every switch is an input of the action", () => {
@@ -87,7 +99,6 @@ const FILE_ONLY: Record<string, string> = {
   "report-visibility": "the default auto keeps findings off public run pages",
   "sarif-upload": "the default auto uploads where GitHub allows it",
   modules: "the default runs all checks",
-  "report-language": "the default follows language",
   "max-pages": "rarely changes",
   "require-sandbox": "safety setting, should stay on",
 };

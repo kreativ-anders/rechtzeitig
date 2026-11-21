@@ -1,13 +1,11 @@
 // Rule metadata: checks/<category>/<name>/rule.yml. Detection lives in check.ts next to it.
-// Legal and wording updates are data updates here, never engine changes.
+// Legal and wording updates are data updates here, never engine changes. Texts are English only; the German
+// texts of v0.8.0 and earlier stay in the rule.yml files at tag v0.8.0.
 
 import { loadYaml } from "./data.ts";
 import { DAY } from "./deadline.ts";
 import { hostIn } from "./text.ts";
-import type { Localized } from "./sdk.ts";
 
-export const LANGUAGES = ["de", "en"] as const;
-export type UiLanguage = (typeof LANGUAGES)[number];
 export const SEVERITIES = ["info", "low", "medium", "high", "critical"] as const;
 export type Severity = (typeof SEVERITIES)[number];
 
@@ -35,12 +33,8 @@ const officialSource = (url: string): boolean => {
   }
 };
 
-/** The report languages a localized text lacks or leaves empty. */
-export const missingLanguages = (value: unknown): UiLanguage[] =>
-  LANGUAGES.filter((l) => {
-    const v = (value as Localized | undefined)?.[l];
-    return typeof v !== "string" || !v.trim();
-  });
+/** A text of a rule or a data file: English, one non-empty string. */
+export const isText = (value: unknown): value is string => typeof value === "string" && !!value.trim();
 
 /**
  * Inputs that turn a rule on or off. A rule names them in `requires`; the runner skips it unless each is on.
@@ -64,16 +58,16 @@ export const switchSpec = (input: Switch): { secret?: string; default?: boolean;
 export interface Rule {
   id: string;
   severity: Severity;
-  title: Localized;
-  legal_basis?: Localized;
+  title: string;
+  legal_basis?: string;
   /**
    * Why the rule is worth running when it has no legal basis: the benefit for the project, in one sentence.
    * Required in NO_LEGAL_BASIS_GROUPS, never together with `legal_basis`. Shown as "No legal basis: <value>".
    */
-  value?: Localized;
+  value?: string;
   /** One sentence: how check.ts detects it, naming the data files it uses. Shown on the wiki pages Checks-<Group>. */
   how: string;
-  fix_hint: Localized;
+  fix_hint: string;
   /** Inputs the rule needs (SWITCHES). Without them it is skipped. */
   requires?: Switch[];
   meta: { last_reviewed: string; sources: string[] };
@@ -99,7 +93,7 @@ export function validateRule(rule: Rule, group?: string): string[] {
   const p: string[] = [];
   const text = (name: string, value: unknown, required = true) => {
     if (value === undefined && !required) return;
-    for (const lang of missingLanguages(value)) p.push(`${name}.${lang} is missing`);
+    if (!isText(value)) p.push(`${name} must be a text in English`);
   };
   if (!ID.test(rule?.id ?? "")) p.push(`id "${rule?.id}" does not match ${ID}`);
   if (!SEVERITIES.includes(rule?.severity)) p.push(`severity must be one of ${SEVERITIES.join(", ")}`);

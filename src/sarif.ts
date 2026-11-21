@@ -35,13 +35,12 @@ const location = (uri: string, line?: number) => ({
 const levelOf = (o: Outcome) => LEVEL[o.suppression?.status ?? o.status];
 
 export function toSarif(r: Report, { base = "", anchor }: SarifOptions = {}): object {
-  const lang = r.language;
   const open = r.outcomes.filter((o) => levelOf(o));
   const rules = [...new Map(open.map((o) => [o.rule.id, o])).values()].map((o) => ({
     id: o.rule.id,
     name: o.id,
-    shortDescription: { text: o.rule.title[lang] },
-    help: { text: [o.rule.fix_hint[lang], o.rule.legal_basis?.[lang] ?? (o.rule.value ? `${render({ key: "no_legal_basis" }, "report", lang)}: ${o.rule.value[lang]}` : undefined)].filter(Boolean).join("\n\n") },
+    shortDescription: { text: o.rule.title },
+    help: { text: [o.rule.fix_hint, o.rule.legal_basis ?? (o.rule.value ? `${render({ key: "no_legal_basis" }, "report")}: ${o.rule.value}` : undefined)].filter(Boolean).join("\n\n") },
     helpUri: ruleUrl(o.id, o.rule.id),
     properties: {
       tags: [o.id.split("/")[0]],
@@ -65,8 +64,8 @@ function results(o: Outcome, r: Report, base: string, anchor?: string) {
   const suppressions = s
     ? { suppressions: [{ kind: "external", status: "accepted", justification: oneLine(`${s.category}: ${s.reason}`), location: location(base ? `${base}/${s.file}` : s.file, s.line) }] }
     : {};
-  const message = oneLine(say(o, r.language));
-  const texts = where(o, r.language).map((t) => oneLine(t));
+  const message = oneLine(say(o));
+  const texts = where(o).map((t) => oneLine(t));
   const inFiles = o.details.flatMap((d, i) => (typeof d !== "string" && d.file ? [{ d, text: texts[i] }] : []));
   const seen = new Map<string, number>();
   const fileResults = inFiles.map(({ d, text }) => {

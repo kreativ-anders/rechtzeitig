@@ -22,8 +22,8 @@ inputs:
     description: Comma list of check groups (legal, privacy, security, sustainability, accessibility, quality) or scopes (website, repository, both; repo is the same as repository) to run. A check runs when its group or its scope is listed; a check of both runs for website or repository, and both picks only those. Empty = all.
     default: ""
   report-language:
-    description: Language of the report (de or en). Empty = same as language.
-    default: ""
+    description: Removed. The report is English; readable reports in other languages are built from its keys and parameters. A set value is ignored with a warning.
+    deprecationMessage: report-language was removed, the report is English. Remove the input.
   fail-on:
     description: When the job fails. never = report only, fail = on any fail, warn = on any warn or fail.
     default: never
@@ -104,7 +104,6 @@ runs:
         SUBSCRIPTIONS: ${{ inputs.subscriptions }}
         SALES: ${{ inputs.sales }}
         MODULES: ${{ inputs.modules }}
-        REPORT_LANGUAGE: ${{ inputs.report-language }}
         FAIL_ON: ${{ inputs.fail-on }}
         MAX_PAGES: ${{ inputs.max-pages }}
         REPOSITORY: ${{ inputs.repository }}
@@ -117,7 +116,7 @@ runs:
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
-        --sales "$SALES" --modules "$MODULES" --report-language "$REPORT_LANGUAGE"
+        --sales "$SALES" --modules "$MODULES"
         --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES"
         --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --report-visibility "$REPORT_VISIBILITY" --sarif "$SARIF" --out "$RUNNER_TEMP/rechtzeitig-report"
 

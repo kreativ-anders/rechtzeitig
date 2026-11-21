@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { basename } from "node:path";
 import { OUTCOMES, type Because, type Outcome, type OutcomeStatus } from "./runner.ts";
-import { SEVERITIES, type UiLanguage } from "./rules.ts";
+import { SEVERITIES } from "./rules.ts";
 import { loadYaml } from "./data.ts";
 import type { Params, RepoContext, RepoCoverage, ScanContext } from "./sdk.ts";
 import { oneLine } from "./text.ts";
@@ -33,9 +33,9 @@ export interface Findings {
     check: string;
     severity: string;
     status: OutcomeStatus;
-    /** In the report language. */
+    /** In English. */
     message: string;
-    /** Message key and parameters (lang/<code>.yml `messages`), the same in every language. */
+    /** Message key and parameters (lang/en.yml `messages`), to build the message in any language. */
     key?: string;
     params?: Params;
     /** Pages, files with line numbers, hosts. Secrets are already redacted by the checks. */
@@ -47,10 +47,10 @@ export interface Findings {
   }>;
 }
 
-/** The outcome's message in `lang`. */
-export const say = (o: Outcome, lang: UiLanguage) => render(o.message, o.id, lang);
-/** The outcome's details in `lang`, one line each. */
-export const where = (o: Outcome, lang: UiLanguage) => o.details.map((d) => renderFinding(d, o.id, lang));
+/** The outcome's message. */
+export const say = (o: Outcome) => render(o.message, o.id);
+/** The outcome's details, one line each. */
+export const where = (o: Outcome) => o.details.map((d) => renderFinding(d, o.id));
 
 /** Parameters can hold text from the scanned site; one line each, like every other output. */
 const cleanParams = (params?: Params): Params | undefined =>
@@ -58,11 +58,10 @@ const cleanParams = (params?: Params): Params | undefined =>
 const cleanValue = (v: Params[string]): Params[string] => {
   if (typeof v === "string") return oneLine(v);
   if (typeof v === "number") return v;
-  if ("key" in v) return { key: v.key, params: cleanParams(v.params as Params | undefined) };
-  return Object.fromEntries(Object.entries(v).map(([lang, text]) => [lang, oneLine(text)])) as typeof v;
+  return { key: v.key, params: cleanParams(v.params) };
 };
 
-export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">, lang: UiLanguage = "en"): Findings {
+export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">): Findings {
   return {
     ...meta,
     results: outcomes.map((o) => ({
@@ -70,9 +69,9 @@ export function toFindings(outcomes: Outcome[], meta: Omit<Findings, "results">,
       check: o.id,
       severity: o.rule.severity,
       status: o.status,
-      message: oneLine(say(o, lang)),
+      message: oneLine(say(o)),
       ...(typeof o.message === "string" ? {} : { key: o.message.key, params: cleanParams(o.message.params) }),
-      locations: where(o, lang).map((d) => oneLine(d)),
+      locations: where(o).map((d) => oneLine(d)),
       ...(o.because && { because: o.because }),
       ...(o.suppression && { suppression: suppressionJson(o.suppression) }),
     })),
@@ -87,8 +86,8 @@ const suppressionJson = (s: NonNullable<Outcome["suppression"]>) => ({
 const HOMEPAGE = "https://github.com/kreativ-anders/rechtzeitig";
 const MAKER = "https://kreativ-anders.de";
 
-// Report wording comes from lang/<code>.yml `messages.report`; rule titles, legal bases and fix hints from each rule.yml.
-const ui = (lang: UiLanguage) => (key: string, params?: Params) => render({ key, params }, "report", lang);
+// Report wording comes from lang/en.yml `messages.report`; rule titles, legal bases and fix hints from each rule.yml.
+const t = (key: string, params?: Params) => render({ key, params }, "report");
 
 export interface Report {
   web?: ScanContext;
@@ -97,7 +96,6 @@ export interface Report {
   version: string;
   startedAt: string;
   onGitHub: boolean;
-  language: UiLanguage;
   /** Problems that did not stop the scan, such as a missing browser sandbox. */
   warnings?: string[];
 }
@@ -116,10 +114,10 @@ export const plain = (s: string) => oneLine(s).replace(/^::/, ": :");
 const cell = (s: string) => s.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\n/g, " ");
 const title = (r: Report) => [r.web?.url, r.repo && `repository ${repoName(r.repo.root)}`].filter(Boolean).join(" + ");
 /** The status as readers see it: "no finding", never a word that sounds like approval. The JSON keeps the key. */
-const label = (s: OutcomeStatus, lang: UiLanguage) => ui(lang)(`status_${s}`);
+const label = (s: OutcomeStatus) => t(`status_${s}`);
 const summaryLine = (r: Report, icons: boolean) => {
   const c = counts(r.outcomes);
-  return OUTCOMES.filter((s) => c[s]).map((s) => `${icons ? `${ICONS[s]} ` : ""}${c[s]} ${label(s, r.language)}`).join(icons ? " · " : ", ");
+  return OUTCOMES.filter((s) => c[s]).map((s) => `${icons ? `${ICONS[s]} ` : ""}${c[s]} ${label(s)}`).join(icons ? " · " : ", ");
 };
 /** Most urgent first: status, then severity. */
 const sorted = (outcomes: Outcome[]) =>
@@ -132,14 +130,13 @@ const open = (o: Outcome) => o.status === "fail" || o.status === "warn" || o.sta
  * Lines for a suppressed outcome: category, expiry and reason; where the entry is and the status without it; for a
  * false positive, where to report it. The reason is untrusted text from the repository and goes through `esc`.
  */
-function suppressionLines(o: Outcome, lang: UiLanguage, esc: (s: string) => string): string[] {
+function suppressionLines(o: Outcome, esc: (s: string) => string): string[] {
   const s = o.suppression;
   if (!s) return [];
-  const t = ui(lang);
   const until = s.expires ? t("suppressed_until", { date: s.expires }) : "";
   return [
     t("suppressed_by", { category: t(`category_${s.category}`), until, reason: esc(s.reason) }),
-    t("suppressed_at", { status: label(s.status, lang), place: esc(`${s.file}:${s.line}`) }),
+    t("suppressed_at", { status: label(s.status), place: esc(`${s.file}:${s.line}`) }),
     ...(s.category === "false-positive" ? [t("suppressed_report", { url: `${HOMEPAGE}/issues` })] : []),
   ];
 }
@@ -150,7 +147,7 @@ const MAX_LISTED = loadYaml<{ common: { max_listed: number } }>("data/thresholds
 const MAX_FILE_MB = loadYaml<{ repo: { max_file_bytes: number } }>("data/thresholds.yml").repo.max_file_bytes / 1_000_000;
 
 interface NotRunGroup {
-  /** One line in the report language with the count and how to turn the checks on. */
+  /** One line with the count and how to turn the checks on. */
   line: string;
   outcomes: Outcome[];
   /** Under the line: each check by title (switches), with its own message (nothing to read), or not at all. */
@@ -159,7 +156,6 @@ interface NotRunGroup {
 
 /** Skipped checks grouped by reason: no url, no checkout, modules, each switch, nothing to read. */
 function notRun(r: Report): NotRunGroup[] {
-  const t = ui(r.language);
   const groups = new Map<string, Outcome[]>();
   for (const o of r.outcomes) {
     const b = o.because;
@@ -172,7 +168,7 @@ function notRun(r: Report): NotRunGroup[] {
   return [...groups.entries()].sort(([a], [b]) => order(a) - order(b)).map(([key, outcomes]) => {
     const count = outcomes.length;
     const b = outcomes[0].because!;
-    if (b.kind === "switch") return { line: t("not_run_switch", { count, hint: say(outcomes[0], r.language) }), outcomes, listed: "title" };
+    if (b.kind === "switch") return { line: t("not_run_switch", { count, hint: say(outcomes[0]) }), outcomes, listed: "title" };
     if (b.kind === "module") return { line: t("not_run_module", { count, modules: b.modules.join(", ") }), outcomes, listed: "none" };
     return { line: t(`not_run_${key}`, { count }), outcomes, listed: key === "data" ? "message" : "none" };
   });
@@ -182,11 +178,10 @@ function notRun(r: Report): NotRunGroup[] {
 function notRunLines(r: Report, format: "md" | "text", names: boolean): string[] {
   const groups = notRun(r);
   if (!groups.length) return [];
-  const t = ui(r.language);
   const total = groups.reduce((n, g) => n + g.outcomes.length, 0);
   const item = (o: Outcome, withMessage: boolean) => {
-    const name = format === "md" ? `${cell(o.rule.title[r.language])} (${o.rule.id})` : o.id;
-    return withMessage ? `${name}: ${(format === "md" ? md : plain)(say(o, r.language))}` : name;
+    const name = format === "md" ? `${cell(o.rule.title)} (${o.rule.id})` : o.id;
+    return withMessage ? `${name}: ${(format === "md" ? md : plain)(say(o))}` : name;
   };
   const lines = groups.flatMap((g) => [
     format === "md" ? `- ${g.line}` : `  ${g.line}`,
@@ -197,14 +192,12 @@ function notRunLines(r: Report, format: "md" | "text", names: boolean): string[]
 }
 
 /** The collapsed block on what no scan can check: content, duties outside site and code, settings the site does not show. */
-const limitLines = (lang: UiLanguage) => {
-  const t = ui(lang);
+const limitLines = () => {
   return [`<details><summary>${ICONS.info} ${t("limits")}</summary>`, "", ...["content", "duties", "config"].map((k) => `- ${t(`limits_${k}`)}`), "", "</details>", ""];
 };
 
 /** What the repository scan could not see or read, one line each; `warn` marks gaps the workflow can close. */
-export function coverageLines(c: RepoCoverage, lang: UiLanguage, esc: (s: string) => string): Array<{ warn: boolean; text: string }> {
-  const t = ui(lang);
+export function coverageLines(c: RepoCoverage, esc: (s: string) => string): Array<{ warn: boolean; text: string }> {
   const names = (items: string[]) =>
     items.slice(0, MAX_LISTED).join(", ") + (items.length > MAX_LISTED ? t("and_more", { count: items.length - MAX_LISTED }) : "");
   const line = (warn: boolean, key: string, items: string[], params: Params = {}) =>
@@ -231,8 +224,6 @@ export function coverageLines(c: RepoCoverage, lang: UiLanguage, esc: (s: string
  * that groups skipped checks by reason, and list what the repository scan could not read under the scan line.
  */
 export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
-  const t = ui(r.language);
-  const lang = r.language;
   const list = sorted(r.outcomes).filter((o) => !notStarted(o) && (!findingsOnly || (o.status !== "pass" && o.status !== "skip")));
   const lines = [`## rechtzeitig: ${md(title(r))}`, "", summaryLine(r, true), ""];
   if (findingsOnly) lines.push(`_${t(list.length ? "findings_only" : "no_findings")}_`, "");
@@ -242,9 +233,9 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
       "|---|---|---|---|",
       ...list.map((o) => {
         // A rule with a value instead of a legal basis (checks/quality/) says so, never looks like a legal duty.
-        const law = o.rule.legal_basis?.[lang] ?? (o.rule.value ? t("no_legal_basis") : undefined);
-        const off = o.suppression ? `<br>${ICONS.suppressed} ${suppressionLines(o, lang, md)[0]}` : "";
-        return `| ${ICONS[o.status]} | ${cell(o.rule.title[lang])}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${t(`severity_${o.rule.severity}`)} | ${md(say(o, lang))}${off} |`;
+        const law = o.rule.legal_basis ?? (o.rule.value ? t("no_legal_basis") : undefined);
+        const off = o.suppression ? `<br>${ICONS.suppressed} ${suppressionLines(o, md)[0]}` : "";
+        return `| ${ICONS[o.status]} | ${cell(o.rule.title)}<br><sub>${o.rule.id}${law ? ` · ${cell(law)}` : ""}</sub> | ${t(`severity_${o.rule.severity}`)} | ${md(say(o))}${off} |`;
       }),
       "",
     );
@@ -253,12 +244,12 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
   if (withDetails.length) {
     lines.push(`### ${t("details")}`, "");
     for (const o of withDetails) {
-      const fix = open(o) ? [`**${t("fix")}:** ${o.rule.fix_hint[lang]}`, ""] : [];
-      const off = o.suppression ? [suppressionLines(o, lang, md).map((l, i) => (i ? l : `**${l}**`)).join("<br>"), ""] : [];
-      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title[lang]} (${o.rule.id})</summary>`, "", ...off, ...fix, ...where(o, lang).map((d) => `- ${md(d)}`), "", "</details>", "");
+      const fix = open(o) ? [`**${t("fix")}:** ${o.rule.fix_hint}`, ""] : [];
+      const off = o.suppression ? [suppressionLines(o, md).map((l, i) => (i ? l : `**${l}**`)).join("<br>"), ""] : [];
+      lines.push(`<details><summary>${ICONS[o.status]} ${o.rule.title} (${o.rule.id})</summary>`, "", ...off, ...fix, ...where(o).map((d) => `- ${md(d)}`), "", "</details>", "");
     }
   }
-  lines.push(...notRunLines(r, "md", true), ...limitLines(lang), `### ${t("scan")}`, "");
+  lines.push(...notRunLines(r, "md", true), ...limitLines(), `### ${t("scan")}`, "");
   if (r.web) {
     const w = r.web;
     lines.push(
@@ -269,7 +260,7 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
   }
   if (r.repo) {
     lines.push(`- ${t("repository", { files: r.repo.files.length, components: r.repo.components.length, lockfiles: r.repo.lockfiles.length, osv: md(r.repo.osv) })}`);
-    for (const c of coverageLines(r.repo.coverage, lang, md)) lines.push(`  - ${c.warn ? "⚠️ " : ""}${c.text}`);
+    for (const c of coverageLines(r.repo.coverage, md)) lines.push(`  - ${c.warn ? "⚠️ " : ""}${c.text}`);
   }
   for (const w of r.warnings ?? []) lines.push(`- ⚠️ ${md(w)}`);
   lines.push(`- [rechtzeitig](${HOMEPAGE}) ${r.version} · ${t("made_by", { maker: `[kreativ-anders](${MAKER})` })} · ${r.startedAt}`, "", `_${t("disclaimer")}_`, "");
@@ -278,14 +269,14 @@ export function toMarkdown(r: Report, { findingsOnly = false } = {}): string {
 
 export function toText(r: Report): string {
   const lines = [`rechtzeitig: ${plain(title(r))}`, ""];
-  const width = Math.max(...OUTCOMES.map((s) => label(s, r.language).length));
+  const width = Math.max(...OUTCOMES.map((s) => label(s).length));
   for (const o of r.outcomes.filter((o) => !notStarted(o))) {
-    lines.push(`${label(o.status, r.language).toUpperCase().padEnd(width)} ${o.id.padEnd(40)} ${plain(say(o, r.language))}`);
-    for (const l of suppressionLines(o, r.language, plain)) lines.push(`      ${l}`);
-    for (const d of where(o, r.language)) lines.push(`      - ${plain(d)}`);
+    lines.push(`${label(o.status).toUpperCase().padEnd(width)} ${o.id.padEnd(40)} ${plain(say(o))}`);
+    for (const l of suppressionLines(o, plain)) lines.push(`      ${l}`);
+    for (const d of where(o)) lines.push(`      - ${plain(d)}`);
   }
   const notStartedOnly = { ...r, outcomes: r.outcomes.filter(notStarted) };
-  const coverage = r.repo ? coverageLines(r.repo.coverage, r.language, plain).map((c) => `${c.warn ? "Warning" : "Coverage"}: ${c.text}`) : [];
+  const coverage = r.repo ? coverageLines(r.repo.coverage, plain).map((c) => `${c.warn ? "Warning" : "Coverage"}: ${c.text}`) : [];
   lines.push("", ...notRunLines(notStartedOnly, "text", false), ...coverage, ...(r.warnings ?? []).map((w) => `Warning: ${plain(w)}`), summaryLine(r, false));
   return lines.join("\n");
 }
@@ -302,7 +293,6 @@ export type Visibility = "full" | "counts";
 
 /** The counts-only report for the step summary (`md`) or the log. Names no check and no place. */
 export function toCounts(r: Report, format: "md" | "text"): string {
-  const t = ui(r.language);
   const note = t("hidden_public");
   // The reasons name inputs, never a check or a place, so they may show here.
   if (format === "text") {
@@ -327,11 +317,11 @@ export function toAnnotations(r: Report, base = ""): string[] {
   return sorted(r.outcomes).flatMap((o) => {
     const level = LEVEL[o.status];
     if (!level) return [];
-    const title = escProp(`${o.rule.title[r.language]} (${o.rule.id})`);
+    const title = escProp(`${o.rule.title} (${o.rule.id})`);
     return o.details.flatMap((d) => {
       if (typeof d === "string" || !d.file) return [];
       const line = d.line ? `,line=${d.line}` : "";
-      const text = d.key ? render({ key: d.key, params: d.params }, o.id, r.language) : (d.text ?? say(o, r.language));
+      const text = d.key ? render({ key: d.key, params: d.params }, o.id) : (d.text ?? say(o));
       return [`::${level} file=${escProp(base ? `${base}/${d.file}` : d.file)}${line},title=${title}::${escData(text)}`];
     });
   });

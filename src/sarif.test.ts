@@ -5,9 +5,9 @@ import type { Report } from "./report.ts";
 import type { Rule } from "./rules.ts";
 import type { ScanContext } from "./sdk.ts";
 
-const rule = (id: string) => ({ id, severity: "high", title: { de: "t", en: "Title" }, how: "h", fix_hint: { de: "f", en: "Fix it" }, legal_basis: { de: "l", en: "Art. 32 DSGVO" }, meta: { last_reviewed: "2026-11-04", sources: [] } }) as Rule;
+const rule = (id: string) => ({ id, severity: "high", title: "Title", how: "h", fix_hint: "Fix it", legal_basis: "Art. 32 DSGVO", meta: { last_reviewed: "2026-11-04", sources: [] } }) as Rule;
 const report = (outcomes: Report["outcomes"], web = false): Report => ({
-  outcomes, version: "1.2.3", startedAt: "now", onGitHub: true, language: "en",
+  outcomes, version: "1.2.3", startedAt: "now", onGitHub: true,
   ...(web ? { web: { url: "https://example.de/" } as ScanContext } : {}),
 });
 type Sarif = { version: string; runs: Array<{ tool: { driver: { rules: Array<{ id: string; helpUri: string; properties: Record<string, unknown> }> } }; results: Array<{ ruleId: string; level: string; message: { text: string }; locations?: Array<{ physicalLocation: { artifactLocation: { uri: string }; region: { startLine: number } } }>; partialFingerprints: Record<string, string> }> }> };

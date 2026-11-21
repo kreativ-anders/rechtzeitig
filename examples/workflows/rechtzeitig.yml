@@ -58,8 +58,6 @@ jobs:
           # Only these check groups (legal, privacy, security, sustainability, accessibility, quality)
           # or scopes (website, repository; repo = repository). Empty = all.
           # modules: ""
-          # Language of the report (de or en). Empty = language of the site.
-          # report-language: ""
           # Pages to visit at most.
           # max-pages: "10"
           # false scans without Chrome's sandbox where the runner has none. Only for sites you trust.

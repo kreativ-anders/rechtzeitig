@@ -27,7 +27,7 @@ function run(...args: string[]) {
 }
 
 test("the OSV lookup is opt-in: off by default, nothing sent", () => {
-  const result = run("--report-language", "en");
+  const result = run();
   assert.equal(result.status, "skip");
   assert.match(result.message, /^Opt-in: runs only with the input vulnerabilities: true.*Nothing was sent\./);
 });
@@ -54,7 +54,7 @@ function onGitHub(event: object | undefined, ...args: string[]) {
     const out = join(dir, "out", "rechtzeitig-report");
     mkdirSync(join(dir, "out"));
     const log = execFileSync(process.execPath, ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts",
-      "--repo", repo, "--modules", "repo", "--vulnerabilities", "false", "--report-language", "en", "--out", out, ...args],
+      "--repo", repo, "--modules", "repo", "--vulnerabilities", "false", "--out", out, ...args],
       { stdio: "pipe", encoding: "utf8", env: { ...process.env, GITHUB_ACTIONS: "true", GITHUB_EVENT_PATH: event ? eventPath : "", GITHUB_STEP_SUMMARY: summaryPath, GITHUB_OUTPUT: "", GITHUB_WORKSPACE: dir } });
     return { log, summary: readFileSync(summaryPath, "utf8"), files: readdirSync(join(dir, "out")) };
   } finally {
@@ -93,6 +93,12 @@ test("the removed values counts and none work like auto, with a warning", () => 
   }
 });
 
+test("a removed input that is set warns and changes nothing", () => {
+  const r = onGitHub({ repository: { private: true } }, "--report-language", "de");
+  assert.match(r.log, /::warning::report-language was removed/);
+  assert.match(r.log, /config\.js/);
+});
+
 test("sarif writes the findings with places even when report-visibility hides them", () => {
   const dir = mkdtempSync(join(tmpdir(), "rechtzeitig-sarif-"));
   try {
@@ -110,10 +116,10 @@ test("sarif writes the findings with places even when report-visibility hides th
 
 test("empty inputs use their defaults, as on schedule and push runs without the dialog", () => {
   // Every option the action passes, empty. The vulnerability lookup is opt-in, so nothing is sent,
-  // and the report is in German, the default language (an empty language used to give an English report).
+  // and the removed report-language warns only when set.
   const empty = ["language", "report-language", "subscriptions", "sales", "fail-on", "max-pages", "vulnerabilities",
     "green-hosting", "require-sandbox", "report-visibility", "sarif"].flatMap((o) => [`--${o}`, ""]);
   const result = run(...empty);
   assert.equal(result.status, "skip");
-  assert.match(result.message, /^Opt-in: läuft nur mit dem Input vulnerabilities: true/);
+  assert.match(result.message, /^Opt-in: runs only with the input vulnerabilities: true/);
 });

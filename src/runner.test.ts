@@ -2,14 +2,14 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
-import { LANGUAGES, SWITCHES, reviewProblems, validateRule, type Rule, type Switch } from "./rules.ts";
+import { SWITCHES, reviewProblems, validateRule, type Rule, type Switch } from "./rules.ts";
 import { suppressionsSchema, EXAMPLE_SUPPRESSIONS, SCHEMA_FILE, exampleRulesYaml, fillYaml, tagsAsCode, wikiPages } from "./docs.ts";
 import { groupPage } from "./wiki.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, defineCrossCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
 import { render } from "./messages.ts";
 
-const rule = { id: "SEC-TEST-001", severity: "low", title: { de: "t", en: "t" }, how: "Reads something and compares it.", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-03", sources: ["https://www.w3.org/TR/WCAG22/"] } } as Rule;
+const rule = { id: "SEC-TEST-001", severity: "low", title: "t", how: "Reads something and compares it.", fix_hint: "f", meta: { last_reviewed: "2026-11-03", sources: ["https://www.w3.org/TR/WCAG22/"] } } as Rule;
 
 test("every check has a folder id and a valid rule.yml with a unique id", async () => {
   const checks = await loadChecks();
@@ -21,7 +21,8 @@ test("every check has a folder id and a valid rule.yml with a unique id", async 
 test("the rule validator rejects broken rules", () => {
   assert.deepEqual(validateRule(rule), []);
   assert.match(validateRule({ ...rule, id: "imprint" }).join(), /does not match/);
-  assert.match(validateRule({ ...rule, title: { de: "t" } as Rule["title"] }).join(), /title\.en is missing/);
+  assert.match(validateRule({ ...rule, title: { de: "t", en: "t" } as unknown as Rule["title"] }).join(), /title must be a text in English/);
+  assert.match(validateRule({ ...rule, fix_hint: " " }).join(), /fix_hint must be a text in English/);
   assert.deepEqual(validateRule({ ...rule, meta: { ...rule.meta, last_reviewed: "2020-01-01" } }), [], "the age of a review is not a structural problem");
   assert.match(validateRule({ ...rule, meta: { ...rule.meta, sources: [] } }).join(), /needs at least one source/);
   const cited = (url: string) => validateRule({ ...rule, meta: { ...rule.meta, sources: [url] } });
@@ -46,18 +47,18 @@ test("loading the checks does not depend on the date", async (t) => {
 });
 
 test("a quality rule states its value instead of a legal basis, and no rule has both", async () => {
-  const value = { de: "Nutzen", en: "Benefit" };
-  const law = { de: "Art. 32 DSGVO", en: "Art. 32 GDPR" };
+  const value = "Benefit";
+  const law = "Art. 32 GDPR";
   assert.deepEqual(validateRule({ ...rule, value }, "quality"), []);
   assert.match(validateRule(rule, "quality").join(), /need value/);
   assert.match(validateRule({ ...rule, value, legal_basis: law }, "quality").join(), /have no legal_basis/);
   assert.match(validateRule({ ...rule, value, legal_basis: law }, "security").join(), /value is only for rules without legal_basis/);
-  assert.match(validateRule({ ...rule, value: { de: "x" } as Rule["value"] }).join(), /value\.en is missing/);
+  assert.match(validateRule({ ...rule, value: "" }).join(), /value must be a text in English/);
   const quality = (await loadChecks()).filter((c) => moduleOf(c.id) === "quality");
   assert.ok(quality.length > 0 && quality.every((c) => c.rule.value && !c.rule.legal_basis));
   // The wiki says so, never a bare "Technical" that could read like a duty by omission.
   const page = wikiPages(quality, {}, "main")[`${groupPage("quality")}.md`];
-  for (const c of quality) assert.ok(page.includes(`No legal basis: ${c.rule.value!.en}`), c.id);
+  for (const c of quality) assert.ok(page.includes(`No legal basis: ${c.rule.value}`), c.id);
 });
 
 test("rule.yml how names every data file its check.ts loads", async () => {
@@ -127,7 +128,7 @@ test("a check of both scopes gets both contexts, and without one of them is a sk
   for (const [targets, missing] of cases) {
     const [o] = await runChecks([both], targets);
     assert.deepEqual([o.status, o.because], ["skip", { kind: "target", missing, both: true }]);
-    for (const lang of LANGUAGES) assert.match(render(o.message, o.id, lang), /repository|Repository/);
+    assert.match(render(o.message, o.id), /repository|Repository/);
   }
 });
 
@@ -172,20 +173,20 @@ test("a check without its target or outside modules is a skip that says why, in 
   assert.deepEqual(nothing[0].because, { kind: "target", missing: "url" });
   const filtered = await runChecks([web, repo], { web: fakeContext({}) }, [], ["repo"]);
   assert.deepEqual(filtered[0].because, { kind: "module", modules: ["repo"] });
-  assert.match(render(filtered[0].message, filtered[0].id, "en"), /group legal nor its scope website/);
+  assert.match(render(filtered[0].message, filtered[0].id), /group legal nor its scope website/);
   const byScope = await runChecks([web, repo], { web: fakeContext({}) }, [], ["website"]);
   assert.deepEqual(byScope.map((o) => o.because?.kind), [undefined, "module"]);
-  for (const o of [onlyWeb[1], nothing[0], filtered[0]]) for (const lang of LANGUAGES) assert.ok(render(o.message, o.id, lang).length > 10);
+  for (const o of [onlyWeb[1], nothing[0], filtered[0]]) assert.ok(render(o.message, o.id).length > 10);
   const [own] = await runChecks([empty], { repo: {} as never });
   assert.deepEqual(own.because, { kind: "data" });
 });
 
-test("every switch skips its rules when off, with a message in every language", async () => {
+test("every switch skips its rules when off, with a message that names it", async () => {
   for (const input of Object.keys(SWITCHES) as Switch[]) {
     const checks = [{ id: "x/switch", rule: { ...rule, requires: [input] }, check: defineCheck({ run: () => pass({ key: "ran" }) }) }];
     const [off] = await runChecks(checks, { web: fakeContext({}) });
     assert.equal(off.status, "skip", input);
-    for (const lang of LANGUAGES) assert.match(render(off.message, off.id, lang), new RegExp(input.split("-")[0]), `${input} in ${lang}`);
+    assert.match(render(off.message, off.id), new RegExp(input.split("-")[0]), input);
     const [on] = await runChecks(checks, { web: fakeContext({}) }, [input]);
     assert.equal(on.status, "pass", input);
   }

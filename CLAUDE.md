@@ -8,7 +8,7 @@ GitHub Action that scans a website and its repository for German legal basics, s
 |---|---|
 | One rule | `checks/<module>/<name>/`: `rule.yml` (metadata), `check.ts` (detection), `test.ts`, `fixtures/` |
 | User docs | The [wiki](https://github.com/kreativ-anders/rechtzeitig/wiki), cloned into `wiki/` by `npm run docs`. Pages `Inputs`, `Checks` and `Checks-<Group>` are generated from `action.yml` and `rule.yml` (`src/docs.ts`) and pushed by the release workflow; the others are edited in the wiki by hand. rechtzeitig.dev shows the wiki through the dashboard |
-| Words per language | `lang/*.yml` |
+| Words per language (detection patterns); English report messages | `lang/*.yml`; messages only in `lang/en.yml` |
 | Known services, countries, cookies | `data/third-parties.yml` |
 | Paths requested without a browser | `data/probes.yml` |
 | Secret patterns | `data/secrets.yml` |

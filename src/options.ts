@@ -5,7 +5,6 @@ export const CLI_OPTIONS = {
   url: { type: "string" },
   repo: { type: "string" },
   language: { type: "string", default: "de" },
-  "report-language": { type: "string", default: "" },
   modules: { type: "string", default: "" },
   subscriptions: { type: "string", default: "false" },
   sales: { type: "string", default: "false" },
@@ -17,4 +16,12 @@ export const CLI_OPTIONS = {
   "report-visibility": { type: "string", default: "auto" },
   sarif: { type: "string", default: "" },
   out: { type: "string", default: "rechtzeitig-report" },
+} as const;
+
+/**
+ * Removed inputs. action.yml keeps them with a `deprecationMessage`, so GitHub warns when a workflow sets one;
+ * the command line accepts them for one more version and prints the same warning. They never change the scan.
+ */
+export const REMOVED_OPTIONS = {
+  "report-language": "report-language was removed: the report is English. Remove the input.",
 } as const;
