@@ -34,8 +34,8 @@ jobs:
       # rechtzeitig uses by commit and repository id (not on GitHub Enterprise Server).
       - uses: kreativ-anders/rechtzeitig@2bac959a3f7601c1cf05c11d76a0c3d351d5043e # v0.8.0
         with:
-          # Start page of your site. Remove the line to check only the repository.
-          url: https://www.example.de/
+          # Start page of your site, e.g. https://www.example.de/. Empty = repository only.
+          url: ""
           # true if consumers buy or sign contracts on the site (shop checks).
           sales: false
           # true if visitors can sign up for subscriptions (cancellation button, § 312k BGB).
