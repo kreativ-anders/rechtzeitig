@@ -19,11 +19,11 @@ export interface Use {
   version?: string;
 }
 
-/** Every `uses:` of another repository in `files`. Local actions (`./`) are left out. */
+/** Every `uses:` of another repository in `files`. Local actions (`./`, `$/`) are left out. */
 export const usesIn = (files: string[]): Use[] =>
   files.flatMap((file) =>
     [...readFileSync(file, "utf8").matchAll(USES)]
-      .filter((m) => !m[2].startsWith("./"))
+      .filter((m) => !m[2].startsWith("./") && !m[2].startsWith("$/"))
       .map((m) => ({ file, action: m[2], ref: m[3], version: m[6] })),
   );
 
