@@ -8,7 +8,8 @@ updates:
     cooldown:
       default-days: 7
     open-pull-requests-limit: 5
-  # Updates the SHA pins and their version comments in action.yml and .github/workflows/.
+  # Updates the SHA pins and their version comments in action.yml and .github/workflows/, and their entries in
+  # .github/workflows/actions.lock.
   # examples/workflows/ is not covered: run `npm run sync-pins` on the pull request (src/pinning.test.ts fails until you do).
   - package-ecosystem: github-actions
     directory: /

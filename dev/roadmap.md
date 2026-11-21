@@ -1,168 +1,73 @@
 # Roadmap
 
-rechtzeitig is a CI tool for technical decision makers. The core is the repository and the live website together: findings that only a scan of both can give, such as a tracking id in the code that loads before consent or a hosting provider the privacy policy does not name. Each side also has its own checks. The website scan reads the start page, the legal pages and a small sample of other pages (`max-pages`), not the whole site. German comes first, but every word of a report comes from `lang/*.yml`, so a new language is one new file.
+## Now
 
-Sections are ordered by urgency: "Now" comes before the next release, "Next" is new checks in order of value per effort, "Later" has no date. Within a section, items are in order of priority.
+- [ ] Report v2: machine-first JSON always written, English only, inputs `report-language` and `report-visibility` removed, `language: auto` (concept: kreativ-anders/rechtzeitig-dashboard#72, #71).
+- [ ] Workflow lockfiles: `actions.lock` here, SEC-DEPS-005 accepts locked refs (#108).
+- [ ] Signed commits required on `main`, once a release pull request shows its commits as verified.
+- [ ] Digital Fairness Act checks as preview rules in the report, dropped or adjusted when the law changes (#79).
+- [ ] Wiki pages `Report` and `Inputs` match the release.
 
-## Now: hardening
+## Later
 
-Open points from the audit of 2026-11-03, after the fixes.
+- `v1.0.0` with a moving `v1` tag, once the repositories are lean, precise and robust.
+- The paid dashboard as a GitHub App on the Marketplace.
+- A command line tool and container image for local runs.
+- GitLab CI/CD on top of the CLI.
 
-1. Require signed commits on `main`. The release workflow makes its commits through the GitHub API, which signs them (`.github/scripts/commit-signed.sh`). Once the first release pull request shows both commits as verified, tick "Require signed commits" in the ruleset on `main`.
+## Ideas
 
-Decided against: a network monitor in CI such as `step-security/harden-runner`. It is a third-party service with paid tiers and, in its audit mode, sends the connections of each run to that service. `test.yml` keeps the parts that need no service: read-only token, no persisted credentials, `npm ci --ignore-scripts`, actions pinned to a commit, only selected actions allowed, job timeouts; the tests reach only localhost.
+No order, no promise. Details go into an issue.
 
-## Next: repository
+Repository:
 
-Ordered by value per effort. The first four need only a new `data/*.yml` and the existing `RepoContext`.
+- Third-party SDKs in the code as info, also without a website.
+- Dockerfile, Compose, Kubernetes and Terraform risks.
+- CRA for products: support period, signed releases with provenance.
+- More `workflow-risks` patterns: secrets in logs, `secrets: inherit`, self-hosted runners.
+- Runtimes past their end of life; debug settings in Spring, Django, ASP.NET; Flutter and Firebase config.
+- Secrets in the git history; `cors` with `origin: *` in code.
+- SBOM fields per BSI TR-03183-2.
+- Lockfile parsers and license data for more ecosystems, `bun.lock` included.
+- Opt-in registry lookup for `hallucinated-packages`.
+- REUSE headers, NOTICE duties, font licenses, more relicensing entries.
+- MCP servers in Codex `config.toml`.
+- More insecure code patterns: auth bypass, unsafe HTML, personal data in logs, SQL from strings.
+- Suppressions per file or page.
 
-1. Third-party SDKs in the code as info with vendor and country, also without a website (Art. 28, 44 DSGVO). The `packages:` field in `data/third-parties.yml` exists; `privacy/sdks-in-privacy-policy` compares it with the privacy policy.
-2. Dockerfile and Compose: no `USER` or `USER root`, `:latest` base images, secrets in `ENV`/`ARG`, `privileged: true`, the Docker socket mounted, database ports published.
-3. CRA for repositories that are products (library, CLI, firmware): support period in `SECURITY.md` (Art. 13 Abs. 8 CRA) and releases with provenance or a signature. `security/security-contact` checks only that a reporting channel exists. Reporting duties apply since 11.09.2026.
-4. More patterns in `workflow-risks`: secrets echoed into logs, `secrets: inherit` to external workflows, self-hosted runners on pull requests.
-5. Runtimes past their end of life (`engines.node`, `.nvmrc`, `FROM php:7.4`, `requires-python`), dates in a data file.
-6. In code: `cors` with `origin: *` and credentials, in JS and header config files. `security/cors` checks only the headers the site sends.
-7. Secrets in the git history. By default only the commits a pull request or push adds; an input `history: full` scans the whole history once, for an audit (needs `fetch-depth: 0`).
-8. Third-party hosts in templates and styles without a website scan, as a warning. With a URL, `privacy/google-fonts-source` covers Google Fonts.
-9. SBOM fields as BSI TR-03183-2 asks: hashes, supplier, dependency graph (CRA Annex I Part II).
-10. License data for ecosystems whose lockfiles have none (Pub, Cargo, PyPI, Go, and yarn.lock). Needs a registry API, so a switch. `legal/unknown-licenses` names them as not checked today.
-11. Registry lookup for `security/hallucinated-packages`: ask each registry's official API (npm registry, PyPI JSON API, crates.io, Packagist, pub.dev) whether a declared name exists and when it was first published, so a made-up or days-old name is a finding even when it is locked. Only package names leave the runner. Opt-in like every outside lookup (`registry-lookups: true`), listed in `SWITCHES`, in the wiki pages `Data-and-safety` and `Getting-started`. The offline part (names missing from the lockfile, look-alikes of popular names) is done.
-12. Infrastructure code: Terraform security groups open to `0.0.0.0/0`, public buckets, privileged Kubernetes pods.
-13. More license rules: SPDX headers per file and vendored files under a foreign license (REUSE), NOTICE duties of Apache-2.0 dependencies, font files and their licenses. More entries in `data/relicensing.yml` where the change differs per release branch (Vault, Consul, Nomad, Packer), which needs version ranges.
-14. A parser for `bun.lock` (JSON with comments). Without it, `hallucinated-packages` and `lockfile-drift` skip folders with a Bun lockfile, which projects from AI app builders often have next to `package-lock.json`.
-15. MCP servers in Codex `config.toml` (`[mcp_servers.*]`) for `agent-permissions`; today only its approval and sandbox settings are read.
-16. More code patterns on `data/insecure-code.yml`, each with a benchmark case: auth bypass flags (`SKIP_AUTH`, `NODE_ENV` checks in auth middleware), unsafe HTML (`dangerouslySetInnerHTML`, `v-html` with variables), personal data in logs (`console.log(req.body)`), SQL built from strings.
-17. Suppressions per finding: `.github/rechtzeitig.yml` turns off whole rules today (`src/suppress.ts`, `QUAL-SUPPRESS-001`). Open is an optional `path` or `url` per entry, so one file or page is suppressed while the rule keeps reporting the rest. Needs a match that survives moved files and query strings without matching too much.
+Repository and website together:
 
-## Next: repository and website together
+- AI SDKs against AI labeling; legal texts in the repository against the rendered pages.
+- Headers from `next.config`, nginx, helmet; SDKs beyond npm; embeds in templates.
+- Served JS libraries against the lockfile; error monitoring and session replay against consent.
+- AGPL source link, "Built with Llama" notice.
 
-Findings that only a scan of both can give (`defineCrossCheck`). Thirteen exist: database rules of the project the site uses, secrets in the served JavaScript, SDKs in the code against the privacy policy, Google Fonts with their source in the repository, source maps that expose repository files, security headers from hosting configs, the deployed `security.txt`, template data in the legal texts, the hosting provider in the privacy policy, tracking ids from the code before consent, a consent tool in the repository that is not active on the site, form receivers in the privacy policy, and dev servers or debug builds in production.
+Website:
 
-1. AI SDKs in the code compared with the AI labeling on the site (Art. 50 AI Act). Today `privacy/sdks-in-privacy-policy` only checks that the privacy policy names the AI provider; telling a chat feature from server-side use is not precise enough yet.
-2. Imprint and privacy texts in the repository compared with the rendered pages, beyond the template data `legal/placeholder-legal-texts` finds.
-3. Security headers from `next.config` `headers()`, nginx and helmet. `security/headers-deployed` reads `vercel.json`, `firebase.json`, `netlify.toml`, `_headers` and `.htaccess`.
-4. SDK packages of other ecosystems (Composer, PyPI) in `data/third-parties.yml`; today only npm.
-5. Third-party hosts in templates other than Google Fonts (maps, video embeds, CDNs), with the repository line, like `privacy/google-fonts-source`.
-6. Client-side JS libraries in the served bundle compared with the lockfile, to tell an old deployed build from the repository.
-7. Error monitoring and session replay configured in the code (Sentry `sendDefaultPii`, replay sample rates, LogRocket, FullStory) against consent and the privacy policy (Art. 5, 13, 25 DSGVO, § 25 TDDDG). Needs telling browser from server config apart.
-8. An AGPL dependency (`legal/network-copyleft`) in an app the site serves, and no link to its source on the site (AGPL-3.0 § 13); a Llama model (`legal/ai-model-licenses`) and no "Built with Llama" on the site.
+- No tracker after a click on "reject".
+- Imprint representative, consumer dispute statement, accessibility statement, editorial responsibility.
+- Form receivers the repository does not name; newsletter double opt-in.
+- Green and guarantee claims, AI transparency, review authenticity, DSA contacts, TDM reservation, GPC.
+- Shop duties: product safety, packaging, electrical devices, textile labels, price reductions.
+- Served code: comments, personal data, libraries and CMS versions with CVEs.
+- DNSSEC, CAA, MTA-STS, `crossdomain.xml`, subdomain takeover (opt-in), port scan.
+- Contact page always visited; screenshots and HAR as evidence.
 
-## Next: website
+Data sources (permissive licenses only): Open Cookie Database, retire.js, gitleaks, zizmor, nuclei-templates, splinter, endoflife.date, ScanCode LicenseDB.
 
-Start page, legal pages and a small sample of other pages. No full-site crawl.
+Other:
 
-1. After a click on "reject": check that no tracker loads. The only check that would need a click.
-2. Imprint of a GmbH, UG or AG names a representative (§ 5 Abs. 1 Nr. 1 DDG).
-3. Statement on consumer dispute resolution with `sales: true`, as a hint, since the 10-employee threshold is unknown (§ 36 VSBG).
-4. The accessibility information for shops (BFSG, § 14 and Anlage 3) or the accessibility statement with feedback contact for public bodies (BITV 2.0 § 7). Selected axe-core rules run since the accessibility checks `alt-text`, `form-labels`, `control-names`, `aria-structure`, `aria-attributes` and `contrast`, plus `best-practices` for WAI-ARIA and HTML recommendations without a legal basis; more rules only when they are as unambiguous.
-5. Forms that send to another site the repository does not name (a CMS, a plugin): receiver named in the privacy policy, its country checked (Art. 13 Abs. 1 lit. e, Art. 44 DSGVO). `privacy/form-receiver` covers receivers the repository names.
-6. Environmental claims such as "klimaneutral" on the start page, as a warning (UWG, Directive (EU) 2024/825, from 27 September 2026).
-7. AI transparency per Art. 50 AI Act (from 02.08.2026): a chatbot labeled as AI before the first input, deepfakes visibly disclosed, AI services named in the privacy policy.
-8. A named natural person as editorially responsible when the site has journalistic content, blog, news or podcast (§ 18 Abs. 2 MStV).
-9. Newsletter signup: double opt-in wording and an unsubscribe link next to the form (UWG § 7).
-10. With `sales: true`: product pages name manufacturer, importer or responsible person and safety information (Reg. (EU) 2023/988, since 13.12.2024); packaging registration number (VerpackG § 9, LUCID) in the imprint; PPWR packaging labeling from 12.08.2026.
-11. With `sales: true`: legal guarantee and commercial guarantee labels per Directive (EU) 2024/825 from 27.09.2026, besides the environmental claims above.
-12. Global Privacy Control (GPC) signal honored by the consent tool, as a warning.
-13. The served HTML and client JS of normal pages: suspicious comments and personal data. Secrets are covered by `security/secrets-in-bundle`.
-14. Client-side JS libraries in the served bundle with known CVEs; the repo vulnerability check covers dependencies, not the bundle.
-15. Detected CMS or framework version (generator meta, headers, paths) compared with known CVEs. `security/error-disclosure` names version headers today, without a CVE lookup.
-16. DNSSEC and CAA records of the domain, the depth of SPF includes, MTA-STS and TLS-RPT; `email-dns` today covers only SPF, DMARC and MX.
-17. Permissive `crossdomain.xml` / `clientaccesspolicy.xml` and directory listings beyond the probe list.
-18. Subdomain takeover: dangling DNS records of own subdomains via certificate transparency logs and a fingerprint list. Sends subdomain names to external log services, so off by default with an input.
-19. Open ports and exposed services on the scanned host only, a port scan from the runner.
-20. Customer reviews or trust badges on the page without a statement whether and how their authenticity is checked (§ 5b Abs. 3 UWG).
-21. Sites with user content (comments, uploads, marketplace): DSA contact points (Art. 11, 12), a notice-and-action route (Art. 16) and the content rules in the terms (Art. 14); ad labeling on platforms (Art. 26). As a warning, since the scan cannot tell whether the site is a hosting service.
-22. Machine-readable reservation against text and data mining (robots.txt rules for AI crawlers, TDMRep header or `/.well-known/tdmrep.json`), as info only, since it is the owner's choice (§ 44b Abs. 3 UrhG, Art. 53 Abs. 1 lit. c AI Act).
-23. With `sales: true`: WEEE registration number and take-back notices for electrical devices and batteries (§ 18 ElektroG, BattDG), textile fiber labeling (Reg. (EU) 1007/2011).
-24. The contact page always visited, like the legal pages, since most forms with personal data live there. Today only the sample of other pages may pick it.
-25. Screenshots of findings and a HAR file of the run as workflow artifacts, as evidence for the report.
-26. With `sales: true`: price reductions shown other than as a struck-through price, such as "-20 %" labels, checked for the 30-day lowest price (§ 11 PAngV).
-27. Visit the T&Cs and withdrawal pages only with `sales: true`, so they do not use up `max-pages` on sites without a shop.
-
-## Next: data sources
-
-Open data that would sharpen existing and planned checks. Only data under MIT, Apache-2.0, BSD, MPL-2.0 (kept in its own file with its notice), CC0 or CC-BY may be copied, with attribution in the header of the `data/*.yml` file and in NOTICE; GPL, AGPL, LGPL, EUPL, CC-BY-SA and non-commercial data never, ideas only. Each import gets a refresh script and a test.
-
-1. Cookie names per vendor from the Open Cookie Database (Apache-2.0) for `data/third-parties.yml` `cookies:` and `data/cookies.yml`.
-2. Library signatures and versions from retire.js `jsrepository.json` (Apache-2.0) for client-side libraries in the served bundle (CVEs of client-side libraries in "website", served bundle against the lockfile in "repository and website together").
-3. More patterns for `data/secrets.yml` from the gitleaks rules (MIT), each with a benchmark case.
-4. Workflow patterns for `security/workflow-risks` from the zizmor audits (MIT), reimplemented (see "repository").
-5. Probe paths and matchers for exposed files from the exposure templates of nuclei-templates (MIT), passive GET only, for `data/probes.yml`.
-6. Supabase lint rules (splinter, license to verify) for `databaseRules()`, reimplemented statically.
-7. End-of-life dates of runtimes from endoflife.date (license to verify) for the runtimes item of "repository".
-8. License categories from the ScanCode LicenseDB (CC-BY-4.0) for `data/licenses.yml`.
-
-## Later: ecosystems
-
-Feedback: the checks are broad, but support for other technical ecosystems should grow. Lockfile parsers cover several ecosystems already; the open question is how deep the checks go into each framework's own configuration, beyond reading dependencies. Targets: Flutter/Dart, Java (Maven, Gradle), .NET (NuGet), Python, Docker, Kubernetes, Terraform. Several items of "repository" belong here too: Dockerfile and Compose, license data, infrastructure code, runtimes past their end of life. Each step needs a parser or a `data/*.yml`, and a fixture per rule.
-
-1. Flutter and Firebase configuration, not only `pubspec.lock`: `firebase.json`, `google-services.json` and `GoogleService-Info.plist` (project, region, enabled services), Firestore and Storage rules in the app's repository, Firebase Analytics, Crashlytics and Performance enabled by default, Android permissions and iOS usage descriptions (`AndroidManifest.xml`, `Info.plist`) against the SDKs used, App Tracking Transparency, cleartext traffic allowed. Third-party SDKs of Dart packages in `data/third-parties.yml` (SDK packages of other ecosystems in "repository and website together").
-2. Parsers for the lockfiles listed as `unsupported` in `data/ecosystems.yml`: NuGet (`packages.lock.json`, `*.csproj`), Maven (`pom.xml`), Gradle (`gradle.lockfile`), Pipenv, PDM and Poetry, then Bundler, CocoaPods, Swift and Hex. Each parser feeds the SBOM, the vulnerability check and `hallucinated-packages`.
-3. Depth per ecosystem, the same questions in each: debug or cleartext settings in production config (Spring Boot actuator and `application.properties`, Django `DEBUG` and `ALLOWED_HOSTS`, ASP.NET `appsettings.json`), secrets in those files, runtimes past their end of life (see "repository").
-4. Docker and Compose (see "repository") and Kubernetes manifests and Helm charts: containers running as root, `privileged`, host paths, missing resource limits, secrets in `ConfigMap`, `:latest` images.
-5. Terraform (infrastructure code in "repository"): open security groups, public buckets, unencrypted storage, regions outside the EU where personal data is stored (Art. 44 DSGVO), state files in the repository, provider versions from `.terraform.lock.hcl`.
-6. License data for these ecosystems (see "repository"): Maven Central, NuGet, PyPI and pub.dev through their official APIs, behind a switch.
-
-## Later: fix
-
-Feedback: detect, then fix, then monitor. Monitor is the hosted service under "Commercialization". Fix stays in the runner and stays free. The line: fixes for technical findings only, never generated legal texts, since writing an imprint or privacy policy for a user would be legal advice.
-
-1. A prompt per finding in the report (file, line, rule, fix hint) to hand to the user's own coding agent. No model call from rechtzeitig, nothing leaves the runner.
-2. Deterministic fixes for technical findings as a patch or pull request, opt-in: actions pinned to a commit, `.env` files in `.gitignore`, security headers in the hosting config. The next run checks the fix.
-3. Legal findings keep a `fix_hint` and their sources, no generated text.
-
-## Later: integrations
-
-Feedback: GitHub Actions is a good start, but in the long run rechtzeitig should reach other places where code is written and built. The scan itself (`src/main.ts`, `CLI_OPTIONS`) does not depend on GitHub; the action, the step summary, annotations and SARIF upload do. Everything here stays free and open, and the report JSON stays the interface.
-
-1. A command line tool for local checks, installable with `npx` and as a container image. `npm run scan` and the options in `src/options.ts` exist today; open are a package with a `bin`, a readable terminal report, a clear exit code from `fail-on`, and a scan of the current folder without a CI environment. Needs the Chromium download documented or optional (repository-only runs need no browser).
-2. GitLab CI/CD: a job template (`include:`) built on the CLI or container image, the report as a job artifact, findings as GitLab's code quality or SAST report so they show in merge requests, and `report-visibility: auto` reading the project's visibility from the GitLab variables.
-3. Bitbucket Pipelines: a pipe on the same image, the report as an artifact and as a Code Insights report on the pull request.
-4. Other CI systems without own work: a documented example for any runner that can run the container (Jenkins, Azure DevOps, CircleCI).
-5. IDE integration: findings with file and line from the report JSON or SARIF shown in the editor, for the repository checks only. Starts with a documented way to open the SARIF file in VS Code; an own extension only if that is not enough.
-
-## Later: other
-
-- Repository checks with a high false-positive risk or no legal basis: admin routes without an auth check, license headers of other projects, Google Tag Manager exports, repository health (LICENSE file, maintenance, CI).
-- More report languages.
-- Prebuilt container image to skip the browser download.
-- `v1.0.0` with a moving `v1` tag, once the checks are stable.
-- Consent checks after the Digital Omnibus, if cookie rules move into the GDPR (proposed Art. 88a, 88b DSGVO).
-- Not planned, since a scan cannot see them: organizational duties of NIS2, the Data Act (connected products), the Hinweisgeberschutzgesetz, trademark law.
-- DACH variants of the legal pages: Switzerland (revDSG Art. 19, Art. 3 UWG) and Austria (§ 5 ECG, § 25 MedienG "Blattlinie"), once more report languages land.
+- A prompt per finding for the user's coding agent; opt-in fix pull requests for technical findings, never legal texts.
+- Bitbucket, other CI systems, IDE view of SARIF.
+- More report languages, DACH legal pages.
+- Consent checks after the Digital Omnibus.
+- Not planned: what a scan cannot see (NIS2 duties, Data Act, trademarks); a CI network monitor that sends runs to a third party.
 
 ## Commercialization
 
-The line: what runs in the user's runner and concerns one run is free. What needs our infrastructure and remembers across runs can be paid.
-
-Free, in this repository:
-
-- Every check, the SBOM, the report as Markdown and JSON, `fail-on`, annotations, step summary.
-- Keeping findings private (`report-visibility`). Nobody pays for their weaknesses not being published.
-- A stable, versioned report JSON. It is the interface to the hosted service.
-- Findings as SARIF in GitHub's Security tab (`sarif-upload`). For a single public repository this already gives new, fixed and dismissed findings, so the paid service does not compete with it.
-
-Paid, a hosted service in its own repository, for what the Security tab does not cover: private repositories without GitHub Code Security, many sites at once, sites without GitHub, and readers without a GitHub account.
-
-- A health summary per site: one technical score, the number of findings with high priority, and a status per group (security, privacy, legal, accessibility). Labeled as a technical summary, never as a legal rating.
-- History of each finding over the runs: when it first appeared, since which commit, when it was fixed, whether it came back, and which new risks came in with an update. This turns the weekly scan into monitoring.
-- Dashboard with the history of runs: trends, what is new, what was fixed.
-- One view over many sites and repositories, for agencies with client projects.
-- Notifications (mail, Slack, Teams) on new findings only, which needs stored state.
-- Accepting a finding with a reason, and a record of who did it and when.
-- A configurator in the app for `.github/rechtzeitig.yml`: every rule in a list with its title, legal basis and the last result, a switch to turn it off, a category and a reason to fill in, and an expiry date picker. The app checks the entries like `QUAL-SUPPRESS-001` and gives the finished file to copy or download, which the user commits to their repository. The file format and its validation stay free; the app only saves writing it by hand. Later the app could open the pull request with the file itself.
-- Reports for clients (PDF), team access and roles.
-- Scheduled scans without an own workflow, also for sites without GitHub.
-
-Distribution, where the action and later the hosted dashboard app are found:
-
-- GitHub Marketplace: the action now, the dashboard as a GitHub App once it exists.
-- Repository topics (`impressum`, `dsgvo`, `gdpr`, `tdddg`, `security-headers`, `sbom`, `cyclonedx`, `github-action`).
-- Sitemap of rechtzeitig.dev in Google Search Console and Bing Webmaster Tools.
-- A listing in the CycloneDX Tool Center.
-
-Rules:
-
-- The engine has no paid code paths, hooks or feature flags. The action only writes the JSON.
-- A separate upload step, in another repository, sends the JSON with a token. Without a token nothing is sent.
-- The service receives sensitive findings: hosting in the EU and a data processing agreement are part of the offer.
+- Free, in this repository: what runs in the user's runner and concerns one run. Every check, SBOM, report JSON, SARIF.
+- Paid, a hosted service in its own repository: what needs our infrastructure and remembers across runs. History, a score per site (technical summary, never a legal rating), many sites, notifications, client reports, scheduled scans.
+- Distribution: GitHub Marketplace, repository topics, CycloneDX Tool Center.
+- The engine has no paid code paths, hooks or feature flags; it only writes the JSON.
+- A separate upload step in another repository sends the JSON with a token. Without a token nothing is sent.
+- Hosting in the EU and a data processing agreement are part of the offer.

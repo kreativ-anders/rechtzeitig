@@ -10,6 +10,7 @@ Security issues go to [SECURITY.md](SECURITY.md), not to a public issue or pull 
 - A pull request can be merged when the checks `test` and `drift` are green.
 - One topic per pull request. Small is better.
 - Commit messages start with a [gitmoji](https://gitmoji.dev/) and say what changes, for example `✨ Check for a vulnerability contact`.
+- A new or changed `uses:` in `.github/workflows/` or `action.yml` needs `gh actions-lock` (extension `github/gh-actions-lock`), which updates `.github/workflows/actions.lock`; `test` runs `gh actions-lock --verify`. Pin new actions by SHA with the version as a comment, as everywhere else. Dependabot keeps existing pins and lockfile entries current; `npm run sync-pins` copies the pins into `examples/workflows/` as before.
 
 ## Before you push
 

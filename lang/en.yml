@@ -859,9 +859,10 @@ messages:
   security/actions-pinning:
     no_workflows: "No GitHub workflows."
     unpinned:
-      one: "{count} action uses a tag instead of a commit SHA. A moved tag can change the code that runs."
-      other: "{count} actions use a tag instead of a commit SHA. A moved tag can change the code that runs."
-    pinned: "All actions are pinned to a commit SHA."
+      one: "{count} action or image is pinned neither to a commit SHA, a digest nor in actions.lock. A moved tag can change the code that runs."
+      other: "{count} actions or images are pinned neither to a commit SHA, a digest nor in actions.lock. A moved tag can change the code that runs."
+    pinned: "All actions are pinned to a commit SHA or in actions.lock."
+    lockfile_unreadable: "The workflow lockfile could not be read, so its entries do not count."
   security/agent-config-hidden-unicode:
     no_files: "No agent instruction files or source files."
     found:
