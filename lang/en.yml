@@ -219,6 +219,8 @@ messages:
     no_legal_basis: "no legal basis"
     pages: "Pages"
     language: "Language"
+    languages_page: "detected from the start page"
+    languages_default: "the start page names no language rechtzeitig has, default"
     subscriptions: "Subscriptions"
     sales: "Sales"
     "yes": "yes"

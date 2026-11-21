@@ -5,7 +5,7 @@
 
 import { OUTCOMES, type Because, type Outcome, type OutcomeStatus } from "./runner.ts";
 import { SEVERITIES, SWITCHES } from "./rules.ts";
-import type { Finding, Params, RepoCoverage } from "./sdk.ts";
+import type { Finding, LanguagesFrom, Params, RepoCoverage } from "./sdk.ts";
 import { isWebUrl, oneLine } from "./text.ts";
 import { findingText, render } from "./messages.ts";
 import { fingerprints } from "./fingerprint.ts";
@@ -67,9 +67,6 @@ export interface ReportJson {
   coverage?: RepoCoverage;
   results: Result[];
 }
-
-/** Where the scan languages came from: the input `language`, the start page (`auto`), or the fallback `de`. */
-export type LanguagesFrom = "input" | "page" | "default";
 
 export interface ReportMeta {
   version: string;

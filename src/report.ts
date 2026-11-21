@@ -179,7 +179,7 @@ export function toSummary(r: Report): string {
     const w = r.web;
     lines.push(
       `- ${t("pages")}: ${w.pages.map((p) => md(w.short(p.url))).join(", ")}`,
-      `- ${t("language")}: ${w.languages.join(", ")} · ${t("subscriptions")}: ${t(w.subscriptions ? "yes" : "no")} · ${t("sales")}: ${t(w.sales ? "yes" : "no")}`,
+      `- ${t("language")}: ${w.languages.join(", ")}${w.languagesFrom === "input" ? "" : ` (${t(`languages_${w.languagesFrom}`)})`} · ${t("subscriptions")}: ${t(w.subscriptions ? "yes" : "no")} · ${t("sales")}: ${t(w.sales ? "yes" : "no")}`,
       `- ${t("visitor")}${r.onGitHub ? `, ${t("runner")}` : ""}`,
     );
   }

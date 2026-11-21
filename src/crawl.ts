@@ -1,7 +1,7 @@
 import type { Browser } from "playwright";
 import { capture, CodeCollector } from "./capture.ts";
 import { loadYaml } from "./data.ts";
-import { legalLinkPatterns, matchLinks, type Language } from "./lang.ts";
+import { DEFAULT_LANGUAGE, legalLinkPatterns, loadLanguages, matchLinks, type Language } from "./lang.ts";
 import { countries, emailDns, greenHosting, hostVariant, plainHttp, probe, sourceMaps, tlsInfo } from "./probe.ts";
 import { isPublicHost, publicProxy } from "./net.ts";
 import { isWebUrl, siteOf, withoutHash } from "./text.ts";
@@ -9,7 +9,8 @@ import { LEGAL_CONCEPTS, pageLinks, type Area, type Page, type Probe, type ScanC
 
 export interface CrawlOptions {
   browser: Browser;
-  lang: Language;
+  /** The scan languages, or for `language: auto` a function that picks them from the start page. */
+  lang: Language | ((start: Page) => Language);
   maxPages: number;
   timeout: number;
   userAgent: string;
@@ -61,8 +62,9 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   const trusted = input.hostname;
   // Every connection of the browser, loopback included, goes through the proxy, which allows only public addresses.
   const proxy = await publicProxy(trusted);
+  // With language auto the browser asks for the default language until the start page names its own.
   const settings = {
-    locale: opts.lang.locale, timezoneId: "Europe/Berlin", userAgent: opts.userAgent,
+    locale: typeof opts.lang === "function" ? loadLanguages([DEFAULT_LANGUAGE]).locale : opts.lang.locale, timezoneId: "Europe/Berlin", userAgent: opts.userAgent,
     proxy: { server: proxy.server, bypass: "<-loopback>" },
     // No downloads; no service workers, so every request passes the proxy and, in tests, the route below.
     acceptDownloads: false, serviceWorkers: "block" as const,
@@ -82,12 +84,13 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     };
 
     const start = await visit(startUrl);
+    const lang = typeof opts.lang === "function" ? opts.lang(start) : opts.lang;
     const url = start.js.finalUrl || startUrl;
     const pages = [start];
     const seen = new Set([withoutHash(startUrl), withoutHash(url)]);
     // A start page in another language that announces the scan language (hreflang): read the legal pages of that version.
     let langPage: Page | undefined;
-    const alternate = hreflangTarget(start, opts.lang.codes, seen);
+    const alternate = hreflangTarget(start, lang.codes, seen);
     // Only the same site and only within max-pages: another domain would put a foreign site into every check.
     const sameSite = alternate && siteOf(new URL(alternate).hostname) === siteOf(new URL(url).hostname);
     if (alternate && sameSite && pages.length < opts.maxPages && (await isPublicHost(new URL(alternate).hostname, trusted))) {
@@ -96,7 +99,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       seen.add(withoutHash(langPage.url));
       if (langPage.js.finalUrl) seen.add(withoutHash(langPage.js.finalUrl));
     }
-    const queue = [...(langPage ? legalTargets(langPage, opts.lang) : []), ...legalTargets(start, opts.lang), ...sampleTargets(start.js)];
+    const queue = [...(langPage ? legalTargets(langPage, lang) : []), ...legalTargets(start, lang), ...sampleTargets(start.js)];
     for (const url of queue) {
       if (pages.length >= opts.maxPages) break;
       const key = withoutHash(url);
@@ -136,14 +139,15 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
 
 /**
  * The start page's alternate in one of the scan languages (`<link rel="alternate" hreflang>`), when it
- * points to another page. An exact language match ("de") wins over a regional one ("de-AT").
+ * points to another page. An exact language match ("de") wins over a regional one ("de-AT"); an entry that
+ * points to the start page itself is passed over.
  */
 function hreflangTarget(start: Page, codes: string[], self: Set<string>): string | undefined {
   const alternates = { ...start.noJs.alternates, ...start.js.alternates };
-  const keys = Object.keys(alternates).filter((k) => codes.includes(k) || codes.includes(k.split("-")[0]));
+  const other = (k: string) => isWebUrl(alternates[k]) && !self.has(withoutHash(alternates[k]));
+  const keys = Object.keys(alternates).filter((k) => (codes.includes(k) || codes.includes(k.split("-")[0])) && other(k));
   const key = keys.find((k) => codes.includes(k)) ?? keys[0];
-  const href = key ? alternates[key] : undefined;
-  return href && isWebUrl(href) && !self.has(withoutHash(href)) ? href : undefined;
+  return key ? alternates[key] : undefined;
 }
 
 function legalTargets(start: Page, lang: Language): string[] {

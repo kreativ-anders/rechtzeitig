@@ -103,7 +103,7 @@ const write = (file: string, text: string) => {
 if (values.sarif) write(values.sarif, JSON.stringify(toSarif(report, { base, anchor: workflowFile() }), null, 2));
 const json = JSON.stringify(toReportJson(outcomes, {
   version: VERSION, startedAt, base,
-  target: { url: web?.url, repository: repo && repoName(repo.root) },
+  target: { url: web?.url, repository: repo && repoName(repo.root), ...(web && { languages: web.languages, languages_from: web.languagesFrom }) },
   ...(repo && { coverage: repo.coverage }),
 }), null, 2);
 if (values.report) {

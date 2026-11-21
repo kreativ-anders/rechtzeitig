@@ -45,7 +45,7 @@ Every check names its legal basis and links a primary source. Your code stays on
 ## Quick start
 
 1. Copy [`examples/workflows/rechtzeitig.yml`](examples/workflows/rechtzeitig.yml) to `.github/workflows/rechtzeitig.yml`.
-2. Set `url` (and `language`, `sales`, `subscriptions`) in the file.
+2. Set `url` (and `sales`, `subscriptions`) in the file. The site language is detected from the start page.
 3. Wait for Monday or open **Actions → rechtzeitig → Run workflow**, then read the report on the run's summary page.
 
 No secret needed. The example runs weekly and fails when a check fails, so GitHub notifies you. Findings also go to the [Security tab](https://github.com/kreativ-anders/rechtzeitig/wiki/Report#security-tab) where GitHub allows it. Optional switches (`sales`, `subscriptions`, `IPINFO_TOKEN`) are listed in [What runs when](https://github.com/kreativ-anders/rechtzeitig/wiki/Inputs#what-runs-when). A rule that does not fit can be [turned off with a reason](https://github.com/kreativ-anders/rechtzeitig/wiki/Suppressions) in `.github/rechtzeitig.yml` (template: [`examples/rechtzeitig.yml`](examples/rechtzeitig.yml)); the report keeps showing it. To get new releases, let Dependabot update the pin: [Keep it running](https://github.com/kreativ-anders/rechtzeitig/wiki/Getting-started#5-keep-it-running).
@@ -55,7 +55,7 @@ No secret needed. The example runs weekly and fails when a check fails, so GitHu
 ```sh
 npm ci
 npx playwright install --only-shell chromium
-node src/main.ts --url https://example.de --repo . --language de
+node src/main.ts --url https://example.de --repo .
 npm run docs && npm run typecheck && npm test && npm run drift
 ```
 

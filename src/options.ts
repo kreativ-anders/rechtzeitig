@@ -4,7 +4,7 @@
 export const CLI_OPTIONS = {
   url: { type: "string" },
   repo: { type: "string" },
-  language: { type: "string", default: "de" },
+  language: { type: "string", default: "auto" },
   modules: { type: "string", default: "" },
   subscriptions: { type: "string", default: "false" },
   sales: { type: "string", default: "false" },
