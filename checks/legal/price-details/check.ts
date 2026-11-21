@@ -34,6 +34,9 @@ export default defineCheck({
       if (!ctx.says("shipping_costs", text) && !pageLinks(page).some((l) => ctx.says("shipping_costs", l.label))) {
         problems.push({ key: "no_shipping", params: { where } });
       }
+      // Drip pricing: a fee every buyer pays, added on top of the price instead of being part of it.
+      const fee = ctx.matches("mandatory_fee", text)[0];
+      if (fee) problems.push({ key: "mandatory_fee", params: { where, fee } });
       const quantity = QUANTITY.exec(text)?.[0];
       if (quantity && !UNIT_PRICE.test(text) && !ctx.says("base_price", text)) problems.push({ key: "no_base_price", params: { where, quantity } });
       const struck = unique([...page.js.struck, ...page.noJs.struck].map(flat), (s) => s).filter((s) => PRICE.test(s));

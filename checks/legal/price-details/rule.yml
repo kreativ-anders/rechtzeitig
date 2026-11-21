@@ -3,13 +3,15 @@ id: LEG-DE-PRICE-001
 severity: medium
 title: "Prices with VAT, shipping, base price and 30-day price"
 legal_basis: "§§ 3, 4, 6 and 11 PAngV (German Price Indication Ordinance)"
-how: "On every visited own page, legal and shipping pages left out, that shows a price (`price` in `data/shop.yml`) and a cart or buy link (`shop` in `lang/*.yml`), warns without `vat_included` and `shipping_costs`, for a `quantity` without `unit_price` or `base_price`, and for a struck-through price without `lowest_price` unless `rrp` is named."
+how: "On every visited own page, legal and shipping pages left out, that shows a price (`price` in `data/shop.yml`) and a cart or buy link (`shop` in `lang/*.yml`), warns without `vat_included` and `shipping_costs`, for a `quantity` without `unit_price` or `base_price`, for a mandatory fee added on top of the price (`mandatory_fee`: service, booking or cleaning fee; shipping and deposit stay allowed), and for a struck-through price without `lowest_price` unless `rrp` is named."
 requires: [sales]
-fix_hint: "Next to prices, say that they include VAT and whether shipping costs apply (\"inkl. MwSt., zzgl. Versand\" with a link to the shipping costs). For goods sold by weight or volume, give the base price (for example \"17,98 €/kg\"). For every price reduction, give the lowest price of the last 30 days."
+fix_hint: "Next to prices, say that they include VAT and whether shipping costs apply (\"inkl. MwSt., zzgl. Versand\" with a link to the shipping costs). Include fees every buyer pays (service, booking, cleaning fee) in the price instead of adding them with \"zzgl.\". For goods sold by weight or volume, give the base price (for example \"17,98 €/kg\"). For every price reduction, give the lowest price of the last 30 days."
 meta:
-  last_reviewed: "2026-11-04"
+  last_reviewed: "2026-11-21"
   sources:
   - https://www.gesetze-im-internet.de/pangv_2022/__3.html
   - https://www.gesetze-im-internet.de/pangv_2022/__4.html
   - https://www.gesetze-im-internet.de/pangv_2022/__6.html
   - https://www.gesetze-im-internet.de/pangv_2022/__11.html
+  # Annex I point 12 (drip pricing) of the Digital Fairness Act proposal would make this a ban EU-wide.
+  - https://commission.europa.eu/document/download/a0539d90-2758-48e5-9010-1e856030d166_en?filename=Annexes%20to%20the%20Proposal%20for%20a%20Digital%20Fairness%20Act.pdf

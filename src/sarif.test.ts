@@ -30,6 +30,16 @@ test("findings in files point to their file and line, passed and skipped checks 
   assert.match(s.runs[0].tool.driver.rules[0].helpUri, /wiki\/Checks-Security#sec-secrets-001$/);
 });
 
+test("rules based on a proposal stay out of SARIF: a preview is no security finding", () => {
+  const preview = { ...rule("LEG-EU-FAIR-002"), severity: "info", proposal: "dfa" } as Rule;
+  const s = sarif(report([
+    { id: "legal/fake-notification", rule: preview, status: "info", message: "Title changes to a count", details: ["(1) Shop"] },
+    { id: "legal/imprint", rule: rule("LEG-DE-IMP-001"), status: "fail", message: "No imprint", details: [] },
+  ], true));
+  assert.deepEqual(s.runs[0].results.map((r) => r.ruleId), ["LEG-DE-IMP-001"]);
+  assert.deepEqual(s.runs[0].tool.driver.rules.map((r) => r.id), ["LEG-DE-IMP-001"]);
+});
+
 test("website findings become one alert at the workflow file, with the URL and details", () => {
   const s = sarif(report([{ id: "privacy/cookies", rule: rule("LEG-EU-COOKIE-001"), status: "warn", message: "Cookies before consent", details: ["_ga", "_fbp"] }], true),
     { anchor: ".github/workflows/rechtzeitig.yml" });

@@ -30,8 +30,11 @@ const location = (uri: string, line?: number) => ({
   physicalLocation: { artifactLocation: { uri, uriBaseId: "%SRCROOT%" }, region: { startLine: line && line > 0 ? line : 1 } },
 });
 
-/** The status that sets the level: for a suppressed rule the one it would have without its entry. */
-const levelOf = (o: Outcome) => LEVEL[o.suppression?.status ?? o.status];
+/**
+ * The status that sets the level: for a suppressed rule the one it would have without its entry. A rule based on a
+ * proposal (rule.yml `proposal`) gets none: a preview is no security finding and stays out of the Security tab.
+ */
+const levelOf = (o: Outcome) => (o.rule.proposal ? undefined : LEVEL[o.suppression?.status ?? o.status]);
 
 export function toSarif(r: Report, { base = "", anchor }: SarifOptions = {}): object {
   const open = r.outcomes.filter((o) => levelOf(o));

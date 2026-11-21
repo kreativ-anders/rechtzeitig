@@ -1,0 +1,14 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+# Numbers are not compared across two loads: real stock and viewer counts change too, so a changed number proves nothing.
+id: LEG-DE-UWG-001
+severity: medium
+title: "No made-up stock or viewer numbers"
+legal_basis: "§ 5 Abs. 1 UWG, UWG Anhang Nr. 7 (German Unfair Competition Act)"
+how: "Warns for a random number generator in the project's own code (`random` in `data/dark-patterns.yml`) within `window_lines` (`data/thresholds.yml`) of a stock or viewer claim (`scarcity_claim`), and gives info for social-proof pop-ups the site loads (`purpose: social proof` in `data/third-parties.yml`); info instead of no finding when a code file could not be read or a page did not load with JavaScript."
+fix_hint: "Show only real stock and visitor numbers from your shop system, or none. Configure social-proof pop-ups so they show real purchases only. The Digital Fairness Act proposal (Annex I points 53 and 54) would ban false scarcity and popularity claims EU-wide."
+meta:
+  last_reviewed: "2026-11-21"
+  sources:
+  - https://www.gesetze-im-internet.de/uwg_2004/__5.html
+  - https://www.gesetze-im-internet.de/uwg_2004/anhang.html
+  - https://commission.europa.eu/document/download/a0539d90-2758-48e5-9010-1e856030d166_en?filename=Annexes%20to%20the%20Proposal%20for%20a%20Digital%20Fairness%20Act.pdf

@@ -48,3 +48,13 @@ test("names the first struck-through price", async () => {
   assert.equal(result.status, "warn");
   assert.equal(result.raw.details?.[0].params?.price, "19,99 €");
 });
+
+test("warns for a mandatory fee added on top of the price (drip pricing), not for shipping", async () => {
+  const text = "Ferienwohnung 89,00 € pro Nacht inkl. MwSt. zzgl. Versand zzgl. 4,90 € Servicegebühr";
+  const result = await runFake(here, { text, links: [cart] }, {}, { sales: true });
+  assert.equal(result.status, "warn");
+  assert.deepEqual(result.raw.details?.map((d) => d.key), ["mandatory_fee"]);
+  assert.match(result.details[0], /servicegebuehr/);
+  const english = await runFake(here, { text: "Room €89.00 incl. VAT, free delivery, plus a €4.90 booking fee", links: [fakeLink("Add to cart")] }, {}, { sales: true, languages: ["en"] });
+  assert.equal(english.raw.details?.[0]?.key, "mandatory_fee");
+});

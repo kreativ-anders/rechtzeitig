@@ -42,7 +42,7 @@ export default defineCheck({
     if (!accept.length) return skip(msg("no_banner"));
     const isAccept = new Set(accept);
     const details: Finding[] = banner
-      .filter((l) => !isAccept.has(l) && ctx.says("consent_shaming", l.text))
+      .filter((l) => !isAccept.has(l) && ctx.says("shaming", l.text))
       .map((l) => ({ key: "shaming", params: { text: l.text } }));
 
     const reject = ctx.links("consent_reject", banner).filter((l) => !isAccept.has(l));

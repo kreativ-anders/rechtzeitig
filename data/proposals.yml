@@ -1,0 +1,20 @@
+# Legislative proposals that preview rules are based on (rule.yml `proposal`). A proposal is no law: its rules
+# have no legal_basis but a `value` that starts with "<title>, not law", severity info, and stay out of SARIF.
+# The report JSON marks their results with `preview`, the step summary says "preview of the <title>, not law".
+#
+# status:   proposal | adopted | in force | applies
+# checked:  last day someone compared status and articles with the source. A test fails when it is older than
+#           proposals.max_age_days in data/thresholds.yml, because the text changes during the negotiations.
+# applies:  first day the law applies, once known
+# sources:  official documents of the proposal.
+# When a proposal applies, its rules move to a legal_basis, drop `proposal` and keep their id and path.
+
+- id: dfa
+  title: "Digital Fairness Act proposal COM(2026) 1100"
+  procedure: "2026/0356 (COD)"
+  status: proposal
+  checked: "2026-11-21"
+  sources:
+  - https://commission.europa.eu/law/law-topic/consumer-protection-law/digital-fairness-act_en
+  - https://commission.europa.eu/document/download/0575d59f-554f-4a9e-b54b-e6b717175809_en?filename=Proposal%20for%20a%20Digital%20Fairness%20Act_0.pdf
+  - https://commission.europa.eu/document/download/a0539d90-2758-48e5-9010-1e856030d166_en?filename=Annexes%20to%20the%20Proposal%20for%20a%20Digital%20Fairness%20Act.pdf

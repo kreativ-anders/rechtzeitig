@@ -23,6 +23,7 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       consent_accept: ["Akzeptieren", "Einverstanden", "Alle Cookies zulassen"],
       consent_reject: ["Ablehnen", "Nur notwendige", "Weiter ohne Einwilligung", "Verweigern"],
       consent_settings: ["Cookie-Einstellungen", "Cookies verwalten", "Widerruf der Einwilligung"],
+      faq: ["FAQ", "Häufig gestellte Fragen"],
     },
     text: {
       cancel_confirm: ["Jetzt kündigen"],
@@ -55,7 +56,20 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       withdraw_consent: ["Widerruf"],
       third_country: ["Drittland", "Drittstaaten", "USA", "Vereinigte Staaten", "Data Privacy Framework", "Angemessenheitsbeschluss", "Standardvertragsklauseln", "außerhalb der Europäischen Union", "außerhalb des EWR"],
       consent_optional: ["Statistik", "Analyse", "Marketing", "Werbung", "Personalisierung", "Externe Medien", "Komfort"],
-      consent_shaming: ["Nein, ich möchte keine besseren Angebote", "Ich möchte nicht sparen", "Ich zahle lieber den vollen Preis", "Ich bevorzuge eine schlechtere Website"],
+      shaming: ["Nein, ich möchte keine besseren Angebote", "Ich möchte nicht sparen", "Ich zahle lieber den vollen Preis", "Ich bevorzuge eine schlechtere Website", "Nein danke, ich brauche keine Rabatte"],
+      scarcity_claim: ["Nur noch 3 Stück auf Lager", "12 Personen sehen sich diesen Artikel gerade an", "5 Kunden haben heute gekauft"],
+      review_count: ["1.234 Bewertungen", "4,8 von 5 Sternen"],
+      review_check: ["Verifizierte Bewertungen", "Bewertungen werden nicht geprüft", "Wie wir Bewertungen prüfen", "Verifizierter Kauf"],
+      ad_label: ["Anzeige", "Enthält Werbung", "Affiliate-Link", "Bezahlte Partnerschaft", "Sponsored", "Gesponsert"],
+      mandatory_fee: ["zzgl. 4,90 € Servicegebühr"],
+      notice_period: ["Kündigungsfrist von 3 Monaten", "mit einer Frist von 3 Monaten vor"],
+      renewal_term: ["verlängert sich automatisch um weitere 12 Monate"],
+      period_week: ["Wochen"],
+      period_month: ["Monaten"],
+      period_year: ["Jahr"],
+      fake_notification: ["(1) Mein Shop", "Neue Nachricht", "Sie haben eine Nachricht", "Vergiss mich nicht", "Komm zurück"],
+      limited_time: ["Nur heute", "Nur für kurze Zeit", "Angebot endet bald", "Zeitlich begrenzt", "Letzte Chance"],
+      date_words: ["bis 31. Dezember", "endet heute um 23 Uhr", "bis Mitternacht"],
       placeholder: ["Max Mustermann", "Musterstraße 1", "12345 Musterstadt", "Musterfirma GmbH", "Lorem ipsum dolor sit amet", "[Firmenname]", "info@beispiel.de", "Telefon: +49 123 456789", "Tel. 0123 / 456 78", "Fax 01234-56789", "USt-IdNr.: DE 123 456 789"],
     },
   },
@@ -72,6 +86,7 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       consent_accept: ["Accept all cookies", "I agree"],
       consent_reject: ["Reject all", "Necessary cookies only", "Only essential", "Continue without accepting"],
       consent_settings: ["Cookie settings", "Manage your cookies"],
+      faq: ["FAQ", "Frequently asked questions"],
     },
     text: {
       cancel_confirm: ["Cancel now", "Confirm contract termination"],
@@ -104,7 +119,20 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       withdraw_consent: ["Withdraw", "Revoke"],
       third_country: ["Third countries", "United States", "U.S.", "Data Privacy Framework", "Adequacy decision", "Standard contractual clauses", "outside the European Union", "outside of the EEA"],
       consent_optional: ["Statistics", "Analytics", "Marketing", "Advertising", "Personalization", "External media"],
-      consent_shaming: ["No, I don't want better offers", "I don't want to save", "I'd rather pay full price", "I prefer worse ads"],
+      shaming: ["No, I don't want better offers", "I don't want to save", "I'd rather pay full price", "I prefer worse ads", "No thanks, I don't like discounts"],
+      scarcity_claim: ["Only 3 left in stock", "12 people are viewing this right now", "5 customers bought this today"],
+      review_count: ["1,234 reviews", "4.8 out of 5 stars"],
+      review_check: ["Verified reviews", "Reviews are not verified", "How we check reviews"],
+      ad_label: ["Advertisement", "Affiliate link", "Sponsored", "Commercial collaboration", "Paid partnership"],
+      mandatory_fee: ["plus a £4.90 service fee"],
+      notice_period: ["notice period of 3 months", "3 months' notice"],
+      renewal_term: ["renews automatically for a further 12 months"],
+      period_week: ["weeks"],
+      period_month: ["months"],
+      period_year: ["year"],
+      fake_notification: ["(1) My shop", "New message", "You have a message", "Don't forget your cart", "Come back"],
+      limited_time: ["Today only", "Limited time offer", "Offer ends soon", "Last chance"],
+      date_words: ["until December 31", "ends 31 December", "until midnight"],
       placeholder: ["Lorem ipsum dolor sit amet", "John Doe", "Your Company Name", "123 Main Street", "[Company Name]", "hello@example.com", "(555) 123-4567", "555-0199"],
     },
   },
@@ -112,8 +140,14 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
 
 // Near misses a concept must not find.
 const NOT: Record<string, Examples> = {
-  de: { withdraw_similar: ["Widerrufsbelehrung"], order_button: ["Bestellen", "Jetzt kaufen und sparen"], imprint: ["Impressionen"], cancel: ["Kündigen"] },
-  en: { withdraw_similar: ["Withdrawn"], order_button: ["Order", "Place order"], imprint: ["Imprinted"], cancel: ["Cancel"] },
+  de: {
+    withdraw_similar: ["Widerrufsbelehrung"], order_button: ["Bestellen", "Jetzt kaufen und sparen"], imprint: ["Impressionen"], cancel: ["Kündigen"],
+    ad_label: ["Cookies für Werbung", "Anzeigen"], mandatory_fee: ["zzgl. Versand"], fake_notification: ["Nachrichten aus der Region"], review_check: ["Echte Bewertungen"],
+  },
+  en: {
+    withdraw_similar: ["Withdrawn"], order_button: ["Order", "Place order"], imprint: ["Imprinted"], cancel: ["Cancel"],
+    ad_label: ["Advertising cookies"], mandatory_fee: ["plus shipping"], fake_notification: ["Messages from our founder"],
+  },
 };
 
 for (const code of availableLanguages()) {

@@ -1,0 +1,10 @@
+# Code patterns for legal/fake-scarcity: a random number generator in the project's own code. A line with one of
+# these, within `legal/fake-scarcity.window_lines` (data/thresholds.yml) of a stock or viewer claim
+# (`scarcity_claim` in lang/*.yml), is a counter that makes up its number. Regular expressions, per language of
+# data/code-paths.yml.
+random:
+  js: ['\bMath\.random\s*\(', '\b(?:faker|chance)\.(?:number|integer|datatype)\b', '\brandomInt\s*\(']
+  php: ['\b(?:mt_)?rand\s*\(', '\brandom_int\s*\(']
+  python: ['\brandom\.(?:randint|randrange|random|uniform|choice)\s*\(']
+  ruby: ['\brand\s*\(', '\bRandom\.rand\b', '\.sample\b']
+  go: ['\brand\.(?:Intn|Int31n|Int63n|Float64|IntN|N)\s*\(']

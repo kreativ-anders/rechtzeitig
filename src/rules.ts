@@ -33,6 +33,26 @@ const officialSource = (url: string): boolean => {
   }
 };
 
+/**
+ * A legislative proposal from data/proposals.yml. A rule that names one in `proposal` is a preview: no law backs it,
+ * so it has severity info, no legal_basis, a `value` that starts with "<title>, not law", and stays out of SARIF.
+ */
+export interface Proposal {
+  id: string;
+  title: string;
+  procedure?: string;
+  status: "proposal" | "adopted" | "in force" | "applies";
+  /** Last day status and articles were compared with the source (YYYY-MM-DD). */
+  checked: string;
+  applies?: string;
+  sources: string[];
+}
+export const PROPOSAL_STATUSES = ["proposal", "adopted", "in force", "applies"] as const;
+export const PROPOSALS: Proposal[] = loadYaml<Proposal[]>("data/proposals.yml");
+export const proposalOf = (rule: Pick<Rule, "proposal">): Proposal | undefined => PROPOSALS.find((p) => p.id === rule.proposal);
+/** The words a preview rule's `value` starts with. */
+export const previewPrefix = (p: Proposal) => `${p.title}, not law`;
+
 /** A text of a rule or a data file: English, one non-empty string. */
 export const isText = (value: unknown): value is string => typeof value === "string" && !!value.trim();
 
@@ -70,6 +90,8 @@ export interface Rule {
   fix_hint: string;
   /** Inputs the rule needs (SWITCHES). Without them it is skipped. */
   requires?: Switch[];
+  /** Id in data/proposals.yml when the rule rests on a proposal, not on law: a preview rule. */
+  proposal?: string;
   meta: { last_reviewed: string; sources: string[] };
 }
 
@@ -104,6 +126,18 @@ export function validateRule(rule: Rule, group?: string): string[] {
   if ((NO_LEGAL_BASIS_GROUPS as readonly string[]).includes(group ?? "")) {
     if (rule?.legal_basis !== undefined) p.push(`rules in ${group}/ have no legal_basis`);
     if (rule?.value === undefined) p.push(`rules in ${group}/ need value: why the rule is worth running`);
+  }
+  if (rule?.proposal !== undefined) {
+    const proposal = proposalOf(rule);
+    if (!proposal) p.push(`proposal "${rule.proposal}" is not in data/proposals.yml`);
+    else {
+      if (rule.severity !== "info") p.push("a rule based on a proposal has severity info: it must never fail a build");
+      if (rule.legal_basis !== undefined) p.push("a rule based on a proposal has no legal_basis: a proposal is no law");
+      if (!rule.value?.startsWith(previewPrefix(proposal))) p.push(`a rule based on a proposal needs value: "${previewPrefix(proposal)}: ..."`);
+    }
+  } else {
+    const named = PROPOSALS.find((x) => rule?.value?.includes(x.title));
+    if (named) p.push(`value names ${named.title}: set proposal: ${named.id}`);
   }
   text("fix_hint", rule?.fix_hint);
   if (typeof rule?.how !== "string" || rule.how.trim().length < 20) p.push("how must say in one sentence how the check works");

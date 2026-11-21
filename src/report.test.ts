@@ -177,3 +177,12 @@ test("the summary names the scan languages and where they came from", () => {
   assert.match(toSummary({ ...report("m", []), web: web("default") }), /- Language: de, en \(the start page names no language rechtzeitig has, default\) · /);
   assert.match(toSummary({ ...report("m", []), web: web("input") }), /- Language: de, en · /);
 });
+
+test("a result of a rule based on a proposal says in the summary and the log that it previews a proposal, not law", () => {
+  const preview = { ...rule, id: "LEG-EU-FAIR-002", severity: "info", proposal: "dfa" } as Rule;
+  const r: Report = { outcomes: [{ id: "legal/fake-notification", rule: preview, status: "info", message: "m", details: [] }], version: "0", startedAt: "now", onGitHub: true };
+  const note = "preview of the Digital Fairness Act proposal COM(2026) 1100, not law";
+  assert.ok(toSummary(r).includes(`· info · ${note}: m`), toSummary(r));
+  assert.ok(toText(r).includes(`m · ${note}`));
+  assert.ok(!toSummary(report("m", [])).includes("preview of"));
+});

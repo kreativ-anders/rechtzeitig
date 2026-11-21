@@ -40,6 +40,11 @@ links:
     - '\b(cookie|privacy|consent|tracking)[- ]?(settings|preferences|options|choices|manager|center|centre)\b'
     - '\b(manage|change|update|edit|withdraw|revoke) (\w+ ){0,2}(cookies|consent|cookie settings|privacy settings)\b'
 
+  # FAQ page, read by legal/review-verification for a note on how reviews are checked.
+  faq:
+    - '\bfaqs?\b'
+    - '\bfrequently asked questions\b'
+
 text:
   cancel_confirm:
     - '\bcancel now\b'
@@ -143,11 +148,58 @@ text:
     - '\bpersonali[sz]ation\b'
     - '\bexternal media\b'
   # Confirmation shaming: a refusal worded so that saying no sounds like a loss. Only clear phrases.
-  consent_shaming:
+  shaming:
     - '\b(no|i don.?t want|i do not want)\b.{0,40}\bbetter (offers?|content|ads|experience|deals|recommendations|prices)\b'
     - '\bi (don.?t|do not) (want to|like to) (save|support)\b'
     - '\bi.?d rather pay (the )?full price\b'
     - '\bi prefer (a )?worse\b'
+    - '\bno,? thanks?,? i (\S+ ){0,3}(don.?t|do not) (like|want|need) (\S+ ){0,2}(discounts?|savings?|deals|to save( money)?|free shipping)\b'
+  # legal/fake-scarcity: a stock or viewer claim next to a number, as written in code and templates.
+  scarcity_claim:
+    - '\bonly \S+ (items? |pieces? |seats? |rooms? )?(left|remaining)\b'
+    - '\b\S{1,12} (people|visitors|others|customers|shoppers|users) (are )?(viewing|looking at|watching) (this|now|right now)\b'
+    - '\b\S{1,12} (people|customers) (have )?(bought|purchased) (this )?(today|in the last \S+ (hours?|minutes?))\b'
+  review_count:
+    - '\b\d[\d,]* (customer )?(reviews|ratings)\b'
+    - '\b\d[.,]\d (out of|/) 5( stars)?\b'
+  review_check:
+    - '\b(verified|checked) (customer |buyer )?(reviews?|purchases?|buyers?)\b'
+    - '\breviews (\S+ ){0,4}(verified|checked|not verified|not checked)\b'
+    - '\bhow we (\S+ ){0,2}(verify|check) reviews\b'
+  ad_label:
+    - '\badvertisement\b'
+    - '\b(ad|advertising|affiliate|sponsored|partner) links?\b'
+    - '\bsponsored\b'
+    - '\bcommercial collaboration\b'
+    - '\bpaid partnership\b'
+  mandatory_fee:
+    - '\b(plus|\+|excl\.?|excluding) (\S+ ){0,3}(service|booking|handling|processing|cleaning|resort|admin|administration|convenience) fees?\b'
+  notice_period:
+    - '\bnotice period of (\S+ ){0,2}\d+ (months?|weeks?|years?)\b'
+    - '\b\d+ (months?|weeks?|years?).? (written )?notice\b'
+  renewal_term:
+    - '\b(renews?|is renewed|extends?|is extended) (\S+ ){0,4}for (a further |another |an additional )?\d+ (months?|years?)\b'
+  period_week:
+    - '^weeks?$'
+  period_month:
+    - '^months?$'
+  period_year:
+    - '^years?$'
+  fake_notification:
+    - '^\(\d+\) '
+    - '\b(new|unread) (message|notification)s?\b'
+    - '\byou have (\S+ ){0,2}messages?\b'
+    - '\bdon.?t forget (me|us|your (cart|basket))\b'
+    - '\bcome back\b'
+  limited_time:
+    - '\b(today|one day) only\b'
+    - '\blimited time( only| offer)?\b'
+    - '\b(offer|sale|deal) ends soon\b'
+    - '\blast chance\b'
+  date_words:
+    - '\b(january|february|march|april|may|june|july|august|september|october|november|december) \d{1,2}\b'
+    - '\b\d{1,2} (january|february|march|april|may|june|july|august|september|october|november|december)\b'
+    - '\bmidnight\b'
   # Template data left in an imprint or privacy policy (legal/placeholder-legal-texts). Only words no real
   # provider uses.
   placeholder:
@@ -300,6 +352,8 @@ messages:
     limits_content: "Whether texts are correct and complete: a scan finds terms, links and fields, not whether what they say is true."
     limits_duties: "Duties outside the site and the code: records of processing, contracts with processors, deletion, answering requests."
     limits_config: "Settings the site does not show: server, hosting and account configuration, and pages behind a login."
+    limits_interaction: "Anything that needs clicks: asking again after a choice, extra steps to refuse or cancel, pre-ticked extras in the checkout, and the emails a provider sends (trial and renewal reminders)."
+    preview: "preview of the {title}, not law"
     disclaimer: "Technical risk hints with the place they were found and the legal basis they relate to. Not legal advice."
     made_by: "by {maker}"
     severity_info: "info"
@@ -413,6 +467,7 @@ messages:
     no_shipping: '{where}: prices without a note on shipping costs ("zzgl. Versand" or a link to the shipping costs).'
     no_base_price: '{where}: quantity "{quantity}" next to prices, but no base price such as "€/kg". Needed for goods sold by weight, volume, length or area.'
     no_lowest_price: '{where}: struck-through price "{price}" without the lowest price of the last 30 days.'
+    mandatory_fee: '{where}: "{fee}" is added on top of the price. A fee every buyer pays belongs in the total price.'
     rrp: "{where}: struck-through price \"{price}\" next to a recommended retail price (UVP). Comparing with it is no reduction of your own price; not checked further."
     missing:
       one: "{count} price notice may be missing."
@@ -423,6 +478,125 @@ messages:
     none:
       one: "The visited page shows no prices with a cart or buy button. To check, point url at a product page."
       other: "None of the {count} visited pages shows prices with a cart or buy button. To check, point url at a product page."
+  legal/fake-scarcity:
+    random_claim: 'A random number next to the claim "{claim}": the count is made up, not read from stock or visits.'
+    widget: "{name} on {pages}: a social-proof pop-up. Check that it shows only real purchases and visitors."
+    random:
+      one: "{count} stock or viewer claim shows a random number."
+      other: "{count} stock or viewer claims show random numbers."
+    widgets:
+      one: "The site loads {count} social-proof pop-up. Its numbers must be real."
+      other: "The site loads {count} social-proof pop-ups. Their numbers must be real."
+    none:
+      one: "No random number next to a stock or viewer claim in {count} code file, and no social-proof pop-up on the site."
+      other: "No random number next to a stock or viewer claim in {count} code files, and no social-proof pop-up on the site."
+  legal/review-verification:
+    no_note_markup: "{where}: review ratings in the page's schema.org markup, but no note whether and how reviews are checked."
+    no_note_text: "{where}: shows reviews or a star rating, but no note whether and how they are checked."
+    widget: "{where}: shows reviews through {name}. Its note on how reviews are checked may sit inside the widget, which the scan does not read; check it in a browser."
+    unread: "The {page} at {where} could not be read, so a note there was not seen."
+    page_faq: "FAQ"
+    missing:
+      one: "{count} page shows reviews without saying whether and how they are checked."
+      other: "{count} pages show reviews without saying whether and how they are checked."
+    widget_only:
+      one: "{count} page shows reviews only through a review widget; whether it says how reviews are checked is not visible to the scan."
+      other: "{count} pages show reviews only through a review widget; whether they say how reviews are checked is not visible to the scan."
+    not_read:
+      one: "{count} page shows reviews without a note on how they are checked, but a page that may hold the note was not read."
+      other: "{count} pages show reviews without a note on how they are checked, but a page that may hold the note was not read."
+    noted: "A note on how reviews are checked is at {where}."
+    noted_pages:
+      one: "The page with reviews says how they are checked."
+      other: "All {count} pages with reviews say how they are checked."
+    no_reviews:
+      one: "The visited page shows no reviews."
+      other: "None of the {count} visited pages shows reviews."
+  legal/advertising-label:
+    unlabelled:
+      one: "{where}: {count} affiliate link ({networks}) without a label such as \"Anzeige\" or \"Affiliate-Link\"."
+      other: "{where}: {count} affiliate links ({networks}) without a label such as \"Anzeige\" or \"Affiliate-Link\"."
+    missing:
+      one: "{count} page has affiliate links without an advertising label."
+      other: "{count} pages have affiliate links without an advertising label."
+    labelled:
+      one: "The page with affiliate links labels them as advertising."
+      other: "All {count} pages with affiliate links label them as advertising."
+    none:
+      one: "No affiliate links on the visited page."
+      other: "No affiliate links on the {count} visited pages."
+    no_pages: "No page of the site loaded, so no link was read."
+  legal/notice-period:
+    long_notice: '{where}: "{phrase}". After an automatic renewal, consumers may cancel with at most one month notice.'
+    long_renewal: '{where}: "{phrase}". A contract that renews on its own may only continue for an indefinite period, cancellable monthly.'
+    found:
+      one: "The T&Cs name {count} notice period or renewal term longer than the law allows for consumers."
+      other: "The T&Cs name {count} notice periods or renewal terms longer than the law allows for consumers."
+    none: "No notice period or renewal term over one month in the T&Cs at {where}."
+    not_read: "The T&Cs at {where} could not be read, so their notice periods are unknown."
+  legal/fake-notification:
+    at_load: '{where}: the title "{title}" claims a message at load, before anyone did anything.'
+    changed: '{where}: the title changes on its own from "{before}" to "{title}".'
+    found:
+      one: "{count} page claims a message in its title that no one sent."
+      other: "{count} pages claim a message in their title that no one sent."
+    none:
+      one: "No title with a message or a call back on the page loaded with JavaScript."
+      other: "No title with a message or a call back on the {count} pages loaded with JavaScript."
+    no_pages: "No page of the site loaded, so no title was seen."
+  legal/push-on-load:
+    prompt: "{where}: {api} was called on load, before any click."
+    prompt_by: "{where}: {api} was called on load by {by}, before any click."
+    found:
+      one: "{count} notification prompt started without the visitor asking."
+      other: "{count} notification prompts started without the visitor asking."
+    none:
+      one: "No notification prompt on load on the page loaded with JavaScript."
+      other: "No notification prompt on load on the {count} pages loaded with JavaScript."
+    no_pages: "No page of the site loaded, so no prompt was seen."
+  legal/confirmshaming:
+    found_on: '{where}: "{text}" makes saying no sound shameful.'
+    found:
+      one: "{count} refusal is worded to shame."
+      other: "{count} refusals are worded to shame."
+    none:
+      one: "No shaming refusal on the visited page."
+      other: "No shaming refusal on the {count} visited pages."
+    no_pages: "No page of the site loaded, so no button was read."
+  legal/offer-duration:
+    no_end: '{where}: "{claim}" without a date or time when the offer ends.'
+    found:
+      one: "{count} page shows a limited-time offer without saying when it ends."
+      other: "{count} pages show limited-time offers without saying when they end."
+    dated:
+      one: "The limited-time offer found says when it ends."
+      other: "All {count} limited-time offers found say when they end."
+    none:
+      one: "No limited-time offer on the visited page."
+      other: "No limited-time offer on the {count} visited pages."
+    no_pages: "No page of the site loaded, so no offer was read."
+  legal/reference-price:
+    rrp: '{where}: struck-through price "{price}" next to a recommended retail price (UVP).'
+    found:
+      one: "{count} shop page strikes a price through against the RRP."
+      other: "{count} shop pages strike prices through against the RRP."
+    no_rrp:
+      one: "No strike-through price against the RRP on the shop page."
+      other: "No strike-through price against the RRP on the {count} shop pages."
+    none:
+      one: "The visited page shows no prices with a cart or buy button."
+      other: "None of the {count} visited pages shows prices with a cart or buy button."
+  legal/subscription-reminders:
+    trial_no_reminder: "Starts a free trial ({providers}), but no code handles the event before the trial ends or sends a reminder. If the provider does not send one, the proposal would require it."
+    renewal_no_reminder: "Creates a recurring plan ({providers}), but no code handles the event before a renewal or sends a reminder. If the provider does not send one, the proposal would require it."
+    found:
+      one: "{count} subscription flow without a reminder in the code."
+      other: "{count} subscription flows without a reminder in the code."
+    handled: "The code handles the reminders before trial end and renewal ({providers})."
+    none:
+      one: "No free trial or recurring plan in {count} code file ({providers})."
+      other: "No free trial or recurring plan in {count} code files ({providers})."
+    no_provider: "No payment provider with known packages in the project (data/third-parties.yml), so nothing to check."
   legal/terms-link:
     no_link: "No link to terms and conditions (AGB) on the start page. If you use terms, customers must be able to open and save them when they sign the contract."
   legal/withdrawal-button:

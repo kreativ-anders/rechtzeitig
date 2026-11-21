@@ -239,6 +239,32 @@
         "because": {
           "$ref": "#/$defs/because"
         },
+        "preview": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "proposal",
+            "title",
+            "status"
+          ],
+          "properties": {
+            "proposal": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "proposal",
+                "adopted",
+                "in force",
+                "applies"
+              ]
+            }
+          },
+          "description": "Set when the rule rests on a legislative proposal, not on law (data/proposals.yml). Severity info; changes or goes with the proposal."
+        },
         "suppression": {
           "type": "object",
           "additionalProperties": false,

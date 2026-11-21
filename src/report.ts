@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { basename } from "node:path";
 import { OUTCOMES, type Outcome, type OutcomeStatus } from "./runner.ts";
-import { SEVERITIES } from "./rules.ts";
+import { SEVERITIES, proposalOf } from "./rules.ts";
 import { loadYaml } from "./data.ts";
 import type { Params, RepoContext, RepoCoverage, ScanContext } from "./sdk.ts";
 import { oneLine } from "./text.ts";
@@ -82,6 +82,12 @@ function suppressionLines(o: Outcome, esc: (s: string) => string): string[] {
     ...(s.category === "false-positive" ? [t("suppressed_report", { url: `${HOMEPAGE}/issues` })] : []),
   ];
 }
+/** " · preview: <title>, not law" for a rule based on a proposal (data/proposals.yml), else "". */
+const previewNote = (o: Outcome) => {
+  const p = proposalOf(o.rule);
+  return p ? ` · ${t("preview", { title: p.title })}` : "";
+};
+
 /** Skipped before it started: no target or left out by `modules`. Listed once per reason, not per check. */
 const notStarted = (o: Outcome) => o.because?.kind === "target" || o.because?.kind === "module";
 
@@ -135,7 +141,7 @@ function notRunLines(r: Report, format: "md" | "text", names: boolean): string[]
 
 /** The collapsed block on what no scan can check: content, duties outside site and code, settings the site does not show. */
 const limitLines = () => {
-  return [`<details><summary>${ICONS.info} ${t("limits")}</summary>`, "", ...["content", "duties", "config"].map((k) => `- ${t(`limits_${k}`)}`), "", "</details>", ""];
+  return [`<details><summary>${ICONS.info} ${t("limits")}</summary>`, "", ...["content", "duties", "config", "interaction"].map((k) => `- ${t(`limits_${k}`)}`), "", "</details>", ""];
 };
 
 /** What the repository scan could not see or read, one line each; `warn` marks gaps the workflow can close. */
@@ -171,7 +177,7 @@ export function toSummary(r: Report): string {
   for (const o of list) {
     const places = o.details.length ? ` (${t("places", { count: o.details.length })})` : "";
     const off = o.suppression ? ` ${ICONS.suppressed} ${suppressionLines(o, md)[0]}` : "";
-    lines.push(`- ${ICONS[o.status]} \`${o.rule.id}\` ${o.rule.title} · ${t(`severity_${o.rule.severity}`)}: ${md(say(o))}${places}${off}`);
+    lines.push(`- ${ICONS[o.status]} \`${o.rule.id}\` ${o.rule.title} · ${t(`severity_${o.rule.severity}`)}${previewNote(o)}: ${md(say(o))}${places}${off}`);
   }
   lines.push(...(list.length ? [""] : []), `_${t(list.length ? "findings" : "no_findings")}_`, "");
   lines.push(...notRunLines(r, "md", true), ...limitLines(), `### ${t("scan")}`, "");
@@ -196,7 +202,7 @@ export function toText(r: Report): string {
   const lines = [`rechtzeitig: ${plain(title(r))}`, ""];
   const width = Math.max(...OUTCOMES.map((s) => label(s).length));
   for (const o of r.outcomes.filter((o) => !notStarted(o))) {
-    lines.push(`${label(o.status).toUpperCase().padEnd(width)} ${o.id.padEnd(40)} ${plain(say(o))}`);
+    lines.push(`${label(o.status).toUpperCase().padEnd(width)} ${o.id.padEnd(40)} ${plain(say(o))}${previewNote(o)}`);
     for (const l of suppressionLines(o, plain)) lines.push(`      ${l}`);
     for (const d of where(o)) lines.push(`      - ${plain(d)}`);
   }

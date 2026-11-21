@@ -1,0 +1,12 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-FAIR-002
+severity: info
+title: "No fake notifications in the page title"
+value: "Digital Fairness Act proposal COM(2026) 1100, not law: Annex I point 61 would ban notifications that claim a message or an event that did not happen."
+how: "In the load with JavaScript of every own page, without any click, records each document title from the first script on (`src/capture.ts`) and gives info when one claims a message or calls the visitor back (`fake_notification`: \"(1) …\", \"Neue Nachricht\", \"Come back\"); info instead of no finding when a page did not load with JavaScript. A title that changes only when the tab is in the background is not seen, and neither is a badge on a chat widget."
+proposal: dfa
+fix_hint: "Change the page title only for real events the visitor asked for, never to a message count or a \"come back\" text."
+meta:
+  last_reviewed: "2026-11-21"
+  sources:
+  - https://commission.europa.eu/document/download/a0539d90-2758-48e5-9010-1e856030d166_en?filename=Annexes%20to%20the%20Proposal%20for%20a%20Digital%20Fairness%20Act.pdf

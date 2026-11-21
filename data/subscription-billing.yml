@@ -1,0 +1,30 @@
+# Code patterns for legal/subscription-reminders: what a project's code does with a payment provider's
+# subscriptions. Which provider a project uses comes from `packages:` of the `purpose: payment` vendors in
+# data/third-parties.yml. Regular expressions, matched line by line in the project's own code files.
+#
+# trial:            the code starts a free trial
+# trial_reminder:   it handles the provider's event before a trial ends, or sends its own reminder
+# recurring:        it creates a recurring plan or subscription
+# renewal_reminder: it handles the provider's event before a renewal, or sends its own reminder
+trial:
+  - '\btrial_period_days\b'
+  - '\btrialPeriodDays\b'
+  - '\btrial_end\b'
+  - '\btrialEnd\b'
+  - '\btrial_from_plan\b'
+trial_reminder:
+  - 'customer\.subscription\.trial_will_end'
+  - '\btrial_will_end\b'
+  - '\btrial_?ending_?reminder\b'
+  - '\btrialEndingReminder\b'
+recurring:
+  - '\bmode\s*[:=]>?\s*[''"]subscription[''"]'
+  - '\bsubscriptions\.create\b'
+  - '\brecurring\s*[:=]>?\s*[{\[]'
+  - '[''"]recurring[''"]\s*(=>|:)\s*[\[{]'
+  - '\bbilling_cycle\b'
+renewal_reminder:
+  - '\binvoice\.upcoming\b'
+  - '\bupcoming_invoice\b'
+  - '\brenewal_?reminder\b'
+  - '\brenewalReminder\b'
