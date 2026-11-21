@@ -32,7 +32,7 @@ jobs:
       # Pinned to a release. Dependabot can move the pin: https://github.com/kreativ-anders/rechtzeitig/wiki/Getting-started#5-keep-it-running
       # On github.com, `gh actions-lock` can also write .github/workflows/actions.lock, which locks the actions
       # rechtzeitig uses by commit and repository id (not on GitHub Enterprise Server).
-      - uses: kreativ-anders/rechtzeitig@2bac959a3f7601c1cf05c11d76a0c3d351d5043e # v0.8.0
+      - uses: kreativ-anders/rechtzeitig@afed28f93f9d416cb376e144f6587ac8ea5d4fc9 # v0.9.0
         with:
           # Start page of your site, e.g. https://www.example.de/. Empty = repository only.
           url: ""
