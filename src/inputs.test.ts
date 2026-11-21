@@ -96,7 +96,7 @@ type Workflow = {
   on: { schedule?: { cron: string }[]; workflow_dispatch?: { inputs?: Record<string, unknown> } | null };
   jobs: Record<string, { permissions?: Record<string, string>; steps: Step[] }>;
 };
-const isRechtzeitig = (s: Step) => /rechtzeitig@|^\.\/$/.test(s.uses ?? "");
+const isRechtzeitig = (s: Step) => /rechtzeitig@|^[.$]\/$/.test(s.uses ?? "");
 const workflow = (path: string) => {
   const wf = loadYaml<Workflow>(path);
   const job = Object.values(wf.jobs).find((j) => j.steps.some(isRechtzeitig));

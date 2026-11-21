@@ -29,6 +29,12 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      # .github/workflows/actions.lock matches the workflows and every locked commit is in its action's history.
+      - run: |
+          gh extension install github/gh-actions-lock --pin v0.4.1
+          gh actions-lock --verify --no-interactive
+        env:
+          GH_TOKEN: ${{ github.token }}
       - run: npm ci --ignore-scripts
       - run: npx playwright install --with-deps --only-shell chromium
       - run: npm run typecheck

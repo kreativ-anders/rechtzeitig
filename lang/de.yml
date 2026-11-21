@@ -898,9 +898,10 @@ messages:
   security/actions-pinning:
     no_workflows: "Keine GitHub-Workflows."
     unpinned:
-      one: "{count} Action nutzt ein Tag statt eines Commit-SHA. Ein verschobenes Tag kann den ausgeführten Code ändern."
-      other: "{count} Actions nutzen ein Tag statt eines Commit-SHA. Ein verschobenes Tag kann den ausgeführten Code ändern."
-    pinned: "Alle Actions sind auf einen Commit-SHA festgelegt."
+      one: "{count} Action oder Image ist weder auf einen Commit-SHA oder Digest noch in actions.lock festgelegt. Ein verschobenes Tag kann den ausgeführten Code ändern."
+      other: "{count} Actions oder Images sind weder auf einen Commit-SHA oder Digest noch in actions.lock festgelegt. Ein verschobenes Tag kann den ausgeführten Code ändern."
+    pinned: "Alle Actions sind auf einen Commit-SHA oder in actions.lock festgelegt."
+    lockfile_unreadable: "Die Workflow-Lockfile konnte nicht gelesen werden, ihre Einträge zählen daher nicht."
   security/agent-config-hidden-unicode:
     no_files: "Keine Agenten-Anweisungen und keine Quelldateien."
     found:
