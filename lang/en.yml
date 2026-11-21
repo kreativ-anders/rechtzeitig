@@ -162,7 +162,8 @@ text:
 
 # Report sentences. Checks return a key and parameters; {name} is replaced by a parameter.
 # A value with one/other is picked by the parameter count. Groups are check ids; `common` is shared.
-# Every language file must define the same keys (test: src/lang.test.ts).
+# Report sentences exist only here: the report is English (src/messages.ts). Other files in lang/ hold
+# only detection patterns. The German texts of v0.8.0 and earlier stay in lang/de.yml at tag v0.8.0.
 messages:
   common:
     axe_not_run: "axe-core did not run on any visited page: no page loaded with JavaScript, or axe-core did not finish in time."
@@ -208,18 +209,18 @@ messages:
       one: "{count} production dependency not checked: {files} name no licenses. See legal/unknown-licenses."
       other: "{count} production dependencies not checked: {files} name no licenses. See legal/unknown-licenses."
   report:
-    check: "Check"
-    severity: "Severity"
-    result: "Result"
-    details: "Details"
-    findings_only: "Findings only. Checks without a finding and skipped checks are in the full report in the artifact rechtzeitig-report."
-    no_findings: "No findings. The full report is in the artifact rechtzeitig-report."
-    hidden_public: "Details hidden: on a public repository anyone can read this page. Set report-visibility: full to show them, or run rechtzeitig from a private repository."
+    findings: "One line per finding. Every place with its fingerprint, the fix hint and every check without a finding are in the report JSON: action output report, artifact rechtzeitig-report."
+    no_findings: "No findings. Every check is in the report JSON: action output report, artifact rechtzeitig-report."
+    places:
+      one: "{count} place"
+      other: "{count} places"
+    hidden_public: "Details hidden: on a public repository anyone can read this page. The findings are in the Security tab where GitHub allows the upload (sarif-upload), and in the report JSON on the runner (action output report)."
     scan: "Scan"
-    fix: "Fix"
     no_legal_basis: "no legal basis"
     pages: "Pages"
     language: "Language"
+    languages_page: "detected from the start page"
+    languages_default: "the start page names no language rechtzeitig has, default"
     subscriptions: "Subscriptions"
     sales: "Sales"
     "yes": "yes"

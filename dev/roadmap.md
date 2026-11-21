@@ -2,7 +2,7 @@
 
 ## Now
 
-- [ ] Report v2: machine-first JSON always written, English only, inputs `report-language` and `report-visibility` removed, `language: auto` (concept: kreativ-anders/rechtzeitig-dashboard#72, #71).
+- [x] Report v2: machine-first JSON always written, English only, inputs `report-language` and `report-visibility` removed, `language: auto` (#113; concept: kreativ-anders/rechtzeitig-dashboard#72, #71). Wiki pages follow with the release.
 - [ ] Workflow lockfiles: `actions.lock` here, SEC-DEPS-005 accepts locked refs (#108).
 - [ ] Signed commits required on `main`, once a release pull request shows its commits as verified.
 - [ ] Digital Fairness Act checks as preview rules in the report, dropped or adjusted when the law changes (#79).

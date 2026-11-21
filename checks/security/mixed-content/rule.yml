@@ -1,16 +1,10 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-TLS-003
 severity: medium
-title:
-  de: "Keine unverschlüsselten Ressourcen auf HTTPS-Seiten"
-  en: "No unencrypted resources on HTTPS pages"
-legal_basis:
-  de: "Art. 32 DSGVO"
-  en: "Art. 32 GDPR"
+title: "No unencrypted resources on HTTPS pages"
+legal_basis: "Art. 32 GDPR"
 how: "Lists `http://` requests made by pages of an HTTPS site; gives info instead of no finding when a page did not load with JavaScript."
-fix_hint:
-  de: "Alle Ressourcen über https:// laden."
-  en: "Load every resource over https://."
+fix_hint: "Load every resource over https://."
 meta:
   last_reviewed: "2026-11-03"
   sources:

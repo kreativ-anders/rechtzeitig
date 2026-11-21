@@ -1,0 +1,288 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/kreativ-anders/rechtzeitig/main/examples/report.schema.json",
+  "title": "rechtzeitig report",
+  "description": "rechtzeitig-report.json, schema_version 2. Field reference: https://github.com/kreativ-anders/rechtzeitig/wiki/Report-format",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "version",
+    "startedAt",
+    "target",
+    "results"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 2
+    },
+    "version": {
+      "type": "string",
+      "description": "rechtzeitig version that wrote the report"
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "languages_from": {
+          "enum": [
+            "input",
+            "page",
+            "default"
+          ]
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "description": "What the repository scan could not see or read"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/result"
+      }
+    }
+  },
+  "$defs": {
+    "params": {
+      "type": "object",
+      "description": "Message parameters. A value is a string, a number, or a message of its own (key and params).",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "$ref": "#/$defs/message"
+          }
+        ]
+      }
+    },
+    "message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "params": {
+          "$ref": "#/$defs/params"
+        }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fingerprint"
+      ],
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "url": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "params": {
+          "$ref": "#/$defs/params"
+        },
+        "message": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}:[1-9][0-9]*$"
+        }
+      }
+    },
+    "because": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "target",
+            "module",
+            "switch",
+            "data"
+          ]
+        },
+        "missing": {
+          "enum": [
+            "url",
+            "repository",
+            "both"
+          ]
+        },
+        "both": {
+          "const": true
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "input": {
+          "enum": [
+            "ipinfo-token",
+            "subscriptions",
+            "sales",
+            "vulnerabilities",
+            "green-hosting"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule",
+        "check",
+        "title",
+        "severity",
+        "status",
+        "message",
+        "fix_hint",
+        "locations"
+      ],
+      "properties": {
+        "rule": {
+          "type": "string"
+        },
+        "check": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "status": {
+          "enum": [
+            "fail",
+            "error",
+            "warn",
+            "info",
+            "suppressed",
+            "pass",
+            "skip"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "params": {
+          "$ref": "#/$defs/params"
+        },
+        "fix_hint": {
+          "type": "string"
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/location"
+          }
+        },
+        "because": {
+          "$ref": "#/$defs/because"
+        },
+        "suppression": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "category",
+            "reason",
+            "file",
+            "line",
+            "status"
+          ],
+          "properties": {
+            "category": {
+              "enum": [
+                "not-applicable",
+                "false-positive",
+                "accepted-risk"
+              ]
+            },
+            "reason": {
+              "type": "string"
+            },
+            "expires": {
+              "type": "string"
+            },
+            "file": {
+              "type": "string"
+            },
+            "line": {
+              "type": "integer"
+            },
+            "status": {
+              "enum": [
+                "fail",
+                "error",
+                "warn",
+                "info",
+                "suppressed",
+                "pass",
+                "skip"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

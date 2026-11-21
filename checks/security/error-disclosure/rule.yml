@@ -1,16 +1,10 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-EXP-002
 severity: medium
-title:
-  de: "Fehlerseiten verraten keine Interna"
-  en: "Error pages reveal no internals"
-legal_basis:
-  de: "Art. 32 DSGVO"
-  en: "Art. 32 GDPR"
+title: "Error pages reveal no internals"
+legal_basis: "Art. 32 GDPR"
 how: "Requests the paths from `data/probes.yml`, searches the visible text of the error paths for the traces in `data/leaks.yml`, and the headers of the start page and every probed path for the version headers in `data/leaks.yml` (`server` only with a version number); gives info instead of no finding when no error page answered."
-fix_hint:
-  de: "Fehlerausgabe in Produktion abschalten (z. B. display_errors=0, DEBUG=false) und Versions-Header entfernen."
-  en: "Turn off error output in production (for example display_errors=0, DEBUG=false) and remove version headers."
+fix_hint: "Turn off error output in production (for example display_errors=0, DEBUG=false) and remove version headers."
 meta:
   last_reviewed: "2026-11-04"
   sources:

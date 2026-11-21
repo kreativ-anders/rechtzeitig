@@ -27,7 +27,8 @@ More code is written with AI, and the same things keep slipping through: no impr
 
 - **Repository and live site.** It reads what visitors never see (lockfiles, workflows, keys, database rules) and what they get (HTML, scripts, cookies, headers, TLS, DNS), and what ships without being visible: the JavaScript bundles and source maps your site serves ([SEC-SECRETS-003](https://github.com/kreativ-anders/rechtzeitig/wiki/Checks-Security#sec-secrets-003), [SEC-EXP-003](https://github.com/kreativ-anders/rechtzeitig/wiki/Checks-Security#sec-exp-003)), in one run and one report. Thirteen checks [compare the two directly](https://github.com/kreativ-anders/rechtzeitig/wiki/Checks) (scope "Repository + website"); they run when the job has both a checkout and a `url`.
 - **Continuous.** Run it weekly or on every push, so a new tracker, an expiring certificate or a newly published vulnerability shows up in the next run.
-- **Private where it should be.** Private repositories get the full report on the run page. Public ones show only counts by default; the findings go to the Security tab, which only people with write access see, where GitHub allows the upload.
+- **Private where it should be.** Private repositories get one line per finding on the run page. Public ones show only counts; the findings go to the Security tab, which only people with write access see, where GitHub allows the upload.
+- **Made for machines and coding agents.** Every run writes a [report JSON](https://github.com/kreativ-anders/rechtzeitig/wiki/Report-format) (schema in [`examples/report.schema.json`](examples/report.schema.json)) with message keys, English fix hints and a stable fingerprint per place, and names its path in the output `report`.
 
 ## What it checks
 
@@ -44,7 +45,7 @@ Every check names its legal basis and links a primary source. Your code stays on
 ## Quick start
 
 1. Copy [`examples/workflows/rechtzeitig.yml`](examples/workflows/rechtzeitig.yml) to `.github/workflows/rechtzeitig.yml`.
-2. Set `url` (and `language`, `sales`, `subscriptions`) in the file.
+2. Set `url` (and `sales`, `subscriptions`) in the file. The site language is detected from the start page.
 3. Wait for Monday or open **Actions → rechtzeitig → Run workflow**, then read the report on the run's summary page.
 
 No secret needed. The example runs weekly and fails when a check fails, so GitHub notifies you. Findings also go to the [Security tab](https://github.com/kreativ-anders/rechtzeitig/wiki/Report#security-tab) where GitHub allows it. Optional switches (`sales`, `subscriptions`, `IPINFO_TOKEN`) are listed in [What runs when](https://github.com/kreativ-anders/rechtzeitig/wiki/Inputs#what-runs-when). A rule that does not fit can be [turned off with a reason](https://github.com/kreativ-anders/rechtzeitig/wiki/Suppressions) in `.github/rechtzeitig.yml` (template: [`examples/rechtzeitig.yml`](examples/rechtzeitig.yml)); the report keeps showing it. To get new releases, let Dependabot update the pin: [Keep it running](https://github.com/kreativ-anders/rechtzeitig/wiki/Getting-started#5-keep-it-running).
@@ -54,7 +55,7 @@ No secret needed. The example runs weekly and fails when a check fails, so GitHu
 ```sh
 npm ci
 npx playwright install --only-shell chromium
-node src/main.ts --url https://example.de --repo . --language de
+node src/main.ts --url https://example.de --repo .
 npm run docs && npm run typecheck && npm test && npm run drift
 ```
 

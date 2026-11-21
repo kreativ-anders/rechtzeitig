@@ -26,7 +26,7 @@ Read `rule.yml`, `check.ts`, `test.ts`, and the `src/sdk.ts` helpers that `check
 3. **legal_basis vs. code.** Does every page or obligation the check tests have a norm? A check that tests imprint and privacy policy needs a norm for both (§ 5 DDG and Art. 12 GDPR). Does a cited norm cover something the check does not test?
 4. **No legal duty.** A rule without `legal_basis` shows "Technical, no single law" in the docs. It still needs a source for its claim: a standard or official guideline (W3C, BSI, ENISA, ETSI, RFC). Do not cite a policy that does not state the claim, such as the European Green Deal for JavaScript. A source that does not say it is no evidence.
 5. **sources vs. claims.** Open each source (WebFetch; `curl` into the scratchpad for anchors and PDFs). Confirm that the cited article, section or anchor exists and says what `legal_basis`, `how` or the check messages claim. Prefer deep links (`#anchor`, `__5.html`) over a homepage.
-6. **fix_hint vs. messages.** Do `fix_hint` (de and en) and the hints in `check.ts` say the same thing? Does `fix_hint` promise something no source backs ("faster", "required by law")?
+6. **fix_hint vs. messages.** Do `fix_hint` and the hints in `check.ts` say the same thing? Does `fix_hint` promise something no source backs ("faster", "required by law")?
 7. **Tests.** Does `test.ts` have a passing and a non-passing fixture for every branch that changes the status?
 8. **New, removed or renamed rules.** Is the rule in the list of `examples/rechtzeitig.yml` with its current title (`npm run docs`)? A renamed or removed id makes users' entries in `.github/rechtzeitig.yml` fail as `unknown_rule`; the commit message must say so.
 

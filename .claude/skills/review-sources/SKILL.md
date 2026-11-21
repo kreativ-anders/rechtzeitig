@@ -28,7 +28,7 @@ Only primary sources from `data/source-domains.yml`: laws and official journals,
 
 ## For each rule
 
-1. Read `rule.yml`: `legal_basis` (de and en), `fix_hint`, `meta.sources`, `meta.last_reviewed`. Read `how` and `check.ts` only as far as needed to know what the rule claims.
+1. Read `rule.yml`: `legal_basis`, `fix_hint`, `meta.sources`, `meta.last_reviewed`. Read `how` and `check.ts` only as far as needed to know what the rule claims.
 2. Open every source (WebFetch; for PDFs save the file and extract the text). Record:
    - reachable or not, and the final URL after redirects;
    - for laws: current version and date of the last change, whether the cited article, paragraph, point or threshold still says what the rule claims;
@@ -54,7 +54,7 @@ Findings are technical risk hints, not legal advice. Say so when a question need
 
 Only after the user agrees, and following `checks/CLAUDE.md`:
 
-1. Update `legal_basis` (de and en), `fix_hint` (de and en) and `meta.sources` as needed. Changed wording or thresholds may also need `lang/*.yml` or `data/` changes and a test.
+1. Update `legal_basis`, `fix_hint` and `meta.sources` as needed. Changed wording or thresholds may also need `lang/*.yml` (messages in `lang/en.yml`) or `data/` changes and a test.
 2. Set `meta.last_reviewed` to today only for rules whose every source was opened and checked. A rule with an `unclear` point keeps its old date.
 3. Run `npm run docs && npm run typecheck && npm test`. On macOS run the tests with `caffeinate -i` so sleep does not break the timing tests.
 4. Commit with a message that lists every reviewed rule id and every changed source, so the review can be traced in the git history.

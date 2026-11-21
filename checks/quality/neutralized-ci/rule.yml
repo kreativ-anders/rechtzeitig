@@ -1,16 +1,10 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: QUAL-CI-001
 severity: medium
-title:
-  de: "CI-Prüfungen können den Lauf scheitern lassen"
-  en: "CI checks can fail the run"
-value:
-  de: "Eine Prüfung, die nie scheitert, meldet nichts. Wer Tests, Linter oder Scans stumm schaltet, sieht Fehler erst in Produktion."
-  en: "A check that never fails reports nothing. Muting tests, linters or scans moves errors into production."
+title: "CI checks can fail the run"
+value: "A check that never fails reports nothing. Muting tests, linters or scans moves errors into production."
 how: "In `.github/workflows/*.yml` warns for `continue-on-error: true` and `if: false` on a step or job whose lines name a check (`check_words` in `data/code-quality.yml`, uploads and notifications left out); in scripts, workflows, Makefiles and package.json for `|| true` or `|| exit 0` after a test, lint or audit command, `git commit --no-verify` outside workflows and a test script that does nothing; and for file-wide `@ts-nocheck`, bare `eslint-disable` or `# type: ignore` in the first lines of at least as many files and as large a share as `data/thresholds.yml` sets (languages and left-out paths in `data/code-paths.yml`); gives info instead of no finding when one of its files is over the `repo` limit in `data/thresholds.yml` or only a Git LFS pointer."
-fix_hint:
-  de: "Prüfschritte scheitern lassen, wenn sie Fehler finden; bekannte Ausnahmen gezielt pro Regel oder Zeile unterdrücken, mit Begründung."
-  en: "Let check steps fail when they find errors; suppress known exceptions per rule or line, with a reason."
+fix_hint: "Let check steps fail when they find errors; suppress known exceptions per rule or line, with a reason."
 meta:
   last_reviewed: "2026-11-09"
   sources:

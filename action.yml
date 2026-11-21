@@ -10,8 +10,8 @@ inputs:
     description: URL of the start page. Leave empty to scan only the repository.
     default: ""
   language:
-    description: Language of the site (de, en, a list such as de,en, or all).
-    default: de
+    description: Language of the site, for the words checks look for. auto = from the start page's html lang and hreflang alternates, de when none of them is in lang/ (the summary names the result). Or de, en, a list such as de,en, or all.
+    default: auto
   subscriptions:
     description: true if visitors can sign up for subscriptions (checks the cancellation button, § 312k BGB).
     default: "false"
@@ -22,8 +22,8 @@ inputs:
     description: Comma list of check groups (legal, privacy, security, sustainability, accessibility, quality) or scopes (website, repository, both; repo is the same as repository) to run. A check runs when its group or its scope is listed; a check of both runs for website or repository, and both picks only those. Empty = all.
     default: ""
   report-language:
-    description: Language of the report (de or en). Empty = same as language.
-    default: ""
+    description: Removed. The report is English; readable reports in other languages are built from its keys and parameters. A set value is ignored with a warning.
+    deprecationMessage: report-language was removed, the report is English. Remove the input.
   fail-on:
     description: When the job fails. never = report only, fail = on any fail, warn = on any warn or fail.
     default: never
@@ -46,8 +46,8 @@ inputs:
     description: true = stop when Chrome cannot start with its sandbox. false = then scan without it, only for sites you trust.
     default: "true"
   report-visibility:
-    description: How much of the report the run shows. auto = everything for private and internal repositories; for public ones only how many checks ended in each status, no artifact (the details go to the Security tab with sarif-upload). full = findings with places in summary, log, annotations and artifact, also on public repositories, where anyone can read them.
-    default: auto
+    description: Removed. Private and internal repositories always show one line per finding in the summary, plus log, annotations and the artifact; public ones only counts, no artifact. A set value is ignored with a warning.
+    deprecationMessage: report-visibility was removed. Private and internal repositories show every finding, public ones only counts. Remove the input.
   sarif-upload:
     description: Upload the findings as SARIF to GitHub code scanning, so they show as alerts in the Security tab, which only people with write access see. auto = upload where GitHub allows it (job permission security-events write; private repositories also need actions read and GitHub Code Security), otherwise skip with a notice. true = the same, but a skip or failure is a warning. false = never. The upload never fails the job.
     default: auto
@@ -56,6 +56,9 @@ outputs:
   result:
     description: pass, warn or fail.
     value: ${{ steps.scan.outputs.result }}
+  report:
+    description: Path of the report JSON (schema_version 2, every finding with places, message keys, fix hints and fingerprints) in RUNNER_TEMP, written for every repository visibility and never uploaded by rechtzeitig. For later steps of the same job, such as a coding agent or an upload of your own.
+    value: ${{ steps.scan.outputs.report }}
 
 runs:
   using: composite
@@ -104,7 +107,6 @@ runs:
         SUBSCRIPTIONS: ${{ inputs.subscriptions }}
         SALES: ${{ inputs.sales }}
         MODULES: ${{ inputs.modules }}
-        REPORT_LANGUAGE: ${{ inputs.report-language }}
         FAIL_ON: ${{ inputs.fail-on }}
         MAX_PAGES: ${{ inputs.max-pages }}
         REPOSITORY: ${{ inputs.repository }}
@@ -112,14 +114,14 @@ runs:
         VULNERABILITIES: ${{ inputs.vulnerabilities }}
         GREEN_HOSTING: ${{ inputs.green-hosting }}
         REQUIRE_SANDBOX: ${{ inputs.require-sandbox }}
-        REPORT_VISIBILITY: ${{ inputs.report-visibility }}
         SARIF: ${{ steps.sarif.outputs.upload == 'true' && format('{0}/sarif/rechtzeitig.sarif', runner.temp) || '' }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
         --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
-        --sales "$SALES" --modules "$MODULES" --report-language "$REPORT_LANGUAGE"
+        --sales "$SALES" --modules "$MODULES"
         --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES"
-        --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --report-visibility "$REPORT_VISIBILITY" --sarif "$SARIF" --out "$RUNNER_TEMP/rechtzeitig-report"
+        --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --sarif "$SARIF"
+        --report "$RUNNER_TEMP/upload/rechtzeitig-report.json" --out "$RUNNER_TEMP/rechtzeitig-report"
 
     - name: Upload report
       if: always()
@@ -130,7 +132,8 @@ runs:
         if-no-files-found: ignore
         retention-days: 7
 
-    # Outside the artifact folder, so a counts-only report on a public repository keeps the artifact empty.
+    # The SARIF file (sarif/) and the report JSON of the output report (upload/) lie outside the artifact
+    # glob, so a counts-only report on a public repository keeps the artifact empty.
     - name: Upload SARIF
       id: upload
       if: always() && steps.sarif.outputs.upload == 'true'

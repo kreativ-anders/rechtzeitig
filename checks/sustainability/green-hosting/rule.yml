@@ -1,14 +1,10 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SUS-HOST-001
 severity: low
-title:
-  de: "Website läuft bei einem grünen Hoster"
-  en: "Site runs on green hosting"
+title: "Site runs on green hosting"
 how: "Sends the host name of the start page to the Green Web Foundation API and warns when it has no evidence that the host runs on green energy."
 requires: [green-hosting]
-fix_hint:
-  de: "Einen Hoster mit belegtem Ökostrom wählen oder den eigenen Hoster bitten, seine Nachweise bei der Green Web Foundation einzureichen."
-  en: "Pick a host with proven renewable energy, or ask your host to submit its evidence to the Green Web Foundation."
+fix_hint: "Pick a host with proven renewable energy, or ask your host to submit its evidence to the Green Web Foundation."
 meta:
   last_reviewed: "2026-11-04"
   sources:

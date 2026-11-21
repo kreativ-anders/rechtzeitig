@@ -4,8 +4,7 @@
 export const CLI_OPTIONS = {
   url: { type: "string" },
   repo: { type: "string" },
-  language: { type: "string", default: "de" },
-  "report-language": { type: "string", default: "" },
+  language: { type: "string", default: "auto" },
   modules: { type: "string", default: "" },
   subscriptions: { type: "string", default: "false" },
   sales: { type: "string", default: "false" },
@@ -14,7 +13,17 @@ export const CLI_OPTIONS = {
   vulnerabilities: { type: "string", default: "false" },
   "green-hosting": { type: "string", default: "false" },
   "require-sandbox": { type: "string", default: "true" },
-  "report-visibility": { type: "string", default: "auto" },
   sarif: { type: "string", default: "" },
+  /** Where to write the report JSON whatever the visibility; empty = only in the artifact (`out`). */
+  report: { type: "string", default: "" },
   out: { type: "string", default: "rechtzeitig-report" },
+} as const;
+
+/**
+ * Removed inputs. action.yml keeps them with a `deprecationMessage`, so GitHub warns when a workflow sets one;
+ * the command line accepts them for one more version and prints the same warning. They never change the scan.
+ */
+export const REMOVED_OPTIONS = {
+  "report-language": "report-language was removed: the report is English. Remove the input.",
+  "report-visibility": "report-visibility was removed: private and internal repositories show every finding, public ones only counts. Remove the input.",
 } as const;

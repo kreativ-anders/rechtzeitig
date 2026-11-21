@@ -1,16 +1,10 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-TLS-001
 severity: high
-title:
-  de: "Website nutzt HTTPS"
-  en: "Site uses HTTPS"
-legal_basis:
-  de: "Art. 32 DSGVO"
-  en: "Art. 32 GDPR"
+title: "Site uses HTTPS"
+legal_basis: "Art. 32 GDPR"
 how: "Checks that the start page is HTTPS and that plain `http://` redirects to HTTPS."
-fix_hint:
-  de: "HTTPS erzwingen und http:// per 301 auf https:// weiterleiten."
-  en: "Enforce HTTPS and redirect http:// to https:// with a 301."
+fix_hint: "Enforce HTTPS and redirect http:// to https:// with a 301."
 meta:
   last_reviewed: "2026-11-03"
   sources:

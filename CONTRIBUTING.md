@@ -90,7 +90,7 @@ A change that affects what a rule does updates its documentation in the same com
 | Legal basis, wording or threshold | `legal_basis`, `fix_hint`, `meta.sources`, and `meta.last_reviewed` set to today |
 | A rule added, removed or renamed | `rule.yml` with a new unique id, then `npm run docs` (also updates the rule list in `examples/rechtzeitig.yml` and `examples/rechtzeitig.schema.json`; a renamed id breaks users' suppressions, say so in the commit message) |
 | A file in `data/` in a way that changes results | name the file in the commit message |
-| An input of the action | `action.yml`, `src/options.ts`, `examples/workflows/rechtzeitig.yml` (set in `with:`, or commented with its default and named in `FILE_ONLY` in `src/inputs.test.ts`), `.github/workflows/rechtzeitig.yml` if this repository needs it; the wiki page `Inputs` is generated from `action.yml` |
+| An input of the action | `action.yml`, `src/options.ts`, `examples/workflows/rechtzeitig.yml` (set in `with:`, or named in `FILE_ONLY` in `src/inputs.test.ts`; the example stays short, no commented inputs), `.github/workflows/rechtzeitig.yml` if this repository needs it; the wiki page `Inputs` is generated from `action.yml` |
 | The architecture | `dev/architecture.md` |
 
 When a commit really leaves the docs as they are, add a line `Docs-unchanged: <reason>` to its message.

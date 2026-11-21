@@ -1,16 +1,10 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: LEG-EU-DSE-002
 severity: medium
-title:
-  de: "Datenschutzerklärung enthält die Pflichtthemen"
-  en: "Privacy policy covers the required topics"
-legal_basis:
-  de: "Art. 13 DSGVO"
-  en: "Art. 13 GDPR"
+title: "Privacy policy covers the required topics"
+legal_basis: "Art. 13 GDPR"
 how: "Searches the privacy policy (linked from the start page or its hreflang version in the scan language) for 11 topics (`controller`, `storage_period`, `right_*` ... in `lang/*.yml`)."
-fix_hint:
-  de: "Fehlende Themen ergänzen: Verantwortlicher, Rechtsgrundlage, Speicherdauer, Betroffenenrechte, Beschwerderecht."
-  en: "Add the missing topics: controller, legal basis, storage period, data subject rights, right to complain."
+fix_hint: "Add the missing topics: controller, legal basis, storage period, data subject rights, right to complain."
 meta:
   last_reviewed: "2026-11-03"
   sources:

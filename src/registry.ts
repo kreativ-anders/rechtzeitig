@@ -1,7 +1,7 @@
 import { loadYaml } from "./data.ts";
 import { hostIn, normalize } from "./text.ts";
 import { packageMatches, type Vendor } from "./sdk.ts";
-import { missingLanguages } from "./rules.ts";
+import { isText } from "./rules.ts";
 
 export interface Registry {
   vendor(host: string): Vendor | undefined;
@@ -15,8 +15,7 @@ export interface Registry {
 export function loadRegistry(): Registry {
   const entries = loadYaml<Array<Vendor & { cookies?: string[] }>>("data/third-parties.yml");
   for (const e of entries) {
-    const missing = e.advice && missingLanguages(e.advice);
-    if (missing?.length) throw new Error(`data/third-parties.yml: advice of ${e.name} needs ${missing.join(", ")}`);
+    if (e.advice !== undefined && !isText(e.advice)) throw new Error(`data/third-parties.yml: advice of ${e.name} must be a text in English`);
   }
   const vendors = entries.map((e) => ({
     ...e,

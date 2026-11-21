@@ -17,7 +17,6 @@ import { loadRegistry } from "../src/registry.ts";
 import { scanRepo } from "../src/repo/scan.ts";
 import { importCheck } from "../src/runner.ts";
 import { render, renderFinding } from "../src/messages.ts";
-import { LANGUAGES } from "../src/rules.ts";
 import { normalize } from "../src/text.ts";
 import type { Area, Check, CrossCheck, Link, Page, RepoCheck, RepoContext, Result, ScanContext, Snapshot } from "../src/sdk.ts";
 
@@ -86,7 +85,7 @@ export async function scanFixture(dir: string, opts: ScanOptions = {}): Promise<
   }
 }
 
-/** A result as the English report shows it, plus the raw result. */
+/** A result as the report shows it, plus the raw result. */
 export interface Rendered {
   status: Result["status"];
   message: string;
@@ -95,17 +94,17 @@ export interface Rendered {
 }
 
 /**
- * Renders a result in every report language, so a missing message key fails the test, and returns the English one.
+ * Renders a result, so a missing message key fails the test.
  * `checkDir` is the folder of the check; its path below checks/ is the message group.
  */
 export function rendered(checkDir: string, raw: Result): Rendered {
   const scope = relative(CHECKS, checkDir).split(sep).join("/");
-  const inLang = (lang: string) => ({
-    message: render(raw.message, scope, lang),
-    details: (raw.details ?? []).map((d) => renderFinding(d, scope, lang)),
-  });
-  for (const lang of LANGUAGES) inLang(lang);
-  return { status: raw.status, ...inLang("en"), raw };
+  return {
+    status: raw.status,
+    message: render(raw.message, scope),
+    details: (raw.details ?? []).map((d) => renderFinding(d, scope)),
+    raw,
+  };
 }
 
 /** Runs checks/<…>/check.ts in `checkDir` against checkDir/fixtures/<fixture>. */

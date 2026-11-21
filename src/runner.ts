@@ -39,7 +39,7 @@ export interface Outcome {
   id: string;
   rule: Rule;
   status: OutcomeStatus;
-  /** Rendered in the report language by src/messages.ts. */
+  /** Rendered in English by src/messages.ts. */
   message: Msg | string;
   details: Array<Finding | string>;
   /** Set for every skip. */

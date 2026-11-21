@@ -6,8 +6,8 @@ import { readdirSync, readFileSync } from "node:fs";
 import { parse } from "yaml";
 import { availableLanguages } from "./lang.ts";
 import { OUTCOMES, type Outcome } from "./runner.ts";
-import { LANGUAGES, type Rule } from "./rules.ts";
-import { toCounts, toMarkdown, toText, type Report } from "./report.ts";
+import type { Rule } from "./rules.ts";
+import { toCounts, toSummary, toText, type Report } from "./report.ts";
 import { wikiPages } from "../test/wiki.ts";
 
 const APPROVAL = [/\b(pass(es|ed|ing)?|compliant|konform|erfüllt|bestanden(e[nrs]?)?|besteh(en|t))\b|✅|✔|✓/i, /\bOK\b/];
@@ -42,16 +42,14 @@ test("rule titles, legal bases, fix hints and how they are checked use no word t
 });
 
 test("the report shows every status without a word that sounds like approval", () => {
-  const rule = { id: "SEC-TEST-001", severity: "high", title: { de: "t", en: "t" }, how: "h", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-14", sources: [] } } as Rule;
+  const rule = { id: "SEC-TEST-001", severity: "high", title: "t", how: "h", fix_hint: "f", meta: { last_reviewed: "2026-11-14", sources: [] } } as Rule;
   const outcomes: Outcome[] = OUTCOMES.map((status) => ({
     id: "security/test", rule, status, message: "m", details: [],
     ...(status === "suppressed" && { suppression: { rule: rule.id, category: "accepted-risk", reason: "r", file: ".github/rechtzeitig.yml", line: 1, status: "pass" } }),
   } as Outcome));
-  for (const language of LANGUAGES) {
-    const r: Report = { outcomes, version: "0", startedAt: "now", onGitHub: true, language };
-    const out = [toMarkdown(r), toMarkdown(r, { findingsOnly: true }), toText(r), toCounts(r, "md"), toCounts(r, "text")].join("\n");
-    assert.deepEqual(hits(`report (${language})`, out), []);
-  }
+  const r: Report = { outcomes, version: "0", startedAt: "now", onGitHub: true };
+  const out = [toSummary(r), toText(r), toCounts(r, "md"), toCounts(r, "text")].join("\n");
+  assert.deepEqual(hits("report", out), []);
 });
 
 test("the wiki and the README use no word that sounds like approval", () => {

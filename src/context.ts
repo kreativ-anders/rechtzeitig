@@ -2,10 +2,12 @@ import { legalLinkPatterns, matchLinks, patternsFor, type Language } from "./lan
 import type { Registry } from "./registry.ts";
 import { isWebUrl, normalize, siteOf, withoutHash } from "./text.ts";
 import type { CrawlData } from "./crawl.ts";
-import { LEGAL_CONCEPTS, loaded, pageLinks, unique, type Page, type ScanContext, type Snapshot } from "./sdk.ts";
+import { LEGAL_CONCEPTS, loaded, pageLinks, unique, type LanguagesFrom, type Page, type ScanContext, type Snapshot } from "./sdk.ts";
 
 export interface ContextOptions {
   languages: string[];
+  /** Where the languages came from; default "input". */
+  languagesFrom?: LanguagesFrom;
   subscriptions: boolean;
   sales: boolean;
 }
@@ -33,6 +35,7 @@ export function createContext(data: CrawlData, lang: Language, registry: Registr
     https: data.url.startsWith("https:"),
     domain: site,
     languages: opts.languages,
+    languagesFrom: opts.languagesFrom ?? "input",
     subscriptions: opts.subscriptions,
     sales: opts.sales,
     sitePages: observedPages.filter((p) => loaded(p.js)),

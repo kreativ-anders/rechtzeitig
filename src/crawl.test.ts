@@ -87,3 +87,23 @@ test("other link concepts stay on the scan language: Kündigen is not the Englis
   const de = await siteFromFiles(germanPage, { language: "de" });
   assert.ok(de.links("cancel", pageLinks(de.start)).length > 0, "the German scan matches Kündigen as cancel");
 });
+
+test("language auto takes html lang and hreflang alternates that lang/ has, in that order", async () => {
+  const ctx = await siteFromFiles(multilingual, { language: "auto" });
+  assert.deepEqual([ctx.languages, ctx.languagesFrom], [["en", "de"], "page"]);
+  assert.ok(ctx.pages.some((p) => new URL(p.url).pathname === "/de/"), "the German version was visited");
+  const german = await siteFromFiles({ "index.html": `<html lang="de-AT"><body><a href="/x">x</a></body></html>` }, { language: "auto" });
+  assert.deepEqual([german.languages, german.languagesFrom], [["de"], "page"]);
+});
+
+test("language auto falls back to de when the start page names no known language", async () => {
+  for (const html of [`<html><body>Hi</body></html>`, `<html lang="fr"><head><link rel="alternate" hreflang="x-default" href="/"></head><body>Salut</body></html>`]) {
+    const ctx = await siteFromFiles({ "index.html": html }, { language: "auto" });
+    assert.deepEqual([ctx.languages, ctx.languagesFrom], [["de"], "default"]);
+  }
+});
+
+test("an explicit language is kept as it is", async () => {
+  const ctx = await siteFromFiles(multilingual, { language: "de" });
+  assert.deepEqual([ctx.languages, ctx.languagesFrom], [["de"], "input"]);
+});

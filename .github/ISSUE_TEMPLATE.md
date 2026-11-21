@@ -14,4 +14,4 @@ rechtzeitig cites these in the rule's documentation (`meta.sources` in its `rule
 
 ## What happens / what is expected?
 
-Steps to reproduce, or the behavior you expected and what happened instead. For a website finding, the scanned URL and the report language help.
+Steps to reproduce, or the behavior you expected and what happened instead. For a website finding, the scanned URL helps.

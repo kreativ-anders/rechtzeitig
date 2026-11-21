@@ -1,16 +1,10 @@
 # Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
 id: SEC-TLS-002
 severity: high
-title:
-  de: "TLS-Zertifikat ist gültig und aktuell"
-  en: "TLS certificate is valid and current"
-legal_basis:
-  de: "Art. 32 DSGVO"
-  en: "Art. 32 GDPR"
+title: "TLS certificate is valid and current"
+legal_basis: "Art. 32 GDPR"
 how: "Opens a TLS connection to the host and reads protocol, trust and expiry date of the certificate, warning 14 days before expiry (`data/thresholds.yml`)."
-fix_hint:
-  de: "Zertifikat automatisch erneuern (z. B. Let's Encrypt) und nur TLS 1.2 und 1.3 erlauben."
-  en: "Renew the certificate automatically (for example Let's Encrypt) and allow only TLS 1.2 and 1.3."
+fix_hint: "Renew the certificate automatically (for example Let's Encrypt) and allow only TLS 1.2 and 1.3."
 meta:
   last_reviewed: "2026-11-03"
   sources:

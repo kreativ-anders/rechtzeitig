@@ -1,7 +1,6 @@
 // Everything a check needs. Checks import from this file and nothing else.
 
 import { hostIn, siteOf } from "./text.ts";
-import type { UiLanguage } from "./rules.ts";
 
 export { loadYaml } from "./data.ts";
 import { loadYaml } from "./data.ts";
@@ -21,14 +20,8 @@ import { dependencyLicenses, type LicenseInfo } from "./repo/licenses.ts";
 export const STATUSES = ["pass", "warn", "fail", "info", "skip"] as const;
 export type Status = (typeof STATUSES)[number];
 
-/** A text in every report language, from data/*.yml (for example a vendor's advice). */
-export type Localized = Record<UiLanguage, string>;
-
-/**
- * Parameters of a message. A Msg as value is rendered in the same language (for example a page name),
- * a Localized picks the report language.
- */
-export type Params = Record<string, string | number | Msg | Localized>;
+/** Parameters of a message. A Msg as value is rendered with the same message group (for example a page name). */
+export type Params = Record<string, string | number | Msg>;
 
 /** A sentence by key; the words are in lang/<code>.yml `messages.<check id>` or `messages.common`. */
 export interface Msg {
@@ -54,7 +47,7 @@ export interface Finding {
 
 export interface Result {
   status: Status;
-  /** Never a sentence: the words are in lang/<code>.yml, so the report can use any language. */
+  /** Never a sentence: the words are in lang/en.yml, and the key and parameters let a reader build any language. */
   message: Msg;
   details?: Finding[];
 }
@@ -661,8 +654,8 @@ export interface Vendor {
   country?: string;
   /** How a privacy policy would name this vendor (normalized). */
   names: string[];
-  /** What to do instead, per report language. */
-  advice?: Localized;
+  /** What to do instead, in English. */
+  advice?: string;
   /** npm packages of the vendor's SDK; a trailing * matches a prefix ("@sentry/*"). */
   packages?: string[];
   /** Regular expressions for the vendor's account or tag ids in code (group 1 is the id, else the whole match). */
@@ -671,6 +664,9 @@ export interface Vendor {
   forms?: string[];
 }
 
+/** Where the scan languages came from: the input `language`, the start page (`auto`), or the fallback `de`. */
+export type LanguagesFrom = "input" | "page" | "default";
+
 export interface ScanContext {
   /** Final URL of the start page. */
   url: string;
@@ -678,7 +674,10 @@ export interface ScanContext {
   https: boolean;
   /** Registrable domain of the start page ("www.example.de" → "example.de"). */
   domain: string;
+  /** Scan languages: packs in lang/ whose patterns the checks use. */
   languages: string[];
+  /** Whether they came from the input `language`, from the start page (`auto`), or are the fallback `de`. */
+  languagesFrom: LanguagesFrom;
   /** true when the site sells subscriptions or other ongoing contracts. */
   subscriptions: boolean;
   /** true when consumers buy or sign contracts on the site (shop, paid plans). */

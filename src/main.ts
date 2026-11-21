@@ -4,19 +4,17 @@
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
-import { CLI_OPTIONS } from "./options.ts";
+import { CLI_OPTIONS, REMOVED_OPTIONS } from "./options.ts";
 import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
 import { toSarif, workflowFile } from "./sarif.ts";
 import { loadChecks, OUTCOMES, runChecks, scopeOf, selectModules, type OutcomeStatus } from "./runner.ts";
-import { LANGUAGES, SWITCHES, switchSpec, type Switch, type UiLanguage } from "./rules.ts";
+import { SWITCHES, switchSpec, type Switch } from "./rules.ts";
 import { errorMessage } from "./text.ts";
 import { applySuppressions, loadSuppressions } from "./suppress.ts";
-import {
-  md, plain, repoName, REMOVED_VISIBILITIES, toAnnotations, toCounts, toFindings, toMarkdown, toText, VISIBILITIES, withoutCommands,
-  type Report, type Visibility,
-} from "./report.ts";
+import { md, plain, repoName, toAnnotations, toCounts, toSummary, toText, withoutCommands, type Report } from "./report.ts";
+import { toReportJson } from "./report-json.ts";
 
 const FAIL_ON: Record<string, OutcomeStatus[]> = {
   never: [],
@@ -26,7 +24,7 @@ const FAIL_ON: Record<string, OutcomeStatus[]> = {
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: CLI_OPTIONS,
+  options: { ...CLI_OPTIONS, ...Object.fromEntries(Object.keys(REMOVED_OPTIONS).map((o) => [o, { type: "string" as const }])) },
 });
 // Runs without the Run workflow dialog (schedule, push) pass every `inputs.*` as "", so empty means the default.
 // url and repo have no default: empty there means "do not scan the site" or "no checkout".
@@ -39,20 +37,14 @@ let url = (values.url || positionals[0] || "").trim();
 if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;
 const failOn = values["fail-on"] || "never";
 if (!FAIL_ON[failOn]) exit(`fail-on must be one of: ${Object.keys(FAIL_ON).join(", ")}`);
-// The report follows the site language unless set; "all" and unknown languages fall back to English.
-const wanted = values["report-language"] || values.language!.split(",")[0];
-const language: UiLanguage = (LANGUAGES as readonly string[]).includes(wanted) ? (wanted as UiLanguage) : "en";
-let wantedVisibility = values["report-visibility"] || "auto";
 const onGitHub = !!process.env.GITHUB_ACTIONS;
-if ((REMOVED_VISIBILITIES as readonly string[]).includes(wantedVisibility)) {
-  const note = `report-visibility: ${wantedVisibility} was removed and now works like auto. Remove the input or set full.`;
-  console.log(onGitHub ? `::warning::${note}` : `Warning: ${note}`);
-  wantedVisibility = "auto";
+// A removed input that is set only warns, so an old workflow keeps running.
+for (const [name, note] of Object.entries(REMOVED_OPTIONS)) {
+  if ((values as Record<string, unknown>)[name]?.toString().trim()) console.log(onGitHub ? `::warning::${note}` : `Warning: ${note}`);
 }
-if (!(VISIBILITIES as readonly string[]).includes(wantedVisibility)) exit(`report-visibility must be one of: ${VISIBILITIES.join(", ")}`);
-// auto: full outside GitHub and for private or internal repositories; counts when the repository is public
-// or the event does not say, so a missing field never makes findings public.
-const visibility: Visibility = wantedVisibility === "full" || !onGitHub || repositoryIsPrivate() ? "full" : "counts";
+// What the run page shows: everything outside GitHub and for private or internal repositories; only counts when
+// the repository is public or the event does not say, so a missing field never makes findings public.
+const visible = !onGitHub || repositoryIsPrivate();
 const modules = values.modules!.split(",").map((m) => m.trim()).filter(Boolean);
 
 const startedAt = new Date().toISOString();
@@ -98,25 +90,35 @@ if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
 // also when no repository check runs, and an invalid entry turns nothing off.
 const root = repo?.root ?? (values.repo?.trim() || undefined);
 const outcomes = applySuppressions(await runChecks(allChecks, { web, repo }, enabled, modules), root ? loadSuppressions(root) : undefined);
-const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub, language, warnings };
+const report: Report = { web, repo, outcomes, version: VERSION, startedAt, onGitHub, warnings };
 const log = (text: string) => console.log(onGitHub ? withoutCommands(text) : text);
 // Scanned repository's folder relative to the workspace, for annotations and SARIF.
 const base = repo ? relative(process.env.GITHUB_WORKSPACE ?? process.cwd(), resolve(repo.root)).split(sep).join("/") : "";
-// sarif-upload is opt-in and independent of report-visibility: the file goes to the Security tab, not the artifact.
-if (values.sarif) {
-  mkdirSync(dirname(values.sarif), { recursive: true });
-  writeFileSync(values.sarif, JSON.stringify(toSarif(report, { base, anchor: workflowFile() }), null, 2));
+const write = (file: string, text: string) => {
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, text);
+};
+// The SARIF file and the report JSON (--report) are written whatever the visibility, outside the artifact folder:
+// SARIF goes to the Security tab, the JSON stays on the runner for later steps of the job (action output report).
+if (values.sarif) write(values.sarif, JSON.stringify(toSarif(report, { base, anchor: workflowFile() }), null, 2));
+const json = JSON.stringify(toReportJson(outcomes, {
+  version: VERSION, startedAt, base,
+  target: { url: web?.url, repository: repo && repoName(repo.root), ...(web && { languages: web.languages, languages_from: web.languagesFrom }) },
+  ...(repo && { coverage: repo.coverage }),
+}), null, 2);
+if (values.report) {
+  write(values.report, json);
+  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `report=${resolve(values.report)}\n`);
 }
 let summary: string | undefined;
-if (visibility === "full") {
-  const findings = toFindings(outcomes, { version: VERSION, startedAt, target: { url: web?.url, repository: repo && repoName(repo.root) }, ...(repo && { coverage: repo.coverage }) }, language);
-  writeFileSync(`${values.out}.md`, toMarkdown(report));
-  writeFileSync(`${values.out}.json`, JSON.stringify(findings, null, 2));
-  if (repo) writeFileSync(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));
+if (visible) {
+  // The artifact: report JSON and SBOM.
+  write(`${values.out}.json`, json);
+  if (repo) write(join(dirname(values.out!), "rechtzeitig-sbom.cdx.json"), toCycloneDx(repo, VERSION));
   log(toText(report));
   // Annotations for findings in files, outside the stop-commands block above; src/report.ts escapes every value.
   if (onGitHub && repo) for (const line of toAnnotations(report, base)) console.log(line);
-  summary = toMarkdown(report, { findingsOnly: true });
+  summary = toSummary(report);
 } else {
   // No files, so no artifact: the SBOM lists vulnerabilities, the findings their places.
   log(toCounts(report, "text"));

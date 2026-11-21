@@ -88,7 +88,7 @@ test("every rule id is known, and this rule's own id among them", () => {
   assert.ok(ids.has(SUPPRESSIONS_RULE) && ids.has("A11Y-ALT-001") && ids.size > 50);
 });
 
-const rule = (id: string) => ({ id, severity: "high", title: { de: "t", en: "t" }, how: "h", fix_hint: { de: "f", en: "f" }, meta: { last_reviewed: "2026-11-14", sources: [] } }) as Rule;
+const rule = (id: string) => ({ id, severity: "high", title: "t", how: "h", fix_hint: "f", meta: { last_reviewed: "2026-11-14", sources: [] } }) as Rule;
 const outcome = (id: string, status: Outcome["status"]): Outcome => ({ id: id.toLowerCase(), rule: rule(id), status, message: "m", details: ["d"] });
 
 test("a suppressed rule keeps its message, details and the status it would have; skips stay skips", () => {
