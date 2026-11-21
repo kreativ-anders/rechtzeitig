@@ -23,6 +23,8 @@ export interface ScanOptions {
   greenHosting?: boolean;
   /** Start Chrome without its sandbox where the runner has none. */
   unsandboxed?: boolean;
+  /** Opt-in: trust the host of url even when it is a private or local address (self-hosted runner, own network). */
+  allowPrivateUrl?: boolean;
   /** Reuse a running browser (tests). */
   browser?: Browser;
   /** Called with problems that do not stop the scan, for the report. */
@@ -74,6 +76,7 @@ export async function scan(url: string, opts: ScanOptions = {}): Promise<ScanCon
       offline: opts.offline,
       ipinfoToken: opts.ipinfoToken,
       greenHosting: opts.greenHosting,
+      allowPrivateUrl: opts.allowPrivateUrl,
     });
     return createContext(data, lang!, loadRegistry(), { languages, languagesFrom, subscriptions: opts.subscriptions ?? false, sales: opts.sales ?? false });
   } finally {

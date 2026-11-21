@@ -77,6 +77,7 @@ const web = url && wantsWeb
       // Opt-in: without green-hosting=true nothing goes to the Green Web Foundation; the rule then skips.
       greenHosting: enabled.includes("green-hosting"),
       unsandboxed: values["require-sandbox"] === "false",
+      allowPrivateUrl: values["allow-private-url"] === "true",
       onWarning: (w) => warnings.push(w),
     }).catch(failed)
   : undefined;

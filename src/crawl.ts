@@ -20,6 +20,8 @@ export interface CrawlOptions {
   greenHosting?: boolean;
   /** Tests only: requests to other hosts are recorded, then aborted; no DNS, TLS or HTTP lookups. */
   offline?: boolean;
+  /** Opt-in: the host of the start url is trusted even when private or local. Off in GitHub Actions unless set. */
+  allowPrivateUrl?: boolean;
 }
 
 export interface CrawlData {
@@ -57,9 +59,11 @@ const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_
  * Each page is loaded twice: JavaScript off and on.
  */
 export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlData> {
-  // The host the user asked for is trusted, also when it is local (dev servers, test fixtures).
+  // The host the user asked for is trusted, also when it is local (dev servers, test fixtures) — but not on
+  // GitHub Actions, where a url from event or PR data must not reach the runner's network (cloud metadata,
+  // internal services). allow-private-url: true opts back in, for self-hosted runners on an own network.
   const input = new URL(startUrl);
-  const trusted = input.hostname;
+  const trusted = opts.allowPrivateUrl === true || !process.env.GITHUB_ACTIONS ? input.hostname : undefined;
   // Every connection of the browser, loopback included, goes through the proxy, which allows only public addresses.
   const proxy = await publicProxy(trusted);
   // With language auto the browser asks for the default language until the start page names its own.
@@ -111,7 +115,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     }
 
     // Lookups without a browser follow the start page only within the same site; otherwise they use the input URL.
-    const finalUrl = siteOf(new URL(url).hostname) === siteOf(trusted) ? url : startUrl;
+    const finalUrl = siteOf(new URL(url).hostname) === siteOf(trusted ?? input.hostname) ? url : startUrl;
     const probes = await probe(new URL(finalUrl).origin, opts.userAgent, opts.timeout, trusted);
     const maps = await sourceMaps(code.files, siteOf(new URL(finalUrl).hostname), opts.userAgent, opts.timeout, trusted);
     const served = { code: code.files, codeSkipped: code.skipped, sourceMaps: maps };
