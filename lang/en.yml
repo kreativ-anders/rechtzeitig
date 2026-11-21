@@ -45,9 +45,9 @@ text:
     - '\bcancel now\b'
     # Wording of the Digital Fairness Act proposal, Art. 23 (COM(2026) 1100).
     - '\bconfirm (the )?contract termination\b'
-  # Second way of contact in an imprint besides email, § 5 Abs. 1 Nr. 2 DDG.
   withdraw_confirm:
     - '\bconfirm (the )?withdrawal\b'
+  # Second way of contact in an imprint besides email, § 5 Abs. 1 Nr. 2 DDG.
   contact_form:
     - '\bcontact form\b'
   order_button:
@@ -319,7 +319,7 @@ messages:
     missing: 'No cancellation button on the start page. The law asks for "Verträge hier kündigen".'
     not_followed: 'Could not follow "{text}" to the cancellation page {where}; the confirmation button "jetzt kündigen" was not checked.'
     not_followed_button: 'Could not follow "{text}" to the cancellation page (a button without a link); the confirmation button "jetzt kündigen" was not checked.'
-    no_confirm: '{where} has no confirmation button "jetzt kündigen" (§ 312k Abs. 2 Satz 2 BGB).'
+    no_confirm: '{where} has no confirmation button "jetzt kündigen" (§ 312k Abs. 2 Satz 3 BGB).'
     login_wall: '{where} shows only a login form and no confirmation button "jetzt kündigen". The cancellation page must be directly and easily accessible (§ 312k Abs. 2 Satz 4 BGB); it may ask for login data as fields of the cancellation form.'
     app_store: '"{text}" leads to an app store ({where}). The cancellation button must work on the website, without installing an app (§ 312k Abs. 2 Satz 1 BGB).'
     similar: 'Found "{text}", but the law asks for "Verträge hier kündigen" or equally clear wording.'
@@ -338,7 +338,7 @@ messages:
       other: "All {count} forms point to the privacy policy."
   legal/imprint-details:
     no_address: "No postal address with a German postcode found (Nr. 1)."
-    no_second_contact: "No phone number or contact form found. Besides email, a second fast way of contact is required (Nr. 2)."
+    no_second_contact: "No phone number or contact form found. Besides email, a second fast way of contact is recommended (Nr. 2: the wording requires Angaben, einschließlich der E-Mail)."
     vat_id: "VAT ID (USt-IdNr.) found."
     no_vat_id: "No VAT ID (USt-IdNr.) found. Required if you have one (Nr. 6)."
     register: "Register entry found."

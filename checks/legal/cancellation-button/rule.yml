@@ -7,7 +7,7 @@ how: "Finds a button labeled \"Verträge hier kündigen\" on the start page (`ca
 requires: [subscriptions]
 fix_hint: "Offer an always available link \"Verträge hier kündigen\", without login, that leads on the website (not to an app store) to a page with a \"jetzt kündigen\" button; login data may be fields of the cancellation form there. The Digital Fairness Act proposal (COM(2026) 1100, Art. 23) would require this EU-wide, worded \"terminate the contract here\" and \"confirm the contract termination\" in English."
 meta:
-  last_reviewed: "2026-11-14"
+  last_reviewed: "2026-11-21"
   sources:
   - https://www.gesetze-im-internet.de/bgb/__312k.html
   - https://commission.europa.eu/law/law-topic/consumer-protection-law/digital-fairness-act_en

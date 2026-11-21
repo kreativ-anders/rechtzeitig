@@ -6,7 +6,7 @@ legal_basis: "Art. 5(1)(e) GDPR, § 25 TDDDG"
 how: "Warns when a known tracking cookie (`data/third-parties.yml`) or a cookie of another site set without clicks expires more than 397 days (13 months, `data/thresholds.yml`) after the scan; long-lived own cookies only give info; gives info instead of no finding when a page did not load with JavaScript."
 fix_hint: "Limit the lifetime of analytics and advertising cookies to at most 13 months and do not extend it automatically on new visits."
 meta:
-  last_reviewed: "2026-11-04"
+  last_reviewed: "2026-11-21"
   sources:
   - https://eur-lex.europa.eu/eli/reg/2016/679/oj
   - https://www.gesetze-im-internet.de/ttdsg/__25.html

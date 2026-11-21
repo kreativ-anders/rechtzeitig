@@ -62,8 +62,9 @@ privacy/consent-equal-choice:
     low: 3
 
 privacy/cookie-lifetime:
-  # Longest lifetime of a cookie that needs consent: 13 months, as the CNIL recommends for audience
-  # measurement cookies (recommendation 2020-092, Art. 5), counted as the longest 13 calendar months.
+  # Longest lifetime the check allows for a cookie that needs consent: 13 calendar months (397 days) as the
+  # upper bound. Note: the CNIL recommendation 2020-092 grants 13 months only to audience-measurement cookies
+  # that are exempt from consent; for consent-based trackers it recommends 6 months (see the rule's fix_hint).
   # Chrome caps cookies at 400 days, so the limit must stay below 400.
   max_days: 397
 
