@@ -4,9 +4,9 @@ import { failedJsPage, fakePage, runCheck, runFake } from "../../../test/helpers
 
 const here = import.meta.dirname;
 
-test("gives info when the page changes its title to a message count on its own", async () => {
+test("warns when the page changes its title to a message count on its own", async () => {
   const result = await runCheck(here, "title");
-  assert.equal(result.status, "info");
+  assert.equal(result.status, "warn");
   assert.equal(result.raw.details?.[0].key, "changed");
   assert.match(result.details[0], /\(1\) Neue Nachricht/);
 });

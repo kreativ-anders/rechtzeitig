@@ -4,9 +4,9 @@ import { failedJsPage, fakePage, fakeLink, runCheck, runFake } from "../../../te
 
 const here = import.meta.dirname;
 
-test("gives info for a shaming refusal in a newsletter pop-up", async () => {
+test("warns for a shaming refusal in a newsletter pop-up", async () => {
   const result = await runCheck(here, "popup");
-  assert.equal(result.status, "info");
+  assert.equal(result.status, "warn");
   assert.match(result.details[0], /Nein danke, ich brauche keine Rabatte/);
 });
 
@@ -18,7 +18,7 @@ test("leaves consent banner buttons to privacy/consent-equal-choice", async () =
   const links = [fakeLink("Alle akzeptieren", null, "banner"), fakeLink("Ich möchte nicht sparen", null, "banner")];
   assert.equal((await runFake(here, { links })).status, "pass");
   const english = await runFake(here, { links: [fakeLink("No thanks, I don't like discounts")] }, {}, { languages: ["en"] });
-  assert.equal(english.status, "info");
+  assert.equal(english.status, "warn");
 });
 
 // Evidence gap: pop-ups come from scripts.

@@ -272,8 +272,8 @@ async function runAxe(page: PlaywrightPage, ms: number): Promise<Pick<Snapshot, 
 
 /**
  * Runs in the page before its own scripts, in the load with JavaScript only (`page.addInitScript`). Records what the
- * page does on its own while nobody clicks: every distinct document title (legal/fake-notification) and calls of
- * the permission prompts for notifications and push (legal/push-on-load) with the first script URL on the stack.
+ * page does on its own while nobody clicks: every distinct document title (dfa/fake-notification) and calls of
+ * the permission prompts for notifications and push (dfa/push-on-load) with the first script URL on the stack.
  * Read back with `window.__rechtzeitig()`. Everything it needs must be defined inside this function.
  */
 function watchPage(): void {

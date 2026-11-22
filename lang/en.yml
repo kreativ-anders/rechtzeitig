@@ -353,7 +353,6 @@ messages:
     limits_duties: "Duties outside the site and the code: records of processing, contracts with processors, deletion, answering requests."
     limits_config: "Settings the site does not show: server, hosting and account configuration, and pages behind a login."
     limits_interaction: "Anything that needs clicks: asking again after a choice, extra steps to refuse or cancel, pre-ticked extras in the checkout, and the emails a provider sends (trial and renewal reminders)."
-    preview: "preview of the {title}, not law"
     disclaimer: "Technical risk hints with the place they were found and the legal basis they relate to. Not legal advice."
     made_by: "by {maker}"
     severity_info: "info"
@@ -534,69 +533,6 @@ messages:
       other: "The T&Cs name {count} notice periods or renewal terms longer than the law allows for consumers."
     none: "No notice period or renewal term over one month in the T&Cs at {where}."
     not_read: "The T&Cs at {where} could not be read, so their notice periods are unknown."
-  legal/fake-notification:
-    at_load: '{where}: the title "{title}" claims a message at load, before anyone did anything.'
-    changed: '{where}: the title changes on its own from "{before}" to "{title}".'
-    found:
-      one: "{count} page claims a message in its title that no one sent."
-      other: "{count} pages claim a message in their title that no one sent."
-    none:
-      one: "No title with a message or a call back on the page loaded with JavaScript."
-      other: "No title with a message or a call back on the {count} pages loaded with JavaScript."
-    no_pages: "No page of the site loaded, so no title was seen."
-  legal/push-on-load:
-    prompt: "{where}: {api} was called on load, before any click."
-    prompt_by: "{where}: {api} was called on load by {by}, before any click."
-    found:
-      one: "{count} notification prompt started without the visitor asking."
-      other: "{count} notification prompts started without the visitor asking."
-    none:
-      one: "No notification prompt on load on the page loaded with JavaScript."
-      other: "No notification prompt on load on the {count} pages loaded with JavaScript."
-    no_pages: "No page of the site loaded, so no prompt was seen."
-  legal/confirmshaming:
-    found_on: '{where}: "{text}" makes saying no sound shameful.'
-    found:
-      one: "{count} refusal is worded to shame."
-      other: "{count} refusals are worded to shame."
-    none:
-      one: "No shaming refusal on the visited page."
-      other: "No shaming refusal on the {count} visited pages."
-    no_pages: "No page of the site loaded, so no button was read."
-  legal/offer-duration:
-    no_end: '{where}: "{claim}" without a date or time when the offer ends.'
-    found:
-      one: "{count} page shows a limited-time offer without saying when it ends."
-      other: "{count} pages show limited-time offers without saying when they end."
-    dated:
-      one: "The limited-time offer found says when it ends."
-      other: "All {count} limited-time offers found say when they end."
-    none:
-      one: "No limited-time offer on the visited page."
-      other: "No limited-time offer on the {count} visited pages."
-    no_pages: "No page of the site loaded, so no offer was read."
-  legal/reference-price:
-    rrp: '{where}: struck-through price "{price}" next to a recommended retail price (UVP).'
-    found:
-      one: "{count} shop page strikes a price through against the RRP."
-      other: "{count} shop pages strike prices through against the RRP."
-    no_rrp:
-      one: "No strike-through price against the RRP on the shop page."
-      other: "No strike-through price against the RRP on the {count} shop pages."
-    none:
-      one: "The visited page shows no prices with a cart or buy button."
-      other: "None of the {count} visited pages shows prices with a cart or buy button."
-  legal/subscription-reminders:
-    trial_no_reminder: "Starts a free trial ({providers}), but no code handles the event before the trial ends or sends a reminder. If the provider does not send one, the proposal would require it."
-    renewal_no_reminder: "Creates a recurring plan ({providers}), but no code handles the event before a renewal or sends a reminder. If the provider does not send one, the proposal would require it."
-    found:
-      one: "{count} subscription flow without a reminder in the code."
-      other: "{count} subscription flows without a reminder in the code."
-    handled: "The code handles the reminders before trial end and renewal ({providers})."
-    none:
-      one: "No free trial or recurring plan in {count} code file ({providers})."
-      other: "No free trial or recurring plan in {count} code files ({providers})."
-    no_provider: "No payment provider with known packages in the project (data/third-parties.yml), so nothing to check."
   legal/terms-link:
     no_link: "No link to terms and conditions (AGB) on the start page. If you use terms, customers must be able to open and save them when they sign the contract."
   legal/withdrawal-button:
@@ -620,6 +556,70 @@ messages:
       other: "The withdrawal instructions may lack {count} required items."
     complete: "Withdrawal instructions with the model form and a note on the withdrawal function: {where}."
 
+  # ---------- dfa
+  dfa/fake-notification:
+    at_load: '{where}: the title "{title}" claims a message at load, before anyone did anything.'
+    changed: '{where}: the title changes on its own from "{before}" to "{title}".'
+    found:
+      one: "{count} page claims a message in its title that no one sent."
+      other: "{count} pages claim a message in their title that no one sent."
+    none:
+      one: "No title with a message or a call back on the page loaded with JavaScript."
+      other: "No title with a message or a call back on the {count} pages loaded with JavaScript."
+    no_pages: "No page of the site loaded, so no title was seen."
+  dfa/push-on-load:
+    prompt: "{where}: {api} was called on load, before any click."
+    prompt_by: "{where}: {api} was called on load by {by}, before any click."
+    found:
+      one: "{count} notification prompt started without the visitor asking."
+      other: "{count} notification prompts started without the visitor asking."
+    none:
+      one: "No notification prompt on load on the page loaded with JavaScript."
+      other: "No notification prompt on load on the {count} pages loaded with JavaScript."
+    no_pages: "No page of the site loaded, so no prompt was seen."
+  dfa/confirmshaming:
+    found_on: '{where}: "{text}" makes saying no sound shameful.'
+    found:
+      one: "{count} refusal is worded to shame."
+      other: "{count} refusals are worded to shame."
+    none:
+      one: "No shaming refusal on the visited page."
+      other: "No shaming refusal on the {count} visited pages."
+    no_pages: "No page of the site loaded, so no button was read."
+  dfa/offer-duration:
+    no_end: '{where}: "{claim}" without a date or time when the offer ends.'
+    found:
+      one: "{count} page shows a limited-time offer without saying when it ends."
+      other: "{count} pages show limited-time offers without saying when they end."
+    dated:
+      one: "The limited-time offer found says when it ends."
+      other: "All {count} limited-time offers found say when they end."
+    none:
+      one: "No limited-time offer on the visited page."
+      other: "No limited-time offer on the {count} visited pages."
+    no_pages: "No page of the site loaded, so no offer was read."
+  dfa/reference-price:
+    rrp: '{where}: struck-through price "{price}" next to a recommended retail price (UVP).'
+    found:
+      one: "{count} shop page strikes a price through against the RRP."
+      other: "{count} shop pages strike prices through against the RRP."
+    no_rrp:
+      one: "No strike-through price against the RRP on the shop page."
+      other: "No strike-through price against the RRP on the {count} shop pages."
+    none:
+      one: "The visited page shows no prices with a cart or buy button."
+      other: "None of the {count} visited pages shows prices with a cart or buy button."
+  dfa/subscription-reminders:
+    trial_no_reminder: "Starts a free trial ({providers}), but no code handles the event before the trial ends or sends a reminder. If the provider does not send one, the proposal would require it."
+    renewal_no_reminder: "Creates a recurring plan ({providers}), but no code handles the event before a renewal or sends a reminder. If the provider does not send one, the proposal would require it."
+    found:
+      one: "{count} subscription flow without a reminder in the code."
+      other: "{count} subscription flows without a reminder in the code."
+    handled: "The code handles the reminders before trial end and renewal ({providers})."
+    none:
+      one: "No free trial or recurring plan in {count} code file ({providers})."
+      other: "No free trial or recurring plan in {count} code files ({providers})."
+    no_provider: "No payment provider with known packages in the project (data/third-parties.yml), so nothing to check."
   # ---------- privacy
   privacy/consent-equal-choice:
     no_banner: "No consent banner found on the start page."

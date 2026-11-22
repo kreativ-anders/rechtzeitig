@@ -1,4 +1,4 @@
-import { capped, defineCheck, info, jsIncomplete, msg, pass, skip, unique, type Finding } from "../../../src/sdk.ts";
+import { capped, defineCheck, info, jsIncomplete, msg, pass, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
@@ -15,7 +15,7 @@ export default defineCheck({
         const by = host ? (ctx.isThirdParty(host) ? (ctx.vendor(host)?.name ?? host) : ctx.short(x.script)) : "";
         return { key: by ? "prompt_by" : "prompt", params: { where: x.where, api: x.api, by } };
       });
-    if (found.length) return info(msg("found", { count: found.length }), capped(found));
+    if (found.length) return warn(msg("found", { count: found.length }), capped(found));
     return jsIncomplete(ctx, info) ?? pass(msg("none", { count: ctx.sitePages.length }));
   },
 });

@@ -4,7 +4,7 @@
 // by npm run docs; src/report-json.test.ts validates real reports against it.
 
 import { OUTCOMES, type Because, type Outcome, type OutcomeStatus } from "./runner.ts";
-import { PROPOSAL_STATUSES, SEVERITIES, SWITCHES, proposalOf } from "./rules.ts";
+import { SEVERITIES, SWITCHES } from "./rules.ts";
 import type { Finding, LanguagesFrom, Params, RepoCoverage } from "./sdk.ts";
 import { isWebUrl, oneLine } from "./text.ts";
 import { findingText, render } from "./messages.ts";
@@ -51,11 +51,6 @@ export interface Result {
   locations: Location[];
   /** Why a check was skipped: target (no url or checkout), module, switch, or data (nothing to read). */
   because?: Because;
-  /**
-   * Set when the rule rests on a legislative proposal, not on law (data/proposals.yml): its id, title and status.
-   * Such a rule has severity info, no legal basis, and changes or goes when the proposal changes.
-   */
-  preview?: { proposal: string; title: string; status: string };
   /** For status "suppressed": the entry in .github/rechtzeitig.yml and the status the rule would have without it. */
   suppression?: { category: string; reason: string; expires?: string; file: string; line: number; status: OutcomeStatus };
 }
@@ -121,18 +116,12 @@ export function toReportJson(outcomes: Outcome[], { base = "", ...meta }: Report
         fix_hint: o.rule.fix_hint,
         locations: o.details.map((d, i) => location(d, o.id, prints[i])),
         ...(o.because && { because: o.because }),
-        ...preview(o),
         ...(o.suppression && { suppression: suppressionJson(o.suppression) }),
       };
     }),
   };
 }
 
-/** `preview` for a rule based on a proposal, else nothing. */
-function preview(o: Outcome): Pick<Result, "preview"> {
-  const p = proposalOf(o.rule);
-  return p ? { preview: { proposal: p.id, title: p.title, status: p.status } } : {};
-}
 
 /** The entry as the report JSON keeps it; the reason comes from the repository, so it is one line like every other text. */
 const suppressionJson = (s: NonNullable<Outcome["suppression"]>) => ({
@@ -203,10 +192,8 @@ export function reportSchema(): Record<string, unknown> {
         fix_hint: { type: "string" },
         locations: { type: "array", items: { $ref: "#/$defs/location" } },
         because: { $ref: "#/$defs/because" },
-        preview: {
-          ...obj({ proposal: { type: "string" }, title: { type: "string" }, status: { enum: [...PROPOSAL_STATUSES] } }, ["proposal", "title", "status"]),
-          description: "Set when the rule rests on a legislative proposal, not on law (data/proposals.yml). Severity info; changes or goes with the proposal.",
-        },
+        // Kept so reports of v0.10.0 still validate; schema_version stays 2 because no reader needs it.
+        preview: { type: "object", description: "Only in reports of v0.10.0, for rules of the Digital Fairness Act proposal; no longer written." },
         suppression: obj({
           category: { enum: [...CATEGORIES] },
           reason: { type: "string" },

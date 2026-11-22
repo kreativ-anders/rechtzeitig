@@ -2,7 +2,7 @@
 
 ## A new check
 
-1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`, and `quality` for rules without a legal basis), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/copyleft-dependencies`. Whether it reads the website or the repository follows from `defineCheck`, `defineRepoCheck` or, for both together, `defineCrossCheck` (its scope, shown on `docs/checks.html`).
+1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`, and `quality` and `dfa` for rules without a legal basis), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/copyleft-dependencies`. Whether it reads the website or the repository follows from `defineCheck`, `defineRepoCheck` or, for both together, `defineCrossCheck` (its scope, shown on `docs/checks.html`).
 2. Add `rule.yml` with the metadata. Title, legal basis and fix hint in English only: the report is English, and readable reports in other languages are built outside the engine from rule ids and message keys.
 
    ```yaml

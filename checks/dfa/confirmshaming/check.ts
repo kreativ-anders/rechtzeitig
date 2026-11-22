@@ -1,4 +1,4 @@
-import { capped, defineCheck, info, jsIncomplete, msg, pageLinks, pass, skip, unique, type Finding } from "../../../src/sdk.ts";
+import { capped, defineCheck, info, jsIncomplete, msg, pageLinks, pass, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
@@ -15,7 +15,7 @@ export default defineCheck({
       }
     }
     const list = unique(found, (f) => `${f.params?.where}\n${f.params?.text}`);
-    if (list.length) return info(msg("found", { count: list.length }), capped(list));
+    if (list.length) return warn(msg("found", { count: list.length }), capped(list));
     // Pop-ups are added by scripts: a page without its load with JavaScript was not seen with them.
     return jsIncomplete(ctx, info) ?? pass(msg("none", { count: pages.length }));
   },

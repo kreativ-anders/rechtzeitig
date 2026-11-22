@@ -10,7 +10,7 @@ common:
   login_form_max_fields: 2
 
 # Legislative proposals (data/proposals.yml): a test fails when `checked` is older than this, so the status and
-# the articles the preview rules cite are compared with the source while the negotiations change the text.
+# the articles its rules cite are compared with the source while the negotiations change the text.
 proposals:
   max_age_days: 120
 
@@ -134,7 +134,7 @@ legal/notice-period:
   max_notice_months: 1
   max_renewal_months: 1
 
-legal/offer-duration:
+dfa/offer-duration:
   # Text blocks (lines of the rendered page) before and after a limited-time claim that may hold its end date.
   context_lines: 1
 

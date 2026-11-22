@@ -1,4 +1,4 @@
-# Code patterns for legal/subscription-reminders: what a project's code does with a payment provider's
+# Code patterns for dfa/subscription-reminders: what a project's code does with a payment provider's
 # subscriptions. Which provider a project uses comes from `packages:` of the `purpose: payment` vendors in
 # data/third-parties.yml. Regular expressions, matched line by line in the project's own code files.
 #

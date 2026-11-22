@@ -9,13 +9,17 @@ import { hostIn } from "./text.ts";
 export const SEVERITIES = ["info", "low", "medium", "high", "critical"] as const;
 export type Severity = (typeof SEVERITIES)[number];
 
-/** SEC security, LEG-DE German law, LEG-EU EU law, A11Y accessibility, PRC prices, SUS sustainability, QUAL code quality. */
-const ID = /^(SEC|LEG-DE|LEG-EU|A11Y|PRC|SUS|QUAL)-[A-Z0-9]+-\d{3}$/;
+/**
+ * SEC security, LEG-DE German law, LEG-EU EU law, LEG-DFA Digital Fairness Act proposal, A11Y accessibility, PRC prices,
+ * SUS sustainability, QUAL code quality.
+ */
+const ID = /^((SEC|LEG-DE|LEG-EU|A11Y|PRC|SUS|QUAL)-[A-Z0-9]+|LEG-DFA)-\d{3}$/;
 /**
  * Groups whose rules have no legal basis by design (checks/<group>/). Each of their rules states its `value`
  * instead, and none may name a `legal_basis`, so a reader never takes a finding there for a legal duty.
+ * `dfa` rests on a legislative proposal (data/proposals.yml), which is no law.
  */
-export const NO_LEGAL_BASIS_GROUPS = ["quality"] as const;
+export const NO_LEGAL_BASIS_GROUPS = ["quality", "dfa"] as const;
 /**
  * A rule whose review is older than this fails the project's tests and `npm run docs` (reviewProblems), so legal
  * texts get looked at again. A scan never fails on it: a pinned release keeps working after a year.
@@ -34,8 +38,8 @@ const officialSource = (url: string): boolean => {
 };
 
 /**
- * A legislative proposal from data/proposals.yml. A rule that names one in `proposal` is a preview: no law backs it,
- * so it has severity info, no legal_basis, a `value` that starts with "<title>, not law", and stays out of SARIF.
+ * A legislative proposal from data/proposals.yml. Its rules are the group checks/<id>/: no law backs them, so they
+ * have no legal_basis and a `value` that starts with the proposal's title.
  */
 export interface Proposal {
   id: string;
@@ -47,11 +51,7 @@ export interface Proposal {
   applies?: string;
   sources: string[];
 }
-export const PROPOSAL_STATUSES = ["proposal", "adopted", "in force", "applies"] as const;
 export const PROPOSALS: Proposal[] = loadYaml<Proposal[]>("data/proposals.yml");
-export const proposalOf = (rule: Pick<Rule, "proposal">): Proposal | undefined => PROPOSALS.find((p) => p.id === rule.proposal);
-/** The words a preview rule's `value` starts with. */
-export const previewPrefix = (p: Proposal) => `${p.title}, not law`;
 
 /** A text of a rule or a data file: English, one non-empty string. */
 export const isText = (value: unknown): value is string => typeof value === "string" && !!value.trim();
@@ -90,8 +90,6 @@ export interface Rule {
   fix_hint: string;
   /** Inputs the rule needs (SWITCHES). Without them it is skipped. */
   requires?: Switch[];
-  /** Id in data/proposals.yml when the rule rests on a proposal, not on law: a preview rule. */
-  proposal?: string;
   meta: { last_reviewed: string; sources: string[] };
 }
 
@@ -127,18 +125,9 @@ export function validateRule(rule: Rule, group?: string): string[] {
     if (rule?.legal_basis !== undefined) p.push(`rules in ${group}/ have no legal_basis`);
     if (rule?.value === undefined) p.push(`rules in ${group}/ need value: why the rule is worth running`);
   }
-  if (rule?.proposal !== undefined) {
-    const proposal = proposalOf(rule);
-    if (!proposal) p.push(`proposal "${rule.proposal}" is not in data/proposals.yml`);
-    else {
-      if (rule.severity !== "info") p.push("a rule based on a proposal has severity info: it must never fail a build");
-      if (rule.legal_basis !== undefined) p.push("a rule based on a proposal has no legal_basis: a proposal is no law");
-      if (!rule.value?.startsWith(previewPrefix(proposal))) p.push(`a rule based on a proposal needs value: "${previewPrefix(proposal)}: ..."`);
-    }
-  } else {
-    const named = PROPOSALS.find((x) => rule?.value?.includes(x.title));
-    if (named) p.push(`value names ${named.title}: set proposal: ${named.id}`);
-  }
+  // A rule based on a proposal names it first, so its value never reads like a law.
+  const proposal = PROPOSALS.find((x) => x.id === group);
+  if (proposal && !rule?.value?.startsWith(proposal.title)) p.push(`rules in ${group}/ need value: "${proposal.title}, <article>: ..."`);
   text("fix_hint", rule?.fix_hint);
   if (typeof rule?.how !== "string" || rule.how.trim().length < 20) p.push("how must say in one sentence how the check works");
   if (rule?.requires !== undefined && (!Array.isArray(rule.requires) || rule.requires.some((r) => !(r in SWITCHES)))) {

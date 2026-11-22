@@ -1,4 +1,4 @@
-import { capped, defineCheck, info, jsIncomplete, msg, pass, skip, type Finding } from "../../../src/sdk.ts";
+import { capped, defineCheck, info, jsIncomplete, msg, pass, skip, warn, type Finding } from "../../../src/sdk.ts";
 
 export default defineCheck({
   run(ctx) {
@@ -10,7 +10,7 @@ export default defineCheck({
       if (!fake) return [];
       return [{ key: fake === first ? "at_load" : "changed", params: { where: ctx.short(p.url), title: fake, before: first ?? "" } }];
     });
-    if (found.length) return info(msg("found", { count: found.length }), capped(found));
+    if (found.length) return warn(msg("found", { count: found.length }), capped(found));
     return jsIncomplete(ctx, info) ?? pass(msg("none", { count: ctx.sitePages.length }));
   },
 });
