@@ -8,13 +8,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadYaml } from "./data.ts";
 import { SWITCHES } from "./rules.ts";
-import { CLI_OPTIONS, REMOVED_OPTIONS } from "./options.ts";
+import { CLI_OPTIONS } from "./options.ts";
 
 type Step = { id?: string; uses?: string; env?: Record<string, string>; run?: string; with?: Record<string, unknown> };
-const action = loadYaml<{ inputs: Record<string, { default?: string; deprecationMessage?: string }>; runs: { steps: Step[] } }>("action.yml");
-/** Current inputs. Removed ones stay in action.yml with a deprecationMessage, so GitHub warns when they are set. */
-const inputs = Object.keys(action.inputs).filter((i) => !action.inputs[i].deprecationMessage);
-const removed = Object.keys(action.inputs).filter((i) => action.inputs[i].deprecationMessage);
+const action = loadYaml<{ inputs: Record<string, { default?: string }>; runs: { steps: Step[] } }>("action.yml");
+const inputs = Object.keys(action.inputs);
 const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const scanStep = action.runs.steps.find((s) => s.id === "scan")!;
 const scanRun = scanStep.run ?? "";
@@ -24,16 +22,6 @@ const options = CLI_OPTIONS as Record<string, { default?: string }>;
 const flagOf = (env: string) => new RegExp(`--([a-z-]+) "\\$${env}"`).exec(scanRun)?.[1];
 /** The input an environment variable of the scan step comes from. */
 const inputOf = (value: string) => /inputs\.([a-z-]+)/.exec(value)?.[1];
-
-test("a removed input only warns: deprecated in action.yml, accepted by the command line, used by no step", () => {
-  assert.deepEqual(removed.sort(), Object.keys(REMOVED_OPTIONS).sort());
-  const text = read("action.yml");
-  for (const i of removed) {
-    assert.ok(!text.includes(`inputs.${i}`), `${i} is still passed to a step`);
-    assert.equal(action.inputs[i].default, undefined, `${i} has a default`);
-    assert.ok(!(i in options), `${i} is still an option in src/options.ts`);
-  }
-});
 
 test("every switch is an input of the action", () => {
   assert.deepEqual(Object.keys(SWITCHES).filter((s) => !inputs.includes(s)), []);
