@@ -1,0 +1,8 @@
+<!doctype html><html lang="de"><head><title>Sale</title></head><body><main><h1>Sommer-Sale</h1><p>Angebot endet in <span id="t"></span></p>
+<script>
+  // Starts at 15 minutes for every visitor, like many "evergreen" timer widgets.
+  const end = Date.now() + 15 * 60 * 1000;
+  const pad = (n) => String(n).padStart(2, "0");
+  const tick = () => { const s = Math.max(0, Math.floor((end - Date.now()) / 1000)); document.getElementById("t").textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`; };
+  tick(); setInterval(tick, 200);
+</script></main></body></html>

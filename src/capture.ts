@@ -4,7 +4,7 @@ import type { BrowserContext, Page as PlaywrightPage, Request as PlaywrightReque
 import { loadYaml } from "./data.ts";
 import { timeoutAfter } from "./deadline.ts";
 import { errorMessage, isWebUrl, normalize } from "./text.ts";
-import { cookieKey, type Area, type Checkbox, type Form, type Image, type Link, type Request, type ServedCode, type Snapshot, type Style, type AxeViolation, type Subresource, type Video } from "./sdk.ts";
+import { cookieKey, type Area, type Checkbox, type Form, type Image, type Link, type Request, type ServedCode, type Snapshot, type Style, type AxeViolation, type Subresource, type Timer, type Video } from "./sdk.ts";
 
 interface RawLink {
   href: string | null;
@@ -313,12 +313,53 @@ async function watched(page: PlaywrightPage): Promise<Pick<Snapshot, "titles" | 
   };
 }
 
+// ---------- countdowns (dfa/fake-countdown)
+
+const COUNTDOWN = loadYaml<{ countdown: string[] }>("data/dark-patterns.yml").countdown;
+const TIMERS = loadYaml<Record<string, { wait_ms: number }>>("data/thresholds.yml")["dfa/fake-countdown"];
+
+/**
+ * Runs inside the page: the innermost elements whose short text looks like a countdown, read once, then again after
+ * `wait` ms. Waits only when there is one. Everything it needs must be defined inside this function.
+ */
+async function readTimers({ patterns, wait }: { patterns: string[]; wait: number }): Promise<Array<{ text: string; later: string }>> {
+  const MAX = 20;
+  const res = patterns.map((p) => new RegExp(p, "u"));
+  const textOf = (el: Element) => ((el as HTMLElement).innerText ?? el.textContent ?? "").replace(/\s+/g, " ").trim();
+  const found: Element[] = [];
+  const walk = (root: Document | ShadowRoot) => {
+    for (const el of Array.from(root.querySelectorAll(root instanceof Document ? "body *" : "*"))) {
+      if (el.shadowRoot) walk(el.shadowRoot);
+      const raw = el.textContent ?? "";
+      if (raw.length > 200 || !/\d/.test(raw)) continue;
+      const text = textOf(el);
+      if (text.length <= 80 && res.some((re) => re.test(text))) found.push(el);
+    }
+  };
+  walk(document);
+  // The innermost one: a container around a countdown has the same text.
+  const timers = found.filter((el) => !found.some((other) => other !== el && el.contains(other))).slice(0, MAX);
+  if (!timers.length) return [];
+  const first = timers.map(textOf);
+  await new Promise((done) => setTimeout(done, wait));
+  return timers.map((el, i) => ({ text: first[i].slice(0, 80), later: textOf(el).slice(0, 80) }));
+}
+
+/** Countdown-like texts of the page, sampled twice; values from the page are checked and capped. */
+async function timers(page: PlaywrightPage): Promise<Timer[]> {
+  const at = Date.now();
+  const raw: unknown = await page.evaluate(readTimers, { patterns: COUNTDOWN, wait: TIMERS.wait_ms }).catch(() => []);
+  return (Array.isArray(raw) ? raw.slice(0, 20) : [])
+    .filter((t) => t && typeof t.text === "string" && typeof t.later === "string")
+    .map((t) => ({ text: String(t.text).slice(0, 80), later: String(t.later).slice(0, 80), at }));
+}
+
 const IDLE = 5000;
 const MAX_REQUESTS = 5000;
 
 /** A load that got nothing: status 0, no content. */
 export const emptySnapshot = (finalUrl: string): Snapshot => ({
-  status: 0, finalUrl, headers: {}, meta: {}, lang: "", alternates: {}, titles: [], prompts: [], text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
+  status: 0, finalUrl, headers: {}, meta: {}, lang: "", alternates: {}, titles: [], prompts: [], timers: [], text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
 });
 
 const CODE = loadYaml<{ code: { max_file_chars: number; max_files: number } }>("data/thresholds.yml").code;
@@ -435,6 +476,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     if (js) await page.waitForLoadState("networkidle", { timeout: idle }).catch(() => {});
     const dom = await page.evaluate(readDom);
     const seen = js ? await watched(page) : { titles: [], prompts: [] };
+    const timed = js ? await timers(page) : [];
     const axe = js ? await runAxe(page, Math.min(AXE.timeout_ms, timeout)) : {};
     const storage = js
       ? await page.evaluate(() => {
@@ -460,6 +502,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       alternates: dom.alternates,
       titles: [...new Set([...seen.titles, ...(dom.title ? [dom.title] : [])])],
       prompts: seen.prompts,
+      timers: timed,
       text: dom.text,
       links: dom.links.map(toLink),
       forms: dom.forms.map(toForm),
@@ -475,7 +518,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     };
   };
   // page.evaluate has no timeout: a page that never yields (while (true) {}) would block the scan forever.
-  const [deadline, stop] = timeoutAfter(2 * timeout + idle + (js ? Math.min(AXE.timeout_ms, timeout) : 0), "page did not finish loading in time");
+  const [deadline, stop] = timeoutAfter(2 * timeout + idle + (js ? Math.min(AXE.timeout_ms, timeout) + TIMERS.wait_ms : 0), "page did not finish loading in time");
   try {
     return await Promise.race([load(), deadline]);
   } catch (e) {

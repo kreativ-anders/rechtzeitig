@@ -8,3 +8,14 @@ random:
   python: ['\brandom\.(?:randint|randrange|random|uniform|choice)\s*\(']
   ruby: ['\brand\s*\(', '\bRandom\.rand\b', '\.sample\b']
   go: ['\brand\.(?:Intn|Int31n|Int63n|Float64|IntN|N)\s*\(']
+
+# dfa/fake-countdown (read by src/capture.ts in the load with JavaScript): a short text that looks like a running
+# timer, three or four numbers from the largest unit down, split by ":" or a unit word in any language
+# ("00:14:59", "2 Tage 14 Std. 05 Min. 33 Sek."). Dates ("24.12.") and prices ("9,99 €") do not match. Regular
+# expressions with the u flag, tested on the element's text with whitespace collapsed.
+countdown:
+  - '^\D{0,30}?\d{1,3}(?:\s*(?:\p{L}{1,12}\.?\s*:?|:)\s*\d{1,2}){2,3}(?:\s*\p{L}{1,12}\.?)?\D{0,30}$'
+# dfa/fake-countdown: a countdown written as a clock with seconds. One that does not change is reported as not judged;
+# other texts that do not change ("12 Monate 24 Monate 36 Monate") are no timer.
+countdown_clock:
+  - '\d{1,2}\s*:\s*\d{2}\s*:\s*\d{2}'

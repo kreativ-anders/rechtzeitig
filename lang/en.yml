@@ -567,6 +567,21 @@ messages:
       one: "No title with a message or a call back on the page loaded with JavaScript."
       other: "No title with a message or a call back on the {count} pages loaded with JavaScript."
     no_pages: "No page of the site loaded, so no title was seen."
+  dfa/fake-countdown:
+    restarts: '{where}: the countdown showed "{first}" and, for a new visitor {gap} s later, "{again}". It ends at {end} for the first visitor and at {later} for the next, so it restarts for every visitor.'
+    not_running: '{where}: "{text}" looks like a countdown but did not change within {seconds} s, so it was not judged.'
+    not_reloaded: '{where}: countdown "{text}" found, but the page did not load again in a fresh browser, so it was not judged.'
+    not_again: '{where}: countdown "{text}" found, but a new visit showed none, so it was not judged.'
+    found:
+      one: "{count} page shows a countdown that restarts for every visitor."
+      other: "{count} pages show a countdown that restarts for every visitor."
+    not_judged:
+      one: "{count} countdown found that could not be judged."
+      other: "{count} countdowns found that could not be judged."
+    none:
+      one: "No countdown that restarts for a new visitor on the page loaded with JavaScript."
+      other: "No countdown that restarts for a new visitor on the {count} pages loaded with JavaScript."
+    no_pages: "No page of the site loaded, so no countdown was seen."
   dfa/push-on-load:
     prompt: "{where}: {api} was called on load, before any click."
     prompt_by: "{where}: {api} was called on load by {by}, before any click."

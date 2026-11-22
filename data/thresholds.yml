@@ -138,6 +138,17 @@ dfa/offer-duration:
   # Text blocks (lines of the rendered page) before and after a limited-time claim that may hold its end date.
   context_lines: 1
 
+dfa/fake-countdown:
+  # A countdown-like text is read again this long after the page settled; one that counts down is running.
+  wait_ms: 1500
+  # A page with a running countdown is loaded again in a fresh browser context, at least this long after the first
+  # reading, so a timer that restarts for every visitor ends this much later than the first one.
+  reload_ms: 5000
+  # End times (now + remaining) of both loads may differ by this much: readings round to the second.
+  tolerance_s: 2
+  # Pages loaded a third time, at most.
+  max_pages: 2
+
 source-code:
   # Lines from the top of a file read for a "use client" or "use server" directive.
   directive_lines: 5

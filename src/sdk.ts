@@ -579,6 +579,11 @@ export interface Snapshot {
   titles: string[];
   /** Permission prompts the page started on its own in the load with JavaScript: the API and the first script URL on the stack ("" when none). */
   prompts: Array<{ api: string; script: string }>;
+  /**
+   * Texts shaped like a countdown (`countdown` in data/dark-patterns.yml), in the load with JavaScript: `text` when the
+   * page settled at `at` (ms since 1970, the runner's clock), `later` after `dfa/fake-countdown.wait_ms`. At most 20.
+   */
+  timers: Timer[];
   /** Visible text, as a user would read it. */
   text: string;
   /** Links and buttons, including those in open shadow roots (consent banners). */
@@ -636,6 +641,15 @@ export interface Page {
   url: string;
   noJs: Snapshot;
   js: Snapshot;
+  /** A third load with JavaScript in a fresh browser context (no cookies, no storage), only for pages with a running countdown. */
+  fresh?: Snapshot;
+}
+
+/** A countdown-like text sampled twice in one load (Snapshot.timers). */
+export interface Timer {
+  text: string;
+  later: string;
+  at: number;
 }
 
 /** A path from data/probes.yml, fetched once without a browser. */
