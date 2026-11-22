@@ -3,7 +3,7 @@ import { capture, CodeCollector } from "./capture.ts";
 import { loadYaml } from "./data.ts";
 import { DEFAULT_LANGUAGE, legalLinkPatterns, loadLanguages, matchLinks, type Language } from "./lang.ts";
 import { countries, emailDns, greenHosting, hostVariant, plainHttp, probe, sourceMaps, tlsInfo } from "./probe.ts";
-import { isPublicHost, publicProxy } from "./net.ts";
+import { isPublicHost, publicAddresses, publicProxy } from "./net.ts";
 import { isWebUrl, siteOf, withoutHash } from "./text.ts";
 import { LEGAL_CONCEPTS, pageLinks, type Area, type Page, type Probe, type ScanContext, type Snapshot } from "./sdk.ts";
 
@@ -20,7 +20,7 @@ export interface CrawlOptions {
   greenHosting?: boolean;
   /** Tests only: requests to other hosts are recorded, then aborted; no DNS, TLS or HTTP lookups. */
   offline?: boolean;
-  /** Opt-in: the host of the start url is trusted even when private or local. Off in GitHub Actions unless set. */
+  /** false: the host of the start url is not trusted when private or local. src/main.ts sets it on GitHub Actions. */
   allowPrivateUrl?: boolean;
 }
 
@@ -59,11 +59,11 @@ const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_
  * Each page is loaded twice: JavaScript off and on.
  */
 export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlData> {
-  // The host the user asked for is trusted, also when it is local (dev servers, test fixtures) — but not on
-  // GitHub Actions, where a url from event or PR data must not reach the runner's network (cloud metadata,
-  // internal services). allow-private-url: true opts back in, for self-hosted runners on an own network.
+  // The host the user asked for is trusted, also when it is local (dev servers, test fixtures), unless allowPrivateUrl is false.
   const input = new URL(startUrl);
-  const trusted = opts.allowPrivateUrl === true || !process.env.GITHUB_ACTIONS ? input.hostname : undefined;
+  const trusted = opts.allowPrivateUrl === false ? undefined : input.hostname;
+  // Untrusted: a private or local start url stops the scan (BlockedHostError) instead of scanning an error page.
+  if (!trusted) await publicAddresses(input.hostname);
   // Every connection of the browser, loopback included, goes through the proxy, which allows only public addresses.
   const proxy = await publicProxy(trusted);
   // With language auto the browser asks for the default language until the start page names its own.

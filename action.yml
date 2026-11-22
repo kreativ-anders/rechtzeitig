@@ -7,7 +7,7 @@ branding:
 
 inputs:
   url:
-    description: URL of the start page. Leave empty to scan only the repository.
+    description: URL of the start page. Leave empty to scan only the repository. Never take it from untrusted event data (pull request, issue or comment fields).
     default: ""
   language:
     description: Language of the site, for the words checks look for. auto = from the start page's html lang and hreflang alternates, de when none of them is in lang/ (the summary names the result). Or de, en, a list such as de,en, or all.
@@ -46,7 +46,7 @@ inputs:
     description: true = stop when Chrome cannot start with its sandbox. false = then scan without it, only for sites you trust.
     default: "true"
   allow-private-url:
-    description: Opt-in, only for a site on your own network on a self-hosted runner. false (default) = the runner never connects to private or local addresses, not even the host of url, so a url from event data cannot reach cloud metadata or internal services. On GitHub-hosted runners a private url fails the scan.
+    description: true = the host of url may be a private or local address (localhost, own network). false = such a url stops the scan, and the scan never connects to private or local addresses.
     default: "false"
   report-visibility:
     description: Removed. Private and internal repositories always show one line per finding in the summary, plus log, annotations and the artifact; public ones only counts, no artifact. A set value is ignored with a warning.
