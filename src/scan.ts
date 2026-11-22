@@ -23,7 +23,7 @@ export interface ScanOptions {
   greenHosting?: boolean;
   /** Start Chrome without its sandbox where the runner has none. */
   unsandboxed?: boolean;
-  /** Opt-in: trust the host of url even when it is a private or local address (self-hosted runner, own network). */
+  /** false: do not trust the host of url when it is a private or local address. */
   allowPrivateUrl?: boolean;
   /** Reuse a running browser (tests). */
   browser?: Browser;

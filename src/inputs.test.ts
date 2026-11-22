@@ -92,7 +92,7 @@ const FILE_ONLY: Record<string, string> = {
   modules: "the default runs all checks",
   "max-pages": "rarely changes",
   "require-sandbox": "safety setting, should stay on",
-  "allow-private-url": "off by default (SSRF protection), only for self-hosted runners on an own network",
+  "allow-private-url": "off by default, only for a site on localhost or an own network",
 };
 
 type Workflow = {
