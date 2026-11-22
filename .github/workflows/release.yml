@@ -9,6 +9,7 @@ name: release
 #    cannot bypass it. Every commit is made through the GitHub API, which signs it
 #    (.github/scripts/commit-signed.sh), so main can require signed commits.
 # 3. Publishes a GitHub release. Before v1.0.0 it is a pre-release.
+#    Moves the branch stable to the release commit; the dashboard's Dependabot follows it.
 # 4. Adds examples/workflows/rechtzeitig.yml pinned
 #    to the release commit to the branch release/vX.Y.Z, starts test.yml on it (commits with GITHUB_TOKEN start no
 #    workflows, a dispatch does) and opens a pull request to main. If Actions may not open
@@ -121,6 +122,14 @@ jobs:
           prerelease=()
           if [ "${NEXT%%.*}" = 0 ]; then prerelease=(--prerelease); fi
           gh release create "v$NEXT" --verify-tag --title "v$NEXT" --notes-file "$notes" "${prerelease[@]}"
+
+      - name: Move stable to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.tag.outputs.sha }}
+        run: |
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/stable" -f sha="$SHA" -F force=true > /dev/null 2>&1 \
+            || gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref=refs/heads/stable -f sha="$SHA" > /dev/null
 
       # The tagged commit stays as it is. The branch carries the same version plus the pin.
       - name: Open a pull request with the version and the pinned example workflow
