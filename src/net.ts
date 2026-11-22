@@ -2,7 +2,7 @@
 // without this, it could make the runner call its own network (cloud metadata, local services).
 // Every connection goes to the address that was checked, so a DNS answer that changes between check
 // and connect (DNS rebinding) cannot reach a private address. The browser connects through publicProxy().
-// The host of the URL the user passed is always allowed, so local dev servers and test fixtures work.
+// A caller can trust the host of the URL the user passed, so local dev servers and test fixtures work.
 
 import { lookup } from "node:dns/promises";
 import { request as httpRequest, type IncomingMessage } from "node:http";
@@ -17,6 +17,7 @@ for (const [net, prefix] of [
 ] as const) PRIVATE.addSubnet(net, prefix, "ipv4");
 for (const [net, prefix] of [
   ["::", 128], ["::1", 128], ["fc00::", 7], ["fe80::", 10], ["ff00::", 8], ["64:ff9b::", 96], ["2001:db8::", 32],
+  ["::", 96], ["::ffff:0:0:0", 96], ["64:ff9b:1::", 48], ["2002::", 16], ["fec0::", 10],
 ] as const) PRIVATE.addSubnet(net, prefix, "ipv6");
 
 export class BlockedHostError extends Error {}

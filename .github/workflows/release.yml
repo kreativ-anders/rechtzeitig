@@ -173,8 +173,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           NEXT: ${{ needs.release.outputs.next }}
         run: |
+          # The token goes into git's config through the environment, as actions/checkout does: not in argv or the URL.
+          export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="http.https://github.com/.extraheader"
+          export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
           cd wiki
           git add -A
           git diff --cached --quiet && { echo "The wiki is current."; exit 0; }
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Generated pages for v$NEXT"
-          git push -q "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.wiki.git" HEAD
+          git push -q "https://github.com/$GITHUB_REPOSITORY.wiki.git" HEAD

@@ -23,7 +23,9 @@ export default defineCheck({
       const text = visibleText(p.body);
       for (const re of LEAKS) {
         const m = re.exec(text);
-        if (m) leaks.push({ text: `${p.path} (HTTP ${p.status}): ${m[0].slice(0, 160)}` });
+        // Short quote only: an error page can contain server internals, and the report is aggregated
+        // (artifact, SARIF in the Security tab), so keep the finding to path, status and a short excerpt.
+        if (m) leaks.push({ text: `${p.path} (HTTP ${p.status}): ${m[0].slice(0, 80)}${m[0].length > 80 ? "…" : ""}` });
       }
     }
     const headers = { ...startSnapshot(ctx).headers, ...Object.assign({}, ...ctx.probes.map((p) => p.headers)) };
