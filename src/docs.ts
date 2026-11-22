@@ -6,7 +6,7 @@
 //   Inputs, Checks and one Checks-<Group> per group. The release workflow pushes them; locally they only feed the tests.
 
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { SEVERITIES, reviewProblems, switchSpec, type Switch } from "./rules.ts";
 import { loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } from "./runner.ts";
@@ -31,6 +31,7 @@ export interface ActionInput { description: string; default?: string; deprecatio
 /** Check groups (folders in checks/) in the order of the docs, with what each covers. */
 const MODULES: Record<string, [string, string]> = {
   legal: ["Legal", "Imprint, privacy policy, licenses, and for shops and subscriptions the cancellation, withdrawal and order buttons, prices and T&Cs."],
+  dfa: ["Digital Fairness Act proposal", "Dark patterns, prices and subscription reminders that the EU proposal COM(2026) 1100 would ban. A proposal, no law yet: no legal basis."],
   privacy: ["Privacy and consent", "Cookies, trackers and third parties before consent, the consent banner, and whether the privacy policy names what the site and the code use."],
   security: ["Security", "Headers, TLS, exposed files, committed secrets, vulnerable or invented packages, risky workflows and AI agent settings."],
   sustainability: ["Sustainability", "Caching, compression, image formats, lazy loading, pages that work without JavaScript, green hosting."],
@@ -185,7 +186,10 @@ function syncWiki(generated: string[]): void {
   const dir = fileURLToPath(WIKI_DIR);
   const git = (...args: string[]) => execFileSync("git", args, { stdio: "inherit" });
   if (!existsSync(new URL(".git", WIKI_DIR))) return void git("clone", "--quiet", `${WIKI.replace(/\/wiki$/, "")}.wiki.git`, dir);
-  const tracked = generated.filter((f) => existsSync(new URL(f, WIKI_DIR)));
+  // A page of a new group is not in the wiki yet: drop it, it is written again below.
+  const known = new Set(execFileSync("git", ["-C", dir, "ls-files"], { encoding: "utf8" }).split("\n"));
+  for (const f of generated.filter((f) => !known.has(f))) rmSync(new URL(f, WIKI_DIR), { force: true });
+  const tracked = generated.filter((f) => known.has(f));
   if (tracked.length) git("-C", dir, "checkout", "--", ...tracked);
   git("-C", dir, "pull", "--quiet", "--ff-only");
 }

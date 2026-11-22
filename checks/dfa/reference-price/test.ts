@@ -5,9 +5,9 @@ import { failedJsPage, fakeLink, fakePage, runCheck, runFake } from "../../../te
 const here = import.meta.dirname;
 const sales = true;
 
-test("gives info for a price struck through against the RRP", async () => {
+test("warns for a price struck through against the RRP", async () => {
   const result = await runCheck(here, "rrp", { sales });
-  assert.equal(result.status, "info");
+  assert.equal(result.status, "warn");
   assert.match(result.details[0], /129,00 €/);
 });
 

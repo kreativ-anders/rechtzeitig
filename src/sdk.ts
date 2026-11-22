@@ -487,6 +487,33 @@ export interface Style {
   background: string;
 }
 
+type Rgba = [number, number, number, number];
+
+/** Parses a computed rgb()/rgba() color; undefined for other formats (oklch, color()). */
+function parseColor(color: string): Rgba | undefined {
+  const m = color.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?\s*\)$/);
+  if (!m) return undefined;
+  const alpha = m[4] === undefined ? 1 : m[4].endsWith("%") ? parseFloat(m[4]) / 100 : parseFloat(m[4]);
+  return [Number(m[1]), Number(m[2]), Number(m[3]), alpha];
+}
+
+/** Relative luminance, WCAG 2.1. */
+const luminance = (rgb: number[]) => {
+  const [r, g, b] = rgb.map((v) => v / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const over = (top: Rgba, under: number[]) => top.slice(0, 3).map((v, i) => v * top[3] + under[i] * (1 - top[3]));
+
+/** WCAG contrast ratio of text against its background, both laid over white; undefined when a color cannot be read. */
+export function contrast(style: Pick<Style, "color" | "background">): number | undefined {
+  const fg = parseColor(style.color);
+  const bg = parseColor(style.background);
+  if (!fg || !bg) return undefined;
+  const back = over(bg, [255, 255, 255]);
+  const [light, dark] = [luminance(over(fg, back)), luminance(back)].sort((x, y) => y - x);
+  return (light + 0.05) / (dark + 0.05);
+}
+
 export interface Request {
   url: string;
   host: string;
@@ -579,6 +606,17 @@ export interface Snapshot {
   titles: string[];
   /** Permission prompts the page started on its own in the load with JavaScript: the API and the first script URL on the stack ("" when none). */
   prompts: Array<{ api: string; script: string }>;
+  /**
+   * Texts shaped like a countdown (`countdown` in data/dark-patterns.yml), in the load with JavaScript: `text` when the
+   * page settled at `at` (ms since 1970, the runner's clock), `later` after `dfa/fake-countdown.wait_ms`. At most 20.
+   */
+  timers: Timer[];
+  /**
+   * Text blocks with a price (`price` in data/shop.yml) or a period, renewal or trial phrase (`price_period`,
+   * `auto_renewal`, `free_trial` of any language in lang/), in the load with JavaScript, at most 30; `textSize` is the
+   * font size most of the page's visible text has (0 without JavaScript).
+   */
+  offers: { textSize: number; blocks: OfferText[] };
   /** Visible text, as a user would read it. */
   text: string;
   /** Links and buttons, including those in open shadow roots (consent banners). */
@@ -636,6 +674,24 @@ export interface Page {
   url: string;
   noJs: Snapshot;
   js: Snapshot;
+  /** A third load with JavaScript in a fresh browser context (no cookies, no storage), only for pages with a running countdown. */
+  fresh?: Snapshot;
+}
+
+/** A block of text as rendered: the font size and color most of its characters have, its largest font size, its background. */
+export interface OfferText {
+  text: string;
+  fontSize: number;
+  maxFontSize: number;
+  color: string;
+  background: string;
+}
+
+/** A countdown-like text sampled twice in one load (Snapshot.timers). */
+export interface Timer {
+  text: string;
+  later: string;
+  at: number;
 }
 
 /** A path from data/probes.yml, fetched once without a browser. */

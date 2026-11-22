@@ -66,22 +66,19 @@ test("examples/report.schema.json is current (npm run docs)", () => {
   assert.deepEqual(JSON.parse(readFileSync(REPORT_SCHEMA_FILE, "utf8")), reportSchema());
 });
 
-const preview: Outcome = {
-  id: "legal/fake-notification", rule: { ...rule, id: "LEG-EU-FAIR-002", severity: "info", proposal: "dfa", value: "Digital Fairness Act proposal COM(2026) 1100, not law: x" },
-  status: "info", message: { key: "found", params: { count: 1 } }, details: [],
+const dfa: Outcome = {
+  id: "dfa/fake-notification", rule: { ...rule, id: "LEG-DFA-002", severity: "medium", value: "Digital Fairness Act proposal COM(2026) 1100, Annex I point 61: x" },
+  status: "warn", message: { key: "found", params: { count: 1 } }, details: [],
 };
-
-test("a result of a rule based on a proposal carries preview with the proposal's id, title and status; others none", () => {
-  const [plain, marked] = toReportJson([secrets, preview], meta).results;
-  assert.equal(plain.preview, undefined);
-  assert.deepEqual(marked.preview, { proposal: "dfa", title: "Digital Fairness Act proposal COM(2026) 1100", status: "proposal" });
-});
 
 test("a report with every status, skip reason, suppression and coverage matches the schema", () => {
   const coverage = { listing: "git", submodules: [], lfs: [], large: [], binary: [], lockfiles: { parsed: [], empty: [], failed: [] }, unsupported: [], private: [] } as RepoCoverage;
-  const report = JSON.parse(JSON.stringify(toReportJson([...all, preview], { ...meta, coverage })));
+  const report = JSON.parse(JSON.stringify(toReportJson([...all, dfa], { ...meta, coverage })));
   assert.equal(report.schema_version, SCHEMA_VERSION);
   assert.deepEqual(validate(reportSchema() as Schema, report), []);
+  // v0.10.0 wrote `preview` for rules of the DFA proposal: its reports still validate as schema 2.
+  const old = { ...report, results: [{ ...report.results[0], preview: { proposal: "dfa", title: "t", status: "proposal" } }] };
+  assert.deepEqual(validate(reportSchema() as Schema, old), []);
   // The validator itself catches what the schema forbids.
   const broken = { ...report, results: [{ ...report.results[0], locations: [{ file: "a", extra: 1 }] }], schema_version: 1 };
   assert.deepEqual(validate(reportSchema() as Schema, broken).sort(), ["$.results[0].locations[0]: extra is not allowed", "$.results[0].locations[0]: fingerprint is missing", "$.schema_version: must be 2"]);

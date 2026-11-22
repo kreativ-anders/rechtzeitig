@@ -1,0 +1,14 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+# Today § 312j Abs. 2 BGB asks for the minimum term only on the order page (legal/order-button covers that page).
+id: LEG-DFA-008
+severity: low
+title: "Renewal and trial terms are as visible as the price"
+value: "Digital Fairness Act proposal COM(2026) 1100, Annex I point 60: would ban showing the automatic renewal of a subscription less prominently than its price."
+how: "In the load with JavaScript of every own page, finds a block with a price (`price` in `data/shop.yml`) per period (`price_period`) and the blocks that name a renewal or a trial (`auto_renewal`, `free_trial`), and warns when even the most visible of them is smaller than `min_font_ratio` of the font size most of the page's text has or has a WCAG contrast below `min_contrast` (`data/thresholds.yml`); info when the page names no renewal or trial terms at all, or did not load with JavaScript. Terms only in an image, a tooltip or a linked page are not seen."
+requires: [subscriptions]
+fix_hint: "Put the renewal and trial terms right next to the price, in the normal text size and colour, for example \"9,99 € / Monat, verlängert sich monatlich, jederzeit kündbar\"."
+meta:
+  last_reviewed: "2026-11-22"
+  sources:
+  - https://commission.europa.eu/document/download/a0539d90-2758-48e5-9010-1e856030d166_en?filename=Annexes%20to%20the%20Proposal%20for%20a%20Digital%20Fairness%20Act.pdf
+  - https://www.w3.org/TR/WCAG22/#contrast-minimum

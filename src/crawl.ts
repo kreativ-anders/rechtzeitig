@@ -47,6 +47,8 @@ const SKIP_FILES = /\.(pdf|zip|gz|dmg|pkg|exe|msi|apk|jpe?g|png|gif|svg|webp|avi
 const SAMPLE_ORDER: Area[] = ["nav", "header", "footer", "main", "other", "banner"];
 const CRAWL = loadYaml<{ crawl: { legal_links_per_concept: number } }>("data/thresholds.yml").crawl;
 const MAX_COUNTRY_LOOKUPS = 30;
+const COUNTDOWN = loadYaml<Record<string, { reload_ms: number; max_pages: number }>>("data/thresholds.yml")["dfa/fake-countdown"];
+const sleep = (ms: number) => new Promise((done) => setTimeout(done, Math.max(0, ms)));
 
 const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_FILES.test(new URL(href).pathname);
 
@@ -55,6 +57,8 @@ const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_
  * then a sample of same-site pages, up to maxPages. The scan language is German, else English: the start page's own
  * (`<html lang>`), else its version in that language (hreflang) on the same site, which is visited too and whose legal
  * links are read first. Neither: the scan stops. Each page is loaded twice: JavaScript off and on.
+ * A page with a running countdown (a timer text that changed between two readings) is loaded a third time in a
+ * fresh browser context, for dfa/fake-countdown.
  */
 export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlData & { lang: Language }> {
   // The host the user asked for is trusted, also when it is local (dev servers, test fixtures), unless allowPrivateUrl is false.
@@ -71,12 +75,14 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     // No downloads; no service workers, so every request passes the proxy and, in tests, the route below.
     acceptDownloads: false, serviceWorkers: "block" as const,
   };
-  const noJs = await opts.browser.newContext({ ...settings, javaScriptEnabled: false });
-  const js = await opts.browser.newContext(settings);
   // Tests: only the fixture host is reached, requests to others are recorded, then aborted.
-  if (opts.offline) {
-    for (const c of [noJs, js]) await c.route("**", (route) => (new URL(route.request().url()).host === input.host ? route.continue() : route.abort()));
-  }
+  const newContext = async (extra: { javaScriptEnabled?: boolean } = {}) => {
+    const c = await opts.browser.newContext({ ...settings, ...extra });
+    if (opts.offline) await c.route("**", (route) => (new URL(route.request().url()).host === input.host ? route.continue() : route.abort()));
+    return c;
+  };
+  const noJs = await newContext({ javaScriptEnabled: false });
+  const js = await newContext();
 
   const code = new CodeCollector();
   try {
@@ -125,6 +131,16 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       // Legal pages may live on other domains, but never inside a private network.
       if (!(await isPublicHost(new URL(key).hostname, trusted))) continue;
       pages.push(await visit(key));
+    }
+    // A countdown that restarts for every visitor ends later in a fresh context: no cookies, no storage.
+    for (const page of pages.filter((p) => p.js.timers.some((t) => t.text !== t.later)).slice(0, COUNTDOWN.max_pages)) {
+      await sleep(page.js.timers[0].at + COUNTDOWN.reload_ms - Date.now());
+      const fresh = await newContext();
+      try {
+        page.fresh = await capture(fresh, page.url, true, opts.timeout);
+      } finally {
+        await fresh.close();
+      }
     }
 
     // Lookups without a browser follow the start page only within the same site; otherwise they use the input URL.

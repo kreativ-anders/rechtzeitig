@@ -49,13 +49,16 @@ suppress:
   # - rule: LEG-EU-DSE-001 # Privacy policy is linked and reachable
   # - rule: LEG-EU-DSE-002 # Privacy policy covers the required topics
   # - rule: LEG-EU-DSE-003 # Forms link to the privacy policy
-  # - rule: LEG-EU-FAIR-001 # No strike-through price against the RRP
-  # - rule: LEG-EU-FAIR-002 # No fake notifications in the page title
-  # - rule: LEG-EU-FAIR-003 # No notification prompt the visitor did not ask for
-  # - rule: LEG-EU-FAIR-004 # Saying no is not worded to shame
-  # - rule: LEG-EU-FAIR-005 # Limited-time offers say when they end
-  # - rule: LEG-EU-FAIR-006 # Free trials and renewals send a reminder
   # - rule: LEG-EU-ODR-001 # No link to the closed EU dispute platform
+  # Digital Fairness Act proposal
+  # - rule: LEG-DFA-001 # No strike-through price against the RRP
+  # - rule: LEG-DFA-002 # No fake notifications in the page title
+  # - rule: LEG-DFA-003 # No notification prompt the visitor did not ask for
+  # - rule: LEG-DFA-004 # Saying no is not worded to shame
+  # - rule: LEG-DFA-005 # Limited-time offers say when they end
+  # - rule: LEG-DFA-006 # Free trials and renewals send a reminder
+  # - rule: LEG-DFA-007 # Countdowns do not restart for every visitor
+  # - rule: LEG-DFA-008 # Renewal and trial terms are as visible as the price
   # Privacy and consent
   # - rule: LEG-EU-CNS-001 # No third-party servers before consent
   # - rule: LEG-EU-CNS-002 # No cookies before consent

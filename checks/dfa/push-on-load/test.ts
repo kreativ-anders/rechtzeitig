@@ -4,9 +4,9 @@ import { failedJsPage, fakePage, runCheck, runFake } from "../../../test/helpers
 
 const here = import.meta.dirname;
 
-test("gives info for a notification prompt on load and names the script", async () => {
+test("warns for a notification prompt on load and names the script", async () => {
   const result = await runCheck(here, "prompt");
-  assert.equal(result.status, "info");
+  assert.equal(result.status, "warn");
   assert.equal(result.raw.details?.[0].params?.api, "Notification.requestPermission");
   assert.match(result.details[0], /\/push\.js/);
 });

@@ -1,4 +1,4 @@
-import { capped, defineCheck, info, jsIncomplete, loadYaml, msg, pageLinks, pass, skip, unique, type Finding } from "../../../src/sdk.ts";
+import { capped, defineCheck, info, jsIncomplete, loadYaml, msg, pageLinks, pass, skip, unique, warn, type Finding } from "../../../src/sdk.ts";
 
 const PRICE = new RegExp(loadYaml<{ price: string[] }>("data/shop.yml").price.join("|"), "i");
 const flat = (text: string) => text.replace(/\s+/g, " ");
@@ -12,7 +12,7 @@ export default defineCheck({
       const struck = unique([...page.js.struck, ...page.noJs.struck].map(flat), (s) => s).filter((s) => PRICE.test(s));
       return struck.length && ctx.says("rrp", page.js.text) ? [{ key: "rrp", params: { where: ctx.short(page.url), price: struck[0] } }] : [];
     });
-    if (found.length) return info(msg("found", { count: found.length }), capped(found));
+    if (found.length) return warn(msg("found", { count: found.length }), capped(found));
     // Struck-through prices are read from the rendered page: a page without its load with JavaScript was not seen.
     return jsIncomplete(ctx, info) ?? pass(msg("no_rrp", { count: shopPages.length }));
   },

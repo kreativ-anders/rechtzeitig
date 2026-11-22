@@ -1,0 +1,8 @@
+<!doctype html><html lang="de"><head><title>Sale</title></head><body><main><h1>Sommer-Sale</h1><p>Angebot endet um Mitternacht (UTC): <span id="t"></span></p>
+<script>
+  // Counts to the same end for every visitor: the next midnight UTC.
+  const end = Math.ceil(Date.now() / 86400000) * 86400000;
+  const pad = (n) => String(n).padStart(2, "0");
+  const tick = () => { const s = Math.max(0, Math.floor((end - Date.now()) / 1000)); document.getElementById("t").textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`; };
+  tick(); setInterval(tick, 200);
+</script></main></body></html>
