@@ -1,5 +1,5 @@
 // Command line entry. Used by action.yml and for local runs:
-//   node src/main.ts --url https://example.de --repo . --language de
+//   node src/main.ts --url https://example.de --repo .
 
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
@@ -69,7 +69,6 @@ const failed = (e: unknown) => exit(errorMessage(e));
 const repo = values.repo?.trim() && wantsRepo ? await scanRepo(values.repo, { osv }).catch(failed) : undefined;
 const web = url && wantsWeb
   ? await scan(url, {
-      language: values.language,
       subscriptions: enabled.includes("subscriptions"),
       sales: enabled.includes("sales"),
       maxPages: Number(values["max-pages"]) || 10,
@@ -83,9 +82,6 @@ const web = url && wantsWeb
     }).catch(failed)
   : undefined;
 if (!web && !repo) exit("Nothing to scan. Set a URL, or check out the repository before this step.");
-if (web && web.start.js.status === 0 && web.start.noJs.status === 0) {
-  exit(`Could not load ${url}: ${web.start.js.error ?? web.start.noJs.error ?? "unknown error"}`);
-}
 
 // Every check gets an outcome; those that cannot run are skips that say why. Rules turned off in
 // .github/rechtzeitig.yml still run and become "suppressed" with their reason; that file is read from the checkout
@@ -105,7 +101,7 @@ const write = (file: string, text: string) => {
 if (values.sarif) write(values.sarif, JSON.stringify(toSarif(report, { base, anchor: workflowFile() }), null, 2));
 const json = JSON.stringify(toReportJson(outcomes, {
   version: VERSION, startedAt, base,
-  target: { url: web?.url, repository: repo && repoName(repo.root), ...(web && { languages: web.languages, languages_from: web.languagesFrom }) },
+  target: { url: web?.url, repository: repo && repoName(repo.root), ...(web && { languages: web.languages, languages_from: "page" as const }) },
   ...(repo && { coverage: repo.coverage }),
 }), null, 2);
 if (values.report) {

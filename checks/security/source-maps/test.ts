@@ -41,7 +41,7 @@ test("passes when the map is not served", async () => {
 });
 
 test("skips a site without scripts of its own", async () => {
-  const site = await siteFromFiles({ "index.html": "<html><body>Hello</body></html>" });
+  const site = await siteFromFiles({ "index.html": "<html lang=\"en\"><body>Hello</body></html>" });
   assert.equal((await runCrossCheck(here, site, repo)).status, "skip");
 });
 

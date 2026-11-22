@@ -27,7 +27,7 @@ test("gives info when the site uses Supabase but the repository has no migration
 });
 
 test("finds Firebase from a request and fails for open rules", async () => {
-  const site = await siteFromFiles({ "index.html": '<html><body>App<script src="https://abc-default-rtdb.firebaseio.com/x.js"></script></body></html>' });
+  const site = await siteFromFiles({ "index.html": '<html lang="en"><body>App<script src="https://abc-default-rtdb.firebaseio.com/x.js"></script></body></html>' });
   const result = await runCrossCheck(here, site, { "database.rules.json": '{ "rules": { ".read": true } }' });
   assert.equal(result.status, "fail");
 });

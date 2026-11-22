@@ -9,7 +9,7 @@ test("passes when the imprint is linked and has content", async () => {
 });
 
 test("finds an English legal notice", async () => {
-  assert.equal((await runCheck(here, "english", { language: "en" })).status, "pass");
+  assert.equal((await runCheck(here, "english")).status, "pass");
 });
 
 test("fails without a link", async () => {
@@ -26,7 +26,7 @@ test("fails when the page returns 404", async () => {
   assert.match(result.message, /404/);
 });
 
-// Issue #52: an English scan of a German page finds the German imprint link.
-test("finds a German imprint link in an English scan", async () => {
-  assert.equal((await runCheck(here, "other-language", { language: "en" })).status, "pass");
+// Issue #52: an English page finds its German imprint link.
+test("finds a German imprint link on an English page", async () => {
+  assert.equal((await runCheck(here, "other-language")).status, "pass");
 });

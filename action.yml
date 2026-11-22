@@ -10,8 +10,8 @@ inputs:
     description: URL of the start page. Leave empty to scan only the repository. Never take it from untrusted event data (pull request, issue or comment fields).
     default: ""
   language:
-    description: Language of the site, for the words checks look for. auto = from the start page's html lang and hreflang alternates, de when none of them is in lang/ (the summary names the result). Or de, en, a list such as de,en, or all.
-    default: auto
+    description: Removed. The language comes from the start page, German first, else English (html lang, else an hreflang version on the same site); any other language stops the run. A set value is ignored with a warning.
+    deprecationMessage: language was removed, the language comes from the start page. Remove the input.
   subscriptions:
     description: true if visitors can sign up for subscriptions (checks the cancellation button, § 312k BGB).
     default: "false"
@@ -19,7 +19,7 @@ inputs:
     description: true if consumers buy or sign contracts on the site (turns on the shop checks for withdrawal, order button, prices and T&Cs).
     default: "false"
   modules:
-    description: Comma list of check groups (legal, privacy, security, sustainability, accessibility, quality) or scopes (website, repository, both; repo is the same as repository) to run. A check runs when its group or its scope is listed; a check of both runs for website or repository, and both picks only those. Empty = all.
+    description: Comma list of check groups (legal, dfa, privacy, security, sustainability, accessibility, quality) or scopes (website, repository, both; repo is the same as repository) to run. A check runs when its group or its scope is listed; a check of both runs for website or repository, and both picks only those. Empty = all.
     default: ""
   report-language:
     description: Removed. The report is English; readable reports in other languages are built from its keys and parameters. A set value is ignored with a warning.
@@ -119,7 +119,6 @@ runs:
       shell: bash
       env:
         URL: ${{ inputs.url }}
-        LANGUAGE: ${{ inputs.language }}
         SUBSCRIPTIONS: ${{ inputs.subscriptions }}
         SALES: ${{ inputs.sales }}
         MODULES: ${{ inputs.modules }}
@@ -134,7 +133,7 @@ runs:
         SARIF: ${{ steps.sarif.outputs.upload == 'true' && format('{0}/sarif/rechtzeitig.sarif', runner.temp) || '' }}
       run: >
         node --disable-warning=ExperimentalWarning "$GITHUB_ACTION_PATH/src/main.ts"
-        --url "$URL" --repo "$REPOSITORY" --language "$LANGUAGE" --subscriptions "$SUBSCRIPTIONS"
+        --url "$URL" --repo "$REPOSITORY" --subscriptions "$SUBSCRIPTIONS"
         --sales "$SALES" --modules "$MODULES"
         --fail-on "$FAIL_ON" --max-pages "$MAX_PAGES" --vulnerabilities "$VULNERABILITIES"
         --green-hosting "$GREEN_HOSTING" --require-sandbox "$REQUIRE_SANDBOX" --allow-private-url "$ALLOW_PRIVATE_URL" --sarif "$SARIF"

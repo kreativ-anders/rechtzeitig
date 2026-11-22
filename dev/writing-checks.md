@@ -2,7 +2,7 @@
 
 ## A new check
 
-1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`, and `quality` for rules without a legal basis), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/copyleft-dependencies`. Whether it reads the website or the repository follows from `defineCheck`, `defineRepoCheck` or, for both together, `defineCrossCheck` (its scope, shown on `docs/checks.html`).
+1. Create `checks/<category>/<name>/`. The path is the check's id, for example `legal/imprint`. The folder is the group, a legal or topic area (`legal`, `privacy`, `security`, `sustainability`, `accessibility`, and `quality` and `dfa` for rules without a legal basis), never the scan target: a repository check goes into the group its legal basis belongs to, like `security/secrets` or `legal/copyleft-dependencies`. Whether it reads the website or the repository follows from `defineCheck`, `defineRepoCheck` or, for both together, `defineCrossCheck` (its scope, shown on `docs/checks.html`).
 2. Add `rule.yml` with the metadata. Title, legal basis and fix hint in English only: the report is English, and readable reports in other languages are built outside the engine from rule ids and message keys.
 
    ```yaml
@@ -96,7 +96,7 @@ The runner finds the check by itself. Nothing else needs to change.
 
 | File | Add here |
 |---|---|
-| `lang/<code>.yml` | Words. `links` concepts match link and button labels (the crawler opens matching links); `text` concepts match page text. Patterns run on normalized text: lowercase, `ä→ae ö→oe ü→ue ß→ss`. A new language is a new file with the same keys; a test checks this. Add the code to `examples/workflows/rechtzeitig.yml`. |
+| `lang/<code>.yml` | Words. `links` concepts match link and button labels (the crawler opens matching links); `text` concepts match page text. Patterns run on normalized text: lowercase, `ä→ae ö→oe ü→ue ß→ss`. A new language is a new file with the same keys and an entry in `LANGUAGES` in `src/lang.ts`; tests check both. |
 | `data/third-parties.yml` | A service: hosts, country, whether it needs consent, how a privacy policy names it, its cookies, advice in English (the loader rejects an empty one). |
 | `data/probes.yml` | A path to request. `kind: file` with an `expect` pattern for files that must not be public, `kind: error` for error pages, `kind: public` for files that should be public and a check reads (`security.txt`). |
 | `data/secrets.yml` | A secret pattern with `fail` or `warn` under `rules`, with `keywords` (lowercase, the line must contain one), a group named `secret`, and `entropy: token` (or `generic`) so placeholders drop out. With `allow`, a documented example; with `payload`, match group 1 is decoded as a JWT payload and must have the listed claims. A pattern adapted from gitleaks (MIT) is fine, it is named in `NOTICE`; never take detectors from AGPL projects such as trufflehog. |

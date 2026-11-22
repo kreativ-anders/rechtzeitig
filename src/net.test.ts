@@ -71,7 +71,7 @@ test("fetchPublic checks every redirect hop", async () => {
 
 test("legal links into private networks are not visited", async () => {
   const site = mkdtempSync(join(tmpdir(), "rechtzeitig-ssrf-"));
-  writeFileSync(join(site, "index.html"), `<footer><a href="http://169.254.169.254/impressum">Impressum</a><a href="http://localhost:1/datenschutz">Datenschutz</a></footer>`);
+  writeFileSync(join(site, "index.html"), `<html lang="de"><footer><a href="http://169.254.169.254/impressum">Impressum</a><a href="http://localhost:1/datenschutz">Datenschutz</a></footer>`);
   const ctx = await scanFixture(site);
   assert.deepEqual(ctx.pages.map((p) => new URL(p.url).hostname), ["127.0.0.1"]);
 });
@@ -81,7 +81,7 @@ test("the browser reaches private addresses only on the trusted host, also throu
   const server = createServer((req, res) => {
     hits.push(req.url ?? "");
     if (req.url === "/redirect") res.writeHead(302, { location: `http://localhost:${port}/leak-redirect` }).end();
-    else res.writeHead(200, { "content-type": "text/html" }).end(`<img src="http://localhost:${port}/leak-name"><img src="/redirect">`);
+    else res.writeHead(200, { "content-type": "text/html" }).end(`<html lang="de"><img src="http://localhost:${port}/leak-name"><img src="/redirect">`);
   });
   await new Promise<void>((done) => server.listen(0, "127.0.0.1", done));
   const { port } = server.address() as { port: number };

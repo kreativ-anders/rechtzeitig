@@ -1,0 +1,12 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DFA-003
+severity: low
+title: "No notification prompt the visitor did not ask for"
+value: "Digital Fairness Act proposal COM(2026) 1100, Art. 17: would ask that notifications are not started without the user, and Annex I point 62 bans pushing a choice the user did not make; browsers already block such prompts."
+how: "In the load with JavaScript of every own page, without any click, records calls of `Notification.requestPermission` and `PushManager.subscribe` with the first script on the stack (`src/capture.ts`) and warns for each, naming the service (`data/third-parties.yml` through the scan context) or the own script; info instead of no finding when a page did not load with JavaScript."
+fix_hint: "Ask for notification permission only after the visitor clicks a button that says what they will get."
+meta:
+  last_reviewed: "2026-11-22"
+  sources:
+  - https://commission.europa.eu/document/download/0575d59f-554f-4a9e-b54b-e6b717175809_en?filename=Proposal%20for%20a%20Digital%20Fairness%20Act_0.pdf
+  - https://notifications.spec.whatwg.org/

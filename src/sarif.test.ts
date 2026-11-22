@@ -10,7 +10,7 @@ const report = (outcomes: Report["outcomes"], web = false): Report => ({
   outcomes, version: "1.2.3", startedAt: "now", onGitHub: true,
   ...(web ? { web: { url: "https://example.de/" } as ScanContext } : {}),
 });
-type Sarif = { version: string; runs: Array<{ tool: { driver: { rules: Array<{ id: string; helpUri: string; properties: Record<string, unknown> }> } }; results: Array<{ ruleId: string; level: string; message: { text: string }; locations?: Array<{ physicalLocation: { artifactLocation: { uri: string }; region: { startLine: number } } }>; partialFingerprints: Record<string, string> }> }> };
+type Sarif = { version: string; runs: Array<{ tool: { driver: { rules: Array<{ id: string; help: { text: string }; helpUri: string; properties: Record<string, unknown> }> } }; results: Array<{ ruleId: string; level: string; message: { text: string }; locations?: Array<{ physicalLocation: { artifactLocation: { uri: string }; region: { startLine: number } } }>; partialFingerprints: Record<string, string> }> }> };
 const sarif = (r: Report, opts = {}) => toSarif(r, opts) as Sarif;
 
 test("findings in files point to their file and line, passed and skipped checks are left out", () => {
@@ -30,14 +30,13 @@ test("findings in files point to their file and line, passed and skipped checks 
   assert.match(s.runs[0].tool.driver.rules[0].helpUri, /wiki\/Checks-Security#sec-secrets-001$/);
 });
 
-test("rules based on a proposal stay out of SARIF: a preview is no security finding", () => {
-  const preview = { ...rule("LEG-EU-FAIR-002"), severity: "info", proposal: "dfa" } as Rule;
-  const s = sarif(report([
-    { id: "legal/fake-notification", rule: preview, status: "info", message: "Title changes to a count", details: ["(1) Shop"] },
-    { id: "legal/imprint", rule: rule("LEG-DE-IMP-001"), status: "fail", message: "No imprint", details: [] },
-  ], true));
-  assert.deepEqual(s.runs[0].results.map((r) => r.ruleId), ["LEG-DE-IMP-001"]);
-  assert.deepEqual(s.runs[0].tool.driver.rules.map((r) => r.id), ["LEG-DE-IMP-001"]);
+test("rules of the DFA proposal go into SARIF like every rule, with their value as the reason", () => {
+  const value = "Digital Fairness Act proposal COM(2026) 1100, Annex I point 61: would ban fake notifications.";
+  const dfa = { ...rule("LEG-DFA-002"), legal_basis: undefined, severity: "medium", value } as Rule;
+  const s = sarif(report([{ id: "dfa/fake-notification", rule: dfa, status: "warn", message: "Title changes to a count", details: ["(1) Shop"] }], true));
+  assert.deepEqual(s.runs[0].results.map((r) => r.ruleId), ["LEG-DFA-002"]);
+  assert.match(s.runs[0].tool.driver.rules[0].help.text, /no legal basis: Digital Fairness Act proposal/i);
+  assert.match(s.runs[0].tool.driver.rules[0].helpUri, /wiki\/Checks-Dfa#leg-dfa-002$/);
 });
 
 test("website findings become one alert at the workflow file, with the URL and details", () => {

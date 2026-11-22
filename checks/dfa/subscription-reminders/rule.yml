@@ -1,0 +1,14 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DFA-006
+severity: low
+title: "Free trials and renewals send a reminder"
+value: "Digital Fairness Act proposal COM(2026) 1100, Art. 20 to 22: would require a reminder before a free trial turns paid and before a subscription renews."
+how: "When the project uses a payment provider (`packages:` of `purpose: payment` in `data/third-parties.yml`), finds code that starts a free trial or creates a recurring plan (`trial`, `recurring` in `data/subscription-billing.yml`) and gives info when no code handles the provider's event before the trial ends or the plan renews, nor sends its own reminder (`trial_reminder`, `renewal_reminder`); info instead of no finding when a code file could not be read. Reminder emails the provider sends by a dashboard setting are not visible."
+requires: [subscriptions]
+fix_hint: "Send a reminder before a trial turns paid and before a subscription renews: handle the provider's event (Stripe customer.subscription.trial_will_end and invoice.upcoming) or turn on the provider's own reminder emails."
+meta:
+  last_reviewed: "2026-11-22"
+  sources:
+  - https://commission.europa.eu/document/download/0575d59f-554f-4a9e-b54b-e6b717175809_en?filename=Proposal%20for%20a%20Digital%20Fairness%20Act_0.pdf
+  - https://docs.stripe.com/billing/subscriptions/trials
+  - https://docs.stripe.com/api/events/types

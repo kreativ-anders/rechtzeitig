@@ -63,22 +63,13 @@ test("a quality rule states its value instead of a legal basis, and no rule has 
   for (const c of quality) assert.ok(page.includes(`No legal basis: ${c.rule.value}`), c.id);
 });
 
-test("a rule based on a proposal is info, has no legal basis and says in value that it is no law", async () => {
-  const value = "Digital Fairness Act proposal COM(2026) 1100, not law: Annex I point 61 would ban it.";
-  const preview = { ...rule, severity: "info", proposal: "dfa", value } as Rule;
-  assert.deepEqual(validateRule(preview, "legal"), []);
-  assert.match(validateRule({ ...preview, severity: "low" }).join(), /severity info/);
-  assert.match(validateRule({ ...preview, value: undefined, legal_basis: "Art. 61" }).join(), /no legal_basis/);
-  assert.match(validateRule({ ...preview, value: "Would be banned." }).join(), /needs value: "Digital Fairness Act proposal COM\(2026\) 1100, not law: \.\.\."/);
-  assert.match(validateRule({ ...preview, proposal: "xyz" }).join(), /not in data\/proposals\.yml/);
-  assert.match(validateRule({ ...rule, value }).join(), /set proposal: dfa/);
-  const previews = (await loadChecks()).filter((c) => c.rule.proposal);
-  assert.ok(previews.length > 0 && previews.every((c) => c.rule.severity === "info" && !c.rule.legal_basis));
-  // Info only, also when the check itself runs: a preview never warns or fails, whatever fail-on is set to.
-  for (const c of previews) {
-    const code = readFileSync(new URL(`../checks/${c.id}/check.ts`, import.meta.url), "utf8");
-    assert.doesNotMatch(code, /\b(warn|fail)\(/, `${c.id} returns warn or fail`);
-  }
+test("a rule of the DFA proposal has no legal basis and names the proposal first in value", async () => {
+  const value = "Digital Fairness Act proposal COM(2026) 1100, Annex I point 61: would ban it.";
+  assert.deepEqual(validateRule({ ...rule, id: "LEG-DFA-001", value }, "dfa"), []);
+  assert.match(validateRule({ ...rule, value, legal_basis: "Art. 61" }, "dfa").join(), /have no legal_basis/);
+  assert.match(validateRule({ ...rule, value: "Would be banned." }, "dfa").join(), /need value: "Digital Fairness Act proposal COM\(2026\) 1100, <article>: \.\.\."/);
+  const dfa = (await loadChecks()).filter((c) => moduleOf(c.id) === "dfa");
+  assert.ok(dfa.length > 0 && dfa.every((c) => c.rule.id.startsWith("LEG-DFA-") && !c.rule.legal_basis), dfa.map((c) => c.rule.id).join());
 });
 
 test("data/proposals.yml: each proposal has a known status, official sources and was checked within proposals.max_age_days", () => {
@@ -91,10 +82,10 @@ test("data/proposals.yml: each proposal has a known status, official sources and
   }
 });
 
-test("a rule based on a proposal says on its wiki page that it is no law", async () => {
+test("a rule of the DFA proposal says on its wiki page that it has no legal basis", async () => {
   const checks = await loadChecks();
   const pages = wikiPages(checks, {}, "main");
-  for (const c of checks.filter((x) => x.rule.proposal)) {
+  for (const c of checks.filter((x) => moduleOf(x.id) === "dfa")) {
     assert.ok(pages[`${groupPage(moduleOf(c.id))}.md`].includes(`No legal basis: ${c.rule.value}`), c.id);
   }
 });

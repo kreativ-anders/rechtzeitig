@@ -5,7 +5,7 @@ import { runCrossCheck, siteFromFiles } from "../../../test/helpers.ts";
 const here = import.meta.dirname;
 
 const txt = (contact: string, expires = "2099-01-01T00:00:00Z") => `Contact: ${contact}\nExpires: ${expires}\n`;
-const site = (body?: string) => siteFromFiles({ "index.html": "<html><body>Hi</body></html>", ...(body && { ".well-known/security.txt": body }) });
+const site = (body?: string) => siteFromFiles({ "index.html": "<html lang=\"en\"><body>Hi</body></html>", ...(body && { ".well-known/security.txt": body }) });
 const repo = { "public/.well-known/security.txt": txt("mailto:security@example.de") };
 
 test("passes when the site serves the repository's security.txt", async () => {

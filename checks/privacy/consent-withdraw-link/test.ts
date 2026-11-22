@@ -11,7 +11,7 @@ test("passes for a settings link in the footer", async () => {
 });
 
 test("passes for a floating icon named by aria-label", async () => {
-  assert.equal((await runCheck(here, "icon", { language: "en" })).status, "pass");
+  assert.equal((await runCheck(here, "icon")).status, "pass");
 });
 
 test("gives info when the link is only in the privacy policy", async () => {

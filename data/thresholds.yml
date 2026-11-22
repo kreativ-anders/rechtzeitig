@@ -10,7 +10,7 @@ common:
   login_form_max_fields: 2
 
 # Legislative proposals (data/proposals.yml): a test fails when `checked` is older than this, so the status and
-# the articles the preview rules cite are compared with the source while the negotiations change the text.
+# the articles its rules cite are compared with the source while the negotiations change the text.
 proposals:
   max_age_days: 120
 
@@ -134,9 +134,26 @@ legal/notice-period:
   max_notice_months: 1
   max_renewal_months: 1
 
-legal/offer-duration:
+dfa/offer-duration:
   # Text blocks (lines of the rendered page) before and after a limited-time claim that may hold its end date.
   context_lines: 1
+
+dfa/renewal-prominence:
+  # The most visible renewal or trial term is fine print when its font is smaller than this share of the font size
+  # most of the page's text has, or faint below this WCAG contrast (4.5:1, success criterion 1.4.3).
+  min_font_ratio: 0.85
+  min_contrast: 4.5
+
+dfa/fake-countdown:
+  # A countdown-like text is read again this long after the page settled; one that counts down is running.
+  wait_ms: 1500
+  # A page with a running countdown is loaded again in a fresh browser context, at least this long after the first
+  # reading, so a timer that restarts for every visitor ends this much later than the first one.
+  reload_ms: 5000
+  # End times (now + remaining) of both loads may differ by this much: readings round to the second.
+  tolerance_s: 2
+  # Pages loaded a third time, at most.
+  max_pages: 2
 
 source-code:
   # Lines from the top of a file read for a "use client" or "use server" directive.

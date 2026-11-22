@@ -1,0 +1,12 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DFA-007
+severity: medium
+title: "Countdowns do not restart for every visitor"
+value: "Digital Fairness Act proposal COM(2026) 1100, Annex I point 13: would ban falsely claiming that an offer is available only for a limited time; a timer that restarts for every visitor makes that claim."
+how: "In the load with JavaScript of every own page, reads texts shaped like a countdown (`countdown` in `data/dark-patterns.yml`) again after `wait_ms` (`data/thresholds.yml`); for up to `max_pages` pages with one that counts down, loads the page a third time in a fresh browser context (no cookies, no storage) at least `reload_ms` after the first reading, and warns when the two end times (now + time left) differ by more than `tolerance_s`; info instead of no finding when the third load failed or showed no running countdown, when a clock-shaped countdown (`countdown_clock`) did not change, or when a page did not load with JavaScript. A countdown without seconds, or one drawn in an image or canvas, is not seen."
+fix_hint: "Count down only to the real end of the offer, the same for every visitor, or remove the timer. A false claim that an offer is available only for a very limited time is already unfair under UWG Anhang Nr. 7."
+meta:
+  last_reviewed: "2026-11-22"
+  sources:
+  - https://commission.europa.eu/document/download/a0539d90-2758-48e5-9010-1e856030d166_en?filename=Annexes%20to%20the%20Proposal%20for%20a%20Digital%20Fairness%20Act.pdf
+  - https://www.gesetze-im-internet.de/uwg_2004/anhang.html

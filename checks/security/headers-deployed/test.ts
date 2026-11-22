@@ -4,7 +4,7 @@ import { runCrossCheck, siteFromFiles } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
-const page = "<html><body>Hello</body></html>";
+const page = "<html lang=\"en\"><body>Hello</body></html>";
 const live = (headers: Record<string, string>) => siteFromFiles({ "index.html": page, "_headers.json": JSON.stringify(headers) });
 const vercel = JSON.stringify({
   headers: [

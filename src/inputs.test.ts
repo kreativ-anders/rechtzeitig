@@ -86,7 +86,6 @@ test("an input and its command line option have the same default", () => {
  * Inputs only, so the example stays short. A new input goes either into the with: block of the example or here.
  */
 const FILE_ONLY: Record<string, string> = {
-  language: "the default auto reads it from the start page",
   repository: "follows the checkout step",
   "sarif-upload": "the default auto uploads where GitHub allows it",
   modules: "the default runs all checks",

@@ -9,7 +9,7 @@ test("passes when the privacy policy is linked and has content", async () => {
 });
 
 test("finds an English privacy policy", async () => {
-  assert.equal((await runCheck(here, "english", { language: "en" })).status, "pass");
+  assert.equal((await runCheck(here, "english")).status, "pass");
 });
 
 test("follows hreflang to the privacy policy in the scan language", async () => {

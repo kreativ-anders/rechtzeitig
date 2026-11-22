@@ -1,0 +1,14 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+# Today a strike-through price against the RRP is allowed when it is labelled (legal/price-details accepts it).
+id: LEG-DFA-001
+severity: medium
+title: "No strike-through price against the RRP"
+value: "Digital Fairness Act proposal COM(2026) 1100, Annex I point 11 and recital 105: would allow a struck-through reference price only for a competitor's current price or new against used, not the manufacturer's recommended price (RRP, UVP)."
+how: "On every own page with JavaScript that shows a price (`price` in `data/shop.yml`) and a cart or buy link (`shop`), warns for a struck-through price next to a recommended retail price (`rrp`); info instead of no finding when a page did not load with JavaScript."
+requires: [sales]
+fix_hint: "Compare with the RRP without striking it through, or strike through only your own earlier price with the lowest price of the last 30 days (§ 11 PAngV)."
+meta:
+  last_reviewed: "2026-11-22"
+  sources:
+  - https://commission.europa.eu/document/download/a0539d90-2758-48e5-9010-1e856030d166_en?filename=Annexes%20to%20the%20Proposal%20for%20a%20Digital%20Fairness%20Act.pdf
+  - https://commission.europa.eu/document/download/0575d59f-554f-4a9e-b54b-e6b717175809_en?filename=Proposal%20for%20a%20Digital%20Fairness%20Act_0.pdf

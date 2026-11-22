@@ -3,7 +3,7 @@ id: A11Y-LANG-001
 severity: low
 title: "Page declares its language"
 legal_basis: "BFSG with § 3 BFSGV; EN 301 549 V3.2.1 clause 9.3.1.1 (WCAG 2.1 success criterion 3.1.1)"
-how: "Reads `<html lang>` of the start page as the server sent it (JavaScript off) and compares it with the chosen language."
+how: "Reads `<html lang>` of the start page as the server sent it (JavaScript off)."
 fix_hint: "Set the lang attribute on <html>, for example <html lang=\"de\">."
 meta:
   last_reviewed: "2026-11-04"

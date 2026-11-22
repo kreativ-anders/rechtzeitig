@@ -4,8 +4,8 @@ import { runCrossCheck, siteFromFiles } from "../../../test/helpers.ts";
 
 const here = import.meta.dirname;
 
-const vite = () => siteFromFiles({ "index.html": '<html><head><script type="module" src="/@vite/client"></script></head><body>Hi</body></html>', "@vite/client": "export {};" });
-const clean = () => siteFromFiles({ "index.html": '<html><head><script src="/app.js"></script></head><body>Hi</body></html>', "app.js": "console.log(1);" });
+const vite = () => siteFromFiles({ "index.html": '<html lang="en"><head><script type="module" src="/@vite/client"></script></head><body>Hi</body></html>', "@vite/client": "export {};" });
+const clean = () => siteFromFiles({ "index.html": '<html lang="en"><head><script src="/app.js"></script></head><body>Hi</body></html>', "app.js": "console.log(1);" });
 
 test("fails when the site runs the Vite dev server and the Dockerfile starts it", async () => {
   const result = await runCrossCheck(here, await vite(), { Dockerfile: "FROM node:24\nRUN npm install vite\nCMD [\"npm\", \"run\", \"dev\", \"--\", \"--host\"]\n" });
@@ -28,7 +28,7 @@ test("gives info for a deploy file with a dev command, and ignores dev Dockerfil
 
 // vuejs.org's playground filters console messages by their first words; a docs page shows the Vite tag as text.
 const served = (js: string, html = "Hi") =>
-  siteFromFiles({ "index.html": `<html><head><script src="/app.js"></script></head><body>${html}</body></html>`, "app.js": js });
+  siteFromFiles({ "index.html": `<html lang="en"><head><script src="/app.js"></script></head><body>${html}</body></html>`, "app.js": js });
 
 test("counts a trace only in the form the tool emits it, not quoted by a playground or a docs page", async () => {
   const filter = "if (msg.includes('You are running a development build of Vue') || msg.includes('You are running Vue in development mode')) return;";

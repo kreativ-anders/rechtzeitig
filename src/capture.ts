@@ -3,8 +3,9 @@ import { createRequire } from "node:module";
 import type { BrowserContext, Page as PlaywrightPage, Request as PlaywrightRequest, Response as PlaywrightResponse } from "playwright";
 import { loadYaml } from "./data.ts";
 import { timeoutAfter } from "./deadline.ts";
+import { availableLanguages, loadLanguages } from "./lang.ts";
 import { errorMessage, isWebUrl, normalize } from "./text.ts";
-import { cookieKey, type Area, type Checkbox, type Form, type Image, type Link, type Request, type ServedCode, type Snapshot, type Style, type AxeViolation, type Subresource, type Video } from "./sdk.ts";
+import { cookieKey, type Area, type Checkbox, type Form, type Image, type Link, type Request, type ServedCode, type Snapshot, type Style, type AxeViolation, type OfferText, type Subresource, type Timer, type Video } from "./sdk.ts";
 
 interface RawLink {
   href: string | null;
@@ -272,8 +273,8 @@ async function runAxe(page: PlaywrightPage, ms: number): Promise<Pick<Snapshot, 
 
 /**
  * Runs in the page before its own scripts, in the load with JavaScript only (`page.addInitScript`). Records what the
- * page does on its own while nobody clicks: every distinct document title (legal/fake-notification) and calls of
- * the permission prompts for notifications and push (legal/push-on-load) with the first script URL on the stack.
+ * page does on its own while nobody clicks: every distinct document title (dfa/fake-notification) and calls of
+ * the permission prompts for notifications and push (dfa/push-on-load) with the first script URL on the stack.
  * Read back with `window.__rechtzeitig()`. Everything it needs must be defined inside this function.
  */
 function watchPage(): void {
@@ -313,12 +314,123 @@ async function watched(page: PlaywrightPage): Promise<Pick<Snapshot, "titles" | 
   };
 }
 
+// ---------- countdowns (dfa/fake-countdown)
+
+const COUNTDOWN = loadYaml<{ countdown: string[] }>("data/dark-patterns.yml").countdown;
+const TIMERS = loadYaml<Record<string, { wait_ms: number }>>("data/thresholds.yml")["dfa/fake-countdown"];
+
+/**
+ * Runs inside the page: the innermost elements whose short text looks like a countdown, read once, then again after
+ * `wait` ms. Waits only when there is one. Everything it needs must be defined inside this function.
+ */
+async function readTimers({ patterns, wait }: { patterns: string[]; wait: number }): Promise<Array<{ text: string; later: string }>> {
+  const MAX = 20;
+  const res = patterns.map((p) => new RegExp(p, "u"));
+  const textOf = (el: Element) => ((el as HTMLElement).innerText ?? el.textContent ?? "").replace(/\s+/g, " ").trim();
+  const found: Element[] = [];
+  const walk = (root: Document | ShadowRoot) => {
+    for (const el of Array.from(root.querySelectorAll(root instanceof Document ? "body *" : "*"))) {
+      if (el.shadowRoot) walk(el.shadowRoot);
+      const raw = el.textContent ?? "";
+      if (raw.length > 200 || !/\d/.test(raw)) continue;
+      const text = textOf(el);
+      if (text.length <= 80 && res.some((re) => re.test(text))) found.push(el);
+    }
+  };
+  walk(document);
+  // The innermost one: a container around a countdown has the same text.
+  const timers = found.filter((el) => !found.some((other) => other !== el && el.contains(other))).slice(0, MAX);
+  if (!timers.length) return [];
+  const first = timers.map(textOf);
+  await new Promise((done) => setTimeout(done, wait));
+  return timers.map((el, i) => ({ text: first[i].slice(0, 80), later: textOf(el).slice(0, 80) }));
+}
+
+/** Countdown-like texts of the page, sampled twice; values from the page are checked and capped. */
+async function timers(page: PlaywrightPage): Promise<Timer[]> {
+  const at = Date.now();
+  const raw: unknown = await page.evaluate(readTimers, { patterns: COUNTDOWN, wait: TIMERS.wait_ms }).catch(() => []);
+  return (Array.isArray(raw) ? raw.slice(0, 20) : [])
+    .filter((t) => t && typeof t.text === "string" && typeof t.later === "string")
+    .map((t) => ({ text: String(t.text).slice(0, 80), later: String(t.later).slice(0, 80), at }));
+}
+
+// ---------- prices and subscription terms (dfa/renewal-prominence)
+
+/**
+ * Runs inside the page: the text blocks (the nearest element that is not inline) of the visible text, each with the
+ * font size and color most of its characters have, its largest font size and its background, and the font size most
+ * of the page's text has. Everything it needs must be defined inside this function.
+ */
+function readOffers(): { textSize: number; blocks: OfferText[] } {
+  const MAX = { nodes: 5000, blocks: 400, chars: 300 };
+  const transparent = (c: string) => c === "transparent" || /^rgba\(.*,\s*0\)$/.test(c);
+  const backgroundOf = (el: Element) => {
+    for (let node: Element | null = el; node; node = node.parentElement) {
+      const c = getComputedStyle(node).backgroundColor;
+      if (!transparent(c)) return c;
+    }
+    return "rgb(255, 255, 255)";
+  };
+  const most = <T>(counts: Map<T, number>): T | undefined => [...counts].sort((a, b) => b[1] - a[1])[0]?.[0];
+  const page = new Map<number, number>();
+  const blocks = new Map<Element, { looks: Map<string, number>; max: number }>();
+  const walker = document.createTreeWalker(document.body ?? document.documentElement, NodeFilter.SHOW_TEXT);
+  for (let n = 0, node = walker.nextNode(); node && n < MAX.nodes; node = walker.nextNode(), n++) {
+    const chars = (node.textContent ?? "").trim().length;
+    const el = node.parentElement;
+    if (!chars || !el || !el.checkVisibility?.({ checkOpacity: true, checkVisibilityCSS: true } as CheckVisibilityOptions)) continue;
+    const css = getComputedStyle(el);
+    const size = parseFloat(css.fontSize) || 0;
+    page.set(size, (page.get(size) ?? 0) + chars);
+    let block: Element = el;
+    while (block.parentElement && getComputedStyle(block).display.startsWith("inline")) block = block.parentElement;
+    if (!blocks.has(block) && blocks.size >= MAX.blocks) continue;
+    const entry = blocks.get(block) ?? { looks: new Map(), max: 0 };
+    const look = `${size}|${css.color}`;
+    entry.looks.set(look, (entry.looks.get(look) ?? 0) + chars);
+    entry.max = Math.max(entry.max, size);
+    blocks.set(block, entry);
+  }
+  const out: OfferText[] = [];
+  for (const [el, { looks, max }] of blocks) {
+    const text = ((el as HTMLElement).innerText ?? "").replace(/\s+/g, " ").trim();
+    if (!text || text.length > MAX.chars) continue;
+    const [size, color] = (most(looks) ?? "0|").split("|");
+    out.push({ text, fontSize: Number(size), maxFontSize: max, color, background: backgroundOf(el) });
+  }
+  return { textSize: most(page) ?? 0, blocks: out };
+}
+
+const PRICE = loadYaml<{ price: string[] }>("data/shop.yml").price.map((p) => new RegExp(p, "i"));
+let offerWords: RegExp[] | undefined;
+/** Prices and the phrases of every language in lang/, read once: capture runs before the scan languages are known. */
+const isOffer = (text: string) => {
+  offerWords ??= (() => {
+    const all = loadLanguages(availableLanguages()).text;
+    return [...PRICE, ...["price_period", "auto_renewal", "free_trial"].flatMap((c) => all[c] ?? [])];
+  })();
+  const t = normalize(text);
+  return offerWords.some((re) => re.test(t));
+};
+
+/** The text blocks of readOffers with a price or a subscription term; values from the page are checked and capped. */
+async function offers(page: PlaywrightPage): Promise<Snapshot["offers"]> {
+  const raw = (await page.evaluate(readOffers).catch(() => undefined)) as { textSize?: unknown; blocks?: unknown } | undefined;
+  const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : 0);
+  const blocks = (Array.isArray(raw?.blocks) ? raw.blocks : [])
+    .filter((b) => b && typeof b.text === "string" && isOffer(b.text))
+    .slice(0, 30)
+    .map((b) => ({ text: String(b.text).slice(0, 300), fontSize: num(b.fontSize), maxFontSize: num(b.maxFontSize), color: String(b.color).slice(0, 60), background: String(b.background).slice(0, 60) }));
+  return { textSize: num(raw?.textSize), blocks };
+}
+
 const IDLE = 5000;
 const MAX_REQUESTS = 5000;
 
 /** A load that got nothing: status 0, no content. */
 export const emptySnapshot = (finalUrl: string): Snapshot => ({
-  status: 0, finalUrl, headers: {}, meta: {}, lang: "", alternates: {}, titles: [], prompts: [], text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
+  status: 0, finalUrl, headers: {}, meta: {}, lang: "", alternates: {}, titles: [], prompts: [], timers: [], offers: { textSize: 0, blocks: [] }, text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
 });
 
 const CODE = loadYaml<{ code: { max_file_chars: number; max_files: number } }>("data/thresholds.yml").code;
@@ -435,6 +547,8 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     if (js) await page.waitForLoadState("networkidle", { timeout: idle }).catch(() => {});
     const dom = await page.evaluate(readDom);
     const seen = js ? await watched(page) : { titles: [], prompts: [] };
+    const timed = js ? await timers(page) : [];
+    const priced = js ? await offers(page) : { textSize: 0, blocks: [] };
     const axe = js ? await runAxe(page, Math.min(AXE.timeout_ms, timeout)) : {};
     const storage = js
       ? await page.evaluate(() => {
@@ -460,6 +574,8 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       alternates: dom.alternates,
       titles: [...new Set([...seen.titles, ...(dom.title ? [dom.title] : [])])],
       prompts: seen.prompts,
+      timers: timed,
+      offers: priced,
       text: dom.text,
       links: dom.links.map(toLink),
       forms: dom.forms.map(toForm),
@@ -475,7 +591,7 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     };
   };
   // page.evaluate has no timeout: a page that never yields (while (true) {}) would block the scan forever.
-  const [deadline, stop] = timeoutAfter(2 * timeout + idle + (js ? Math.min(AXE.timeout_ms, timeout) : 0), "page did not finish loading in time");
+  const [deadline, stop] = timeoutAfter(2 * timeout + idle + (js ? Math.min(AXE.timeout_ms, timeout) + TIMERS.wait_ms : 0), "page did not finish loading in time");
   try {
     return await Promise.race([load(), deadline]);
   } catch (e) {
