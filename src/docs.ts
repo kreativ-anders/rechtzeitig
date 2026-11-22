@@ -64,7 +64,7 @@ export function wikiPages(checks: LoadedCheck[], inputs: Record<string, ActionIn
     "",
     `All ${checks.length} checks, one page per group. Each names its legal basis and primary sources; findings are risk hints, not legal advice.`,
     "",
-    "**Scope** says what a check reads: *Website* runs with a `url`, *Repository* when `actions/checkout` runs before rechtzeitig, *Repository + website* needs both. `modules` picks groups or scopes, see [Inputs](Inputs). To turn one rule off: [Suppressions](Suppressions).",
+    "**Scope** says what a check reads: *Website* runs with a `url`, *Repository* when `actions/checkout` runs before rechtzeitig, *Repository + website* needs both. `modules` picks groups, see [Inputs](Inputs). To turn one rule off: [Suppressions](Suppressions).",
     "",
     "| Group | Checks | What |",
     "|---|---|---|",
