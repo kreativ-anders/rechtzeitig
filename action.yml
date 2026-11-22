@@ -43,7 +43,7 @@ inputs:
     description: true = the host of url may be a private or local address (localhost, own network). false = such a url stops the scan, and the scan never connects to private or local addresses.
     default: "false"
   sarif-upload:
-    description: Upload the findings as SARIF to GitHub code scanning, so they show as alerts in the Security tab, which only people with write access see. auto = upload where GitHub allows it (job permission security-events write; private repositories also need actions read and GitHub Code Security), otherwise skip with a notice. true = the same, but a skip or failure is a warning. false = never. The upload never fails the job.
+    description: Upload the findings as SARIF to GitHub code scanning, so they show as alerts in the Security tab, which only people with write access see. auto = upload where GitHub allows it (job permission security-events write; private repositories also need actions read and GitHub Code Security), otherwise skip with a notice. false = never. The upload never fails the job.
     default: auto
 
 outputs:
@@ -153,9 +153,5 @@ runs:
     - name: SARIF upload result
       if: always() && steps.upload.outcome == 'failure'
       shell: bash
-      env:
-        MODE: ${{ inputs.sarif-upload }}
       run: |
-        level=notice
-        if [ "$MODE" = true ]; then level=warning; fi
-        echo "::$level::rechtzeitig: could not upload SARIF to code scanning. The findings are in the report. See https://github.com/kreativ-anders/rechtzeitig/wiki/Report#security-tab"
+        echo "::notice::rechtzeitig: could not upload SARIF to code scanning. The findings are in the report. See https://github.com/kreativ-anders/rechtzeitig/wiki/Report#security-tab"

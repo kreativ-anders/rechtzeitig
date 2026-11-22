@@ -30,7 +30,7 @@ function withEvent(event: object, run: (path: string) => Promise<void>) {
 test("empty sarif-upload counts as auto; unknown values are rejected", () => {
   assert.equal(sarifMode(""), "auto");
   assert.equal(sarifMode(undefined), "auto");
-  assert.equal(sarifMode("true"), "true");
+  assert.equal(sarifMode("true"), undefined);
   assert.equal(sarifMode("false"), "false");
   assert.equal(sarifMode("yes"), undefined);
 });

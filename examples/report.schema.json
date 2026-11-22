@@ -239,10 +239,6 @@
         "because": {
           "$ref": "#/$defs/because"
         },
-        "preview": {
-          "type": "object",
-          "description": "Only in reports of v0.10.0, for rules of the Digital Fairness Act proposal; no longer written."
-        },
         "suppression": {
           "type": "object",
           "additionalProperties": false,

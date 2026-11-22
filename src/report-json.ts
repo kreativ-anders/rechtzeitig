@@ -192,8 +192,6 @@ export function reportSchema(): Record<string, unknown> {
         fix_hint: { type: "string" },
         locations: { type: "array", items: { $ref: "#/$defs/location" } },
         because: { $ref: "#/$defs/because" },
-        // Kept so reports of v0.10.0 still validate; schema_version stays 2 because no reader needs it.
-        preview: { type: "object", description: "Only in reports of v0.10.0, for rules of the Digital Fairness Act proposal; no longer written." },
         suppression: obj({
           category: { enum: [...CATEGORIES] },
           reason: { type: "string" },

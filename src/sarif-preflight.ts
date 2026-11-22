@@ -2,14 +2,13 @@
 // GitHub does not allow it skips the upload with a notice instead of a failed step. Gets the job's token,
 // which the scan step never sees. Sends one request, to the code scanning API of the own repository.
 //   auto (default, also when empty): upload when possible, otherwise ::notice:: and skip.
-//   true: the same, but a skip or a failed upload is a ::warning::.
 //   false: action.yml does not run this step.
 
 import { appendFileSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { WIKI } from "./wiki.ts";
 
-export const SARIF_MODES = ["auto", "true", "false"] as const;
+export const SARIF_MODES = ["auto", "false"] as const;
 const HELP = `${WIKI}/Report#security-tab`;
 
 export type Skip = "local" | "fork" | "dependabot" | "no-code-security" | "permission";
@@ -76,6 +75,6 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
     process.exit(2);
   }
   const decision = mode === "false" ? { upload: false, note: "" } : await decide();
-  if (decision.note) console.log(`::${mode === "true" ? "warning" : "notice"}::${decision.note}`);
+  if (decision.note) console.log(`::notice::${decision.note}`);
   if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `upload=${decision.upload}\n`);
 }

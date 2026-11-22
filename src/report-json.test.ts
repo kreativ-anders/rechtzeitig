@@ -76,9 +76,6 @@ test("a report with every status, skip reason, suppression and coverage matches 
   const report = JSON.parse(JSON.stringify(toReportJson([...all, dfa], { ...meta, coverage })));
   assert.equal(report.schema_version, SCHEMA_VERSION);
   assert.deepEqual(validate(reportSchema() as Schema, report), []);
-  // v0.10.0 wrote `preview` for rules of the DFA proposal: its reports still validate as schema 2.
-  const old = { ...report, results: [{ ...report.results[0], preview: { proposal: "dfa", title: "t", status: "proposal" } }] };
-  assert.deepEqual(validate(reportSchema() as Schema, old), []);
   // The validator itself catches what the schema forbids.
   const broken = { ...report, results: [{ ...report.results[0], locations: [{ file: "a", extra: 1 }] }], schema_version: 1 };
   assert.deepEqual(validate(reportSchema() as Schema, broken).sort(), ["$.results[0].locations[0]: extra is not allowed", "$.results[0].locations[0]: fingerprint is missing", "$.schema_version: must be 2"]);
