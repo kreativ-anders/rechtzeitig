@@ -11,8 +11,9 @@ const multilingual = {
   "de/datenschutz.html": `<html lang="de"><body>Datenschutzerklärung. ${"Personenbezogene Daten werden verarbeitet. ".repeat(10)}</body></html>`,
 };
 
-test("follows hreflang to the legal pages of the scan language", async () => {
-  const ctx = await siteFromFiles(multilingual); // default language: de
+test("an English start page with a German version (hreflang): the scan is German and reads that version's legal pages", async () => {
+  const ctx = await siteFromFiles(multilingual);
+  assert.deepEqual(ctx.languages, ["de"]);
   const found = ctx.legalPage("privacy");
   assert.ok(found, "the German scan finds a privacy link");
   assert.equal(new URL(found.link.href!).pathname, "/de/datenschutz");
@@ -20,8 +21,9 @@ test("follows hreflang to the legal pages of the scan language", async () => {
   assert.ok(ctx.pages.some((p) => new URL(p.url).pathname === "/de/"), "the German start page was visited");
 });
 
-test("without an alternate in the scan language, the start page's own links count", async () => {
-  const ctx = await siteFromFiles(multilingual, { language: "en" });
+test("an English start page without a German version: the scan is English, on the start page's own links", async () => {
+  const ctx = await siteFromFiles({ ...multilingual, "index.html": multilingual["index.html"].replace(/<link[^>]*>/, "") });
+  assert.deepEqual(ctx.languages, ["en"]);
   const found = ctx.legalPage("privacy");
   assert.ok(found, "the English scan finds a privacy link");
   assert.equal(new URL(found.link.href!).pathname, "/privacy");
@@ -52,7 +54,8 @@ test("an hreflang to another site is not visited", async () => {
   const ctx = await siteFromFiles({
     "index.html": `<html lang="en"><head><link rel="alternate" hreflang="de" href="https://example.de/"></head><body><footer><a href="/privacy">Privacy Policy</a></footer></body></html>`,
     "privacy.html": multilingual["privacy.html"],
-  }, { language: "en" });
+  });
+  assert.deepEqual(ctx.languages, ["en"]);
   assert.equal(ctx.pages.some((p) => new URL(p.url).hostname === "example.de"), false);
   assert.equal(new URL(ctx.legalPage("privacy")!.link.href!).pathname, "/privacy");
 });
@@ -60,17 +63,18 @@ test("an hreflang to another site is not visited", async () => {
 test("the hreflang version counts against max-pages", async () => {
   const ctx = await siteFromFiles(multilingual, { maxPages: 1 });
   assert.equal(ctx.pages.length, 1);
+  assert.deepEqual(ctx.languages, ["en"]);
 });
 
 // Issue #52: legal-page links are matched with the link words of every language, not only the scan language.
-const germanPage = {
-  "index.html": `<html lang="de"><body><main><h1>Start</h1><button>Verträge hier kündigen</button></main><footer><a href="/impressum.html">Impressum</a> <a href="/datenschutz.html">Datenschutzerklärung</a></footer></body></html>`,
+const germanLinks = {
+  "index.html": `<html lang="en"><body><main><h1>Start</h1><button>Verträge hier kündigen</button></main><footer><a href="/impressum.html">Impressum</a> <a href="/datenschutz.html">Datenschutzerklärung</a></footer></body></html>`,
   "impressum.html": `<html lang="de"><body><h1>Impressum</h1><p>Angaben gemäß § 5 DDG: Beispiel GmbH, Musterstraße 1, 12345 Berlin.</p></body></html>`,
   "datenschutz.html": `<html lang="de"><body><h1>Datenschutzerklärung</h1><p>Personenbezogene Daten werden verarbeitet.</p></body></html>`,
 };
 
-test("an English scan of a German page finds the imprint and privacy links and visits both pages", async () => {
-  const ctx = await siteFromFiles(germanPage, { language: "en" });
+test("an English page finds its German imprint and privacy links and visits both pages", async () => {
+  const ctx = await siteFromFiles(germanLinks);
   const imprint = ctx.legalPage("imprint");
   const privacy = ctx.legalPage("privacy");
   assert.ok(imprint, "the English scan finds the German imprint link");
@@ -82,28 +86,23 @@ test("an English scan of a German page finds the imprint and privacy links and v
 });
 
 test("other link concepts stay on the scan language: Kündigen is not the English cancel button", async () => {
-  const ctx = await siteFromFiles(germanPage, { language: "en" });
+  const ctx = await siteFromFiles(germanLinks);
   assert.equal(ctx.links("cancel", pageLinks(ctx.start)).length, 0);
-  const de = await siteFromFiles(germanPage, { language: "de" });
+  const de = await siteFromFiles({ ...germanLinks, "index.html": germanLinks["index.html"].replace('lang="en"', 'lang="de"') });
   assert.ok(de.links("cancel", pageLinks(de.start)).length > 0, "the German scan matches Kündigen as cancel");
 });
 
-test("language auto takes html lang and hreflang alternates that lang/ has, in that order", async () => {
-  const ctx = await siteFromFiles(multilingual, { language: "auto" });
-  assert.deepEqual([ctx.languages, ctx.languagesFrom], [["en", "de"], "page"]);
-  assert.ok(ctx.pages.some((p) => new URL(p.url).pathname === "/de/"), "the German version was visited");
-  const german = await siteFromFiles({ "index.html": `<html lang="de-AT"><body><a href="/x">x</a></body></html>` }, { language: "auto" });
-  assert.deepEqual([german.languages, german.languagesFrom], [["de"], "page"]);
+test("German wins: a German start page with an English version stays on the start page", async () => {
+  const ctx = await siteFromFiles({ "index.html": `<html lang="de-AT"><head><link rel="alternate" hreflang="en" href="/en/"></head><body>Start</body></html>`, "en/index.html": `<html lang="en"><body>Home</body></html>` });
+  assert.deepEqual([ctx.languages, ctx.pages.length], [["de"], 1]);
 });
 
-test("language auto falls back to de when the start page names no known language", async () => {
-  for (const html of [`<html><body>Hi</body></html>`, `<html lang="fr"><head><link rel="alternate" hreflang="x-default" href="/"></head><body>Salut</body></html>`]) {
-    const ctx = await siteFromFiles({ "index.html": html }, { language: "auto" });
-    assert.deepEqual([ctx.languages, ctx.languagesFrom], [["de"], "default"]);
+test("a start page in another language, or without one, and no German or English version stops the scan", async () => {
+  const pages = [
+    `<html><body>Hi</body></html>`,
+    `<html lang="es"><head><link rel="alternate" hreflang="fr" href="/fr/"></head><body>Hola</body></html>`,
+  ];
+  for (const html of pages) {
+    await assert.rejects(siteFromFiles({ "index.html": html }), /^Error: The start page's language is (not declared|"es") and it names no German or English version.*set url to the German or English page/);
   }
-});
-
-test("an explicit language is kept as it is", async () => {
-  const ctx = await siteFromFiles(multilingual, { language: "de" });
-  assert.deepEqual([ctx.languages, ctx.languagesFrom], [["de"], "input"]);
 });

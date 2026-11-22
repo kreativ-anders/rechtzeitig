@@ -46,6 +46,6 @@ test("passes for real details, ignoring code and data files that name placeholde
 });
 
 test("skips without legal pages", async () => {
-  const result = await runCrossCheck(here, await siteFromFiles({ "index.html": "<html><body>Hallo</body></html>" }), { "README.md": "x" });
+  const result = await runCrossCheck(here, await siteFromFiles({ "index.html": "<html lang=\"de\"><body>Hallo</body></html>" }), { "README.md": "x" });
   assert.equal(result.status, "skip");
 });

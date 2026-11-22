@@ -9,7 +9,7 @@ test("passes when every topic is covered", async () => {
 });
 
 test("understands plain English wording", async () => {
-  const result = await runCheck(here, "plain-english", { language: "en" });
+  const result = await runCheck(here, "plain-english");
   assert.deepEqual(result.details ?? [], []);
 });
 

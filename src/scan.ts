@@ -1,9 +1,8 @@
 import { chromium, type Browser } from "playwright";
 import { createContext } from "./context.ts";
 import { crawl } from "./crawl.ts";
-import { DEFAULT_LANGUAGE, detectLanguages, loadLanguages, resolveLanguages, type Language } from "./lang.ts";
 import { loadRegistry } from "./registry.ts";
-import { loadYaml, type LanguagesFrom, type Page, type ScanContext } from "./sdk.ts";
+import { loadYaml, type ScanContext } from "./sdk.ts";
 import { errorMessage } from "./text.ts";
 
 /** From package.json (YAML reads JSON too). */
@@ -11,8 +10,6 @@ export const VERSION = loadYaml<{ version: string }>("package.json").version;
 const HOMEPAGE = "https://github.com/kreativ-anders/rechtzeitig";
 
 export interface ScanOptions {
-  /** "auto" (from the start page), "de", "en", "all" or a comma list. */
-  language?: string;
   subscriptions?: boolean;
   sales?: boolean;
   maxPages?: number;
@@ -50,26 +47,14 @@ export async function launchBrowser(onWarning: (message: string) => void = () =>
 }
 
 export async function scan(url: string, opts: ScanOptions = {}): Promise<ScanContext> {
-  // auto: the languages of the start page that lang/ has, else the default; known once the start page loaded.
-  const auto = (opts.language ?? DEFAULT_LANGUAGE).trim() === "auto";
-  let languages = auto ? [] : resolveLanguages(opts.language ?? DEFAULT_LANGUAGE);
-  let languagesFrom: LanguagesFrom = "input";
-  let lang: Language | undefined = auto ? undefined : loadLanguages(languages);
-  const fromStart = (start: Page) => {
-    const found = detectLanguages(start);
-    languages = found.length ? found : [DEFAULT_LANGUAGE];
-    languagesFrom = found.length ? "page" : "default";
-    return (lang = loadLanguages(languages));
-  };
   const browser = opts.browser ?? (await launchBrowser(opts.onWarning, opts.unsandboxed));
   try {
     const chrome = browser.version().split(".")[0];
     const userAgent =
       `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chrome}.0.0.0 Safari/537.36 ` +
       `rechtzeitig/${VERSION} (+${HOMEPAGE})`;
-    const data = await crawl(url, {
+    const { lang, ...data } = await crawl(url, {
       browser,
-      lang: lang ?? fromStart,
       userAgent,
       maxPages: opts.maxPages ?? 10,
       timeout: opts.timeout ?? 20_000,
@@ -78,7 +63,7 @@ export async function scan(url: string, opts: ScanOptions = {}): Promise<ScanCon
       greenHosting: opts.greenHosting,
       allowPrivateUrl: opts.allowPrivateUrl,
     });
-    return createContext(data, lang!, loadRegistry(), { languages, languagesFrom, subscriptions: opts.subscriptions ?? false, sales: opts.sales ?? false });
+    return createContext(data, lang, loadRegistry(), { languages: lang.codes, subscriptions: opts.subscriptions ?? false, sales: opts.sales ?? false });
   } finally {
     if (!opts.browser) await browser.close();
   }

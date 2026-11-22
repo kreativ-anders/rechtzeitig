@@ -3,10 +3,12 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFile, execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { promisify } from "node:util";
+import { serve } from "../test/helpers.ts";
 
 const NO_FETCH = "data:text/javascript,globalThis.fetch=()=>{throw new Error('network used')}";
 
@@ -102,9 +104,11 @@ test("report-visibility was removed: full warns and still shows only counts on a
 });
 
 test("a removed input that is set warns and changes nothing", () => {
-  const r = onGitHub({ repository: { private: true } }, "--report-language", "de");
-  assert.match(r.log, /::warning::report-language was removed/);
-  assert.match(r.log, /config\.js/);
+  for (const name of ["report-language", "language"]) {
+    const r = onGitHub({ repository: { private: true } }, `--${name}`, "de");
+    assert.match(r.log, new RegExp(`::warning::${name} was removed`));
+    assert.match(r.log, /config\.js/);
+  }
 });
 
 test("sarif writes the findings with places also for a public repository", () => {
@@ -125,9 +129,31 @@ test("sarif writes the findings with places also for a public repository", () =>
 test("empty inputs use their defaults, as on schedule and push runs without the dialog", () => {
   // Every option the action passes, empty. The vulnerability lookup is opt-in, so nothing is sent,
   // and the removed report-language warns only when set.
-  const empty = ["language", "report-language", "subscriptions", "sales", "fail-on", "max-pages", "vulnerabilities",
+  const empty = ["report-language", "subscriptions", "sales", "fail-on", "max-pages", "vulnerabilities",
     "green-hosting", "require-sandbox", "report-visibility", "sarif"].flatMap((o) => [`--${o}`, ""]);
   const result = run(...empty);
   assert.equal(result.status, "skip");
   assert.match(result.message, /^Opt-in: runs only with the input vulnerabilities: true/);
+});
+
+test("a site neither German nor English stops the run with one line, no report file and no output", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "rechtzeitig-lang-"));
+  writeFileSync(join(dir, "index.html"), `<html lang="es"><body>Hola</body></html>`);
+  const site = await serve(dir);
+  try {
+    const [summary, output, report] = ["summary.md", "output.txt", "upload/rechtzeitig-report.json"].map((f) => join(dir, f));
+    writeFileSync(summary, "");
+    writeFileSync(output, "");
+    const failed = await promisify(execFile)(process.execPath, ["--disable-warning=ExperimentalWarning", "src/main.ts", "--url", site.url,
+      "--require-sandbox", "false", "--out", join(dir, "out", "rechtzeitig-report"), "--report", report],
+      { env: { ...process.env, GITHUB_ACTIONS: "", GITHUB_STEP_SUMMARY: summary, GITHUB_OUTPUT: output } }).catch((e) => e);
+    assert.equal(failed.code, 2);
+    assert.match(failed.stderr, /^rechtzeitig: The start page's language is "es" .*set url to the German or English page/);
+    assert.equal(failed.stderr.trim().split("\n").length, 1);
+    assert.equal(readFileSync(output, "utf8"), "");
+    assert.deepEqual(readdirSync(dir).sort(), ["index.html", "output.txt", "summary.md"]);
+  } finally {
+    site.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

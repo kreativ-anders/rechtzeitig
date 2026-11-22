@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { availableLanguages, resolveLanguages } from "./lang.ts";
+import { availableLanguages, LANGUAGES } from "./lang.ts";
 import { loadYaml } from "./data.ts";
 import { normalize } from "./text.ts";
 
@@ -14,9 +14,8 @@ test("every language defines the same concepts", () => {
   for (const code of rest) assert.deepEqual(keys(code), keys(first), `lang/${code}.yml differs from lang/${first}.yml`);
 });
 
-test("all selects every language", () => {
-  assert.deepEqual(resolveLanguages("all"), availableLanguages());
-  assert.throws(() => resolveLanguages("xx"), /Unknown language/);
+test("the scan languages are the files in lang/", () => {
+  assert.deepEqual([...LANGUAGES].sort(), availableLanguages());
 });
 
 test("normalize folds umlauts, case and spaces", () => {

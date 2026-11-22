@@ -1,7 +1,7 @@
 import type { Browser } from "playwright";
 import { capture, CodeCollector } from "./capture.ts";
 import { loadYaml } from "./data.ts";
-import { DEFAULT_LANGUAGE, legalLinkPatterns, loadLanguages, matchLinks, type Language } from "./lang.ts";
+import { LANGUAGES, legalLinkPatterns, loadLanguages, matchLinks, primaryTag, type Language } from "./lang.ts";
 import { countries, emailDns, greenHosting, hostVariant, plainHttp, probe, sourceMaps, tlsInfo } from "./probe.ts";
 import { isPublicHost, publicAddresses, publicProxy } from "./net.ts";
 import { isWebUrl, siteOf, withoutHash } from "./text.ts";
@@ -9,8 +9,6 @@ import { LEGAL_CONCEPTS, pageLinks, type Area, type Page, type Probe, type ScanC
 
 export interface CrawlOptions {
   browser: Browser;
-  /** The scan languages, or for `language: auto` a function that picks them from the start page. */
-  lang: Language | ((start: Page) => Language);
   maxPages: number;
   timeout: number;
   userAgent: string;
@@ -28,7 +26,7 @@ export interface CrawlData {
   /** Final URL of the start page. */
   url: string;
   start: Page;
-  /** The start page's version in a scan language, when it announces one via hreflang and that page was visited. */
+  /** The start page's version in the scan language, when the start page is in another one and announces it via hreflang. */
   langPage?: Page;
   pages: Page[];
   probes: Probe[];
@@ -54,11 +52,11 @@ const isPage = (href: string | null): href is string => isWebUrl(href) && !SKIP_
 
 /**
  * Visits the start page, every page a language pack calls a legal page (imprint, privacy, ...),
- * then a sample of same-site pages, up to maxPages. When the start page announces an alternate in the
- * scan language (hreflang) on the same site, that version is visited too and its legal links are read first.
- * Each page is loaded twice: JavaScript off and on.
+ * then a sample of same-site pages, up to maxPages. The scan language is German, else English: the start page's own
+ * (`<html lang>`), else its version in that language (hreflang) on the same site, which is visited too and whose legal
+ * links are read first. Neither: the scan stops. Each page is loaded twice: JavaScript off and on.
  */
-export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlData> {
+export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlData & { lang: Language }> {
   // The host the user asked for is trusted, also when it is local (dev servers, test fixtures), unless allowPrivateUrl is false.
   const input = new URL(startUrl);
   const trusted = opts.allowPrivateUrl === false ? undefined : input.hostname;
@@ -66,9 +64,9 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   if (!trusted) await publicAddresses(input.hostname);
   // Every connection of the browser, loopback included, goes through the proxy, which allows only public addresses.
   const proxy = await publicProxy(trusted);
-  // With language auto the browser asks for the default language until the start page names its own.
+  // The browser asks for German, the preferred scan language.
   const settings = {
-    locale: typeof opts.lang === "function" ? loadLanguages([DEFAULT_LANGUAGE]).locale : opts.lang.locale, timezoneId: "Europe/Berlin", userAgent: opts.userAgent,
+    locale: loadLanguages([LANGUAGES[0]]).locale, timezoneId: "Europe/Berlin", userAgent: opts.userAgent,
     proxy: { server: proxy.server, bypass: "<-loopback>" },
     // No downloads; no service workers, so every request passes the proxy and, in tests, the route below.
     acceptDownloads: false, serviceWorkers: "block" as const,
@@ -88,21 +86,36 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     };
 
     const start = await visit(startUrl);
-    const lang = typeof opts.lang === "function" ? opts.lang(start) : opts.lang;
+    if (start.js.status === 0 && start.noJs.status === 0) throw new Error(`Could not load ${startUrl}: ${start.js.error ?? start.noJs.error ?? "unknown error"}`);
     const url = start.js.finalUrl || startUrl;
     const pages = [start];
     const seen = new Set([withoutHash(startUrl), withoutHash(url)]);
-    // A start page in another language that announces the scan language (hreflang): read the legal pages of that version.
+    // German, else English: the start page's own language, else its version in that language (hreflang).
+    const own = [start.js.lang, start.noJs.lang].map(primaryTag);
+    let language: string | undefined;
     let langPage: Page | undefined;
-    const alternate = hreflangTarget(start, lang.codes, seen);
-    // Only the same site and only within max-pages: another domain would put a foreign site into every check.
-    const sameSite = alternate && siteOf(new URL(alternate).hostname) === siteOf(new URL(url).hostname);
-    if (alternate && sameSite && pages.length < opts.maxPages && (await isPublicHost(new URL(alternate).hostname, trusted))) {
-      langPage = await visit(alternate);
-      pages.push(langPage);
-      seen.add(withoutHash(langPage.url));
-      if (langPage.js.finalUrl) seen.add(withoutHash(langPage.js.finalUrl));
+    for (const c of LANGUAGES) {
+      if (own.includes(c)) {
+        language = c;
+        break;
+      }
+      const alternate = hreflangTarget(start, c, seen);
+      // Only the same site and only within max-pages: another domain would put a foreign site into every check.
+      const sameSite = alternate && siteOf(new URL(alternate).hostname) === siteOf(new URL(url).hostname);
+      if (alternate && sameSite && pages.length < opts.maxPages && (await isPublicHost(new URL(alternate).hostname, trusted))) {
+        language = c;
+        langPage = await visit(alternate);
+        pages.push(langPage);
+        seen.add(withoutHash(langPage.url));
+        if (langPage.js.finalUrl) seen.add(withoutHash(langPage.js.finalUrl));
+        break;
+      }
     }
+    if (!language) {
+      const found = (start.noJs.lang || start.js.lang).trim().slice(0, 20);
+      throw new Error(`The start page's language is ${found ? `"${found}"` : "not declared"} and it names no German or English version on the same site (hreflang). rechtzeitig checks German or English sites: set url to the German or English page, or declare the language with <html lang> and hreflang.`);
+    }
+    const lang = loadLanguages([language]);
     const queue = [...(langPage ? legalTargets(langPage, lang) : []), ...legalTargets(start, lang), ...sampleTargets(start.js)];
     for (const url of queue) {
       if (pages.length >= opts.maxPages) break;
@@ -119,7 +132,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     const probes = await probe(new URL(finalUrl).origin, opts.userAgent, opts.timeout, trusted);
     const maps = await sourceMaps(code.files, siteOf(new URL(finalUrl).hostname), opts.userAgent, opts.timeout, trusted);
     const served = { code: code.files, codeSkipped: code.skipped, sourceMaps: maps };
-    if (opts.offline) return { url, start, langPage, pages, probes, countries: {}, ...served };
+    if (opts.offline) return { lang, url, start, langPage, pages, probes, countries: {}, ...served };
 
     const site = siteOf(new URL(finalUrl).hostname);
     // The start page's own host too: privacy/third-country falls back to its IP country when data/hosting.yml does not know the provider.
@@ -133,7 +146,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       countries(lookups, opts.ipinfoToken, opts.timeout),
       opts.greenHosting ? greenHosting(finalUrl, opts.timeout) : undefined,
     ]);
-    return { url, start, langPage, pages, probes, countries: found, http, variant, tls, dns, green, ...served };
+    return { lang, url, start, langPage, pages, probes, countries: found, http, variant, tls, dns, green, ...served };
   } finally {
     await noJs.close();
     await js.close();
@@ -142,15 +155,15 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
 }
 
 /**
- * The start page's alternate in one of the scan languages (`<link rel="alternate" hreflang>`), when it
- * points to another page. An exact language match ("de") wins over a regional one ("de-AT"); an entry that
- * points to the start page itself is passed over.
+ * The start page's alternate in language `code` (`<link rel="alternate" hreflang>`), when it points to another
+ * page. An exact match ("de") wins over a regional one ("de-AT"); an entry that points to the start page itself
+ * is passed over.
  */
-function hreflangTarget(start: Page, codes: string[], self: Set<string>): string | undefined {
+function hreflangTarget(start: Page, code: string, self: Set<string>): string | undefined {
   const alternates = { ...start.noJs.alternates, ...start.js.alternates };
   const other = (k: string) => isWebUrl(alternates[k]) && !self.has(withoutHash(alternates[k]));
-  const keys = Object.keys(alternates).filter((k) => (codes.includes(k) || codes.includes(k.split("-")[0])) && other(k));
-  const key = keys.find((k) => codes.includes(k)) ?? keys[0];
+  const keys = Object.keys(alternates).filter((k) => primaryTag(k) === code && other(k));
+  const key = keys.find((k) => k === code) ?? keys[0];
   return key ? alternates[key] : undefined;
 }
 

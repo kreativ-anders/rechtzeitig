@@ -671,9 +671,6 @@ export interface Vendor {
   forms?: string[];
 }
 
-/** Where the scan languages came from: the input `language`, the start page (`auto`), or the fallback `de`. */
-export type LanguagesFrom = "input" | "page" | "default";
-
 export interface ScanContext {
   /** Final URL of the start page. */
   url: string;
@@ -681,10 +678,8 @@ export interface ScanContext {
   https: boolean;
   /** Registrable domain of the start page ("www.example.de" → "example.de"). */
   domain: string;
-  /** Scan languages: packs in lang/ whose patterns the checks use. */
+  /** The scan language, de or en (one element): the pack in lang/ whose patterns the checks use, picked from the start page. */
   languages: string[];
-  /** Whether they came from the input `language`, from the start page (`auto`), or are the fallback `de`. */
-  languagesFrom: LanguagesFrom;
   /** true when the site sells subscriptions or other ongoing contracts. */
   subscriptions: boolean;
   /** true when consumers buy or sign contracts on the site (shop, paid plans). */

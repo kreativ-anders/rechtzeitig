@@ -51,6 +51,6 @@ test("warns when the button leads to an app store", async () => {
 });
 
 test("accepts the English wording of the Digital Fairness Act proposal", async () => {
-  assert.equal((await runCheck(here, "dfa-english", { subscriptions, language: "en" })).status, "pass");
+  assert.equal((await runCheck(here, "dfa-english", { subscriptions })).status, "pass");
 });
 

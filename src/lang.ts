@@ -1,7 +1,7 @@
 import { readdirSync } from "node:fs";
 import { loadYaml } from "./data.ts";
 import { errorMessage } from "./text.ts";
-import type { Link, Page } from "./sdk.ts";
+import type { Link } from "./sdk.ts";
 
 const DIR = new URL("../lang/", import.meta.url);
 
@@ -16,30 +16,11 @@ export function availableLanguages(): string[] {
   return readdirSync(DIR).filter((f) => f.endsWith(".yml")).map((f) => f.slice(0, -4)).sort();
 }
 
-/** The scan language when the input is `auto` and the start page names none that lang/ has. */
-export const DEFAULT_LANGUAGE = "de";
+/** The scan languages, German first: one per run, picked from the start page (src/crawl.ts). */
+export const LANGUAGES = ["de", "en"];
 
-/**
- * Scan languages for `language: auto`: the start page's `<html lang>` first, then its hreflang alternates,
- * each by its primary subtag ("de-AT" → "de"), kept when lang/ has a pack for it. Empty when none matches.
- */
-export function detectLanguages(start: Page): string[] {
-  const available = availableLanguages();
-  const tags = [start.js.lang, start.noJs.lang, ...Object.keys({ ...start.noJs.alternates, ...start.js.alternates })];
-  const codes = tags.map((t) => (t ?? "").trim().toLowerCase().split(/[-_]/)[0]).filter((c) => available.includes(c));
-  return [...new Set(codes)];
-}
-
-/** "de" → ["de"], "all" → every file in lang/. */
-export function resolveLanguages(choice: string): string[] {
-  const available = availableLanguages();
-  const codes = choice === "all" ? available : choice.split(",").map((c) => c.trim()).filter(Boolean);
-  const unknown = codes.filter((c) => !available.includes(c));
-  if (unknown.length || !codes.length) {
-    throw new Error(`Unknown language "${choice}". Available: ${available.join(", ")}, all`);
-  }
-  return codes;
-}
+/** "de-AT" → "de". */
+export const primaryTag = (tag: string | undefined): string => (tag ?? "").trim().toLowerCase().split(/[-_]/)[0];
 
 /** Loads and merges language packs. Patterns of all chosen languages are combined per concept. */
 export function loadLanguages(codes: string[]): Language {

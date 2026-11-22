@@ -28,7 +28,7 @@ test("fails for a service_role key in the bundle and names the public variable i
 });
 
 test("fails for a live Stripe key inline in the HTML, without a variable to blame", async () => {
-  const ctx = await siteFromFiles({ "index.html": `<html><body><script>window.KEY="${stripe}"</script>Hello</body></html>` });
+  const ctx = await siteFromFiles({ "index.html": `<html lang="en"><body><script>window.KEY="${stripe}"</script>Hello</body></html>` });
   const result = await runCrossCheck(here, ctx, { "README.md": "x" });
   assert.equal(result.status, "fail");
   assert.match(result.details[0], /^Stripe secret key in \/ \(sk_l… \(32 chars\)\)$/);

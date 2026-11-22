@@ -5,7 +5,7 @@
 
 import { OUTCOMES, type Because, type Outcome, type OutcomeStatus } from "./runner.ts";
 import { PROPOSAL_STATUSES, SEVERITIES, SWITCHES, proposalOf } from "./rules.ts";
-import type { Finding, LanguagesFrom, Params, RepoCoverage } from "./sdk.ts";
+import type { Finding, Params, RepoCoverage } from "./sdk.ts";
 import { isWebUrl, oneLine } from "./text.ts";
 import { findingText, render } from "./messages.ts";
 import { fingerprints } from "./fingerprint.ts";
@@ -66,8 +66,8 @@ export interface ReportJson {
   /** Version of rechtzeitig that wrote the report. */
   version: string;
   startedAt: string;
-  /** `languages`: the scan languages (lang/*.yml packs) and whether they came from the input or the start page. */
-  target: { url?: string; repository?: string; languages?: string[]; languages_from?: LanguagesFrom };
+  /** `languages`: the scan language (lang/*.yml pack, one element). `languages_from` is always "page" now; v0.10.0 and earlier also wrote "input" and "default". */
+  target: { url?: string; repository?: string; languages?: string[]; languages_from?: "input" | "page" | "default" };
   /** What the repository scan could not see or read: submodules, LFS pointers, unread files, lockfiles, private sources. */
   coverage?: RepoCoverage;
   results: Result[];

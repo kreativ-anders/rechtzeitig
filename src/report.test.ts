@@ -171,11 +171,9 @@ test("a suppressed rule stays in every output with its reason, escaped, and give
   assert.doesNotMatch(counts, /Generated/);
 });
 
-test("the summary names the scan languages and where they came from", () => {
-  const web = (languagesFrom: string) => ({ url: "https://example.de/", pages: [], short: (u: string) => u, languages: ["de", "en"], languagesFrom, subscriptions: false, sales: false }) as unknown as Report["web"];
-  assert.match(toSummary({ ...report("m", []), web: web("page") }), /- Language: de, en \(detected from the start page\) · /);
-  assert.match(toSummary({ ...report("m", []), web: web("default") }), /- Language: de, en \(the start page names no language rechtzeitig has, default\) · /);
-  assert.match(toSummary({ ...report("m", []), web: web("input") }), /- Language: de, en · /);
+test("the summary names the scan language", () => {
+  const web = { url: "https://example.de/", pages: [], short: (u: string) => u, languages: ["de"], subscriptions: false, sales: false } as unknown as Report["web"];
+  assert.match(toSummary({ ...report("m", []), web }), /- Language: de · /);
 });
 
 test("a result of a rule based on a proposal says in the summary and the log that it previews a proposal, not law", () => {

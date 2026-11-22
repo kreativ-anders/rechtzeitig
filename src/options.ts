@@ -4,7 +4,6 @@
 export const CLI_OPTIONS = {
   url: { type: "string" },
   repo: { type: "string" },
-  language: { type: "string", default: "auto" },
   modules: { type: "string", default: "" },
   subscriptions: { type: "string", default: "false" },
   sales: { type: "string", default: "false" },
@@ -26,5 +25,6 @@ export const CLI_OPTIONS = {
  */
 export const REMOVED_OPTIONS = {
   "report-language": "report-language was removed: the report is English. Remove the input.",
+  language: "language was removed: rechtzeitig reads the language from the start page (German, else English). Remove the input.",
   "report-visibility": "report-visibility was removed: private and internal repositories show every finding, public ones only counts. Remove the input.",
 } as const;
