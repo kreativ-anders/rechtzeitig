@@ -196,6 +196,19 @@ text:
     - '\blimited time( only| offer)?\b'
     - '\b(offer|sale|deal) ends soon\b'
     - '\blast chance\b'
+  price_period:
+    - '(/|\bper|\ba) ?(month|mo|year|yr|week|wk)\b'
+    - '\b(monthly|yearly|annually|weekly)\b'
+  auto_renewal:
+    - '\b(renews|is renewed) (automatically|every|each|monthly|annually|yearly)\b'
+    - '\bauto(matically)?[- ]?renew(s|al|ed|ing)?\b'
+    - '\bcancel any ?time\b'
+    - '\bbilled (monthly|annually|yearly|every)\b'
+    - '\bminimum term\b'
+  free_trial:
+    - '\bfree trial\b'
+    - '\b\d+[- ]day (free )?trial\b'
+    - '\btry (it )?(for )?free\b'
   date_words:
     - '\b(january|february|march|april|may|june|july|august|september|october|november|december) \d{1,2}\b'
     - '\b\d{1,2} (january|february|march|april|may|june|july|august|september|october|november|december)\b'
@@ -582,6 +595,23 @@ messages:
       one: "No countdown that restarts for a new visitor on the page loaded with JavaScript."
       other: "No countdown that restarts for a new visitor on the {count} pages loaded with JavaScript."
     no_pages: "No page of the site loaded, so no countdown was seen."
+  dfa/renewal-prominence:
+    small: '{where}: "{text}" is the most visible renewal or trial term, in {size} px while most text is {text_size} px.'
+    faint: '{where}: "{text}" is the most visible renewal or trial term, with a contrast of only {ratio}:1.'
+    missing: '{where}: "{price}" without a word on renewal or a trial.'
+    found:
+      one: "{count} page shows the renewal or trial terms less visibly than the subscription price."
+      other: "{count} pages show the renewal or trial terms less visibly than the subscription price."
+    not_said:
+      one: "{count} page shows a subscription price without renewal or trial terms."
+      other: "{count} pages show a subscription price without renewal or trial terms."
+    visible:
+      one: "The renewal or trial terms are as visible as the text next to the subscription price."
+      other: "The renewal or trial terms are as visible as the text next to the subscription price on {count} pages."
+    none:
+      one: "The page loaded with JavaScript shows no subscription price."
+      other: "None of the {count} pages loaded with JavaScript shows a subscription price."
+    no_pages: "No page of the site loaded, so no price was seen."
   dfa/push-on-load:
     prompt: "{where}: {api} was called on load, before any click."
     prompt_by: "{where}: {api} was called on load by {by}, before any click."

@@ -138,6 +138,12 @@ dfa/offer-duration:
   # Text blocks (lines of the rendered page) before and after a limited-time claim that may hold its end date.
   context_lines: 1
 
+dfa/renewal-prominence:
+  # The most visible renewal or trial term is fine print when its font is smaller than this share of the font size
+  # most of the page's text has, or faint below this WCAG contrast (4.5:1, success criterion 1.4.3).
+  min_font_ratio: 0.85
+  min_contrast: 4.5
+
 dfa/fake-countdown:
   # A countdown-like text is read again this long after the page settled; one that counts down is running.
   wait_ms: 1500

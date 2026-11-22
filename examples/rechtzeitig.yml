@@ -58,6 +58,7 @@ suppress:
   # - rule: LEG-DFA-005 # Limited-time offers say when they end
   # - rule: LEG-DFA-006 # Free trials and renewals send a reminder
   # - rule: LEG-DFA-007 # Countdowns do not restart for every visitor
+  # - rule: LEG-DFA-008 # Renewal and trial terms are as visible as the price
   # Privacy and consent
   # - rule: LEG-EU-CNS-001 # No third-party servers before consent
   # - rule: LEG-EU-CNS-002 # No cookies before consent

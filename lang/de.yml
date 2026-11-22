@@ -244,6 +244,21 @@ text:
     - '\b(angebot|aktion|rabatt|sale) endet (bald|in kuerze)\b'
     - '\bzeitlich begrenzt(es)?\b'
     - '\b(letzte|letzter) chance\b'
+  # dfa/renewal-prominence: a price per period (a subscription), and the renewal or trial terms next to it, Annex I
+  # point 60 of the DFA proposal.
+  price_period:
+    - '(/|\bpro|\bje|\bim) ?(monat|jahr|woche|quartal|mon\.?|mo\.?)\b'
+    - '\b(monatlich|jaehrlich|woechentlich|mtl\.)'
+  auto_renewal:
+    - '\bverlaengert sich\b'
+    - '\b(automatisch|stillschweigend) verlaengert\b'
+    - '\bautomatische verlaengerung\b'
+    - '\b(monatlich|jederzeit|jaehrlich) kuendbar\b'
+    - '\bmindestlaufzeit\b'
+  free_trial:
+    - '\b(kostenlose|gratis) (test|probe)(phase|zeitraum|monat|abo)\b'
+    - '\b\d+ (tage|wochen|monate?) (kostenlos|gratis) (testen|probieren)\b'
+    - '\b(test|probe)(phase|abo|monat)\b'
   # dfa/offer-duration: a date written in words, next to an offer. Numeric dates and times: data/shop.yml.
   date_words:
     - '\b\d{1,2}\. (januar|februar|maerz|april|mai|juni|juli|august|september|oktober|november|dezember)\b'

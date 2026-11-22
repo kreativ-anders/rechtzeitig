@@ -69,6 +69,9 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       period_year: ["Jahr"],
       fake_notification: ["(1) Mein Shop", "Neue Nachricht", "Sie haben eine Nachricht", "Vergiss mich nicht", "Komm zurück"],
       limited_time: ["Nur heute", "Nur für kurze Zeit", "Angebot endet bald", "Zeitlich begrenzt", "Letzte Chance"],
+      price_period: ["9,99 € / Monat", "9,99 € pro Jahr", "monatlich 9,99 €"],
+      auto_renewal: ["Das Abo verlängert sich um 1 Monat", "wird automatisch verlängert", "Automatische Verlängerung", "jederzeit kündbar", "Mindestlaufzeit 12 Monate"],
+      free_trial: ["Kostenlose Testphase", "14 Tage kostenlos testen", "Probeabo"],
       date_words: ["bis 31. Dezember", "endet heute um 23 Uhr", "bis Mitternacht"],
       placeholder: ["Max Mustermann", "Musterstraße 1", "12345 Musterstadt", "Musterfirma GmbH", "Lorem ipsum dolor sit amet", "[Firmenname]", "info@beispiel.de", "Telefon: +49 123 456789", "Tel. 0123 / 456 78", "Fax 01234-56789", "USt-IdNr.: DE 123 456 789"],
     },
@@ -132,6 +135,9 @@ const EXAMPLES: Record<string, { links: Examples; text: Examples }> = {
       period_year: ["year"],
       fake_notification: ["(1) My shop", "New message", "You have a message", "Don't forget your cart", "Come back"],
       limited_time: ["Today only", "Limited time offer", "Offer ends soon", "Last chance"],
+      price_period: ["$9.99/month", "£99 per year", "Monthly plan"],
+      auto_renewal: ["Renews automatically", "Auto-renewal", "Cancel anytime", "Billed annually", "Minimum term 12 months"],
+      free_trial: ["Free trial", "14-day trial", "Try it for free"],
       date_words: ["until December 31", "ends 31 December", "until midnight"],
       placeholder: ["Lorem ipsum dolor sit amet", "John Doe", "Your Company Name", "123 Main Street", "[Company Name]", "hello@example.com", "(555) 123-4567", "555-0199"],
     },
@@ -143,10 +149,12 @@ const NOT: Record<string, Examples> = {
   de: {
     withdraw_similar: ["Widerrufsbelehrung"], order_button: ["Bestellen", "Jetzt kaufen und sparen"], imprint: ["Impressionen"], cancel: ["Kündigen"],
     ad_label: ["Cookies für Werbung", "Anzeigen"], mandatory_fee: ["zzgl. Versand"], fake_notification: ["Nachrichten aus der Region"], review_check: ["Echte Bewertungen"],
+    price_period: ["Produkt des Monats", "Imagefilm"], auto_renewal: ["Kündigung"],
   },
   en: {
     withdraw_similar: ["Withdrawn"], order_button: ["Order", "Place order"], imprint: ["Imprinted"], cancel: ["Cancel"],
     ad_label: ["Advertising cookies"], mandatory_fee: ["plus shipping"], fake_notification: ["Messages from our founder"],
+    price_period: ["Product of the month", "a weekend"],
   },
 };
 
