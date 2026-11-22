@@ -299,6 +299,25 @@
   consent: required
   country: DE
 
+# Social proof and urgency pop-ups ("Anna from Berlin just bought ...", visitor counters). legal/fake-scarcity
+# reports them as info: the numbers they show must be real (§ 5 UWG).
+- name: Fomo
+  hosts: [fomo.com, usefomo.com]
+  purpose: social proof
+  consent: required
+  country: US
+
+- name: ProveSource
+  hosts: [provesrc.com]
+  purpose: social proof
+  consent: required
+
+- name: TrustPulse
+  hosts: [trstplse.com, trustpulse.com]
+  purpose: social proof
+  consent: required
+  country: US
+
 - name: Calendly
   hosts: [calendly.com]
   purpose: scheduling embed

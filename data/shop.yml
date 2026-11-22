@@ -29,3 +29,11 @@ app_store:
   - itunes.apple.com
   - play.google.com
   - appgallery.huawei.com
+
+# legal/offer-duration: a date or time next to a limited offer ("bis 31.12.", "2026-12-24", "23:59", a running
+# timer "02:14:59"). Dates in words are `date_words` in lang/*.yml.
+date:
+  - '\b\d{1,2}\.\d{1,2}\.(?:\d{2,4})?'
+  - '\b\d{4}-\d{2}-\d{2}\b'
+  - '\b\d{1,2}/\d{1,2}(?:/\d{2,4})?\b'
+  - '\b\d{1,2}:\d{2}\b'

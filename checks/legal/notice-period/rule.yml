@@ -1,0 +1,13 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-AGB-002
+severity: low
+title: "T&Cs: at most one month notice after an automatic renewal"
+legal_basis: "§ 309 Nr. 9 BGB (German Civil Code)"
+how: "In the T&Cs linked from the start page (`terms`), reads notice periods (`notice_period`) and automatic renewal terms (`renewal_term`) with their number and unit (`period_week`, `period_month`, `period_year`) and warns for one longer than `max_notice_months` or `max_renewal_months` (`data/thresholds.yml`); info when the T&Cs are linked but could not be read. Text heuristics: the matched sentence is shown."
+requires: [subscriptions]
+fix_hint: "For consumer contracts that renew on their own: let them continue for an indefinite period after the first term, cancellable at any time with at most one month notice. The Digital Fairness Act proposal (Art. 21) would set the same rule EU-wide."
+meta:
+  last_reviewed: "2026-11-21"
+  sources:
+  - https://www.gesetze-im-internet.de/bgb/__309.html
+  - https://commission.europa.eu/document/download/0575d59f-554f-4a9e-b54b-e6b717175809_en?filename=Proposal%20for%20a%20Digital%20Fairness%20Act_0.pdf

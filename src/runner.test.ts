@@ -2,8 +2,10 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { loadChecks, moduleOf, runChecks, scopeOf, selectModules, SCOPES } from "./runner.ts";
-import { SWITCHES, reviewProblems, validateRule, type Rule, type Switch } from "./rules.ts";
+import { PROPOSALS, SWITCHES, reviewProblems, validateRule, type Rule, type Switch } from "./rules.ts";
 import { suppressionsSchema, EXAMPLE_SUPPRESSIONS, SCHEMA_FILE, exampleRulesYaml, fillYaml, tagsAsCode, wikiPages } from "./docs.ts";
+import { loadYaml } from "./data.ts";
+import { DAY } from "./deadline.ts";
 import { groupPage } from "./wiki.ts";
 import { fakeContext } from "../test/helpers.ts";
 import { defineCheck, defineCrossCheck, defineRepoCheck, pass, skip } from "./sdk.ts";
@@ -59,6 +61,42 @@ test("a quality rule states its value instead of a legal basis, and no rule has 
   // The wiki says so, never a bare "Technical" that could read like a duty by omission.
   const page = wikiPages(quality, {}, "main")[`${groupPage("quality")}.md`];
   for (const c of quality) assert.ok(page.includes(`No legal basis: ${c.rule.value}`), c.id);
+});
+
+test("a rule based on a proposal is info, has no legal basis and says in value that it is no law", async () => {
+  const value = "Digital Fairness Act proposal COM(2026) 1100, not law: Annex I point 61 would ban it.";
+  const preview = { ...rule, severity: "info", proposal: "dfa", value } as Rule;
+  assert.deepEqual(validateRule(preview, "legal"), []);
+  assert.match(validateRule({ ...preview, severity: "low" }).join(), /severity info/);
+  assert.match(validateRule({ ...preview, value: undefined, legal_basis: "Art. 61" }).join(), /no legal_basis/);
+  assert.match(validateRule({ ...preview, value: "Would be banned." }).join(), /needs value: "Digital Fairness Act proposal COM\(2026\) 1100, not law: \.\.\."/);
+  assert.match(validateRule({ ...preview, proposal: "xyz" }).join(), /not in data\/proposals\.yml/);
+  assert.match(validateRule({ ...rule, value }).join(), /set proposal: dfa/);
+  const previews = (await loadChecks()).filter((c) => c.rule.proposal);
+  assert.ok(previews.length > 0 && previews.every((c) => c.rule.severity === "info" && !c.rule.legal_basis));
+  // Info only, also when the check itself runs: a preview never warns or fails, whatever fail-on is set to.
+  for (const c of previews) {
+    const code = readFileSync(new URL(`../checks/${c.id}/check.ts`, import.meta.url), "utf8");
+    assert.doesNotMatch(code, /\b(warn|fail)\(/, `${c.id} returns warn or fail`);
+  }
+});
+
+test("data/proposals.yml: each proposal has a known status, official sources and was checked within proposals.max_age_days", () => {
+  const { max_age_days } = loadYaml<{ proposals: { max_age_days: number } }>("data/thresholds.yml").proposals;
+  for (const p of PROPOSALS) {
+    assert.ok(["proposal", "adopted", "in force", "applies"].includes(p.status), `${p.id}: status ${p.status}`);
+    assert.ok(p.sources.length && p.sources.every((s) => !validateRule({ ...rule, meta: { ...rule.meta, sources: [s] } }).length), `${p.id}: sources`);
+    const age = (Date.now() - new Date(p.checked).getTime()) / DAY;
+    assert.ok(age >= 0 && age <= max_age_days, `${p.id}: checked ${p.checked} is older than ${max_age_days} days; compare status and articles with ${p.sources[0]}`);
+  }
+});
+
+test("a rule based on a proposal says on its wiki page that it is no law", async () => {
+  const checks = await loadChecks();
+  const pages = wikiPages(checks, {}, "main");
+  for (const c of checks.filter((x) => x.rule.proposal)) {
+    assert.ok(pages[`${groupPage(moduleOf(c.id))}.md`].includes(`No legal basis: ${c.rule.value}`), c.id);
+  }
 });
 
 test("rule.yml how names every data file its check.ts loads", async () => {

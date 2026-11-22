@@ -1,0 +1,14 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-UWG-003
+severity: medium
+title: "Affiliate links are labelled as advertising"
+legal_basis: "§ 5a Abs. 4 UWG, UWG Anhang Nr. 11 (German Unfair Competition Act), § 6 Abs. 1 Nr. 1 DDG"
+how: "On every visited page of the site, both loads, finds links of affiliate networks by host, query parameter and path (`data/affiliate.yml`) and warns when neither the page text nor the link's label says `ad_label` (\"Anzeige\", \"Affiliate-Link\", \"advertisement\"); a label inside an image or only in rel=\"sponsored\" (a hint for search engines, not for people) is not seen."
+fix_hint: "Mark affiliate links and paid content where readers see them, for example \"Anzeige\" above the article or \"*Affiliate-Link\" next to the link with a short explanation. The Digital Fairness Act proposal (Art. 11) would ask for the words \"advertisement\" or \"commercial collaboration\"."
+meta:
+  last_reviewed: "2026-11-21"
+  sources:
+  - https://www.gesetze-im-internet.de/uwg_2004/__5a.html
+  - https://www.gesetze-im-internet.de/uwg_2004/anhang.html
+  - https://www.gesetze-im-internet.de/ddg/__6.html
+  - https://commission.europa.eu/document/download/0575d59f-554f-4a9e-b54b-e6b717175809_en?filename=Proposal%20for%20a%20Digital%20Fairness%20Act_0.pdf

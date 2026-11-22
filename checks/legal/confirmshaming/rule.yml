@@ -1,0 +1,12 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-EU-FAIR-004
+severity: info
+title: "Saying no is not worded to shame"
+value: "Digital Fairness Act proposal COM(2026) 1100, not law: Annex I point 56 would ban wording that makes refusing an offer sound shameful (confirmshaming)."
+how: "On every visited own page, both loads, gives info for each visible link or button whose text uses shaming words (`shaming`, also read by `privacy/consent-equal-choice` for consent banners, whose buttons are left out here), for example in newsletter and discount pop-ups; info instead of no finding when a page did not load with JavaScript, since pop-ups come from scripts. Pop-ups that open only on a click or when leaving the page are not seen."
+proposal: dfa
+fix_hint: "Label the refusal neutrally, for example \"Nein, danke\" or \"No thanks\"."
+meta:
+  last_reviewed: "2026-11-21"
+  sources:
+  - https://commission.europa.eu/document/download/a0539d90-2758-48e5-9010-1e856030d166_en?filename=Annexes%20to%20the%20Proposal%20for%20a%20Digital%20Fairness%20Act.pdf

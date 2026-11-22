@@ -9,6 +9,11 @@ common:
   # legal/withdrawal-button): an identifier and the password.
   login_form_max_fields: 2
 
+# Legislative proposals (data/proposals.yml): a test fails when `checked` is older than this, so the status and
+# the articles the preview rules cite are compared with the source while the negotiations change the text.
+proposals:
+  max_age_days: 120
+
 # Reading the repository (src/repo/scan.ts). Files above a limit are not read; the report names them.
 repo:
   # Largest file any repository check reads, in bytes, for example repo/secrets.
@@ -119,6 +124,20 @@ legal/project-license:
 
 # Reading the repository's source code (src/repo/code.ts, data/code-paths.yml), shared by the code checks.
 # Not `code`, which limits the code the website serves.
+legal/fake-scarcity:
+  # Lines before and after a random number generator that are searched for a stock or viewer claim.
+  window_lines: 5
+
+legal/notice-period:
+  # § 309 Nr. 9 BGB: a consumer contract that renews on its own must be terminable with at most one month's
+  # notice, and a renewal for a fixed term is not allowed. Months; a renewal by one month at a time is not listed.
+  max_notice_months: 1
+  max_renewal_months: 1
+
+legal/offer-duration:
+  # Text blocks (lines of the rendered page) before and after a limited-time claim that may hold its end date.
+  context_lines: 1
+
 source-code:
   # Lines from the top of a file read for a "use client" or "use server" directive.
   directive_lines: 5

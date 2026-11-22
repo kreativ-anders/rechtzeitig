@@ -1,0 +1,14 @@
+# Metadata of this check. Detection lives in check.ts. Schema: src/rules.ts
+id: LEG-DE-UWG-002
+severity: medium
+title: "Shown reviews say whether and how they are checked"
+legal_basis: "§ 5b Abs. 3 UWG, UWG Anhang Nr. 23b (German Unfair Competition Act)"
+how: "On the visited pages that show reviews (schema.org `AggregateRating` or `Review` in the served document, `review_count` in the text, or a widget with `purpose: reviews and trust badge` in `data/third-parties.yml`), looks for `review_check` on the page, the T&Cs and the FAQ (`faq`, which the crawler opens); warns without it, gives info when only a widget shows reviews (its notice may sit in its iframe) or when the T&Cs or FAQ are linked but were not read."
+requires: [sales]
+fix_hint: "Say next to the reviews, or on a page linked from there, whether and how you check that reviews come from customers who bought the product (for example \"Bewertungen werden nicht geprüft\" or \"Wir prüfen jede Bewertung anhand der Bestellnummer\"). The Digital Fairness Act proposal (Annex I point 36) keeps this duty EU-wide."
+meta:
+  last_reviewed: "2026-11-21"
+  sources:
+  - https://www.gesetze-im-internet.de/uwg_2004/__5b.html
+  - https://www.gesetze-im-internet.de/uwg_2004/anhang.html
+  - https://commission.europa.eu/document/download/a0539d90-2758-48e5-9010-1e856030d166_en?filename=Annexes%20to%20the%20Proposal%20for%20a%20Digital%20Fairness%20Act.pdf

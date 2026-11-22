@@ -25,6 +25,7 @@ interface RawForm {
 }
 
 interface Dom {
+  title: string;
   lang: string;
   alternates: Record<string, string>;
   meta: Record<string, string>;
@@ -155,6 +156,7 @@ function readDom(): Dom {
   }
 
   return {
+    title: document.title.trim().slice(0, 200),
     lang: document.documentElement.getAttribute("lang") ?? "",
     alternates,
     meta,
@@ -268,12 +270,55 @@ async function runAxe(page: PlaywrightPage, ms: number): Promise<Pick<Snapshot, 
   }
 }
 
+/**
+ * Runs in the page before its own scripts, in the load with JavaScript only (`page.addInitScript`). Records what the
+ * page does on its own while nobody clicks: every distinct document title (legal/fake-notification) and calls of
+ * the permission prompts for notifications and push (legal/push-on-load) with the first script URL on the stack.
+ * Read back with `window.__rechtzeitig()`. Everything it needs must be defined inside this function.
+ */
+function watchPage(): void {
+  const MAX = 20;
+  const titles: string[] = [];
+  const prompts: Array<{ api: string; script: string }> = [];
+  const title = () => {
+    const t = (document.title ?? "").trim().slice(0, 200);
+    if (t && titles[titles.length - 1] !== t && titles.length < MAX) titles.push(t);
+  };
+  setInterval(title, 250);
+  document.addEventListener("DOMContentLoaded", title);
+  const caller = () => /https?:\/\/[^\s)]+?(?=:\d+:\d+)/.exec(new Error().stack ?? "")?.[0] ?? "";
+  const wrap = (owner: object | undefined, name: string, api: string) => {
+    const original = owner && (owner as Record<string, unknown>)[name];
+    if (typeof original !== "function") return;
+    (owner as Record<string, unknown>)[name] = function (this: unknown, ...args: unknown[]) {
+      if (prompts.length < MAX) prompts.push({ api, script: caller().slice(0, 2000) });
+      return original.apply(this, args);
+    };
+  };
+  wrap(typeof Notification === "function" ? Notification : undefined, "requestPermission", "Notification.requestPermission");
+  wrap(typeof PushManager === "function" ? PushManager.prototype : undefined, "subscribe", "PushManager.subscribe");
+  Object.defineProperty(window, "__rechtzeitig", { value: () => (title(), { titles: titles.slice(), prompts: prompts.slice() }) });
+}
+
+/** What watchPage recorded; values from the page are checked and capped, the page can change them. */
+async function watched(page: PlaywrightPage): Promise<Pick<Snapshot, "titles" | "prompts">> {
+  const raw: unknown = await page.evaluate(() => (window as unknown as { __rechtzeitig?: () => unknown }).__rechtzeitig?.()).catch(() => undefined);
+  const r = (raw ?? {}) as { titles?: unknown; prompts?: unknown };
+  const list = (v: unknown) => (Array.isArray(v) ? v.slice(0, 20) : []);
+  return {
+    titles: list(r.titles).map((t) => String(t).slice(0, 200)),
+    prompts: list(r.prompts)
+      .filter((p) => p && typeof p.api === "string")
+      .map((p) => ({ api: String(p.api).slice(0, 50), script: isWebUrl(String(p.script ?? "")) ? String(p.script).slice(0, 2000) : "" })),
+  };
+}
+
 const IDLE = 5000;
 const MAX_REQUESTS = 5000;
 
 /** A load that got nothing: status 0, no content. */
 export const emptySnapshot = (finalUrl: string): Snapshot => ({
-  status: 0, finalUrl, headers: {}, meta: {}, lang: "", alternates: {}, text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
+  status: 0, finalUrl, headers: {}, meta: {}, lang: "", alternates: {}, titles: [], prompts: [], text: "", links: [], forms: [], checkboxes: [], struck: [], requests: [], cookies: [], storage: [], subresources: [], images: [], videos: [],
 });
 
 const CODE = loadYaml<{ code: { max_file_chars: number; max_files: number } }>("data/thresholds.yml").code;
@@ -384,10 +429,12 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
     if (code && (entry.type === "script" || entry.type === "document")) bodies.push(code.take(res, entry.type, bytesOf));
   });
   const before = new Set((await context.cookies()).map(cookieKey));
+  if (js) await page.addInitScript(watchPage);
   const load = async (): Promise<Snapshot> => {
     const response = await page.goto(url, { waitUntil: "load", timeout });
     if (js) await page.waitForLoadState("networkidle", { timeout: idle }).catch(() => {});
     const dom = await page.evaluate(readDom);
+    const seen = js ? await watched(page) : { titles: [], prompts: [] };
     const axe = js ? await runAxe(page, Math.min(AXE.timeout_ms, timeout)) : {};
     const storage = js
       ? await page.evaluate(() => {
@@ -411,6 +458,8 @@ export async function capture(context: BrowserContext, url: string, js: boolean,
       meta: dom.meta,
       lang: dom.lang,
       alternates: dom.alternates,
+      titles: [...new Set([...seen.titles, ...(dom.title ? [dom.title] : [])])],
+      prompts: seen.prompts,
       text: dom.text,
       links: dom.links.map(toLink),
       forms: dom.forms.map(toForm),

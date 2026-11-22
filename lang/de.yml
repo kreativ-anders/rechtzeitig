@@ -54,6 +54,11 @@ links:
     - '\b(cookies|einwilligung(en)?|zustimmung(en)?|cookie[- ]?auswahl) (\w+ ){0,2}(aendern|anpassen|verwalten|widerrufen|bearbeiten)\b'
     - '\bwiderruf (der |ihrer |deiner )?(einwilligung|zustimmung)\b'
 
+  # FAQ page, read by legal/review-verification for a note on how reviews are checked.
+  faq:
+    - '\bfaq\b'
+    - '\bhaeufig(e| gestellte) fragen\b'
+
 # Wording inside page text.
 text:
   # Confirmation button on the cancellation page, § 312k Abs. 2 Satz 3 BGB.
@@ -180,11 +185,70 @@ text:
     - '\bexterne medien\b'
     - '\bkomfort\b'
   # Confirmation shaming: a refusal worded so that saying no sounds like a loss. Only clear phrases.
-  consent_shaming:
+  shaming:
     - '\b(nein|ich (moechte|will) kein\w*|ich verzichte)\b.{0,40}\bbessere[nmrs]? (angebote?|inhalte?|werbung|erlebnis|nutzererlebnis|empfehlungen|preise)\b'
     - '\bich (moechte|will) (nicht|kein\w*) (sparen|profitieren|unterstuetzen)\b'
     - '\bich (zahle|bezahle) lieber (den )?vollen? preis\b'
     - '\bich bevorzuge (ein |eine )?schlechtere'
+    - '\bnein,? danke,? ich (\S+ ){0,3}(brauche|mag|will|moechte) (\S+ ){0,2}(keine?n?|nicht) (rabatte?|gutscheine?|sparen|geld sparen|angebote|vorteile)\b'
+  # legal/fake-scarcity: a stock or viewer claim next to a number, as written in code and templates.
+  scarcity_claim:
+    - '\bnur noch \S+ (stueck |artikel |exemplare |plaetze )?(auf lager|verfuegbar|vorraetig|uebrig|frei)\b'
+    - '\b\S{1,12} (personen|leute|besucher|kunden|nutzer) (sehen sich|schauen sich|betrachten|sehen) (\S+ ){0,3}(gerade|gerade an|jetzt|an)\b'
+    - '\b\S{1,12} (personen|leute|besucher|kunden) haben (\S+ ){0,3}(gerade|heute|in den letzten \S+ (stunden|minuten)) gekauft\b'
+  # legal/review-verification: the page shows reviews with a count or a star rating.
+  review_count:
+    - '\b\d[\d.]* (kunden)?(bewertungen|rezensionen|erfahrungsberichte)\b'
+    - '\b\d[.,]\d (von|/) 5( sternen?)?\b'
+  # legal/review-verification: a note whether and how reviews are checked, § 5b Abs. 3 UWG.
+  review_check:
+    - '\b(verifizierte|gepruefte|ueberpruefte) (kunden)?(bewertungen|rezensionen|kaeufe?r?)\b'
+    - '\bbewertungen (\S+ ){0,4}(geprueft|verifiziert|ueberprueft|nicht geprueft|nicht verifiziert)\b'
+    - '\bwie wir (\S+ ){0,2}bewertungen (pruefen|verifizieren|ueberpruefen)\b'
+    - '\b(verifizierter|bestaetigter) kauf\b'
+  # legal/advertising-label: the word that marks paid content or affiliate links, § 5a Abs. 4 UWG.
+  ad_label:
+    - '\banzeige\b'
+    - '\b(enthaelt|beinhaltet|kennzeichnung:?) werbung\b'
+    - '\b(werbe|affiliate|partner|provisions|empfehlungs)-?links?\b'
+    - '\bbezahlte partnerschaft\b'
+    - '\bsponsored\b'
+    - '\bgesponsert\b'
+  # legal/price-details: a mandatory fee added on top of a price, § 3 Abs. 1 PAngV (total price). Shipping and
+  # deposit (Pfand, § 7 PAngV) may be shown separately and are not listed.
+  mandatory_fee:
+    - '\b(zzgl\.?|zuzueglich|plus|\+) (\S+ ){0,3}(servicegebuehr|buchungsgebuehr|bearbeitungsgebuehr|vermittlungsgebuehr|reinigungsgebuehr|endreinigung|servicepauschale|bearbeitungspauschale)'
+  # legal/notice-period: a notice period and an automatic renewal term in T&Cs, § 309 Nr. 9 BGB.
+  notice_period:
+    - '\bkuendigungsfrist (von |betraegt |:)?(\S+ ){0,2}\d+ (monate?n?|wochen|jahre?n?)\b'
+    - '\b(mit einer frist von|unter einhaltung einer frist von|spaetestens) \d+ (monate?n?|wochen|jahre?n?) (vor|zum)\b'
+  renewal_term:
+    - '\bverlaengert sich (\S+ ){0,4}um (\S+ ){0,2}\d+ (monate?|jahre?)\b'
+  period_week:
+    - '^wochen?$'
+  period_month:
+    - '^monate?n?$'
+  period_year:
+    - '^jahre?n?$'
+  # legal/fake-notification: a page title that claims a message, Annex I point 61 of the DFA proposal.
+  fake_notification:
+    - '^\(\d+\) '
+    - '\b(neue|ungelesene) (nachricht|benachrichtigung)(en)?\b'
+    - '\bsie haben (\S+ ){0,2}nachricht'
+    - '\b(vergiss|vergessen sie) (mich|uns|deinen warenkorb|ihren warenkorb)\b'
+    - '\bkomm(en sie)? zurueck\b'
+  # legal/offer-duration: an offer limited in time, Annex I point 14 of the DFA proposal.
+  limited_time:
+    - '\bnur (noch )?heute\b'
+    - '\bnur (fuer )?kurze zeit\b'
+    - '\b(angebot|aktion|rabatt|sale) endet (bald|in kuerze)\b'
+    - '\bzeitlich begrenzt(es)?\b'
+    - '\b(letzte|letzter) chance\b'
+  # legal/offer-duration: a date written in words, next to an offer. Numeric dates and times: data/shop.yml.
+  date_words:
+    - '\b\d{1,2}\. (januar|februar|maerz|april|mai|juni|juli|august|september|oktober|november|dezember)\b'
+    - '\b(bis|endet) (heute|morgen) (um )?\d'
+    - '\bmitternacht\b'
   # Template data left in an imprint or privacy policy (legal/placeholder-legal-texts). Only words no real
   # provider uses: "Mustermann" alone is a real surname, a register number like "HRB 12345" exists at many courts.
   placeholder:

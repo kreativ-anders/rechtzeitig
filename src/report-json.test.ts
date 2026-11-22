@@ -66,9 +66,20 @@ test("examples/report.schema.json is current (npm run docs)", () => {
   assert.deepEqual(JSON.parse(readFileSync(REPORT_SCHEMA_FILE, "utf8")), reportSchema());
 });
 
+const preview: Outcome = {
+  id: "legal/fake-notification", rule: { ...rule, id: "LEG-EU-FAIR-002", severity: "info", proposal: "dfa", value: "Digital Fairness Act proposal COM(2026) 1100, not law: x" },
+  status: "info", message: { key: "found", params: { count: 1 } }, details: [],
+};
+
+test("a result of a rule based on a proposal carries preview with the proposal's id, title and status; others none", () => {
+  const [plain, marked] = toReportJson([secrets, preview], meta).results;
+  assert.equal(plain.preview, undefined);
+  assert.deepEqual(marked.preview, { proposal: "dfa", title: "Digital Fairness Act proposal COM(2026) 1100", status: "proposal" });
+});
+
 test("a report with every status, skip reason, suppression and coverage matches the schema", () => {
   const coverage = { listing: "git", submodules: [], lfs: [], large: [], binary: [], lockfiles: { parsed: [], empty: [], failed: [] }, unsupported: [], private: [] } as RepoCoverage;
-  const report = JSON.parse(JSON.stringify(toReportJson(all, { ...meta, coverage })));
+  const report = JSON.parse(JSON.stringify(toReportJson([...all, preview], { ...meta, coverage })));
   assert.equal(report.schema_version, SCHEMA_VERSION);
   assert.deepEqual(validate(reportSchema() as Schema, report), []);
   // The validator itself catches what the schema forbids.

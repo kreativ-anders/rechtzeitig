@@ -1,0 +1,39 @@
+# Affiliate links for legal/advertising-label: links that pay the site a commission. A link counts when its host
+# lies under one of `hosts` (subdomains count) and, where `params` is set, its query has one of them; with
+# `paths`, its path starts with one of them. Only redirect hosts of networks and parameters that exist only
+# for tracking a partner, so a plain link to a shop is no affiliate link.
+networks:
+  - name: Amazon Associates
+    hosts: [amazon.de, amazon.com, amazon.co.uk, amazon.fr, amazon.it, amazon.es, amazon.nl, amazon.at]
+    params: [tag]
+  - name: Amazon short link
+    hosts: [amzn.to]
+  - name: Awin
+    hosts: [awin1.com]
+  - name: CJ Affiliate
+    hosts: [anrdoezrs.net, dpbolvw.net, jdoqocy.com, kqzyfj.com, tkqlhce.com]
+  - name: Digistore24
+    hosts: [digistore24.com]
+    paths: [/redir/]
+  - name: eBay Partner Network
+    hosts: [ebay.de, ebay.com, ebay.co.uk]
+    params: [campid]
+  - name: impact.com
+    hosts: [sjv.io, pxf.io]
+  - name: Partnerize
+    hosts: [prf.hn]
+  - name: Rakuten Advertising
+    hosts: [click.linksynergy.com]
+  - name: ShareASale
+    hosts: [shareasale.com]
+    paths: [/r.cfm]
+  - name: Skimlinks
+    hosts: [go.skimresources.com]
+  - name: Tradedoubler
+    hosts: [clk.tradedoubler.com]
+  - name: financeAds
+    hosts: [financeads.net]
+    paths: [/tc.php]
+  - name: ADCELL
+    hosts: [adcell.de]
+    paths: [/promotion/]

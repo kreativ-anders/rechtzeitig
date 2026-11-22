@@ -572,6 +572,13 @@ export interface Snapshot {
   lang: string;
   /** <link rel="alternate" hreflang> entries of the page: hreflang in lowercase → absolute URL. */
   alternates: Record<string, string>;
+  /**
+   * Distinct document titles in the order they appeared, the first at load. With JavaScript the page is watched
+   * from its first script until the snapshot, so a title the page changes on its own shows up here; without it, one.
+   */
+  titles: string[];
+  /** Permission prompts the page started on its own in the load with JavaScript: the API and the first script URL on the stack ("" when none). */
+  prompts: Array<{ api: string; script: string }>;
   /** Visible text, as a user would read it. */
   text: string;
   /** Links and buttons, including those in open shadow roots (consent banners). */
