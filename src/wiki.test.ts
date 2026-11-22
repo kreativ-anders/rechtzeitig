@@ -1,8 +1,10 @@
 // The pages of the wiki written by hand stay true to the code: links resolve, every page is in the sidebar,
-// and "Data and safety" names every outside service (CLAUDE.md, "Boundaries"). The generated pages come from npm run docs.
+// "Data and safety" names every outside service (CLAUDE.md, "Boundaries"), and no page names a removed input.
+// The generated pages come from npm run docs.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { loadYaml } from "./data.ts";
 import { SWITCHES } from "./rules.ts";
 import { anchor, readWiki, wikiPages } from "../test/wiki.ts";
 
@@ -27,4 +29,16 @@ test("Data and safety names every outside service", () => {
   const page = readWiki("Data-and-safety.md");
   const services = Object.values(SWITCHES).flatMap((s) => ("service" in s && s.service ? [s.service] : []));
   assert.deepEqual(services.filter((s) => !page.includes(s)), []);
+});
+
+// Keys of workflow steps, permissions and data files that pages show as `key: value`; every other key is an input.
+const NOT_INPUTS = new Set(["actions", "contents", "security-events", "persist-credentials", "submodules", "lfs", "continue-on-error", "if", "secret", "consent", "purpose"]);
+
+test("every `key: value` on a wiki page names an input of the action", () => {
+  const inputs = new Set(Object.keys(loadYaml<{ inputs: Record<string, unknown> }>("action.yml").inputs));
+  const unknown = pages.flatMap((file) =>
+    [...readWiki(file).matchAll(/`([a-z][a-z-]*): [^`]+`/g)]
+      .filter(([, key]) => !inputs.has(key) && !NOT_INPUTS.has(key))
+      .map(([snippet]) => `${file}: ${snippet}`));
+  assert.deepEqual(unknown, []);
 });
