@@ -59,7 +59,8 @@ function onGitHub(event: object | undefined, ...args: string[]) {
     writeFileSync(outputPath, "");
     const reportPath = join(dir, "upload", "rechtzeitig-report.json");
     const log = execFileSync(process.execPath, ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts",
-      "--repo", repo, "--modules", "repo", "--vulnerabilities", "false", "--out", out, "--report", reportPath, ...args],
+      // fail-on never: these tests read what a run shows; the default fail would end the process with 1 on the finding
+      "--repo", repo, "--modules", "repo", "--vulnerabilities", "false", "--fail-on", "never", "--out", out, "--report", reportPath, ...args],
       { stdio: "pipe", encoding: "utf8", env: { ...process.env, GITHUB_ACTIONS: "true", GITHUB_EVENT_PATH: event ? eventPath : "", GITHUB_STEP_SUMMARY: summaryPath, GITHUB_OUTPUT: outputPath, GITHUB_WORKSPACE: dir } });
     const output = readFileSync(outputPath, "utf8");
     return { log, output, summary: readFileSync(summaryPath, "utf8"), files: readdirSync(join(dir, "out")), json: JSON.parse(readFileSync(reportPath, "utf8")), reportPath };
@@ -96,19 +97,25 @@ test("the report JSON is written for every visibility and named in the output re
   }
 });
 
-test("report-visibility was removed: full warns and still shows only counts on a public repository", () => {
-  const r = onGitHub({ repository: { private: false } }, "--report-visibility", "full");
-  assert.match(r.log, /::warning::report-visibility was removed/);
-  assert.doesNotMatch(r.log, /config\.js/);
-  assert.deepEqual(r.files, []);
+test("fail-on is fail by default: a failing check ends the run with 1", () => {
+  const dir = mkdtempSync(join(tmpdir(), "rechtzeitig-failon-"));
+  try {
+    const repo = join(dir, "repo");
+    mkdirSync(repo);
+    writeFileSync(join(repo, "config.js"), `const key = "${["AKIA", "Z7Q3MRT2XKWPL4NB"].join("")}";\n`);
+    const args = ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts", "--repo", repo, "--modules", "repo", "--out", join(dir, "report")];
+    const env = { ...process.env, GITHUB_ACTIONS: "", GITHUB_STEP_SUMMARY: "", GITHUB_OUTPUT: "" };
+    assert.throws(() => execFileSync(process.execPath, args, { stdio: "pipe", env }), (e: { status?: number }) => e.status === 1);
+    assert.doesNotThrow(() => execFileSync(process.execPath, [...args, "--fail-on", "never"], { stdio: "pipe", env }));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
 
-test("a removed input that is set warns and changes nothing", () => {
-  for (const name of ["report-language", "language"]) {
-    const r = onGitHub({ repository: { private: true } }, `--${name}`, "de");
-    assert.match(r.log, new RegExp(`::warning::${name} was removed`));
-    assert.match(r.log, /config\.js/);
-  }
+test("a public repository shows only counts", () => {
+  const r = onGitHub({ repository: { private: false } });
+  assert.doesNotMatch(r.log, /config\.js/);
+  assert.deepEqual(r.files, []);
 });
 
 test("sarif writes the findings with places also for a public repository", () => {
@@ -127,10 +134,9 @@ test("sarif writes the findings with places also for a public repository", () =>
 });
 
 test("empty inputs use their defaults, as on schedule and push runs without the dialog", () => {
-  // Every option the action passes, empty. The vulnerability lookup is opt-in, so nothing is sent,
-  // and the removed report-language warns only when set.
-  const empty = ["report-language", "subscriptions", "sales", "fail-on", "max-pages", "vulnerabilities",
-    "green-hosting", "require-sandbox", "report-visibility", "sarif"].flatMap((o) => [`--${o}`, ""]);
+  // Every option the action passes, empty. The vulnerability lookup is opt-in, so nothing is sent.
+  const empty = ["subscriptions", "sales", "fail-on", "max-pages", "vulnerabilities",
+    "green-hosting", "require-sandbox", "sarif"].flatMap((o) => [`--${o}`, ""]);
   const result = run(...empty);
   assert.equal(result.status, "skip");
   assert.match(result.message, /^Opt-in: runs only with the input vulnerabilities: true/);

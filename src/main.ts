@@ -4,7 +4,7 @@
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
-import { CLI_OPTIONS, REMOVED_OPTIONS } from "./options.ts";
+import { CLI_OPTIONS } from "./options.ts";
 import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
@@ -24,7 +24,7 @@ const FAIL_ON: Record<string, OutcomeStatus[]> = {
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: { ...CLI_OPTIONS, ...Object.fromEntries(Object.keys(REMOVED_OPTIONS).map((o) => [o, { type: "string" as const }])) },
+  options: CLI_OPTIONS,
 });
 // Runs without the Run workflow dialog (schedule, push) pass every `inputs.*` as "", so empty means the default.
 // url and repo have no default: empty there means "do not scan the site" or "no checkout".
@@ -35,13 +35,9 @@ for (const [name, spec] of Object.entries(CLI_OPTIONS)) {
 
 let url = (values.url || positionals[0] || "").trim();
 if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;
-const failOn = values["fail-on"] || "never";
+const failOn = values["fail-on"] || "fail";
 if (!FAIL_ON[failOn]) exit(`fail-on must be one of: ${Object.keys(FAIL_ON).join(", ")}`);
 const onGitHub = !!process.env.GITHUB_ACTIONS;
-// A removed input that is set only warns, so an old workflow keeps running.
-for (const [name, note] of Object.entries(REMOVED_OPTIONS)) {
-  if ((values as Record<string, unknown>)[name]?.toString().trim()) console.log(onGitHub ? `::warning::${note}` : `Warning: ${note}`);
-}
 // What the run page shows: everything outside GitHub and for private or internal repositories; only counts when
 // the repository is public or the event does not say, so a missing field never makes findings public.
 const visible = !onGitHub || repositoryIsPrivate();

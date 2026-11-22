@@ -25,8 +25,8 @@ export const REPORT_SCHEMA_FILE = new URL("../examples/report.schema.json", impo
 /** Local clone of the wiki, ignored by git. */
 export const WIKI_DIR = new URL("../wiki/", import.meta.url);
 
-/** An input in action.yml. One with `deprecationMessage` was removed: GitHub warns when a workflow sets it. */
-export interface ActionInput { description: string; default?: string; deprecationMessage?: string }
+/** An input in action.yml. A removed input is deleted; GitHub warns when a workflow still sets it. */
+export interface ActionInput { description: string; default?: string }
 
 /** Check groups (folders in checks/) in the order of the docs, with what each covers. */
 const MODULES: Record<string, [string, string]> = {
@@ -94,8 +94,6 @@ export function wikiPages(checks: LoadedCheck[], inputs: Record<string, ActionIn
   if (unknownGroups.length) throw new Error(`groups without a wiki page in src/docs.ts: ${unknownGroups.join(", ")}`);
 
   const value = (v?: string) => (!v ? "empty" : v.includes("${{") ? "workspace" : `\`${v}\``);
-  const current = Object.entries(inputs).filter(([, i]) => !i.deprecationMessage);
-  const removed = Object.keys(inputs).filter((name) => inputs[name].deprecationMessage);
   pages["Inputs.md"] = [
     generated("action.yml and checks/**/rule.yml"),
     "",
@@ -103,9 +101,8 @@ export function wikiPages(checks: LoadedCheck[], inputs: Record<string, ActionIn
     "",
     "| Input | Default | Meaning |",
     "|---|---|---|",
-    ...current.map(([name, i]) => `| \`${name}\` | ${value(i.default)} | ${cell(i.description)} |`),
+    ...Object.entries(inputs).map(([name, i]) => `| \`${name}\` | ${value(i.default)} | ${cell(i.description)} |`),
     "",
-    ...(removed.length ? [`Removed, ignored with a warning when set: ${removed.map((n) => `\`${n}\``).join(", ")}.`, ""] : []),
     "## What runs when",
     "",
     "Most checks always run. These need a setting; without it they are skipped and the report names the setting.",

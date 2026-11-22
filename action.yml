@@ -9,9 +9,6 @@ inputs:
   url:
     description: URL of the start page. Leave empty to scan only the repository. Never take it from untrusted event data (pull request, issue or comment fields).
     default: ""
-  language:
-    description: Removed. The language comes from the start page, German first, else English (html lang, else an hreflang version on the same site); any other language stops the run. A set value is ignored with a warning.
-    deprecationMessage: language was removed, the language comes from the start page. Remove the input.
   subscriptions:
     description: true if visitors can sign up for subscriptions (checks the cancellation button, § 312k BGB).
     default: "false"
@@ -21,12 +18,9 @@ inputs:
   modules:
     description: Comma list of check groups (legal, dfa, privacy, security, sustainability, accessibility, quality) or scopes (website, repository, both; repo is the same as repository) to run. A check runs when its group or its scope is listed; a check of both runs for website or repository, and both picks only those. Empty = all.
     default: ""
-  report-language:
-    description: Removed. The report is English; readable reports in other languages are built from its keys and parameters. A set value is ignored with a warning.
-    deprecationMessage: report-language was removed, the report is English. Remove the input.
   fail-on:
-    description: When the job fails. never = report only, fail = on any fail, warn = on any warn or fail.
-    default: never
+    description: When the job fails. fail = on any fail, warn = on any warn or fail, never = report only.
+    default: fail
   max-pages:
     description: How many pages to visit at most.
     default: "10"
@@ -48,9 +42,6 @@ inputs:
   allow-private-url:
     description: true = the host of url may be a private or local address (localhost, own network). false = such a url stops the scan, and the scan never connects to private or local addresses.
     default: "false"
-  report-visibility:
-    description: Removed. Private and internal repositories always show one line per finding in the summary, plus log, annotations and the artifact; public ones only counts, no artifact. A set value is ignored with a warning.
-    deprecationMessage: report-visibility was removed. Private and internal repositories show every finding, public ones only counts. Remove the input.
   sarif-upload:
     description: Upload the findings as SARIF to GitHub code scanning, so they show as alerts in the Security tab, which only people with write access see. auto = upload where GitHub allows it (job permission security-events write; private repositories also need actions read and GitHub Code Security), otherwise skip with a notice. true = the same, but a skip or failure is a warning. false = never. The upload never fails the job.
     default: auto
