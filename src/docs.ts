@@ -6,7 +6,7 @@
 //   Inputs, Checks and one Checks-<Group> per group. The release workflow pushes them; locally they only feed the tests.
 
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { SEVERITIES, reviewProblems, switchSpec, type Switch } from "./rules.ts";
 import { loadChecks, moduleOf, scopeOf, type LoadedCheck, type Scope } from "./runner.ts";
@@ -186,7 +186,10 @@ function syncWiki(generated: string[]): void {
   const dir = fileURLToPath(WIKI_DIR);
   const git = (...args: string[]) => execFileSync("git", args, { stdio: "inherit" });
   if (!existsSync(new URL(".git", WIKI_DIR))) return void git("clone", "--quiet", `${WIKI.replace(/\/wiki$/, "")}.wiki.git`, dir);
-  const tracked = generated.filter((f) => existsSync(new URL(f, WIKI_DIR)));
+  // A page of a new group is not in the wiki yet: drop it, it is written again below.
+  const known = new Set(execFileSync("git", ["-C", dir, "ls-files"], { encoding: "utf8" }).split("\n"));
+  for (const f of generated.filter((f) => !known.has(f))) rmSync(new URL(f, WIKI_DIR), { force: true });
+  const tracked = generated.filter((f) => known.has(f));
   if (tracked.length) git("-C", dir, "checkout", "--", ...tracked);
   git("-C", dir, "pull", "--quiet", "--ff-only");
 }
