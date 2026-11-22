@@ -56,7 +56,7 @@ links:
 
 # Wording inside page text.
 text:
-  # Confirmation button on the cancellation page, § 312k Abs. 2 Satz 2 BGB.
+  # Confirmation button on the cancellation page, § 312k Abs. 2 Satz 3 BGB.
   cancel_confirm:
     - '\bjetzt kuendigen\b'
   # Confirmation button of the withdrawal function, § 356a Abs. 3 BGB.
