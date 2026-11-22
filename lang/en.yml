@@ -264,7 +264,7 @@ messages:
       other: "Nothing found on the pages seen, but {count} pages did not load with JavaScript. What scripts load or set there is unknown, so the result stays open."
     js_failed: "{page}: load with JavaScript failed ({error})"
     lockfile_unread: "Lockfile could not be read (see security/sbom)."
-    not_run_module: "Not run: neither its group {module} nor its scope {scope} is in modules ({modules}). Empty modules runs all checks."
+    not_run_module: "Not run: its group {module} is not in modules ({modules}). Empty modules runs all checks."
     not_run_both_url: "Not run: reads the website and the repository together, and the website is missing. Set the input url."
     not_run_both_repository: "Not run: reads the website and the repository together, and the checkout is missing. Run actions/checkout before rechtzeitig."
     not_run_both_both: "Not run: reads the website and the repository together, and both are missing. Set the input url and run actions/checkout before rechtzeitig."

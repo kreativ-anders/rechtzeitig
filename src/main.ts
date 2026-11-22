@@ -9,7 +9,7 @@ import { scan, VERSION } from "./scan.ts";
 import { scanRepo } from "./repo/scan.ts";
 import { toCycloneDx } from "./repo/sbom.ts";
 import { toSarif, workflowFile } from "./sarif.ts";
-import { loadChecks, OUTCOMES, runChecks, scopeOf, selectModules, type OutcomeStatus } from "./runner.ts";
+import { loadChecks, OUTCOMES, runChecks, scopeOf, selectModules, unknownModules, type OutcomeStatus } from "./runner.ts";
 import { SWITCHES, switchSpec, type Switch } from "./rules.ts";
 import { errorMessage } from "./text.ts";
 import { applySuppressions, loadSuppressions } from "./suppress.ts";
@@ -54,6 +54,9 @@ const isOn = (input: Switch): boolean => {
 const enabled = (Object.keys(SWITCHES) as Switch[]).filter(isOn);
 const warnings: string[] = [];
 const allChecks = await loadChecks();
+// A wrong group would silently skip everything; the scopes website, repository and both are gone (url and checkout decide)
+const unknown = unknownModules(allChecks, modules);
+if (unknown.length) exit(`modules: unknown group ${unknown.join(", ")}. Groups: ${[...new Set(allChecks.map((c) => c.id.split("/")[0]))].join(", ")}.`);
 const checks = selectModules(allChecks, modules);
 // A check of both scopes needs both scans.
 const wantsRepo = checks.some((c) => scopeOf(c.check) !== "website");

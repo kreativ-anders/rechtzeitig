@@ -20,13 +20,20 @@ function run(...args: string[]) {
     writeFileSync(join(repo, "package-lock.json"), JSON.stringify({ packages: { "node_modules/lodash": { version: "4.17.20" } } }));
     const out = join(dir, "report");
     execFileSync(process.execPath, ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts",
-      "--repo", repo, "--modules", "repo", "--out", out, ...args], { stdio: "pipe", env: { ...process.env, GITHUB_ACTIONS: "", GITHUB_STEP_SUMMARY: "", GITHUB_OUTPUT: "" } });
+      "--repo", repo, "--out", out, ...args], { stdio: "pipe", env: { ...process.env, GITHUB_ACTIONS: "", GITHUB_STEP_SUMMARY: "", GITHUB_OUTPUT: "" } });
     const findings = JSON.parse(readFileSync(`${out}.json`, "utf8"));
     return findings.results.find((r: { check: string }) => r.check === "security/vulnerabilities");
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
 }
+
+test("modules takes groups only: a scope such as repository stops with one line", () => {
+  const args = ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts", "--modules", "legal,repository"];
+  const env = { ...process.env, GITHUB_ACTIONS: "", GITHUB_STEP_SUMMARY: "", GITHUB_OUTPUT: "" };
+  assert.throws(() => execFileSync(process.execPath, args, { stdio: "pipe", env, encoding: "utf8" }),
+    (e: { stdout?: string; stderr?: string }) => /modules: unknown group repository\. Groups: /.test(`${e.stdout}${e.stderr}`));
+});
 
 test("the OSV lookup is opt-in: off by default, nothing sent", () => {
   const result = run();
@@ -60,7 +67,7 @@ function onGitHub(event: object | undefined, ...args: string[]) {
     const reportPath = join(dir, "upload", "rechtzeitig-report.json");
     const log = execFileSync(process.execPath, ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts",
       // fail-on never: these tests read what a run shows; the default fail would end the process with 1 on the finding
-      "--repo", repo, "--modules", "repo", "--vulnerabilities", "false", "--fail-on", "never", "--out", out, "--report", reportPath, ...args],
+      "--repo", repo, "--vulnerabilities", "false", "--fail-on", "never", "--out", out, "--report", reportPath, ...args],
       { stdio: "pipe", encoding: "utf8", env: { ...process.env, GITHUB_ACTIONS: "true", GITHUB_EVENT_PATH: event ? eventPath : "", GITHUB_STEP_SUMMARY: summaryPath, GITHUB_OUTPUT: outputPath, GITHUB_WORKSPACE: dir } });
     const output = readFileSync(outputPath, "utf8");
     return { log, output, summary: readFileSync(summaryPath, "utf8"), files: readdirSync(join(dir, "out")), json: JSON.parse(readFileSync(reportPath, "utf8")), reportPath };
@@ -103,7 +110,7 @@ test("fail-on is fail by default: a failing check ends the run with 1", () => {
     const repo = join(dir, "repo");
     mkdirSync(repo);
     writeFileSync(join(repo, "config.js"), `const key = "${["AKIA", "Z7Q3MRT2XKWPL4NB"].join("")}";\n`);
-    const args = ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts", "--repo", repo, "--modules", "repo", "--out", join(dir, "report")];
+    const args = ["--disable-warning=ExperimentalWarning", "--import", NO_FETCH, "src/main.ts", "--repo", repo, "--out", join(dir, "report")];
     const env = { ...process.env, GITHUB_ACTIONS: "", GITHUB_STEP_SUMMARY: "", GITHUB_OUTPUT: "" };
     assert.throws(() => execFileSync(process.execPath, args, { stdio: "pipe", env }), (e: { status?: number }) => e.status === 1);
     assert.doesNotThrow(() => execFileSync(process.execPath, [...args, "--fail-on", "never"], { stdio: "pipe", env }));
