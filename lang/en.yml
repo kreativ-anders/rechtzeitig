@@ -1462,7 +1462,6 @@ messages:
     found: "A contact for vulnerabilities is named."
   security/vulnerabilities:
     no_components: "No locked dependencies to check."
-    osv_error: "Could not query OSV: {error}"
     none:
       one: "No known vulnerabilities in {count} component."
       other: "No known vulnerabilities in {count} components."

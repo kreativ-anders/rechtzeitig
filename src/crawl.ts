@@ -66,7 +66,8 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   const trusted = opts.allowPrivateUrl === false ? undefined : input.hostname;
   // Untrusted: a private or local start url stops the scan (BlockedHostError) instead of scanning an error page.
   if (!trusted) await publicAddresses(input.hostname);
-  // Every connection of the browser, loopback included, goes through the proxy, which allows only public addresses.
+  // Every TCP connection of the browser, loopback included, goes through the proxy, which allows only public addresses
+  // (WebRTC UDP is off, launchBrowser).
   const proxy = await publicProxy(trusted);
   // The browser asks for German, the preferred scan language.
   const settings = {

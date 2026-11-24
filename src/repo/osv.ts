@@ -8,6 +8,8 @@ const API = "https://api.osv.dev/v1";
 const BATCH = 1000;
 const MAX_DETAILS = 100;
 const TIMEOUT = 30_000;
+/** Wait before the one retry of a request that failed for a reason that may clear (network, timeout, 429, 5xx). Tests set it to 0. */
+export const retry = { delay: 2_000 };
 
 /** The parts of an OSV record rechtzeitig reads. https://ossf.github.io/osv-schema/ */
 export interface OsvVuln {
@@ -91,10 +93,19 @@ export function fixedFor(version: string, range: OsvRange): string | undefined {
   return end?.kind === "fixed" && cmp(version, end.at)! < 0 ? end.at : undefined;
 }
 
-/** GET without a body, POST with one. Throws on a non-OK answer. */
+/** GET without a body, POST with one. Retries once after a network error, a timeout, 429 or 5xx. Throws on a non-OK answer. */
 async function request<T>(path: string, body?: unknown): Promise<T> {
   const init: RequestInit = body === undefined ? {} : { method: "POST", body: JSON.stringify(body) };
-  const res = await fetch(API + path, { ...init, signal: AbortSignal.timeout(TIMEOUT) });
+  const once = () => fetch(API + path, { ...init, signal: AbortSignal.timeout(TIMEOUT) });
+  const res = await once().then(
+    (r) => (r.status === 429 || r.status >= 500 ? later(once) : r),
+    () => later(once),
+  );
   if (!res.ok) throw new Error(`OSV answered HTTP ${res.status}`);
   return (await res.json()) as T;
 }
+
+const later = async <T>(fn: () => Promise<T>): Promise<T> => {
+  await new Promise((r) => setTimeout(r, retry.delay));
+  return fn();
+};

@@ -201,25 +201,41 @@ function isRegularFile(path: string): boolean {
   }
 }
 
-/** Reads at most `max` bytes of a regular file. Larger and binary files say why they were skipped; symlinks, devices and errors give undefined. */
-function readText(path: string, max: number): { text: string } | { skipped: Exclude<UnreadReason, "invalid" | "lfs"> } | undefined {
-  let fd: number | undefined;
+/**
+ * Reads a regular file of at most `max` bytes, opened without following a symlink (O_NOFOLLOW) or blocking on a FIFO,
+ * and checked on the open handle, so the file cannot be swapped between check and read. Symlinks, directories and
+ * devices are `not_regular`; a missing or unreadable file gives undefined.
+ */
+export function readRegularFile(path: string, max: number): { data: Buffer } | { skipped: "large" | "not_regular" } | undefined {
+  let fd: number;
   try {
     fd = openSync(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0) | (constants.O_NONBLOCK ?? 0));
+  } catch (e) {
+    return (e as NodeJS.ErrnoException).code === "ELOOP" ? { skipped: "not_regular" } : undefined;
+  }
+  try {
     const stat = fstatSync(fd);
-    if (!stat.isFile()) return undefined;
+    if (!stat.isFile()) return { skipped: "not_regular" };
     if (stat.size > max) return { skipped: "large" };
     const buf = Buffer.alloc(stat.size + 1); // one byte more shows a file that grew
     let size = 0;
     for (let n = 1; n > 0 && size < buf.length; size += n) n = readSync(fd, buf, size, buf.length - size, null);
     if (size > max) return { skipped: "large" };
-    if (buf.subarray(0, size).includes(0)) return { skipped: "binary" };
-    return { text: buf.toString("utf8", 0, size) };
+    return { data: buf.subarray(0, size) };
   } catch {
     return undefined;
   } finally {
-    if (fd !== undefined) closeSync(fd);
+    closeSync(fd);
   }
+}
+
+/** Reads at most `max` bytes of a regular file. Larger and binary files say why they were skipped; symlinks, devices and errors give undefined. */
+function readText(path: string, max: number): { text: string } | { skipped: Exclude<UnreadReason, "invalid" | "lfs"> } | undefined {
+  const r = readRegularFile(path, max);
+  if (!r || ("skipped" in r && r.skipped === "not_regular")) return undefined;
+  if ("skipped" in r) return { skipped: "large" };
+  if (r.data.includes(0)) return { skipped: "binary" };
+  return { text: r.data.toString("utf8") };
 }
 
 function projectLicense(read: (p: string) => string | undefined): string {

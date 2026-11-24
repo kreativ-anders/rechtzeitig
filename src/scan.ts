@@ -30,6 +30,8 @@ export interface ScanOptions {
 
 // The browser gets only these variables, never tokens from the workflow (IPINFO_TOKEN, GITHUB_TOKEN, ...).
 const BROWSER_ENV = ["PATH", "HOME", "TMPDIR", "TMP", "TEMP", "LANG", "LC_ALL", "DISPLAY", "XDG_RUNTIME_DIR", "SystemRoot", "LOCALAPPDATA"];
+// The SOCKS5 proxy (publicProxy) carries TCP only. WebRTC would send UDP (STUN, ICE) past it, to any address.
+const BROWSER_ARGS = ["--force-webrtc-ip-handling-policy=disable_non_proxied_udp"];
 
 /**
  * Starts Chromium with its sandbox. Where the runner cannot sandbox, it stops, unless `unsandboxed`
@@ -38,11 +40,11 @@ const BROWSER_ENV = ["PATH", "HOME", "TMPDIR", "TMP", "TEMP", "LANG", "LC_ALL", 
 export async function launchBrowser(onWarning: (message: string) => void = () => {}, unsandboxed = false): Promise<Browser> {
   const env = Object.fromEntries(BROWSER_ENV.filter((k) => process.env[k] !== undefined).map((k) => [k, process.env[k]!]));
   try {
-    return await chromium.launch({ env, chromiumSandbox: true });
+    return await chromium.launch({ env, args: BROWSER_ARGS, chromiumSandbox: true });
   } catch (e) {
     if (!unsandboxed) throw new Error(`Chrome cannot start with its sandbox on this runner (${errorMessage(e)}). Only for sites you trust: require-sandbox: false scans without it.`);
     onWarning(`Chrome sandbox not available on this runner, scanning without it (${errorMessage(e)})`);
-    return chromium.launch({ env, chromiumSandbox: false });
+    return chromium.launch({ env, args: BROWSER_ARGS, chromiumSandbox: false });
   }
 }
 

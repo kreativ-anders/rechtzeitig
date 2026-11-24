@@ -5,7 +5,8 @@ const SERIOUS = new Set(["CRITICAL", "HIGH"]);
 export default defineRepoCheck({
   run(repo) {
     if (!repo.components.length) return skip(msg("no_components"));
-    if (!repo.osv.startsWith("ok")) return warn(msg("osv_error", { error: repo.osv }));
+    // Not asked is not checked: the outcome error keeps fail-on strict and earlier findings open.
+    if (!repo.osv.startsWith("ok")) throw new Error(`Could not query OSV: ${repo.osv}`);
     if (!repo.vulnerabilities.length) {
       // Packages of a lockfile that could not be read, or of a package file without a parser, were never asked about: no pass.
       const { lockfiles, unsupported } = repo.coverage;

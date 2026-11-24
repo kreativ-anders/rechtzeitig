@@ -1,9 +1,10 @@
 import { afterEach, test } from "node:test";
 import assert from "node:assert/strict";
-import { fixedFor, queryOsv } from "./osv.ts";
+import { fixedFor, queryOsv, retry } from "./osv.ts";
 import type { Component } from "../sdk.ts";
 
 const real = globalThis.fetch;
+retry.delay = 0;
 afterEach(() => {
   globalThis.fetch = real;
 });
@@ -50,6 +51,43 @@ test("keeps hits beyond the detail limit", async () => {
   const { vulnerabilities, status } = await queryOsv(Array.from({ length: 101 }, (_, i) => component(`p${i}`)));
   assert.equal(vulnerabilities.length, 101);
   assert.equal(status, "ok (details for 100 of 101)");
+});
+
+/** Answers the batch query with `answers` in turn (an Error rejects), then like stubOsv; returns the batch call count. */
+function flakyBatch(answers: Array<number | Error>) {
+  stubOsv();
+  const ok = globalThis.fetch;
+  const calls = { batch: 0 };
+  globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+    if (!String(input).endsWith("/querybatch")) return ok(input, init);
+    const answer = answers[calls.batch++];
+    if (answer instanceof Error) throw answer;
+    return answer === undefined ? ok(input, init) : new Response("", { status: answer });
+  }) as typeof fetch;
+  return calls;
+}
+
+// Issue #145: one hiccup of OSV must not cost the whole check.
+for (const first of [new TypeError("fetch failed"), 503, 429]) {
+  test(`retries once after ${first instanceof Error ? "a network error" : `HTTP ${first}`}`, async () => {
+    const calls = flakyBatch([first]);
+    const { vulnerabilities, status } = await queryOsv([component("a")]);
+    assert.equal(status, "ok");
+    assert.equal(vulnerabilities.length, 1);
+    assert.equal(calls.batch, 2);
+  });
+}
+
+test("does not retry a 4xx answer", async () => {
+  const calls = flakyBatch([400]);
+  assert.deepEqual(await queryOsv([component("a")]), { vulnerabilities: [], status: "OSV answered HTTP 400" });
+  assert.equal(calls.batch, 1);
+});
+
+test("gives up after the one retry", async () => {
+  const calls = flakyBatch([503, 503]);
+  assert.deepEqual(await queryOsv([component("a")]), { vulnerabilities: [], status: "OSV answered HTTP 503" });
+  assert.equal(calls.batch, 2);
 });
 
 // Structure of GHSA-f82v-jwr5-mffw on osv.dev: one affected entry per release branch of next.

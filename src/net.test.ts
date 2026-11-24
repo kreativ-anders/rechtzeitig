@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
+import { createSocket } from "node:dgram";
 import { connect } from "node:net";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -101,4 +102,33 @@ test("with allowPrivateUrl false the host of url is not trusted either", async (
   const site = mkdtempSync(join(tmpdir(), "rechtzeitig-ssrf-"));
   writeFileSync(join(site, "index.html"), "<p>Hallo</p>");
   await assert.rejects(scanFixture(site, { allowPrivateUrl: false }), BlockedHostError);
+});
+
+test("WebRTC sends no UDP past the proxy: a STUN server on a local port gets no packet", async () => {
+  const udp = createSocket("udp4");
+  let packets = 0;
+  udp.on("message", () => packets++);
+  await new Promise<void>((done) => udp.bind(0, "127.0.0.1", done));
+  const browser = await testBrowser();
+  try {
+    const page = await browser.newPage();
+    const candidates = await page.evaluate(async (stun) => {
+      const pc = new RTCPeerConnection({ iceServers: [{ urls: stun }] });
+      pc.createDataChannel("probe");
+      const found: string[] = [];
+      pc.onicecandidate = (e) => { if (e.candidate) found.push(e.candidate.candidate); };
+      await pc.setLocalDescription(await pc.createOffer());
+      await new Promise((done) => {
+        pc.onicegatheringstatechange = () => { if (pc.iceGatheringState === "complete") done(undefined); };
+        setTimeout(done, 5_000);
+      });
+      pc.close();
+      return found;
+    }, `stun:127.0.0.1:${udp.address().port}`);
+    assert.deepEqual(candidates.filter((c) => / udp /i.test(c)), [], "no UDP candidate");
+    assert.equal(packets, 0, "the STUN port received nothing");
+  } finally {
+    await browser.close();
+    udp.close();
+  }
 });
