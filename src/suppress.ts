@@ -3,12 +3,13 @@
 // the reason and the status it would have had, so nothing drops out of the report silently. An entry with a problem
 // turns nothing off, and the rule quality/suppressions (QUAL-SUPPRESS-001) lists every problem.
 
-import { globSync, lstatSync, readFileSync } from "node:fs";
+import { globSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { isMap, isScalar, isSeq, LineCounter, parseDocument } from "yaml";
 import { loadYaml } from "./data.ts";
 import { DAY } from "./deadline.ts";
+import { readRegularFile } from "./repo/scan.ts";
 import { oneLine } from "./text.ts";
 import type { Outcome, OutcomeStatus } from "./runner.ts";
 import type { Params } from "./sdk.ts";
@@ -83,17 +84,13 @@ const isDay = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date
  * untrusted: only a regular file up to `repo.max_file_bytes` is read, never through a symlink.
  */
 export function loadSuppressions(root: string, today = new Date()): Suppressions | undefined {
-  const path = join(root, SUPPRESSIONS_FILE);
-  let size: number;
-  try {
-    const stat = lstatSync(path);
-    if (!stat.isFile()) return { file: SUPPRESSIONS_FILE, entries: [], problems: [{ key: "not_regular" }] };
-    size = stat.size;
-  } catch {
-    return undefined;
+  const r = readRegularFile(join(root, SUPPRESSIONS_FILE), MAX_FILE_BYTES);
+  if (!r) return undefined;
+  if ("skipped" in r) {
+    const problem: SuppressionProblem = r.skipped === "large" ? { key: "too_large", params: { limit: MAX_FILE_BYTES / 1_000_000 } } : { key: "not_regular" };
+    return { file: SUPPRESSIONS_FILE, entries: [], problems: [problem] };
   }
-  if (size > MAX_FILE_BYTES) return { file: SUPPRESSIONS_FILE, entries: [], problems: [{ key: "too_large", params: { limit: MAX_FILE_BYTES / 1_000_000 } }] };
-  return { file: SUPPRESSIONS_FILE, ...parseSuppressions(readFileSync(path, "utf8"), today) };
+  return { file: SUPPRESSIONS_FILE, ...parseSuppressions(r.data.toString("utf8"), today) };
 }
 
 /** Parses and validates the file's text. `known` are the rule ids that exist. */

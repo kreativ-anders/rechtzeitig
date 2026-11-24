@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { applySuppressions, loadSuppressions, parseSuppressions, ruleIds, SUPPRESSIONS_RULE } from "./suppress.ts";
@@ -81,6 +81,25 @@ test("the file is read from .github/ of the repository, never through a symlink"
   writeFileSync(join(root, "elsewhere.yml"), "suppress: []\n");
   symlinkSync(join(root, "elsewhere.yml"), join(root, ".github/rechtzeitig.yml"));
   assert.deepEqual(loadSuppressions(root)?.problems.map((p) => p.key), ["not_regular"]);
+});
+
+test("a symlink is never followed, a directory is no file, a large file is not read", () => {
+  const root = mkdtempSync(join(tmpdir(), "rechtzeitig-suppress-"));
+  mkdirSync(join(root, ".github"));
+  const file = join(root, ".github/rechtzeitig.yml");
+  // The target holds a valid entry: following the link would turn A11Y-ALT-001 off.
+  writeFileSync(join(root, "elsewhere.yml"), "suppress:\n  - rule: A11Y-ALT-001\n    category: not-applicable\n    reason: Keine Bilder auf der Seite\n");
+  symlinkSync(join(root, "elsewhere.yml"), file);
+  assert.deepEqual(loadSuppressions(root), { file: ".github/rechtzeitig.yml", entries: [], problems: [{ key: "not_regular" }] });
+  rmSync(file);
+  writeFileSync(file, readFileSync(join(root, "elsewhere.yml")));
+  assert.deepEqual(loadSuppressions(root)?.entries.map((e) => e.rule), ["A11Y-ALT-001"]);
+  rmSync(file);
+  mkdirSync(file);
+  assert.deepEqual(loadSuppressions(root)?.problems.map((p) => p.key), ["not_regular"]);
+  rmSync(file, { recursive: true });
+  writeFileSync(file, `# ${"x".repeat(1_000_000)}\n`);
+  assert.deepEqual(loadSuppressions(root)?.problems.map((p) => p.key), ["too_large"]);
 });
 
 test("every rule id is known, and this rule's own id among them", () => {
