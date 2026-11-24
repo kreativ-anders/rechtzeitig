@@ -1,7 +1,8 @@
 // Keeps requests on the public internet. The scanned site decides where links and redirects point;
 // without this, it could make the runner call its own network (cloud metadata, local services).
 // Every connection goes to the address that was checked, so a DNS answer that changes between check
-// and connect (DNS rebinding) cannot reach a private address. The browser connects through publicProxy().
+// and connect (DNS rebinding) cannot reach a private address. The browser's TCP connections go through publicProxy();
+// SOCKS5 carries no UDP, so the browser starts with WebRTC UDP off (launchBrowser in src/scan.ts).
 // A caller can trust the host of the URL the user passed, so local dev servers and test fixtures work.
 
 import { lookup } from "node:dns/promises";
@@ -116,6 +117,7 @@ async function get(url: URL, { headers = {}, signal }: PublicInit, trusted?: str
 /**
  * A local SOCKS5 proxy for the browser. Chromium sends host names to a SOCKS5 proxy and does no DNS itself,
  * so every page, redirect, subresource and WebSocket connects to an address publicAddresses checked.
+ * TCP only: WebRTC could send UDP past it, which launchBrowser turns off.
  */
 export async function publicProxy(trusted?: string): Promise<{ server: string; close: () => void }> {
   const sockets = new Set<Socket>();
