@@ -1,5 +1,5 @@
 // Runs the command line entry on a small repository. fetch throws, so any request to api.osv.dev would turn
-// the vulnerabilities rule into a warn instead of a skip.
+// the vulnerabilities rule into an error instead of a skip.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -42,8 +42,9 @@ test("the OSV lookup is opt-in: off by default, nothing sent", () => {
 });
 
 test("vulnerabilities=true runs the OSV lookup", () => {
-  const result = run("--vulnerabilities", "true");
-  assert.equal(result.status, "warn");
+  // fail-on never: OSV that cannot be asked is an error, which fails the job by default.
+  const result = run("--vulnerabilities", "true", "--fail-on", "never");
+  assert.equal(result.status, "error");
   assert.match(result.message, /network used/);
 });
 

@@ -28,7 +28,7 @@ Both loads happen without interaction, so every request and cookie in the contex
 
 ## Repository
 
-`src/repo/scan.ts` lists tracked files, parses lockfiles with `src/repo/lockfiles.ts`, reads the project license, and asks [OSV](https://osv.dev) for known vulnerabilities (`src/repo/osv.ts`) unless the input `vulnerabilities` is `false`. Every OSV hit is kept; details (summary, severity, fixed version) are loaded for up to 100 of them, and the status says when some are missing. `src/repo/sbom.ts` turns the result into CycloneDX 1.6.
+`src/repo/scan.ts` lists tracked files, parses lockfiles with `src/repo/lockfiles.ts`, reads the project license, and asks [OSV](https://osv.dev) for known vulnerabilities (`src/repo/osv.ts`) unless the input `vulnerabilities` is `false`. Every OSV hit is kept; details (summary, severity, fixed version) are loaded for up to 100 of them, and the status says when some are missing. Each OSV request is retried once after 2 s on a network error, a timeout, 429 or 5xx; when OSV still cannot be asked, `security/vulnerabilities` throws and ends as `error`, so `fail-on` fails the job and earlier findings are not marked fixed. `src/repo/sbom.ts` turns the result into CycloneDX 1.6.
 
 The file list comes from two git calls: `git ls-files --cached --others --exclude-standard` for the repository itself and `git ls-files --stage --recurse-submodules` for the files of checked-out submodules; a gitlink (mode 160000) in the second marks a submodule that is not checked out. Without git, or when git fails, the folder is walked, which ignores `.gitignore`. Only the checked-out files are read, never the history.
 

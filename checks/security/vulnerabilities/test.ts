@@ -36,10 +36,9 @@ test("skips without dependencies", async () => {
   assert.equal((await runRepoCheck(here, { "README.md": "x" })).status, "skip");
 });
 
-test("warns when OSV could not be asked", async () => {
-  const result = await runRepoCheck(here, files, { osv: "error: timeout" });
-  assert.equal(result.status, "warn");
-  assert.match(result.message, /timeout/);
+// Issue #145: a warn would hide a critical issue in CI and mark open findings fixed in the dashboard.
+test("is an error, not a warn, when OSV could not be asked", async () => {
+  await assert.rejects(runRepoCheck(here, files, { osv: "OSV answered HTTP 503" }), /Could not query OSV: OSV answered HTTP 503/);
 });
 
 // Audit 2026-11-10: a development entry in one lockfile must not hide a production entry in another.
