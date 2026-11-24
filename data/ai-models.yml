@@ -22,45 +22,45 @@ models:
     kind: conditions
     terms: llama
     ids: ['^meta-llama/Llama-2-']
-    source: https://www.llama.com/llama2/license/
+    source: https://dev.meta.ai/llama/llama2/license
   - license: Meta Llama 3 Community License
     kind: conditions
     terms: llama
     ids: ['^meta-llama/Meta-Llama-3-']
-    source: https://www.llama.com/llama3/license/
+    source: https://dev.meta.ai/llama/llama3/license
   - license: Llama 3.1 Community License
     kind: conditions
     terms: llama
     ids: ['^meta-llama/(Meta-)?Llama-3\.1-']
-    source: https://www.llama.com/llama3_1/license/
+    source: https://dev.meta.ai/llama/llama3_1/license
   - license: Llama 3.2 Community License
     kind: conditions
     terms: llama
     ids: ['^meta-llama/Llama-3\.2-']
-    source: https://www.llama.com/llama3_2/license/
+    source: https://dev.meta.ai/llama/llama3_2/license
   - license: Llama 3.3 Community License
     kind: conditions
     terms: llama
     ids: ['^meta-llama/Llama-3\.3-']
-    source: https://www.llama.com/llama3_3/license/
+    source: https://dev.meta.ai/llama/llama3_3/license
   - license: Llama 4 Community License
     kind: conditions
     terms: llama
     ids: ['^meta-llama/Llama-4-']
-    source: https://www.llama.com/llama4/license/
+    source: https://dev.meta.ai/llama/llama4/license
   # GGUF and other conversions keep the model name: Llama-3.1-8B-Instruct-Q4_K_M.gguf, llama-2-7b.Q4_0.gguf.
   - license: Llama Community License (version as in the file name)
     kind: conditions
     terms: llama
     ids: []
     files: ['^(meta-)?llama-?(2|3|3\.[0-9]|4)[-_.]']
-    source: https://www.llama.com/llama3_1/license/
+    source: https://dev.meta.ai/llama/llama3_1/license
   - license: Gemma Terms of Use
     kind: conditions
     terms: gemma
     ids: ['^google/(gemma-(2b|7b|1\.1-|2-|3-|3n-)|codegemma-|paligemma|recurrentgemma-|embeddinggemma-)']
     files: ['^(code|pali|recurrent|embedding)?gemma-?(2b|7b|1\.1|2|3|3n)[-_.]']
-    source: https://ai.google.dev/gemma/terms
+    source: https://gemma.ai/resources/terms/
   - license: CreativeML Open RAIL++-M
     kind: conditions
     terms: openrail
